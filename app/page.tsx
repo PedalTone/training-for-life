@@ -15,6 +15,12 @@ type Session = {
   updatedAt: string; completedAt?: string;
 };
 type LibraryExercise = { id: string; name: string; equipment: string };
+type InsightRecommendation = { title: string; reason: string; action: string };
+type TrainingInsightReport = {
+  id: string; generatedAt: string; periodDays: 0 | 30 | 90; sessionsAnalyzed: number;
+  headline: string; summary: string; wins: string[]; patterns: string[];
+  recommendations: InsightRecommendation[]; cautions: string[]; dataQuality: string;
+};
 type SavePickerWindow = Window & { showSaveFilePicker?: (options: { suggestedName: string; id: string; types: { description: string; accept: Record<string, string[]> }[] }) => Promise<{ createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }> }> };
 
 const schedule = [
@@ -98,10 +104,24 @@ async function fetchWorkoutGuide(videoUrl: string) {
   if (!response.ok || !("exercises" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "Workout guide unavailable.");
   return payload;
 }
+async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 90, accessCode: string) {
+  const localService = typeof window !== "undefined" && (window.location.hostname.endsWith("chatgpt.site") || ["localhost", "127.0.0.1"].includes(window.location.hostname));
+  const service = localService ? "" : "https://training-4-life.tommy-tritone.chatgpt.site";
+  const compactSessions = sessions.map((saved) => ({
+    date: saved.date, plannedTheme: schedule[dateFromKey(saved.date).getDay()].theme, status: saved.status,
+    activities: saved.activities ?? (saved.activity ? [saved.activity] : []), duration: saved.duration, distance: saved.distance, effort: saved.effort,
+    notes: saved.notes, mobilityExercises: saved.mobilityExercises, completedExercises: saved.completedExercises,
+    injury: { reported: hasReportedInjury(saved), impact: saved.injury.impact, bodyArea: saved.injury.bodyArea, note: saved.injury.note },
+  }));
+  const response = await fetch(`${service}/api/training-insights`, { method: "POST", headers: { "Content-Type": "application/json", "X-Training-Insights-Key": accessCode }, body: JSON.stringify({ sessions: compactSessions, periodDays }) });
+  const payload = await response.json() as Omit<TrainingInsightReport, "id"> | { error?: string };
+  if (!response.ok || !("headline" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "AI insights are temporarily unavailable.");
+  return { ...payload, id: `${periodDays}-${Date.now()}` } as TrainingInsightReport;
+}
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.7";
+const APP_VERSION = "v1.8";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -120,12 +140,12 @@ function backupFilename(now = new Date()) {
   const part = (value: number) => String(value).padStart(2, "0");
   return `training-for-life-backup-${now.getFullYear()}-${part(now.getMonth() + 1)}-${part(now.getDate())}_${part(now.getHours())}-${part(now.getMinutes())}-${part(now.getSeconds())}.json`;
 }
-function makeBackupFile(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[]) {
-  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, libraryExercises, futureVideos, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
+function makeBackupFile(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[], insightReports: TrainingInsightReport[]) {
+  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, libraryExercises, futureVideos, insightReports, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
   return new File([JSON.stringify(payload, null, 2)], backupFilename(), { type: "application/json" });
 }
-async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[]) {
-  const file = makeBackupFile(sessions, libraryExercises, futureVideos);
+async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[], insightReports: TrainingInsightReport[]) {
+  const file = makeBackupFile(sessions, libraryExercises, futureVideos, insightReports);
   const pickerWindow = window as SavePickerWindow;
   if (pickerWindow.showSaveFilePicker) {
     const handle = await pickerWindow.showSaveFilePicker({ suggestedName: file.name, id: "training-for-life-daily-backup", types: [{ description: "Training for Life backup", accept: { "application/json": [".json"] } }] });
@@ -190,6 +210,7 @@ export default function Home() {
   const [finishBackupState, setFinishBackupState] = useState("");
   const [libraryExercises, setLibraryExercises] = useState<LibraryExercise[]>(defaultExerciseLibrary);
   const [futureVideos, setFutureVideos] = useState<Video[]>([]);
+  const [insightReports, setInsightReports] = useState<TrainingInsightReport[]>([]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
 
@@ -208,6 +229,7 @@ export default function Home() {
       setLibraryExercises([...savedExercises, ...newDefaults]);
     }
     const savedFutureVideos = localStorage.getItem("t4l:future-videos"); if (savedFutureVideos) setFutureVideos(JSON.parse(savedFutureVideos));
+    const savedInsightReports = localStorage.getItem("t4l:insight-reports"); if (savedInsightReports) setInsightReports(JSON.parse(savedInsightReports));
   }, []);
   useEffect(() => {
     if (!loaded) return;
@@ -221,6 +243,7 @@ export default function Home() {
   useEffect(() => { getAllSessions().then((items) => setHistory(items.map(normalizeSession).sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([])); }, [tab, session]);
   useEffect(() => { localStorage.setItem("t4l:library", JSON.stringify(libraryExercises)); }, [libraryExercises]);
   useEffect(() => { localStorage.setItem("t4l:future-videos", JSON.stringify(futureVideos)); }, [futureVideos]);
+  useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
   useEffect(() => {
     const id = youtubeId(videoUrl.trim());
     if (!id) return;
@@ -263,7 +286,7 @@ export default function Home() {
     const current = { ...session, status: plan.key === "rest" ? "rest" as const : "completed" as const, completedAt: now, updatedAt: now };
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
     try {
-      await saveBackup(allSessions, libraryExercises, futureVideos);
+      await saveBackup(allSessions, libraryExercises, futureVideos, insightReports);
       try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
       setSession(current); setHistory(allSessions);
       setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
@@ -402,8 +425,8 @@ export default function Home() {
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} exercises={libraryExercises} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
-      {tab === "history" && <HistoryView now={today} sessions={history} onOpenDate={openDate}/>}
-      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
+      {tab === "history" && <HistoryView now={today} sessions={history} insightReports={insightReports} setInsightReports={setInsightReports} onOpenDate={openDate}/>}
+      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
     </main>
     <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
@@ -476,9 +499,15 @@ function ExerciseLibrary({ session, exercises, toggleExercise }: { session: Sess
   return <div className="exercise-library"><div className="library-intro"><div><span className="kicker">MOVE WELL</span><h2>Exercise library</h2></div><p>One library for any day. Use a comfortable range, controlled movement, and an appropriate load.</p></div><div className="library-list unified-library">{exercises.map(({ id, name, equipment }) => { const added = session.mobilityExercises.includes(name); return <button key={id} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark exerciseId={id} name={name}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></div>;
 }
 
-function HistoryView({ now, sessions, onOpenDate }: { now: Date; sessions: Session[]; onOpenDate: (date: Date) => void }) {
+function HistoryView({ now, sessions, insightReports, setInsightReports, onOpenDate }: { now: Date; sessions: Session[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; onOpenDate: (date: Date) => void }) {
   const [view, setView] = useState<"weeks" | "month">("weeks");
   const [flaggedOnly, setFlaggedOnly] = useState(false);
+  const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(30);
+  const [insightState, setInsightState] = useState<"idle" | "analyzing">("idle");
+  const [insightError, setInsightError] = useState("");
+  const [insightAccessCode, setInsightAccessCode] = useState("");
+  const [editingInsightAccess, setEditingInsightAccess] = useState(false);
+  useEffect(() => { const savedCode = localStorage.getItem("t4l:insights-access"); if (savedCode) setInsightAccessCode(savedCode); }, []);
   const map = new Map(sessions.map((item) => [item.date, item]));
   const adherent = sessions.filter((item) => ["completed", "rest"].includes(item.status) || hasReportedInjury(item) || item.injury.impact === "modified");
   const last30 = sessions.filter((item) => (now.getTime() - dateFromKey(item.date).getTime()) / 86400000 <= 30);
@@ -488,10 +517,43 @@ function HistoryView({ now, sessions, onOpenDate }: { now: Date; sessions: Sessi
   const monthDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const monthOffset = (new Date(now.getFullYear(), now.getMonth(), 1).getDay() + 6) % 7;
   const weekBlocks = Array.from({ length: 4 }, (_, w) => { const date = new Date(now); date.setDate(now.getDate() - w * 7); return weekDates(date); });
+  const insightSessions = sessions.filter((saved) => {
+    const age = (now.getTime() - dateFromKey(saved.date).getTime()) / 86400000;
+    const hasData = saved.status === "completed" || saved.status === "rest" || Boolean(saved.activity || saved.notes || saved.duration || saved.distance || saved.completedExercises.length || hasReportedInjury(saved));
+    return hasData && age >= 0 && (insightPeriod === 0 || age <= insightPeriod);
+  }).sort((a, b) => a.date.localeCompare(b.date));
+  const currentReport = insightReports.find((report) => report.periodDays === insightPeriod);
+  async function generateInsights() {
+    if (!insightSessions.length) { setInsightError("Record at least one workout before generating insights."); return; }
+    if (!insightAccessCode.trim()) { setEditingInsightAccess(true); setInsightError("Enter your personal AI access code first."); return; }
+    setInsightState("analyzing"); setInsightError("");
+    try {
+      localStorage.setItem("t4l:insights-access", insightAccessCode.trim());
+      const report = await fetchTrainingInsights(insightSessions, insightPeriod, insightAccessCode.trim());
+      setInsightReports((items) => [report, ...items.filter((item) => item.periodDays !== insightPeriod)]);
+    } catch (error) { setInsightError(error instanceof Error ? error.message : "AI insights are temporarily unavailable."); }
+    finally { setInsightState("idle"); }
+  }
   return <div className="subpage history-page">
     <section className="page-intro"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>Your rhythm,<br/>over time.</h1><p>Progress is the pattern you return to—not a perfect streak.</p></section>
     <section className="insight-card"><span className="insight-icon">↗</span><div><span>LAST 30 DAYS</span><strong>{adherence}% on rhythm</strong><p>{adherent.length ? `${adherent.length} recorded days. Every return strengthens the pattern.` : "Record your first day to begin seeing the pattern."}</p></div></section>
     <section className="stat-row"><div><span>CURRENT RHYTHM</span><strong>{currentStreak}<small> {currentStreak === 1 ? "day" : "days"}</small></strong></div><div><span>CONSISTENT WEEKS</span><strong>{consistentWeeks}<small> of 8</small></strong></div><div><span>RECORDED</span><strong>{sessions.length}<small> {sessions.length === 1 ? "day" : "days"}</small></strong></div></section>
+    <section className="ai-insights-card">
+      <div className="ai-insights-heading"><span className="ai-orb" aria-hidden="true">✦</span><div><span className="kicker">TRAINING INSIGHTS</span><h2>Your history, interpreted</h2><p>AI reviews completed workouts, details, notes, mobility work, effort, and injury reports to find useful patterns.</p></div></div>
+      <div className="insight-period" aria-label="Insight review period">{([[30, "30 days"], [90, "90 days"], [0, "All history"]] as const).map(([period, label]) => <button key={period} className={insightPeriod === period ? "active" : ""} aria-pressed={insightPeriod === period} onClick={() => { setInsightPeriod(period); setInsightError(""); }}>{label}</button>)}</div>
+      {(!insightAccessCode || editingInsightAccess) && <div className="insight-access"><div><strong>Personal AI access</strong><small>Enter this once per device. It is not included in backups or sent to the AI model.</small></div><input type="password" value={insightAccessCode} onChange={(event) => setInsightAccessCode(event.target.value)} placeholder="Personal access code" aria-label="Personal AI access code" autoComplete="off"/><button onClick={() => { if (insightAccessCode.trim()) { localStorage.setItem("t4l:insights-access", insightAccessCode.trim()); setEditingInsightAccess(false); setInsightError(""); } }}>Save code</button></div>}
+      {insightAccessCode && !editingInsightAccess && <div className="insight-access-ready"><span>✓ Personal AI access enabled on this device</span><button onClick={() => setEditingInsightAccess(true)}>Change</button></div>}
+      <div className="insight-action"><div><strong>{insightSessions.length} recorded {insightSessions.length === 1 ? "day" : "days"}</strong><small>Only this period’s compact workout data is sent when you generate.</small></div><button onClick={() => void generateInsights()} disabled={insightState === "analyzing" || !insightSessions.length}>{insightState === "analyzing" ? "Reviewing your history…" : currentReport ? "Refresh insights" : "Generate AI insights"}</button></div>
+      {insightError && <p className="insight-error" role="alert">{insightError}</p>}
+      {currentReport && <article className="insight-report">
+        <header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{currentReport.headline}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header>
+        <p className="insight-summary">{currentReport.summary}</p>
+        <div className="insight-report-grid"><section><h4>What’s working</h4><ul>{currentReport.wins.map((item) => <li key={item}>{item}</li>)}</ul></section><section><h4>Patterns to notice</h4><ul>{currentReport.patterns.map((item) => <li key={item}>{item}</li>)}</ul></section></div>
+        <section className="next-focus"><h4>Recommended next steps</h4>{currentReport.recommendations.map((item) => <div key={item.title}><span>→</span><p><strong>{item.title}</strong>{item.reason}<b>{item.action}</b></p></div>)}</section>
+        {currentReport.cautions.length > 0 && <section className="insight-cautions"><h4>Use extra care</h4><ul>{currentReport.cautions.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+        <footer><span>{currentReport.dataQuality}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer>
+      </article>}
+    </section>
     <div className="history-controls"><div className="segmented"><button className={view === "weeks" ? "active" : ""} onClick={() => setView("weeks")}>Weeks</button><button className={view === "month" ? "active" : ""} onClick={() => setView("month")}>Month</button></div><button className={flaggedOnly ? "filter active" : "filter"} onClick={() => setFlaggedOnly(!flaggedOnly)}>⚑ Injuries</button></div>
     {flaggedOnly ? <section className="flagged-list"><h2>Injury-affected workouts</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {schedule[dateFromKey(saved.date).getDay()].theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Injury reported")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No injury-affected workouts yet.</p>}</section> : view === "weeks" ? <section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === 0 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.slice(0,6).filter((d) => ["completed", "modified", "protected"].includes(stateFor(map.get(dateKey(d)), schedule[d.getDay()].key))).length} / 6</b></div><div className="scan-days">{days.map((date) => { const plan = schedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); return <button key={dateKey(date)} className={`${state} ${plan.key}`} onClick={() => onOpenDate(date)}><span>{plan.label}</span><strong>{date.getDate()}</strong><i>{stateSymbol(state)}</i></button>; })}</div></div>)}</section> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{now.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Injury</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(now.getFullYear(), now.getMonth(), i + 1); const plan = schedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{stateSymbol(state)}</small></button>; })}</div></section>}
   </div>;
@@ -503,7 +565,7 @@ function calculateStreak(sessions: Session[], now: Date) {
   return streak;
 }
 
-function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutureVideos, sessions, setHistory, onDeleteVideo, onAddToToday }: { libraryExercises: LibraryExercise[]; setLibraryExercises: React.Dispatch<React.SetStateAction<LibraryExercise[]>>; futureVideos: Video[]; setFutureVideos: React.Dispatch<React.SetStateAction<Video[]>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void; onAddToToday: (video: Video) => Promise<string> }) {
+function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutureVideos, insightReports, setInsightReports, sessions, setHistory, onDeleteVideo, onAddToToday }: { libraryExercises: LibraryExercise[]; setLibraryExercises: React.Dispatch<React.SetStateAction<LibraryExercise[]>>; futureVideos: Video[]; setFutureVideos: React.Dispatch<React.SetStateAction<Video[]>>; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void; onAddToToday: (video: Video) => Promise<string> }) {
   const [newExercise, setNewExercise] = useState(""); const [newEquipment, setNewEquipment] = useState(""); const [notice, setNotice] = useState("");
   const [futureUrl, setFutureUrl] = useState(""); const [futureNotice, setFutureNotice] = useState(""); const [savingFutureVideo, setSavingFutureVideo] = useState(false);
   const recentVideos = sessions.flatMap((s) => s.videos.map((video, videoIndex) => ({ ...video, sessionId: s.id, videoIndex }))).slice(0, 6);
@@ -544,13 +606,13 @@ function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutu
     if (video.guideStatus === "analyzing") { setFutureNotice("The workout guide is still building. Add it when the guide is ready."); return; }
     setFutureNotice(await onAddToToday(video));
   }
-  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.libraryExercises)) { const restoredLibrary = payload.libraryExercises.filter((item: LibraryExercise) => item?.id && item?.name).map((item: LibraryExercise) => ({ id: item.id, name: item.name, equipment: item.equipment || "No equipment listed" })); localStorage.setItem("t4l:library", JSON.stringify(restoredLibrary)); setLibraryExercises(restoredLibrary); } if (Array.isArray(payload.futureVideos)) { const restoredVideos = payload.futureVideos.filter((item: Video) => item?.url && item?.label); localStorage.setItem("t4l:future-videos", JSON.stringify(restoredVideos)); setFutureVideos(restoredVideos); } setHistory(restored); setNotice(`Restored ${restored.length} sessions. Reloading your plan…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
+  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.libraryExercises)) { const restoredLibrary = payload.libraryExercises.filter((item: LibraryExercise) => item?.id && item?.name).map((item: LibraryExercise) => ({ id: item.id, name: item.name, equipment: item.equipment || "No equipment listed" })); localStorage.setItem("t4l:library", JSON.stringify(restoredLibrary)); setLibraryExercises(restoredLibrary); } if (Array.isArray(payload.futureVideos)) { const restoredVideos = payload.futureVideos.filter((item: Video) => item?.url && item?.label); localStorage.setItem("t4l:future-videos", JSON.stringify(restoredVideos)); setFutureVideos(restoredVideos); } if (Array.isArray(payload.insightReports)) { const restoredReports = payload.insightReports.filter((item: TrainingInsightReport) => item?.id && item?.headline); localStorage.setItem("t4l:insight-reports", JSON.stringify(restoredReports)); setInsightReports(restoredReports); } setHistory(restored); setNotice(`Restored ${restored.length} sessions, ${Array.isArray(payload.insightReports) ? payload.insightReports.length : 0} insight reports, and your libraries. Reloading…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
   return <div className="subpage more-page">
     <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Manage your mobility library, saved videos, and restored data.</p></section>
     <details className="settings-card library-manager"><summary><span className="setting-icon mobility">↗</span><span><strong>Mobility library</strong><small>{libraryExercises.length} exercises · add or edit</small></span><i>＋</i></summary><p className="library-editor-help">Add a new mobility exercise here, or tap any existing name or equipment line to edit it.</p><div className="add-library-exercise"><input value={newExercise} onChange={(e) => setNewExercise(e.target.value)} placeholder="New mobility exercise" aria-label="New mobility exercise"/><input value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} placeholder="Equipment or instructions" aria-label="New mobility exercise equipment or instructions"/><button onClick={addExercise}>Add mobility exercise</button></div><div className="library-editor-list">{libraryExercises.map((exercise) => <div className="library-editor-row" key={exercise.id}><span className="exercise-visual"><MovementMark exerciseId={exercise.id} name={exercise.name}/></span><div><input aria-label="Mobility exercise name" value={exercise.name} onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}/><input aria-label="Equipment or instructions" value={exercise.equipment} onChange={(e) => updateExercise(exercise.id, { equipment: e.target.value })}/></div></div>)}</div></details>
     <section className="settings-card future-video-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Future workout videos</h2><p>Save a YouTube link now and add it to today when you’re ready</p></div></div><div className="future-video-form"><input type="url" value={futureUrl} onChange={(e) => setFutureUrl(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void saveFutureVideo(); }} placeholder="Paste YouTube URL" aria-label="YouTube URL for a future workout"/><button onClick={() => void saveFutureVideo()} disabled={savingFutureVideo}>{savingFutureVideo ? "Saving…" : "Save for later"}</button></div>{futureNotice && <p className="notice" role="status">{futureNotice}</p>}{futureVideos.length ? <div className="video-grid future-video-grid">{futureVideos.map((video, index) => <VideoCard video={video} onAddToday={() => void addFutureToToday(video)} onDelete={() => setFutureVideos((items) => items.filter((_, itemIndex) => itemIndex !== index))} onRetry={() => void retryFutureVideo(video)} key={`${video.url}-${index}`}/>)}</div> : <p className="empty-state">No future workout videos saved yet.</p>}</section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div>{recentVideos.length ? <div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div> : <p className="empty-state">Videos added to a workout will appear here.</p>}</section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↑</span><div><h2>Restore from backup</h2><p>Reload workouts, mobility exercises, and future videos from a saved file</p></div></div><label className="wide-action file-action">Choose backup file <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Choose your newest dated Training for Life backup. Restoring replaces the app’s saved workout history, mobility library, and future video library with the file’s contents.</p></section>
-    <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history is uploaded. To build a workout guide, the video link is sent to the Training for Life transcript helper and exercise names are matched with ExerciseDB. The finished guide is saved only on this device and in your backup.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
+    <section className="privacy-card"><span>PRIVATE BY DEFAULT</span><h2>Your history stays under your control.</h2><p>No analytics and no automatic workout uploads. Workout history stays on this device unless you tap Generate AI insights; then only the compact fields from your selected period are sent through the private Training for Life helper to OpenAI. Video links are sent only when you request a workout guide. Finished guides and insight reports are saved on this device and in your backup.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;
 }
