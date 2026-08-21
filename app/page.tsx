@@ -91,6 +91,7 @@ async function fetchWorkoutGuide(videoUrl: string) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
+const APP_VERSION = "v1.0";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -313,7 +314,7 @@ export default function Home() {
 
   return <div className={`app-shell theme-${plan.key}`}>
     <header className="brand-bar">
-      <button className="wordmark" onClick={() => { setActiveDate(today); navigate("today"); }} aria-label="Go to Today"><span className="brand-mark">T4L</span><span><b>Training</b> for Life</span></button>
+      <button className="wordmark" onClick={() => { setActiveDate(today); navigate("today"); }} aria-label={`Training for Life ${APP_VERSION} — go to Today`}><span className="brand-mark">T4L</span><span><b>Training</b> for Life <small className="app-version">{APP_VERSION}</small></span></button>
       <span className="privacy-dot"><i/>Relentless Forward Progress</span>
     </header>
     <main>
