@@ -6,7 +6,9 @@ type Tab = "today" | "week" | "history" | "more";
 type Effort = "" | "easy" | "moderate" | "hard";
 type Status = "partial" | "completed" | "rest";
 type Injury = { reported?: boolean; impact: "" | "modified" | "stopped" | "prevented"; bodyArea: string; note: string };
-type Video = { url: string; label: string; videoId?: string; thumbnailData?: string };
+type GuideExercise = { name: string; displayName: string; timestamp: number; sets?: string; reps?: string; duration?: string; transcriptText: string; graphicUrl?: string; equipment?: string; instructions: string[] };
+type WorkoutGuide = { generatedAt: string; transcriptSegments: number; exercises: GuideExercise[]; notice: string };
+type Video = { url: string; label: string; videoId?: string; thumbnailData?: string; guideStatus?: "analyzing" | "ready" | "failed"; guideError?: string; workoutGuide?: WorkoutGuide };
 type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
   notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
@@ -77,6 +79,14 @@ async function captureYoutubeThumbnail(id: string) {
   const response = await fetch(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`);
   if (!response.ok) throw new Error("Thumbnail unavailable");
   return blobAsDataUrl(await response.blob());
+}
+async function fetchWorkoutGuide(videoUrl: string) {
+  const localService = typeof window !== "undefined" && (window.location.hostname.endsWith("chatgpt.site") || ["localhost", "127.0.0.1"].includes(window.location.hostname));
+  const service = localService ? "" : "https://training-4-life.tommy-tritone.chatgpt.site";
+  const response = await fetch(`${service}/api/workout-guide`, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ url: videoUrl }) });
+  const payload = await response.json() as WorkoutGuide | { error?: string };
+  if (!response.ok || !("exercises" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "Workout guide unavailable.");
+  return payload;
 }
 
 const DB_NAME = "training-for-life";
@@ -242,14 +252,29 @@ export default function Home() {
     const url = videoUrl.trim();
     const id = youtubeId(url);
     if (!id) { setVideoMessage("Paste a valid YouTube video link."); return; }
-    setAttachingVideo(true); setVideoMessage("Saving video + thumbnail…");
+    setAttachingVideo(true); setVideoMessage("Saving video and starting workout guide…");
     let title = videoLabel.trim();
     if (!title) { try { title = await fetchYoutubeTitle(id); } catch { title = "Workout video"; } }
     let thumbnailData = "";
     try { thumbnailData = await captureYoutubeThumbnail(id); } catch { setVideoMessage("Video saved. The thumbnail will load when online."); }
-    update({ videos: [...session.videos, { url, label: title, videoId: id, thumbnailData }] });
+    const videoIndex = session.videos.length;
+    const video: Video = { url, label: title, videoId: id, thumbnailData, guideStatus: "analyzing" };
+    update({ videos: [...session.videos, video] });
     videoLabelEdited.current = false; setVideoUrl(""); setVideoLabel(""); setAttachingVideo(false);
-    if (thumbnailData) setVideoMessage("Video + thumbnail saved on this device.");
+    setVideoMessage("Video saved. Reading the transcript and building your exercise list…");
+    void analyzeVideo(videoIndex, video);
+  };
+  const analyzeVideo = async (videoIndex: number, video: Video) => {
+    setSession((current) => ({ ...current, videos: current.videos.map((item, index) => index === videoIndex ? { ...item, guideStatus: "analyzing", guideError: undefined } : item) }));
+    try {
+      const workoutGuide = await fetchWorkoutGuide(video.url);
+      setSession((current) => ({ ...current, videos: current.videos.map((item, index) => index === videoIndex ? { ...item, guideStatus: "ready", guideError: undefined, workoutGuide } : item) }));
+      setVideoMessage(workoutGuide.exercises.length ? `Workout guide created with ${workoutGuide.exercises.length} exercises.` : "Transcript loaded, but no supported exercises were identified.");
+    } catch (error) {
+      const guideError = error instanceof Error ? error.message : "Workout guide unavailable. Try again later.";
+      setSession((current) => ({ ...current, videos: current.videos.map((item, index) => index === videoIndex ? { ...item, guideStatus: "failed", guideError } : item) }));
+      setVideoMessage(guideError);
+    }
   };
   const deleteVideo = (sessionId: string, videoIndex: number) => {
     if (session.id === sessionId) {
@@ -329,7 +354,7 @@ export default function Home() {
         <div className="control-row youtube-injury-row">
           <details className="surface-card details-card youtube-card" open={openPanel === "youtube"} onToggle={(e) => togglePanel("youtube", e.currentTarget.open)}>
             <summary><span><b>YouTube</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
-            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div></div>
+            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + build guide"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} onRetry={() => analyzeVideo(i, video)} key={`${video.url}-${i}`}/>)}</div></div>
           </details>
           <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><span><b>Injury</b><small>{injuryReported ? "Reported" : "No injury"}</small></span><i/></button>{injuryReported && <button className="injury-expand" onClick={() => setShowInjury(!showInjury)}>{showInjury ? "Hide" : "Details"}</button>}</div>
         </div>
@@ -348,12 +373,22 @@ export default function Home() {
   </div>;
 }
 
-function VideoCard({ video, onDelete }: { video: Video; onDelete?: () => void }) {
+function formatTimestamp(seconds: number) { const minutes = Math.floor(seconds / 60); return `${minutes}:${String(seconds % 60).padStart(2, "0")}`; }
+
+function VideoCard({ video, onDelete, onRetry }: { video: Video; onDelete?: () => void; onRetry?: () => void }) {
   const [playing, setPlaying] = useState(false);
+  const [startAt, setStartAt] = useState(0);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const id = video.videoId || youtubeId(video.url);
   const thumbnail = video.thumbnailData || (id ? `https://i.ytimg.com/vi/${id}/mqdefault.jpg` : "");
-  return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <><button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>{onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}</>}</article>;
+  const playFrom = (seconds = 0) => { setStartAt(seconds); setPlaying(true); };
+  return <article className={`video-card ${playing ? "playing" : ""} ${video.workoutGuide ? "has-guide" : ""}`}>
+    {playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&start=${startAt}`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={() => playFrom()} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.workoutGuide?.exercises.length ? `${video.workoutGuide.exercises.length} exercise guide · play here` : video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}
+    {video.guideStatus === "analyzing" && <div className="guide-status analyzing" role="status"><span>↻</span><div><strong>Building workout guide</strong><small>Reading the transcript and identifying exercises…</small></div></div>}
+    {video.guideStatus === "failed" && <div className="guide-status failed" role="alert"><div><strong>Workout guide unavailable</strong><small>{video.guideError || "The transcript could not be read."}</small></div>{onRetry && <button onClick={onRetry}>Retry</button>}</div>}
+    {video.workoutGuide && <details className="workout-guide" open><summary><span><strong>Workout guide</strong><small>{video.workoutGuide.exercises.length} exercises identified</small></span><i>⌄</i></summary><div className="workout-guide-body">{video.workoutGuide.exercises.length ? video.workoutGuide.exercises.map((exercise, index) => <article className="guide-exercise" key={`${exercise.name}-${exercise.timestamp}`}><span className="guide-graphic">{exercise.graphicUrl ? <img src={exercise.graphicUrl} alt={`${exercise.displayName} demonstration`}/> : <MovementMark type={index}/>}</span><div><small>EXERCISE {index + 1} · {formatTimestamp(exercise.timestamp)}</small><strong>{exercise.displayName}</strong><p>{[exercise.sets && `${exercise.sets} sets`, exercise.reps && `${exercise.reps} reps`, exercise.duration].filter(Boolean).join(" · ") || "Sets and reps were not clearly stated"}</p>{exercise.equipment && <em>{exercise.equipment}</em>}{exercise.instructions[0] && <span>{exercise.instructions[0].replace(/^Step:\s*\d+\s*/i, "")}</span>}<button onClick={() => playFrom(exercise.timestamp)}>Watch from {formatTimestamp(exercise.timestamp)}</button></div></article>) : <p className="empty-state">The transcript loaded, but no supported exercise names were identified.</p>}<p className="guide-disclaimer">{video.workoutGuide.notice}</p></div></details>}
+    {onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}
+  </article>;
 }
 
 function MobilityPicker({ exercises, selected, toggleExercise, onDone, onCancel }: { exercises: LibraryExercise[]; selected: string[]; toggleExercise: (name: string) => void; onDone: () => void; onCancel: () => void }) {
@@ -429,6 +464,6 @@ function MoreView({ libraryExercises, setLibraryExercises, sessions, setHistory,
     <details className="settings-card library-manager"><summary><span className="setting-icon mobility">↗</span><span><strong>Exercise library</strong><small>{libraryExercises.length} exercises · add or edit</small></span><i>＋</i></summary><p className="library-editor-help">Add a new exercise here, or tap any existing name or equipment line to edit it.</p><div className="add-library-exercise"><input value={newExercise} onChange={(e) => setNewExercise(e.target.value)} placeholder="New exercise name" aria-label="New exercise name"/><input value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} placeholder="Equipment or instructions" aria-label="New exercise equipment or instructions"/><button onClick={addExercise}>Add exercise</button></div><div className="library-editor-list">{libraryExercises.map((exercise) => <div className="library-editor-row" key={exercise.id}><span className="exercise-visual"><MovementMark type={libraryExercises.indexOf(exercise)}/></span><div><input aria-label="Exercise name" value={exercise.name} onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}/><input aria-label="Equipment or instructions" value={exercise.equipment} onChange={(e) => updateExercise(exercise.id, { equipment: e.target.value })}/></div></div>)}</div></details>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div>{recentVideos.length ? <div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div> : <p className="empty-state">Videos added to a workout will appear here.</p>}</section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↑</span><div><h2>Restore from backup</h2><p>Reload workouts and library changes from a saved file</p></div></div><label className="wide-action file-action">Choose backup file <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Choose your newest dated Training for Life backup. Restoring replaces the app’s saved workout history and exercise library with the file’s contents.</p></section>
-    <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history uploaded to GitHub or a Training for Life server. Saving a YouTube thumbnail or playing an embedded video contacts YouTube/Google.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
+    <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history is uploaded. To build a workout guide, the video link is sent to the Training for Life transcript helper and exercise names are matched with ExerciseDB. The finished guide is saved only on this device and in your backup.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;
 }
