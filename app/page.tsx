@@ -204,7 +204,7 @@ export default function Home() {
   };
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
-  const completedThisWeek = weekDates(today).filter((date) => ["completed", "modified", "rest", "protected"].includes(stateFor(weekMap.get(dateKey(date)), schedule[date.getDay()].key))).length;
+  const completedThisWeek = weekDates(today).filter((date) => { const saved = weekMap.get(dateKey(date)); return Boolean(saved && ["completed", "modified", "rest", "protected"].includes(stateFor(saved, schedule[date.getDay()].key))); }).length;
 
   return <div className={`app-shell theme-${plan.key}`}>
     <header className="brand-bar">
