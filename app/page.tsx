@@ -21,7 +21,7 @@ const schedule = [
   { short: "Tue", label: "T", theme: "Easy Aerobic", key: "aerobic", icon: "≈", guidance: "30–45 minutes at a conversational, Zone 2 effort.", activities: ["Walk", "Easy run", "Peloton", "Bike", "Other"] },
   { short: "Wed", label: "W", theme: "Full-Body Strength", key: "strength", icon: "◆", guidance: "20–30 minutes of controlled, full-body strength work.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Other"] },
   { short: "Thu", label: "T", theme: "Speed / Intensity", key: "speed", icon: "⚡", guidance: "Intervals, tempo, hills, Peloton HIIT or other speed work.", activities: ["Track intervals", "Tempo run", "Hill repeats", "Peloton HIIT", "Other"] },
-  { short: "Fri", label: "F", theme: "Full-Body Strength", key: "strength", icon: "◆", guidance: "20–30 minutes of controlled, full-body strength work.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Other"] },
+  { short: "Fri", label: "F", theme: "Upper Body Strength", key: "strength", icon: "◆", guidance: "20–30 minutes of controlled upper-body strength work after Thursday’s leg-heavy effort.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Other"] },
   { short: "Sat", label: "S", theme: "Endurance", key: "endurance", icon: "∞", guidance: "60+ minutes of steady aerobic work. Choose the activity that fits today.", activities: ["Run", "Bike", "Peloton", "Hike / hike-run", "Swim", "Other"] },
 ] as const;
 
@@ -40,10 +40,6 @@ const exerciseGroups = [
   ] },
 ] as const;
 
-const strengthExercises = [["Warm-up", "Move through a comfortable range"], ["Hinge or squat", "Controlled reps"], ["Push", "Choose a comfortable variation"], ["Pull or carry", "Choose a comfortable variation"], ["Cool-down", "Easy breathing + movement"]] as const;
-const speedExercises = [["Warm-up", "Easy movement + a few pickups"], ["Main workout", "Intervals, tempo, hills, or HIIT"], ["Cool-down", "Return to an easy effort"]] as const;
-const mobilityDefaults = [["Face Pulls", "2 × 10"], ["Open Book", "2 × 8 each side"], ["Wall Slide", "2 × 10"], ["Dead Hang", "Comfortable time"], ["Side Plank", "2 rounds each side"]] as const;
-
 function dateKey(date = new Date()) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; }
 function dateFromKey(key: string) { return new Date(`${key}T12:00:00`); }
 function easternToday() {
@@ -53,6 +49,11 @@ function easternToday() {
 }
 function emptySession(date: string, rest = false): Session {
   return { id: date, date, activity: "", duration: "", distance: "", effort: "", notes: "", completedExercises: [], status: rest ? "rest" : "partial", injury: { reported: false, impact: "", bodyArea: "", note: "" }, videos: [], updatedAt: new Date().toISOString() };
+}
+function normalizeSession(saved: Session): Session {
+  const injury = saved.injury ?? { impact: "", bodyArea: "", note: "" };
+  const reported = typeof injury.reported === "boolean" ? injury.reported : injury.impact === "stopped" || injury.impact === "prevented";
+  return { ...saved, completedExercises: saved.completedExercises ?? [], videos: saved.videos ?? [], injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
 }
 function weekDates(date: Date) {
   const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() + 6) % 7));
@@ -107,15 +108,14 @@ async function saveBackup(sessions: Session[], ptExercises: PtExercise[]) {
 }
 
 function stateFor(session: Session | undefined, planKey: string) {
-  if (session?.injury?.impact === "prevented") return "protected";
-  if (session?.injury?.reported || session?.injury?.impact === "stopped") return "protected";
+  if (hasReportedInjury(session)) return "protected";
   if (session?.injury?.impact === "modified") return "modified";
   if (session?.status === "completed") return "completed";
   if (planKey === "rest" || session?.status === "rest") return "rest";
   if (session && (session.activity || session.notes || session.completedExercises.length)) return "partial";
   return "missed";
 }
-function hasReportedInjury(session: Session | undefined) { return Boolean(session?.injury?.reported || session?.injury?.impact === "stopped" || session?.injury?.impact === "prevented"); }
+function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
 function stateSymbol(state: string) { return state === "completed" ? "✓" : state === "modified" ? "↗" : state === "protected" ? "⚑" : state === "rest" ? "R" : state === "partial" ? "◐" : "·"; }
 
 function MovementMark({ type = 0 }: { type?: number }) {
@@ -148,7 +148,7 @@ export default function Home() {
   const [videoLabel, setVideoLabel] = useState("");
   const [videoMessage, setVideoMessage] = useState("");
   const [attachingVideo, setAttachingVideo] = useState(false);
-  const [dailyBackupState, setDailyBackupState] = useState("Backup Data");
+  const [finishBackupState, setFinishBackupState] = useState("");
   const [ptExercises, setPtExercises] = useState<PtExercise[]>([
     { id: "pt-1", name: "Face pulls", prescription: "2 × 10", archived: false },
     { id: "pt-2", name: "Thoracic rotations at wall", prescription: "2 × 12 each", archived: false },
@@ -159,9 +159,9 @@ export default function Home() {
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); }, []);
   useEffect(() => {
-    setLoaded(false);
-    getSession(activeKey).then((saved) => setSession(saved ?? emptySession(activeKey, plan.key === "rest"))).catch(() => {
-      const fallback = localStorage.getItem(`t4l:${activeKey}`); setSession(fallback ? JSON.parse(fallback) : emptySession(activeKey, plan.key === "rest"));
+    setLoaded(false); setFinishBackupState("");
+    getSession(activeKey).then((saved) => setSession(saved ? normalizeSession(saved) : emptySession(activeKey, plan.key === "rest"))).catch(() => {
+      const fallback = localStorage.getItem(`t4l:${activeKey}`); setSession(fallback ? normalizeSession(JSON.parse(fallback)) : emptySession(activeKey, plan.key === "rest"));
     }).finally(() => { setLoaded(true); setSaveState("Saved on this device"); });
   }, [activeKey]);
   useEffect(() => {
@@ -176,22 +176,25 @@ export default function Home() {
     }, 400);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [session, loaded, activeKey]);
-  useEffect(() => { getAllSessions().then((items) => setHistory(items.sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([])); }, [tab, session]);
+  useEffect(() => { getAllSessions().then((items) => setHistory(items.map(normalizeSession).sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([])); }, [tab, session]);
   useEffect(() => { localStorage.setItem("t4l:pt", JSON.stringify(ptExercises)); }, [ptExercises]);
 
-  const update = (patch: Partial<Session>) => setSession((current) => ({ ...current, ...patch }));
-  const dayExercises = plan.key === "strength" ? strengthExercises : plan.key === "speed" ? speedExercises : plan.key === "mobility" ? mobilityDefaults : [];
-  const exerciseProgress = dayExercises.length ? Math.round(session.completedExercises.filter((name) => dayExercises.some(([item]) => item === name)).length / dayExercises.length * 100) : 0;
+  const update = (patch: Partial<Session>) => { setFinishBackupState(""); setSession((current) => ({ ...current, ...patch })); };
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
   const openDate = (date: Date) => { setActiveDate(date); setTab("today"); window.scrollTo(0, 0); };
-  const finishWorkout = () => { update({ status: plan.key === "rest" ? "rest" : "completed", completedAt: new Date().toISOString() }); setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved"); };
-  const backupToday = async () => {
-    setDailyBackupState("Backing up…");
-    const current = { ...session, updatedAt: new Date().toISOString() };
+  const finishAndBackup = async () => {
+    setFinishBackupState("Choose backup location…");
+    const now = new Date().toISOString();
+    const current = { ...session, status: plan.key === "rest" ? "rest" as const : "completed" as const, completedAt: now, updatedAt: now };
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
-    try { void saveSession(current).catch(() => undefined); await saveBackup(allSessions, ptExercises); setDailyBackupState("Backup Saved ✓"); }
-    catch (error) { setDailyBackupState(error instanceof DOMException && error.name === "AbortError" ? "Backup Data" : "Try Backup Again"); }
+    try {
+      await saveBackup(allSessions, ptExercises);
+      try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
+      setSession(current); setHistory(allSessions);
+      setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
+      setFinishBackupState("✓ Day recorded + backup saved");
+    } catch (error) { setFinishBackupState(error instanceof DOMException && error.name === "AbortError" ? "" : "Try Finish + Backup Again"); }
   };
   const attachVideo = async () => {
     const url = videoUrl.trim();
@@ -209,11 +212,16 @@ export default function Home() {
   const completedThisWeek = weekDates(today).filter((date) => { const saved = weekMap.get(dateKey(date)); return Boolean(saved && ["completed", "modified", "rest", "protected"].includes(stateFor(saved, schedule[date.getDay()].key))); }).length;
   const injuryReported = hasReportedInjury(session);
   const handleInjuryControl = () => {
-    if (!injuryReported) update({ injury: { reported: true, impact: "", bodyArea: "", note: "" } });
-    setShowInjury((visible) => !injuryReported || !visible);
+    const next = { ...session, injury: { ...session.injury, reported: !injuryReported }, updatedAt: new Date().toISOString() };
+    setFinishBackupState(""); setSession(next); void saveSession(next).catch(() => localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(next)));
+    setShowInjury(!injuryReported);
+  };
+  const updateInjury = (injury: Injury) => {
+    const next = { ...session, injury, updatedAt: new Date().toISOString() };
+    setFinishBackupState(""); setSession(next); void saveSession(next).catch(() => localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(next)));
   };
   const clearInjury = () => {
-    update({ injury: { reported: false, impact: "", bodyArea: "", note: "" } });
+    updateInjury({ reported: false, impact: "", bodyArea: "", note: "" });
     setShowInjury(false);
   };
 
@@ -233,18 +241,12 @@ export default function Home() {
         </section>
 
         <details className="surface-card compact-panel activity-card">
-          <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose today’s workout</b><small>{session.activity || "Pick the activity that fits today"}</small></span><i>＋</i></summary>
+          <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose Workout</b><small>{session.activity || "Pick the activity that fits today"}</small></span><i>＋</i></summary>
           <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => <button key={activity} className={session.activity === activity ? "selected" : ""} onClick={() => update({ activity: session.activity === activity ? "" : activity })}><span>{session.activity === activity ? "✓" : plan.icon}</span>{activity}</button>)}</div></div>
         </details>
 
-        <div className={`work-injury-row ${dayExercises.length ? "" : "injury-only"}`}>
-          {dayExercises.length > 0 && <details className="surface-card compact-panel workout-card">
-            <summary><span className="panel-icon progress-icon">{exerciseProgress}%</span><span><b>Today’s work</b><small>{session.completedExercises.filter((name) => dayExercises.some(([item]) => item === name)).length} of {dayExercises.length} movements complete</small></span><i>＋</i></summary>
-            <div className="panel-body"><div className="progress-track"><i style={{ width: `${exerciseProgress}%` }}/></div><div className="checklist">{dayExercises.map(([name, detail], index) => { const checked = session.completedExercises.includes(name); return <button key={name} className={checked ? "checked" : ""} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span className="exercise-copy"><strong>{name}</strong><small>{detail}</small></span><span className="check-target" aria-label={checked ? `Mark ${name} incomplete` : `Mark ${name} complete`}>{checked ? "✓" : ""}</span></button>; })}</div>{exerciseProgress === 100 && <p className="complete-message">Relentless forward progress. Today’s planned movements are complete.</p>}</div>
-          </details>}
-          <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported} aria-expanded={injuryReported && showInjury}><span>⚑</span><b>Injury</b><i/></button><button className="injury-expand" onClick={() => setShowInjury(!showInjury)} disabled={!injuryReported} aria-label={showInjury ? "Hide injury details" : "Show injury details"}>⌄</button></div>
-        </div>
-        {injuryReported && showInjury && <section className="surface-card injury-details-card"><div className="injury-heading"><div><span className="kicker">INJURY DETAILS</span><h2>What happened?</h2></div><button onClick={() => setShowInjury(false)} aria-label="Hide injury details">×</button></div><p>Did the injury stop today’s workout?</p><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => update({ injury: { ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] } })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => update({ injury: { ...session.injury, reported: true, bodyArea: e.target.value } })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => update({ injury: { ...session.injury, reported: true, note: e.target.value } })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury</button></section>}
+        <div className={`injury-control standalone ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><b>Injury</b><i/></button><button className="injury-expand" onClick={() => setShowInjury(!showInjury)} disabled={!injuryReported} aria-label={showInjury ? "Hide injury details" : "Show injury details"}>⌄</button></div>
+        {injuryReported && showInjury && <section className="surface-card injury-details-card"><div className="injury-heading"><div><span className="kicker">INJURY DETAILS</span><h2>What happened?</h2></div><button onClick={() => setShowInjury(false)} aria-label="Hide injury details">×</button></div><p>Did the injury stop today’s workout?</p><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury data</button></section>}
 
         <details className="surface-card compact-panel note-card">
           <summary><span className="panel-icon">✎</span><span><b>Workout note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
@@ -252,7 +254,7 @@ export default function Home() {
         </details>
 
         <details className="surface-card details-card">
-          <summary><span><b>Workout details</b><small>Duration, distance, effort, video, or modification</small></span><i>＋</i></summary>
+          <summary><span><b>Workout details</b><small>Duration, distance, effort, or video</small></span><i>＋</i></summary>
           <div className="details-body">
             <div className="field-grid"><label><span>Duration</span><div><input inputMode="numeric" value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/><em>min</em></div></label><label><span>Distance</span><div><input inputMode="decimal" value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/><em>mi</em></div></label></div>
             <div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>
@@ -262,7 +264,7 @@ export default function Home() {
           </div>
         </details>
 
-        <div className="finish-zone"><div className="save-status"><span>→</span><div><strong>Relentless Forward Progress</strong><small>{saveState} · local + private</small></div></div><div className="finish-actions"><button className="backup-button" onClick={backupToday}><span>↓</span>{dailyBackupState}</button><button onClick={finishWorkout} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}>{session.status === "completed" || session.status === "rest" ? "✓ Day recorded" : plan.key === "rest" ? "Honor recovery" : "Finish workout"}<span>→</span></button></div></div>
+        <div className="finish-zone"><div className="save-status"><span>→</span><div><strong>Relentless Forward Progress</strong><small>{saveState} · local + private</small></div></div><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
       </div>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleExercise} onOpenDate={openDate}/>}
@@ -301,11 +303,11 @@ function HistoryView({ now, sessions, onOpenDate }: { now: Date; sessions: Sessi
   const [view, setView] = useState<"weeks" | "month">("weeks");
   const [flaggedOnly, setFlaggedOnly] = useState(false);
   const map = new Map(sessions.map((item) => [item.date, item]));
-  const adherent = sessions.filter((item) => ["completed", "rest"].includes(item.status) || item.injury.reported || ["modified", "stopped", "prevented"].includes(item.injury.impact));
+  const adherent = sessions.filter((item) => ["completed", "rest"].includes(item.status) || hasReportedInjury(item) || item.injury.impact === "modified");
   const last30 = sessions.filter((item) => (now.getTime() - dateFromKey(item.date).getTime()) / 86400000 <= 30);
-  const adherence = last30.length ? Math.round(last30.filter((item) => item.status !== "partial" || item.injury.reported || ["stopped", "prevented"].includes(item.injury.impact)).length / last30.length * 100) : 0;
+  const adherence = last30.length ? Math.round(last30.filter((item) => item.status !== "partial" || hasReportedInjury(item)).length / last30.length * 100) : 0;
   const currentStreak = calculateStreak(sessions, now);
-  const consistentWeeks = Array.from({ length: 8 }, (_, w) => { const start = new Date(now); start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - w * 7); return Array.from({ length: 6 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return map.get(dateKey(d)); }).filter((s) => s?.status === "completed" || s?.injury.reported || ["modified", "stopped", "prevented"].includes(s?.injury.impact || "")).length >= 5; }).filter(Boolean).length;
+  const consistentWeeks = Array.from({ length: 8 }, (_, w) => { const start = new Date(now); start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - w * 7); return Array.from({ length: 6 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return map.get(dateKey(d)); }).filter((s) => s?.status === "completed" || hasReportedInjury(s) || s?.injury.impact === "modified").length >= 5; }).filter(Boolean).length;
   const monthDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const monthOffset = (new Date(now.getFullYear(), now.getMonth(), 1).getDay() + 6) % 7;
   const weekBlocks = Array.from({ length: 4 }, (_, w) => { const date = new Date(now); date.setDate(now.getDate() - w * 7); return weekDates(date); });
@@ -328,7 +330,7 @@ function MoreView({ ptExercises, setPtExercises, sessions, setHistory, onOpenLib
   const [newPt, setNewPt] = useState(""); const [notice, setNotice] = useState("");
   const recentVideos = sessions.flatMap((s) => s.videos.map((video) => ({ ...video, date: s.date }))).slice(0, 6);
   async function exportData() { try { setNotice(await saveBackup(sessions, ptExercises)); } catch (error) { if (!(error instanceof DOMException && error.name === "AbortError")) setNotice("Backup could not be created. Please try again."); } }
-  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); await Promise.all(payload.sessions.map((item: Session) => saveSession(item))); if (Array.isArray(payload.ptExercises)) { localStorage.setItem("t4l:pt", JSON.stringify(payload.ptExercises)); setPtExercises(payload.ptExercises); } setHistory(payload.sessions); setNotice(`Restored ${payload.sessions.length} sessions. Reloading your plan…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
+  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.ptExercises)) { localStorage.setItem("t4l:pt", JSON.stringify(payload.ptExercises)); setPtExercises(payload.ptExercises); } setHistory(restored); setNotice(`Restored ${restored.length} sessions. Reloading your plan…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
   return <div className="subpage more-page">
     <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Your movements, references, data, and privacy settings.</p></section>
     <section className="settings-card action-list"><button onClick={onOpenLibrary}><span className="setting-icon mobility">↗</span><span><strong>Exercise library</strong><small>20 mobility and strength movements</small></span><i>›</i></button><div><span className="setting-icon speed">5/6</span><span><strong>Weekly goal</strong><small>5 of 6 training days · rest protected</small></span><i>›</i></div></section>
