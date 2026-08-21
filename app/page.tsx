@@ -9,7 +9,7 @@ type Injury = { reported?: boolean; impact: "" | "modified" | "stopped" | "preve
 type Video = { url: string; label: string; videoId?: string; thumbnailData?: string };
 type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
-  notes: string; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
+  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
   updatedAt: string; completedAt?: string;
 };
 type PtExercise = { id: string; name: string; prescription: string; archived: boolean };
@@ -39,6 +39,8 @@ const exerciseGroups = [
     ["Dead Hang", "Bar"], ["Balance — One Leg, Eyes Closed", "Bodyweight"], ["Farmer's Carry", "Dumbbells or kettlebells"], ["Side Plank", "Bodyweight · optional"],
   ] },
 ] as const;
+const exerciseLibrary = exerciseGroups.flatMap((group) => group.exercises);
+const exerciseEquipment = new Map<string, string>(exerciseLibrary.map(([name, equipment]) => [name, equipment]));
 
 function dateKey(date = new Date()) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; }
 function dateFromKey(key: string) { return new Date(`${key}T12:00:00`); }
@@ -48,13 +50,15 @@ function easternToday() {
   return new Date(Number(values.year), Number(values.month) - 1, Number(values.day), 12);
 }
 function emptySession(date: string, rest = false): Session {
-  return { id: date, date, activity: "", activities: [], duration: "", distance: "", effort: "", notes: "", completedExercises: [], status: rest ? "rest" : "partial", injury: { reported: false, impact: "", bodyArea: "", note: "" }, videos: [], updatedAt: new Date().toISOString() };
+  return { id: date, date, activity: "", activities: [], duration: "", distance: "", effort: "", notes: "", mobilityExercises: [], completedExercises: [], status: rest ? "rest" : "partial", injury: { reported: false, impact: "", bodyArea: "", note: "" }, videos: [], updatedAt: new Date().toISOString() };
 }
 function normalizeSession(saved: Session): Session {
   const injury = saved.injury ?? { impact: "", bodyArea: "", note: "" };
   const reported = typeof injury.reported === "boolean" ? injury.reported : injury.impact === "stopped" || injury.impact === "prevented";
   const activities = saved.activities ?? (saved.activity ? [saved.activity] : []);
-  return { ...saved, activity: activities.join(" + "), activities, completedExercises: saved.completedExercises ?? [], videos: saved.videos ?? [], injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
+  const completedExercises = saved.completedExercises ?? [];
+  const mobilityExercises = saved.mobilityExercises ?? completedExercises;
+  return { ...saved, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: saved.videos ?? [], injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
 }
 function weekDates(date: Date) {
   const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() + 6) % 7));
@@ -121,7 +125,7 @@ function stateFor(session: Session | undefined, planKey: string) {
   if (session?.injury?.impact === "modified") return "modified";
   if (session?.status === "completed") return "completed";
   if (planKey === "rest" || session?.status === "rest") return "rest";
-  if (session && (session.activity || session.notes || session.completedExercises.length)) return "partial";
+  if (session && (session.activity || session.notes || session.mobilityExercises.length || session.completedExercises.length)) return "partial";
   return "missed";
 }
 function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
@@ -152,6 +156,7 @@ export default function Home() {
   const [saveState, setSaveState] = useState("Loading your plan…");
   const [history, setHistory] = useState<Session[]>([]);
   const [showInjury, setShowInjury] = useState(false);
+  const [showMobilityPicker, setShowMobilityPicker] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoLabel, setVideoLabel] = useState("");
   const [videoMessage, setVideoMessage] = useState("");
@@ -168,7 +173,7 @@ export default function Home() {
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); }, []);
   useEffect(() => {
-    setLoaded(false); setFinishBackupState("");
+    setLoaded(false); setFinishBackupState(""); setShowMobilityPicker(false);
     getSession(activeKey).then((saved) => setSession(saved ? normalizeSession(saved) : emptySession(activeKey, plan.key === "rest"))).catch(() => {
       const fallback = localStorage.getItem(`t4l:${activeKey}`); setSession(fallback ? normalizeSession(JSON.parse(fallback)) : emptySession(activeKey, plan.key === "rest"));
     }).finally(() => { setLoaded(true); setSaveState("Saved on this device"); });
@@ -206,6 +211,13 @@ export default function Home() {
     const selected = session.activities ?? (session.activity ? [session.activity] : []);
     const activities = selected.includes(activity) ? selected.filter((item) => item !== activity) : [...selected, activity];
     update({ activities, activity: activities.join(" + ") });
+  };
+  const toggleMobilitySelection = (name: string) => {
+    const selected = session.mobilityExercises.includes(name);
+    update({
+      mobilityExercises: selected ? session.mobilityExercises.filter((item) => item !== name) : [...session.mobilityExercises, name],
+      completedExercises: selected ? session.completedExercises.filter((item) => item !== name) : session.completedExercises,
+    });
   };
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
@@ -290,9 +302,13 @@ export default function Home() {
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose Workout</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
           </details>
+          <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={() => setShowMobilityPicker(!showMobilityPicker)} aria-expanded={showMobilityPicker}><span>↗</span><b>Load Mobility</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Choose exercises"}</small></button>
           <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><b>Injury</b><i/></button><button className="injury-expand" onClick={() => setShowInjury(!showInjury)} disabled={!injuryReported} aria-label={showInjury ? "Hide injury details" : "Show injury details"}>⌄</button></div>
         </div>
+        {showMobilityPicker && <MobilityPicker session={session} toggleExercise={toggleMobilitySelection} onDone={() => setShowMobilityPicker(false)}/>}
         {injuryReported && showInjury && <section className="surface-card injury-details-card"><div className="injury-heading"><div><span className="kicker">INJURY DETAILS</span><h2>What happened?</h2></div><button onClick={() => setShowInjury(false)} aria-label="Hide injury details">×</button></div><p>Did the injury stop today’s workout?</p><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury data</button></section>}
+
+        {session.mobilityExercises.length > 0 && <DailyMobility session={session} toggleExercise={toggleExercise} onEdit={() => setShowMobilityPicker(true)}/>}
 
         <div className="control-row note-details-row">
           <details className="surface-card compact-panel note-card">
@@ -318,7 +334,7 @@ export default function Home() {
         </div>
       </div>}
 
-      {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleExercise} onOpenDate={openDate}/>}
+      {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} onOpenDate={openDate}/>}
       {tab === "more" && <MoreView ptExercises={ptExercises} setPtExercises={setPtExercises} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onOpenLibrary={() => navigate("week")}/>}
     </main>
@@ -332,6 +348,15 @@ function VideoCard({ video, onDelete }: { video: Video; onDelete?: () => void })
   const id = video.videoId || youtubeId(video.url);
   const thumbnail = video.thumbnailData || (id ? `https://i.ytimg.com/vi/${id}/mqdefault.jpg` : "");
   return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <><button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>{onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}</>}</article>;
+}
+
+function MobilityPicker({ session, toggleExercise, onDone }: { session: Session; toggleExercise: (name: string) => void; onDone: () => void }) {
+  return <section className="surface-card mobility-picker"><div className="mobility-picker-heading"><div><span className="kicker">MOBILITY LIBRARY</span><h2>Choose your exercises</h2><p>Select as many as you want for this day.</p></div><button onClick={onDone}>Done</button></div><div className="library-list">{exerciseLibrary.map(([name, equipment], index) => { const added = session.mobilityExercises.includes(name); return <button key={name} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></section>;
+}
+
+function DailyMobility({ session, toggleExercise, onEdit }: { session: Session; toggleExercise: (name: string) => void; onEdit: () => void }) {
+  const complete = session.mobilityExercises.filter((name) => session.completedExercises.includes(name)).length;
+  return <details className="surface-card daily-mobility" open><summary><span><b>Mobility exercises</b><small>{complete} of {session.mobilityExercises.length} completed</small></span><i>⌄</i></summary><div className="daily-mobility-body"><div className="checklist">{session.mobilityExercises.map((name, index) => { const checked = session.completedExercises.includes(name); return <button key={name} className={checked ? "checked" : ""} aria-pressed={checked} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span className="exercise-copy"><strong>{name}</strong><small>{exerciseEquipment.get(name) || "Mobility exercise"}</small></span><span className="check-target">{checked ? "✓" : ""}</span></button>; })}</div><button className="edit-mobility" onClick={onEdit}>Edit loaded exercises</button></div></details>;
 }
 
 function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate }: { today: Date; sessions: Session[]; currentSession: Session; toggleExercise: (name: string) => void; onOpenDate: (date: Date) => void }) {
@@ -348,7 +373,7 @@ function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate 
 }
 
 function ExerciseLibrary({ session, toggleExercise }: { session: Session; toggleExercise: (name: string) => void }) {
-  return <div className="exercise-library"><div className="library-intro"><div><span className="kicker">MOVE WELL</span><h2>Exercise library</h2></div><p>Use a comfortable range, controlled movement, and an appropriate load.</p></div>{exerciseGroups.map((group, groupIndex) => <section className="library-group" key={group.title}><div className="group-title"><span>{String(groupIndex + 1).padStart(2, "0")}</span><div><h3>{group.title}</h3><p>{group.subtitle}</p></div></div><div className="library-list">{group.exercises.map(([name, equipment], index) => { const added = session.completedExercises.includes(name); return <button key={name} className={added ? "added" : ""} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index + groupIndex}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></section>)}</div>;
+  return <div className="exercise-library"><div className="library-intro"><div><span className="kicker">MOVE WELL</span><h2>Exercise library</h2></div><p>One library for any day. Use a comfortable range, controlled movement, and an appropriate load.</p></div><div className="library-list unified-library">{exerciseLibrary.map(([name, equipment], index) => { const added = session.mobilityExercises.includes(name); return <button key={name} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></div>;
 }
 
 function HistoryView({ now, sessions, onOpenDate }: { now: Date; sessions: Session[]; onOpenDate: (date: Date) => void }) {
