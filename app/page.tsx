@@ -62,6 +62,14 @@ function weekDates(date: Date) {
 }
 function youtubeId(url: string) { return url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{6,})/)?.[1] ?? ""; }
 function blobAsDataUrl(blob: Blob) { return new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(reader.error); reader.readAsDataURL(blob); }); }
+async function fetchYoutubeTitle(id: string) {
+  const videoUrl = `https://www.youtube.com/watch?v=${id}`;
+  const response = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
+  if (!response.ok) throw new Error("Video title unavailable");
+  const metadata = await response.json() as { title?: string };
+  if (!metadata.title?.trim()) throw new Error("Video title unavailable");
+  return metadata.title.trim();
+}
 async function captureYoutubeThumbnail(id: string) {
   const response = await fetch(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`);
   if (!response.ok) throw new Error("Thumbnail unavailable");
@@ -156,6 +164,7 @@ export default function Home() {
     { id: "pt-4", name: "KB wrist flexion / extension", prescription: "Elbow at 90° · as prescribed", archived: false },
   ]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const videoLabelEdited = useRef(false);
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); }, []);
   useEffect(() => {
@@ -178,6 +187,19 @@ export default function Home() {
   }, [session, loaded, activeKey]);
   useEffect(() => { getAllSessions().then((items) => setHistory(items.map(normalizeSession).sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([])); }, [tab, session]);
   useEffect(() => { localStorage.setItem("t4l:pt", JSON.stringify(ptExercises)); }, [ptExercises]);
+  useEffect(() => {
+    const id = youtubeId(videoUrl.trim());
+    if (!id) return;
+    let cancelled = false;
+    setVideoMessage("Finding video title…");
+    const timer = window.setTimeout(() => {
+      fetchYoutubeTitle(id).then((title) => {
+        if (cancelled || videoLabelEdited.current) return;
+        setVideoLabel(title); setVideoMessage("Video title added automatically.");
+      }).catch(() => { if (!cancelled) setVideoMessage("Title unavailable. You can add a label manually."); });
+    }, 350);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [videoUrl]);
 
   const update = (patch: Partial<Session>) => { setFinishBackupState(""); setSession((current) => ({ ...current, ...patch })); };
   const toggleActivity = (activity: string) => {
@@ -206,10 +228,12 @@ export default function Home() {
     const id = youtubeId(url);
     if (!id) { setVideoMessage("Paste a valid YouTube video link."); return; }
     setAttachingVideo(true); setVideoMessage("Saving video + thumbnail…");
+    let title = videoLabel.trim();
+    if (!title) { try { title = await fetchYoutubeTitle(id); } catch { title = "Workout video"; } }
     let thumbnailData = "";
     try { thumbnailData = await captureYoutubeThumbnail(id); } catch { setVideoMessage("Video saved. The thumbnail will load when online."); }
-    update({ videos: [...session.videos, { url, label: videoLabel.trim() || "Workout video", videoId: id, thumbnailData }] });
-    setVideoUrl(""); setVideoLabel(""); setAttachingVideo(false);
+    update({ videos: [...session.videos, { url, label: title, videoId: id, thumbnailData }] });
+    videoLabelEdited.current = false; setVideoUrl(""); setVideoLabel(""); setAttachingVideo(false);
     if (thumbnailData) setVideoMessage("Video + thumbnail saved on this device.");
   };
   const activeIsToday = activeKey === dateKey(today);
@@ -272,7 +296,7 @@ export default function Home() {
         <div className="control-row youtube-finish-row">
           <details className="surface-card details-card youtube-card">
             <summary><span><b>YouTube</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
-            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input value={videoLabel} onChange={(e) => setVideoLabel(e.target.value)} placeholder="Your label (optional)"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></div>
+            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></div>
           </details>
           <div className="finish-zone paired-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
         </div>
