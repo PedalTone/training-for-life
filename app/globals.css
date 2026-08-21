@@ -87,7 +87,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .panel-body .activity-grid,.panel-body .progress-track { margin-top: 16px; }
 .note-meta { display: flex; justify-content: flex-end; margin: 12px 0 8px; }
 .injury-control { min-height: 76px; margin-top: 8px; padding: 7px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: white; display: grid; grid-template-columns: 1fr 34px; align-items: stretch; box-shadow: var(--shadow-soft); }
-.injury-control.standalone { width: 190px; margin-left: auto; }
 .injury-control button { border: 0; background: transparent; }.injury-toggle { min-width: 0; padding: 0 7px; display: grid; grid-template-columns: 28px 1fr 30px; gap: 7px; align-items: center; text-align: left; }.injury-toggle > span { width: 28px; height: 28px; border-radius: 10px; background: var(--surface-2); color: var(--muted); display: grid; place-items: center; }.injury-toggle b { font-size: 16px; }.injury-toggle i { width: 29px; height: 17px; padding: 2px; border-radius: 99px; background: #d9dfda; }.injury-toggle i::after { content: ""; display: block; width: 13px; height: 13px; border-radius: 50%; background: white; box-shadow: 0 1px 4px rgba(0,0,0,.18); transition: transform .18s ease; }
 .injury-control.active { border-color: #ddb67d; background: #fff7e9; }.injury-control.active .injury-toggle > span { background: #f4ddbb; color: #8a5322; }.injury-control.active .injury-toggle i { background: #bd6a35; }.injury-control.active .injury-toggle i::after { transform: translateX(12px); }.injury-expand { border-radius: 11px !important; color: var(--muted); font-size: 20px; }.injury-expand:not(:disabled) { background: rgba(189,106,53,.1); color: #8a5322; }.injury-expand:disabled { opacity: .32; cursor: default; }
 .injury-details-card { padding: 20px; border-color: #e4c79d; background: #fffaf2; }.injury-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }.injury-heading h2 { margin: 3px 0 0; font-size: 21px; }.injury-heading > button { width: 40px; height: 40px; border: 0; border-radius: 50%; background: #f3e3ca; color: #7c5129; font-size: 24px; }.injury-details-card > p { margin: 14px 0 8px; color: var(--muted); font-size: 15px; }.injury-options { grid-template-columns: 1fr 1fr; }.injury-details-card > input,.injury-details-card > textarea { width: 100%; margin-top: 8px; border: 1px solid #e1cfb5; border-radius: 12px; background: white; padding: 13px; resize: vertical; font-size: 16px; }
@@ -150,9 +149,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .effort-row > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
 .effort-row button { min-height: 48px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-2); text-transform: capitalize; font-size: 15px; }
 .effort-row button.selected { background: var(--accent); border-color: var(--accent); color: white; }
-.secondary-actions { margin-top: 18px; display: grid; grid-template-columns: 1fr; gap: 8px; }
-.secondary-actions button { min-height: 50px; border: 1px solid var(--line); border-radius: 14px; background: white; padding: 7px 12px; font-size: 15px; font-weight: 650; }
-.secondary-actions button.has-state { background: #fff4d7; border-color: #ead79b; color: #725b19; }
 .inline-sheet { margin-top: 10px; padding: 16px; border-radius: 16px; background: var(--surface-2); display: grid; gap: 9px; }
 .sheet-title { margin: 0; font-size: 16px; font-weight: 750; }
 .sheet-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
@@ -185,6 +181,14 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .finish-actions button { min-height: 58px; min-width: 0; padding: 0 13px; border: 0; border-radius: 16px; color: white; display: flex; align-items: center; justify-content: space-between; gap: 7px; font-size: 15px; font-weight: 780; }
 .finish-actions .finish-button { background: var(--accent); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 28%, transparent); }
 .finish-actions .finish-button.done { background: #5f8064; }.finish-actions button > span { font-size: 18px; }
+
+.control-row { margin-top: 8px; display: grid; gap: 8px; align-items: stretch; }
+.control-row > .surface-card,.control-row > .injury-control,.control-row > .finish-zone { margin-top: 0; }
+.control-row > details[open] { grid-column: 1 / -1; }
+.workout-injury-row { grid-template-columns: minmax(0,1fr) 190px; }.workout-injury-row > .injury-control { grid-column: 2; }
+.note-details-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.youtube-finish-row { grid-template-columns: minmax(0,.85fr) minmax(250px,1.15fr); }.youtube-finish-row > .paired-finish { grid-column: 2; }
+.paired-finish { min-height: 78px; padding: 8px; display: block; }.paired-finish .finish-actions,.paired-finish .finish-actions button { height: 100%; }
 
 .bottom-nav { position: fixed; left: 50%; bottom: max(10px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 40; width: min(440px, calc(100% - 24px)); min-height: 70px; padding: 6px; border: 1px solid rgba(210,219,212,.9); border-radius: 23px; background: rgba(255,255,255,.92); backdrop-filter: blur(18px); display: grid; grid-template-columns: repeat(4, 1fr); box-shadow: 0 14px 35px rgba(26,43,35,.16); }
 .bottom-nav button { min-width: 0; min-height: 56px; border: 0; border-radius: 17px; background: transparent; color: #7b8781; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
@@ -243,14 +247,15 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .rhythm-strip { gap: 3px; }.rhythm-strip button { height: 48px; padding: 3px; border-radius: 10px; }.rhythm-strip button i { width: 19px; height: 19px; font-size: 11px; }.rhythm-strip button span { font-size: 11px; }
   .surface-card { margin-top: 8px; padding: 16px; border-radius: 17px; }
   .compact-panel { padding: 0; }.compact-panel summary { min-height: 66px; padding: 8px 12px; grid-template-columns: 38px 1fr 30px; gap: 10px; }.panel-icon { width: 36px; height: 36px; border-radius: 11px; }.compact-panel summary > i { width: 30px; height: 30px; }.compact-panel summary b { font-size: 16px; }.compact-panel summary small { font-size: 13px; }.panel-body { padding: 2px 14px 17px; }
-  .injury-control { min-height: 64px; border-radius: 17px; padding: 5px; grid-template-columns: 1fr 30px; }.injury-control.standalone { width: 154px; }.injury-toggle { padding: 0 5px; grid-template-columns: 26px 1fr 28px; gap: 6px; }.injury-toggle > span { width: 26px; height: 26px; border-radius: 8px; font-size: 12px; }.injury-toggle b { font-size: 15px; }.injury-expand { font-size: 18px; }.injury-details-card { padding: 16px; }
+  .injury-control { min-height: 64px; border-radius: 17px; padding: 5px; grid-template-columns: 1fr 30px; }.injury-toggle { padding: 0 5px; grid-template-columns: 26px 1fr 28px; gap: 6px; }.injury-toggle > span { width: 26px; height: 26px; border-radius: 8px; font-size: 12px; }.injury-toggle b { font-size: 15px; }.injury-expand { font-size: 18px; }.injury-details-card { padding: 16px; }
   .card-heading h2 { font-size: 21px; }.activity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }.activity-grid button { min-width: 0; min-height: 54px; padding: 0 10px; font-size: 15px; }
   .checklist > button { min-height: 76px; grid-template-columns: 48px 1fr 42px; padding: 9px 7px; gap: 9px; }.exercise-visual { width: 46px; height: 46px; }.check-target { width: 38px; height: 38px; }
   .note-card textarea { min-height: 132px; }.save-pill { max-width: 135px; overflow: hidden; text-overflow: ellipsis; }
   .details-card { padding: 0; }.details-card summary { min-height: 66px; padding: 10px 14px; }.details-card summary > span b { font-size: 16px; }.details-card summary > span small { font-size: 13px; }.details-card summary > i { width: 30px; height: 30px; }.details-body { padding: 3px 14px 17px; }
-  .secondary-actions { grid-template-columns: 1fr; }.sheet-options { grid-template-columns: 1fr; }.injury-options { grid-template-columns: 1fr 1fr; }
+  .sheet-options { grid-template-columns: 1fr; }.injury-options { grid-template-columns: 1fr 1fr; }
   .video-grid { grid-template-columns: 1fr; }.video-launch { grid-template-columns: 92px 1fr 16px; }
   .finish-zone { margin-top: 8px; grid-template-columns: 1fr; padding: 6px; gap: 0; border-radius: 17px; }.save-status { display: none; }.finish-actions { grid-template-columns: 1fr; }.finish-actions button { min-height: 56px; padding: 0 14px; border-radius: 13px; font-size: 14px; }
+  .control-row { margin-top: 8px; gap: 8px; }.control-row > .surface-card,.control-row > .injury-control,.control-row > .finish-zone { margin-top: 0; }.workout-injury-row { grid-template-columns: minmax(0,1fr) 144px; }.note-details-row { grid-template-columns: repeat(2,minmax(0,1fr)); }.youtube-finish-row { grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); }.paired-finish { min-height: 66px; padding: 5px; }
   .bottom-nav { bottom: max(7px, env(safe-area-inset-bottom)); width: calc(100% - 16px); min-height: 66px; border-radius: 21px; }.bottom-nav button { min-height: 52px; border-radius: 15px; }
   .page-intro { padding: 23px 5px; }.page-intro h1 { font-size: clamp(45px, 14vw, 62px); }.page-intro p { font-size: 16px; }.page-intro.colorful { padding: 24px 20px; border-radius: 23px; }
   .week-rhythm-card { padding: 16px; border-radius: 18px; }.week-rhythm-card .rhythm-strip button { height: 60px; }.rhythm-legend { gap: 9px; }
@@ -267,6 +272,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .today-hero { padding: 17px; }.hero-main h1 { font-size: 39px; }.hero-main p { font-size: 15px; }.hero-score { width: 70px; }
   .rhythm-strip { gap: 3px; }.rhythm-strip button { padding: 3px; }.rhythm-strip button span { font-size: 11px; }
   .surface-card { padding: 15px; }.compact-panel,.details-card { padding: 0; }
+  .control-row .compact-panel summary { grid-template-columns: 1fr 30px; gap: 6px; padding: 8px 10px; }.control-row .compact-panel .panel-icon { display: none; }
   .activity-grid button { font-size: 14px; }.activity-grid button span { width: 23px; height: 23px; }
   .exercise-copy strong { font-size: 15px; }.exercise-copy small { font-size: 13px; }
   .stat-row strong { font-size: 20px; }.week-day-card { padding: 11px; }

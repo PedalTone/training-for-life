@@ -8,7 +8,7 @@ type Status = "partial" | "completed" | "rest";
 type Injury = { reported?: boolean; impact: "" | "modified" | "stopped" | "prevented"; bodyArea: string; note: string };
 type Video = { url: string; label: string; videoId?: string; thumbnailData?: string };
 type Session = {
-  id: string; date: string; activity: string; duration: string; distance: string; effort: Effort;
+  id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
   notes: string; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
   updatedAt: string; completedAt?: string;
 };
@@ -48,12 +48,13 @@ function easternToday() {
   return new Date(Number(values.year), Number(values.month) - 1, Number(values.day), 12);
 }
 function emptySession(date: string, rest = false): Session {
-  return { id: date, date, activity: "", duration: "", distance: "", effort: "", notes: "", completedExercises: [], status: rest ? "rest" : "partial", injury: { reported: false, impact: "", bodyArea: "", note: "" }, videos: [], updatedAt: new Date().toISOString() };
+  return { id: date, date, activity: "", activities: [], duration: "", distance: "", effort: "", notes: "", completedExercises: [], status: rest ? "rest" : "partial", injury: { reported: false, impact: "", bodyArea: "", note: "" }, videos: [], updatedAt: new Date().toISOString() };
 }
 function normalizeSession(saved: Session): Session {
   const injury = saved.injury ?? { impact: "", bodyArea: "", note: "" };
   const reported = typeof injury.reported === "boolean" ? injury.reported : injury.impact === "stopped" || injury.impact === "prevented";
-  return { ...saved, completedExercises: saved.completedExercises ?? [], videos: saved.videos ?? [], injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
+  const activities = saved.activities ?? (saved.activity ? [saved.activity] : []);
+  return { ...saved, activity: activities.join(" + "), activities, completedExercises: saved.completedExercises ?? [], videos: saved.videos ?? [], injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
 }
 function weekDates(date: Date) {
   const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() + 6) % 7));
@@ -143,7 +144,6 @@ export default function Home() {
   const [saveState, setSaveState] = useState("Loading your plan…");
   const [history, setHistory] = useState<Session[]>([]);
   const [showInjury, setShowInjury] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoLabel, setVideoLabel] = useState("");
   const [videoMessage, setVideoMessage] = useState("");
@@ -180,6 +180,11 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("t4l:pt", JSON.stringify(ptExercises)); }, [ptExercises]);
 
   const update = (patch: Partial<Session>) => { setFinishBackupState(""); setSession((current) => ({ ...current, ...patch })); };
+  const toggleActivity = (activity: string) => {
+    const selected = session.activities ?? (session.activity ? [session.activity] : []);
+    const activities = selected.includes(activity) ? selected.filter((item) => item !== activity) : [...selected, activity];
+    update({ activities, activity: activities.join(" + ") });
+  };
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
   const openDate = (date: Date) => { setActiveDate(date); setTab("today"); window.scrollTo(0, 0); };
@@ -240,31 +245,37 @@ export default function Home() {
           <RhythmStrip focus={activeDate} sessions={history} onOpen={openDate}/>
         </section>
 
-        <details className="surface-card compact-panel activity-card">
-          <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose Workout</b><small>{session.activity || "Pick the activity that fits today"}</small></span><i>＋</i></summary>
-          <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => <button key={activity} className={session.activity === activity ? "selected" : ""} onClick={() => update({ activity: session.activity === activity ? "" : activity })}><span>{session.activity === activity ? "✓" : plan.icon}</span>{activity}</button>)}</div></div>
-        </details>
-
-        <div className={`injury-control standalone ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><b>Injury</b><i/></button><button className="injury-expand" onClick={() => setShowInjury(!showInjury)} disabled={!injuryReported} aria-label={showInjury ? "Hide injury details" : "Show injury details"}>⌄</button></div>
+        <div className="control-row workout-injury-row">
+          <details className="surface-card compact-panel activity-card">
+            <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose Workout</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
+            <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
+          </details>
+          <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><b>Injury</b><i/></button><button className="injury-expand" onClick={() => setShowInjury(!showInjury)} disabled={!injuryReported} aria-label={showInjury ? "Hide injury details" : "Show injury details"}>⌄</button></div>
+        </div>
         {injuryReported && showInjury && <section className="surface-card injury-details-card"><div className="injury-heading"><div><span className="kicker">INJURY DETAILS</span><h2>What happened?</h2></div><button onClick={() => setShowInjury(false)} aria-label="Hide injury details">×</button></div><p>Did the injury stop today’s workout?</p><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury data</button></section>}
 
-        <details className="surface-card compact-panel note-card">
-          <summary><span className="panel-icon">✎</span><span><b>Workout note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
-          <div className="panel-body"><div className="note-meta"><span className={`save-pill ${saveState === "Saving…" ? "saving" : ""}`}>● {saveState}</span></div><textarea value={session.notes} onChange={(e) => update({ notes: e.target.value })} placeholder="Add workout note…" rows={4} aria-label="Workout note"/><p>Tap and use the iPhone keyboard microphone to dictate. No Save button needed.</p></div>
-        </details>
+        <div className="control-row note-details-row">
+          <details className="surface-card compact-panel note-card">
+            <summary><span className="panel-icon">✎</span><span><b>Add note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
+            <div className="panel-body"><div className="note-meta"><span className={`save-pill ${saveState === "Saving…" ? "saving" : ""}`}>● {saveState}</span></div><textarea value={session.notes} onChange={(e) => update({ notes: e.target.value })} placeholder="Add workout note…" rows={4} aria-label="Workout note"/><p>Tap and use the iPhone keyboard microphone to dictate. No Save button needed.</p></div>
+          </details>
 
-        <details className="surface-card details-card">
-          <summary><span><b>Workout details</b><small>Duration, distance, effort, or video</small></span><i>＋</i></summary>
-          <div className="details-body">
-            <div className="field-grid"><label><span>Duration</span><div><input inputMode="numeric" value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/><em>min</em></div></label><label><span>Distance</span><div><input inputMode="decimal" value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/><em>mi</em></div></label></div>
-            <div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>
-            <div className="secondary-actions"><button onClick={() => setShowVideo(!showVideo)}>▶ Add YouTube reference</button></div>
-            {showVideo && <div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input value={videoLabel} onChange={(e) => setVideoLabel(e.target.value)} placeholder="Your label (optional)"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div>}
-            <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div>
-          </div>
-        </details>
+          <details className="surface-card details-card">
+            <summary><span><b>Add details</b><small>Time, distance, effort</small></span><i>＋</i></summary>
+            <div className="details-body">
+              <div className="field-grid"><label><span>Duration</span><div><input inputMode="numeric" value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/><em>min</em></div></label><label><span>Distance</span><div><input inputMode="decimal" value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/><em>mi</em></div></label></div>
+              <div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>
+            </div>
+          </details>
+        </div>
 
-        <div className="finish-zone"><div className="save-status"><span>→</span><div><strong>Relentless Forward Progress</strong><small>{saveState} · local + private</small></div></div><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
+        <div className="control-row youtube-finish-row">
+          <details className="surface-card details-card youtube-card">
+            <summary><span><b>YouTube</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
+            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input value={videoLabel} onChange={(e) => setVideoLabel(e.target.value)} placeholder="Your label (optional)"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></div>
+          </details>
+          <div className="finish-zone paired-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
+        </div>
       </div>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleExercise} onOpenDate={openDate}/>}
