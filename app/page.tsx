@@ -129,6 +129,7 @@ function stateFor(session: Session | undefined, planKey: string) {
 }
 function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
 function stateSymbol(state: string) { return state === "completed" ? "✓" : state === "modified" ? "↗" : state === "protected" ? "⚑" : state === "rest" ? "R" : state === "partial" ? "◐" : "·"; }
+function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Injury" : state === "rest" ? "Rest" : state === "partial" ? "In progress" : "Not logged"; }
 
 function MovementMark({ type = 0 }: { type?: number }) {
   return <span className={`movement-mark pose-${type % 3}`} aria-hidden="true"><i className="head"/><i className="body"/><i className="arm a"/><i className="arm b"/><i className="leg a"/><i className="leg b"/></span>;
@@ -140,7 +141,7 @@ function NavIcon({ name }: { name: Tab }) {
 function RhythmStrip({ focus, today, sessions, onOpen }: { focus: Date; today: Date; sessions: Session[]; onOpen?: (date: Date) => void }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   return <div className="rhythm-strip" aria-label="This week’s training rhythm">
-    {weekDates(focus).map((date) => { const plan = schedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${state}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}><span>{plan.label}<b>{date.getDate()}</b></span><i>{stateSymbol(state)}</i>{isToday && <em>TODAY</em>}</button>; })}
+    {weekDates(focus).map((date) => { const plan = schedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${stateLabel(state)}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}><span>{plan.label}<b>{date.getDate()}</b></span>{isToday && <em>TODAY</em>}</button>; })}
   </div>;
 }
 
@@ -379,8 +380,8 @@ function WeekView({ today, sessions, currentSession, exercises, toggleExercise, 
   const days = weekDates(today);
   return <div className="subpage week-page">
     <section className="page-intro colorful"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>One day.<br/>Then the next.</h1><p>The objective stays steady even when the activity changes. Tap any day to review or record it.</p></section>
-    <section className="week-rhythm-card"><RhythmStrip focus={today} today={today} sessions={sessions} onOpen={onOpenDate}/><div className="rhythm-legend"><span><i className="completed"/>Complete</span><span><i className="modified"/>Adapted</span><span><i className="protected"/>Injury</span><span><i className="rest"/>Rest</span></div></section>
-    <section className="week-list">{days.map((date) => { const plan = schedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateSymbol(state)}</i></button>; })}</section>
+    <section className="week-rhythm-card"><RhythmStrip focus={today} today={today} sessions={sessions} onOpen={onOpenDate}/></section>
+    <section className="week-list">{days.map((date) => { const plan = schedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
     <button className="library-toggle" onClick={() => setLibraryOpen(!libraryOpen)}><span><b>Mobility + exercise library</b><small>20 movement options for any day</small></span><i>{libraryOpen ? "−" : "+"}</i></button>
     {libraryOpen && <ExerciseLibrary session={currentSession} exercises={exercises} toggleExercise={toggleExercise}/>}
   </div>;
