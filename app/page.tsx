@@ -236,6 +236,22 @@ export default function Home() {
     videoLabelEdited.current = false; setVideoUrl(""); setVideoLabel(""); setAttachingVideo(false);
     if (thumbnailData) setVideoMessage("Video + thumbnail saved on this device.");
   };
+  const deleteVideo = (sessionId: string, videoIndex: number) => {
+    if (session.id === sessionId) {
+      const next = { ...session, videos: session.videos.filter((_, index) => index !== videoIndex), updatedAt: new Date().toISOString() };
+      void saveSession(next).catch(() => localStorage.setItem(`t4l:${next.date}`, JSON.stringify(next)));
+      setSession(next);
+      setHistory((items) => items.map((item) => item.id === sessionId ? next : item));
+      setSaveState("Saved on this device");
+      setVideoMessage("Video deleted.");
+      return;
+    }
+    const saved = history.find((item) => item.id === sessionId);
+    if (!saved) return;
+    const next = { ...saved, videos: saved.videos.filter((_, index) => index !== videoIndex), updatedAt: new Date().toISOString() };
+    setHistory((items) => items.map((item) => item.id === sessionId ? next : item));
+    void saveSession(next).catch(() => localStorage.setItem(`t4l:${next.date}`, JSON.stringify(next)));
+  };
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
   const completedThisWeek = weekDates(today).filter((date) => { const saved = weekMap.get(dateKey(date)); return Boolean(saved && ["completed", "modified", "rest", "protected"].includes(stateFor(saved, schedule[date.getDay()].key))); }).length;
@@ -296,7 +312,7 @@ export default function Home() {
         <div className="control-row youtube-finish-row">
           <details className="surface-card details-card youtube-card">
             <summary><span><b>YouTube</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
-            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></div>
+            <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div></div>
           </details>
           <div className="finish-zone paired-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
         </div>
@@ -304,17 +320,18 @@ export default function Home() {
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleExercise} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} onOpenDate={openDate}/>}
-      {tab === "more" && <MoreView ptExercises={ptExercises} setPtExercises={setPtExercises} sessions={history} setHistory={setHistory} onOpenLibrary={() => navigate("week")}/>}
+      {tab === "more" && <MoreView ptExercises={ptExercises} setPtExercises={setPtExercises} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onOpenLibrary={() => navigate("week")}/>}
     </main>
     <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
 }
 
-function VideoCard({ video }: { video: Video }) {
+function VideoCard({ video, onDelete }: { video: Video; onDelete?: () => void }) {
   const [playing, setPlaying] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const id = video.videoId || youtubeId(video.url);
   const thumbnail = video.thumbnailData || (id ? `https://i.ytimg.com/vi/${id}/mqdefault.jpg` : "");
-  return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}</article>;
+  return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <><button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>{onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}</>}</article>;
 }
 
 function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate }: { today: Date; sessions: Session[]; currentSession: Session; toggleExercise: (name: string) => void; onOpenDate: (date: Date) => void }) {
@@ -361,16 +378,16 @@ function calculateStreak(sessions: Session[], now: Date) {
   return streak;
 }
 
-function MoreView({ ptExercises, setPtExercises, sessions, setHistory, onOpenLibrary }: { ptExercises: PtExercise[]; setPtExercises: React.Dispatch<React.SetStateAction<PtExercise[]>>; sessions: Session[]; setHistory: (sessions: Session[]) => void; onOpenLibrary: () => void }) {
+function MoreView({ ptExercises, setPtExercises, sessions, setHistory, onDeleteVideo, onOpenLibrary }: { ptExercises: PtExercise[]; setPtExercises: React.Dispatch<React.SetStateAction<PtExercise[]>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void; onOpenLibrary: () => void }) {
   const [newPt, setNewPt] = useState(""); const [notice, setNotice] = useState("");
-  const recentVideos = sessions.flatMap((s) => s.videos.map((video) => ({ ...video, date: s.date }))).slice(0, 6);
+  const recentVideos = sessions.flatMap((s) => s.videos.map((video, videoIndex) => ({ ...video, sessionId: s.id, videoIndex }))).slice(0, 6);
   async function exportData() { try { setNotice(await saveBackup(sessions, ptExercises)); } catch (error) { if (!(error instanceof DOMException && error.name === "AbortError")) setNotice("Backup could not be created. Please try again."); } }
   async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.ptExercises)) { localStorage.setItem("t4l:pt", JSON.stringify(payload.ptExercises)); setPtExercises(payload.ptExercises); } setHistory(restored); setNotice(`Restored ${restored.length} sessions. Reloading your plan…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
   return <div className="subpage more-page">
     <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Your movements, references, data, and privacy settings.</p></section>
     <section className="settings-card action-list"><button onClick={onOpenLibrary}><span className="setting-icon mobility">↗</span><span><strong>Exercise library</strong><small>20 mobility and strength movements</small></span><i>›</i></button><div><span className="setting-icon speed">5/6</span><span><strong>Weekly goal</strong><small>5 of 6 training days · rest protected</small></span><i>›</i></div></section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon strength">PT</span><div><h2>My PT exercises</h2><p>Saved only on this device</p></div></div>{ptExercises.filter((item) => !item.archived).map((item) => <div className="pt-row" key={item.id}><div><input aria-label="Exercise name" value={item.name} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, name: e.target.value } : x))}/><input aria-label="Prescription" value={item.prescription} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, prescription: e.target.value } : x))}/></div><button onClick={() => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, archived: true } : x))}>Archive</button></div>)}<div className="add-pt"><input value={newPt} onChange={(e) => setNewPt(e.target.value)} placeholder="Add a PT exercise"/><button onClick={() => { if (newPt.trim()) { setPtExercises((all) => [...all, { id: crypto.randomUUID(), name: newPt.trim(), prescription: "", archived: false }]); setNewPt(""); } }}>Add</button></div></section>
-    {recentVideos.length > 0 && <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div><div className="video-grid">{recentVideos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></section>}
+    {recentVideos.length > 0 && <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div><div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div></section>}
     <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↓</span><div><h2>Backup + restore</h2><p>Keep an external copy in Files or iCloud Drive</p></div></div><button className="wide-action primary" onClick={exportData}>Back up my data <span>↓</span></button><label className="wide-action file-action">Restore from backup <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Every backup filename includes its local save date and time. To recover after an update, tap Restore from backup and choose the newest file.</p></section>
     <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history uploaded to GitHub or a Training for Life server. Saving a YouTube thumbnail or playing an embedded video contacts YouTube/Google.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;

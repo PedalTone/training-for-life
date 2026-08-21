@@ -170,6 +170,11 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .video-card strong { font-size: 15px; white-space: nowrap; }
 .video-card small { margin-top: 4px; color: var(--muted); font-size: 13px; }
 .video-launch > b { color: var(--muted); }
+.video-delete { width: 100%; min-height: 40px; margin-top: 7px; border: 0; border-top: 1px solid var(--line); background: transparent; color: #a43d35; font-size: 14px; font-weight: 700; }
+.video-delete-confirm { min-height: 46px; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 7px; }
+.video-delete-confirm span { font-size: 13px; font-weight: 700; }
+.video-delete-confirm button { min-height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--ink); font-size: 13px; font-weight: 700; }
+.video-delete-confirm button.danger { border-color: #a43d35; background: #a43d35; color: white; }
 .inline-player { display: grid; gap: 8px; }.inline-player iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 11px; background: #111; }.inline-player button { min-height: 46px; border: 0; border-radius: 11px; background: var(--surface-2); color: var(--muted); font-size: 14px; font-weight: 700; }
 
 .finish-zone { margin-top: 18px; padding: 15px 16px; border-radius: var(--radius-lg); background: #17231f; color: white; display: grid; grid-template-columns: 1fr minmax(250px, 330px); align-items: center; gap: 15px; box-shadow: var(--shadow); }
