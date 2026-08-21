@@ -92,7 +92,7 @@ async function fetchWorkoutGuide(videoUrl: string) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.5";
+const APP_VERSION = "v1.6";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -352,7 +352,7 @@ export default function Home() {
 
         <div className="control-row workout-mobility-row">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
-            <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose Workout</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
+            <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
           </details>
           <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Load Mobility</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Choose exercises"}</small></button>
@@ -362,12 +362,12 @@ export default function Home() {
 
         <div className="control-row note-details-row">
           <details className="surface-card compact-panel note-card" open={openPanel === "note"} onToggle={(e) => togglePanel("note", e.currentTarget.open)}>
-            <summary><span className="panel-icon">✎</span><span><b>Add note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
+            <summary><span className="panel-icon">✎</span><span><b>Note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="note-meta"><span className={`save-pill ${saveState === "Saving…" ? "saving" : ""}`}>● {saveState}</span></div><textarea value={session.notes} onChange={(e) => update({ notes: e.target.value })} placeholder="Add workout note…" rows={4} aria-label="Workout note"/><p>Tap and use the iPhone keyboard microphone to dictate. No Save button needed.</p></div>
           </details>
 
           <details className="surface-card details-card" open={openPanel === "details"} onToggle={(e) => togglePanel("details", e.currentTarget.open)}>
-            <summary><span><b>Add details</b><small>Time, distance, effort</small></span><i>＋</i></summary>
+            <summary><span><b>Details</b><small>Time, distance, effort</small></span><i>＋</i></summary>
             <div className="details-body">
               <div className="field-grid"><label><span>Duration</span><div><input inputMode="numeric" value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/><em>min</em></div></label><label><span>Distance</span><div><input inputMode="decimal" value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/><em>mi</em></div></label></div>
               <div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>
@@ -377,7 +377,7 @@ export default function Home() {
 
         <div className="control-row youtube-injury-row">
           <details className="surface-card details-card youtube-card" open={openPanel === "youtube"} onToggle={(e) => togglePanel("youtube", e.currentTarget.open)}>
-            <summary><span><b>YouTube</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
+            <summary><span><b>Links</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
             <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + build guide"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} onRetry={() => analyzeVideo(i, video)} key={`${video.url}-${i}`}/>)}</div></div>
           </details>
           <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><span><b>Injury</b><small>{injuryReported ? "Reported" : "No injury"}</small></span><i/></button>{injuryReported && <button className="injury-expand" onClick={() => setShowInjury(!showInjury)}>{showInjury ? "Hide" : "Details"}</button>}</div>
