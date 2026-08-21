@@ -159,7 +159,7 @@ export default function Home() {
   return <div className={`app-shell theme-${plan.key}`}>
     <header className="brand-bar">
       <button className="wordmark" onClick={() => { setActiveDate(today); navigate("today"); }} aria-label="Go to Today"><span className="brand-mark">T4L</span><span><b>Training</b> for Life</span></button>
-      <span className="privacy-dot"><i/>Local + private</span>
+      <span className="privacy-dot"><i/>Relentless Forward Progress</span>
     </header>
     <main>
       {tab === "today" && <div className="today-page">
@@ -167,26 +167,24 @@ export default function Home() {
         <section className={`today-hero ${plan.key}`}>
           <div className="hero-topline"><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</time></div>
           <div className="hero-main"><div><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1><p>{plan.guidance}</p></div><div className="hero-score"><strong>{completedThisWeek}</strong><span>of 7 days<br/>on rhythm</span></div></div>
+          <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
           <RhythmStrip focus={activeDate} sessions={history} onOpen={openDate}/>
         </section>
 
-        <section className="surface-card activity-card">
-          <div className="card-heading"><div><span className="kicker">TODAY’S CHOICE</span><h2>What fits today?</h2></div><span className="optional">Optional</span></div>
-          <div className="activity-grid">{plan.activities.map((activity) => <button key={activity} className={session.activity === activity ? "selected" : ""} onClick={() => update({ activity: session.activity === activity ? "" : activity })}><span>{session.activity === activity ? "✓" : plan.icon}</span>{activity}</button>)}</div>
-        </section>
+        <details className="surface-card compact-panel activity-card">
+          <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose today’s workout</b><small>{session.activity || "Pick the activity that fits today"}</small></span><i>＋</i></summary>
+          <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => <button key={activity} className={session.activity === activity ? "selected" : ""} onClick={() => update({ activity: session.activity === activity ? "" : activity })}><span>{session.activity === activity ? "✓" : plan.icon}</span>{activity}</button>)}</div></div>
+        </details>
 
-        {dayExercises.length > 0 && <section className="surface-card workout-card">
-          <div className="card-heading"><div><span className="kicker">TODAY’S WORK</span><h2>{session.completedExercises.filter((name) => dayExercises.some(([item]) => item === name)).length} of {dayExercises.length} complete</h2></div><span className="progress-percent">{exerciseProgress}%</span></div>
-          <div className="progress-track"><i style={{ width: `${exerciseProgress}%` }}/></div>
-          <div className="checklist">{dayExercises.map(([name, detail], index) => { const checked = session.completedExercises.includes(name); return <button key={name} className={checked ? "checked" : ""} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span className="exercise-copy"><strong>{name}</strong><small>{detail}</small></span><span className="check-target" aria-label={checked ? `Mark ${name} incomplete` : `Mark ${name} complete`}>{checked ? "✓" : ""}</span></button>; })}</div>
-          {exerciseProgress === 100 && <p className="complete-message">Nice work. The planned movements are complete.</p>}
-        </section>}
+        {dayExercises.length > 0 && <details className="surface-card compact-panel workout-card">
+          <summary><span className="panel-icon progress-icon">{exerciseProgress}%</span><span><b>Today’s work</b><small>{session.completedExercises.filter((name) => dayExercises.some(([item]) => item === name)).length} of {dayExercises.length} movements complete</small></span><i>＋</i></summary>
+          <div className="panel-body"><div className="progress-track"><i style={{ width: `${exerciseProgress}%` }}/></div><div className="checklist">{dayExercises.map(([name, detail], index) => { const checked = session.completedExercises.includes(name); return <button key={name} className={checked ? "checked" : ""} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span className="exercise-copy"><strong>{name}</strong><small>{detail}</small></span><span className="check-target" aria-label={checked ? `Mark ${name} incomplete` : `Mark ${name} complete`}>{checked ? "✓" : ""}</span></button>; })}</div>{exerciseProgress === 100 && <p className="complete-message">Relentless forward progress. Today’s planned movements are complete.</p>}</div>
+        </details>}
 
-        <section className="surface-card note-card">
-          <div className="card-heading"><div><span className="kicker">WORKOUT NOTE</span><h2>Add what matters</h2></div><span className={`save-pill ${saveState === "Saving…" ? "saving" : ""}`}>● {saveState}</span></div>
-          <textarea value={session.notes} onChange={(e) => update({ notes: e.target.value })} placeholder="Add workout note…" rows={4} aria-label="Workout note"/>
-          <p>Tap and use the iPhone keyboard microphone to dictate. No Save button needed.</p>
-        </section>
+        <details className="surface-card compact-panel note-card">
+          <summary><span className="panel-icon">✎</span><span><b>Workout note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
+          <div className="panel-body"><div className="note-meta"><span className={`save-pill ${saveState === "Saving…" ? "saving" : ""}`}>● {saveState}</span></div><textarea value={session.notes} onChange={(e) => update({ notes: e.target.value })} placeholder="Add workout note…" rows={4} aria-label="Workout note"/><p>Tap and use the iPhone keyboard microphone to dictate. No Save button needed.</p></div>
+        </details>
 
         <details className="surface-card details-card">
           <summary><span><b>Workout details</b><small>Duration, distance, effort, video, or modification</small></span><i>＋</i></summary>
@@ -200,7 +198,7 @@ export default function Home() {
           </div>
         </details>
 
-        <div className="finish-zone"><div className="save-status"><span>✓</span><div><strong>{saveState}</strong><small>Everything stays on this device.</small></div></div><button onClick={finishWorkout} className={session.status === "completed" || session.status === "rest" ? "done" : ""}>{session.status === "completed" || session.status === "rest" ? "✓ Day recorded" : plan.key === "rest" ? "Honor recovery day" : "Finish workout"}<span>→</span></button></div>
+        <div className="finish-zone"><div className="save-status"><span>→</span><div><strong>Relentless Forward Progress</strong><small>{saveState} · local + private</small></div></div><button onClick={finishWorkout} className={session.status === "completed" || session.status === "rest" ? "done" : ""}>{session.status === "completed" || session.status === "rest" ? "✓ Day recorded" : plan.key === "rest" ? "Honor recovery day" : "Finish workout"}<span>→</span></button></div>
       </div>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleExercise} onOpenDate={openDate}/>}
@@ -221,7 +219,7 @@ function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate 
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
   return <div className="subpage week-page">
-    <section className="page-intro colorful"><span className="kicker">YOUR WEEKLY RHYTHM</span><h1>Train broadly.<br/>Adapt freely.</h1><p>The objective stays steady even when the activity changes. Tap any day to review or record it.</p></section>
+    <section className="page-intro colorful"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>One day.<br/>Then the next.</h1><p>The objective stays steady even when the activity changes. Tap any day to review or record it.</p></section>
     <section className="week-rhythm-card"><RhythmStrip focus={today} sessions={sessions} onOpen={onOpenDate}/><div className="rhythm-legend"><span><i className="completed"/>Complete</span><span><i className="modified"/>Modified</span><span><i className="protected"/>Protected</span><span><i className="rest"/>Rest</span></div></section>
     <section className="week-list">{days.map((date) => { const plan = schedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateSymbol(state)}</i></button>; })}</section>
     <button className="library-toggle" onClick={() => setLibraryOpen(!libraryOpen)}><span><b>Mobility + exercise library</b><small>20 movement options for any day</small></span><i>{libraryOpen ? "−" : "+"}</i></button>
@@ -246,7 +244,7 @@ function HistoryView({ now, sessions, onOpenDate }: { now: Date; sessions: Sessi
   const monthOffset = (new Date(now.getFullYear(), now.getMonth(), 1).getDay() + 6) % 7;
   const weekBlocks = Array.from({ length: 4 }, (_, w) => { const date = new Date(now); date.setDate(now.getDate() - w * 7); return weekDates(date); });
   return <div className="subpage history-page">
-    <section className="page-intro"><span className="kicker">QUIET CONSISTENCY</span><h1>Your rhythm,<br/>over time.</h1><p>Progress is the pattern you return to—not a perfect streak.</p></section>
+    <section className="page-intro"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>Your rhythm,<br/>over time.</h1><p>Progress is the pattern you return to—not a perfect streak.</p></section>
     <section className="insight-card"><span className="insight-icon">↗</span><div><span>LAST 30 DAYS</span><strong>{adherence}% on rhythm</strong><p>{adherent.length ? `${adherent.length} recorded days. Every return strengthens the pattern.` : "Record your first day to begin seeing the pattern."}</p></div></section>
     <section className="stat-row"><div><span>CURRENT RHYTHM</span><strong>{currentStreak}<small> days</small></strong></div><div><span>CONSISTENT WEEKS</span><strong>{consistentWeeks}<small> of 8</small></strong></div><div><span>RECORDED</span><strong>{sessions.length}<small> days</small></strong></div></section>
     <div className="history-controls"><div className="segmented"><button className={view === "weeks" ? "active" : ""} onClick={() => setView("weeks")}>Weeks</button><button className={view === "month" ? "active" : ""} onClick={() => setView("month")}>Month</button></div><button className={flaggedOnly ? "filter active" : "filter"} onClick={() => setFlaggedOnly(!flaggedOnly)}>⚑ Modified</button></div>
