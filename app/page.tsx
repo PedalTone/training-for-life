@@ -138,10 +138,10 @@ function NavIcon({ name }: { name: Tab }) {
   return <span aria-hidden="true">{name === "today" ? "●" : name === "week" ? "◫" : name === "history" ? "◷" : "•••"}</span>;
 }
 
-function RhythmStrip({ focus, sessions, onOpen }: { focus: Date; sessions: Session[]; onOpen?: (date: Date) => void }) {
+function RhythmStrip({ focus, today, sessions, onOpen }: { focus: Date; today: Date; sessions: Session[]; onOpen?: (date: Date) => void }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   return <div className="rhythm-strip" aria-label="This week’s training rhythm">
-    {weekDates(focus).map((date) => { const plan = schedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); return <button key={dateKey(date)} className={`${plan.key} ${state} ${dateKey(date) === dateKey(focus) ? "current" : ""}`} onClick={() => onOpen?.(date)} aria-label={`${plan.short} ${plan.theme}: ${state}`}><span>{plan.label}</span><i>{stateSymbol(state)}</i></button>; })}
+    {weekDates(focus).map((date) => { const plan = schedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${state}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}><span>{plan.label}<b>{date.getDate()}</b></span><i>{stateSymbol(state)}</i>{isToday && <em>TODAY</em>}</button>; })}
   </div>;
 }
 
@@ -157,6 +157,8 @@ export default function Home() {
   const [history, setHistory] = useState<Session[]>([]);
   const [showInjury, setShowInjury] = useState(false);
   const [showMobilityPicker, setShowMobilityPicker] = useState(false);
+  const [mobilityDraft, setMobilityDraft] = useState<string[]>([]);
+  const [openPanel, setOpenPanel] = useState<"workout" | "note" | "details" | "youtube" | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoLabel, setVideoLabel] = useState("");
   const [videoMessage, setVideoMessage] = useState("");
@@ -173,7 +175,7 @@ export default function Home() {
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); }, []);
   useEffect(() => {
-    setLoaded(false); setFinishBackupState(""); setShowMobilityPicker(false);
+    setLoaded(false); setFinishBackupState(""); setShowMobilityPicker(false); setOpenPanel(null);
     getSession(activeKey).then((saved) => setSession(saved ? normalizeSession(saved) : emptySession(activeKey, plan.key === "rest"))).catch(() => {
       const fallback = localStorage.getItem(`t4l:${activeKey}`); setSession(fallback ? normalizeSession(JSON.parse(fallback)) : emptySession(activeKey, plan.key === "rest"));
     }).finally(() => { setLoaded(true); setSaveState("Saved on this device"); });
@@ -218,6 +220,12 @@ export default function Home() {
       mobilityExercises: selected ? session.mobilityExercises.filter((item) => item !== name) : [...session.mobilityExercises, name],
       completedExercises: selected ? session.completedExercises.filter((item) => item !== name) : session.completedExercises,
     });
+  };
+  const openMobilityPicker = () => { setMobilityDraft([...session.mobilityExercises]); setShowMobilityPicker(true); };
+  const toggleMobilityDraft = (name: string) => setMobilityDraft((items) => items.includes(name) ? items.filter((item) => item !== name) : [...items, name]);
+  const applyMobilityDraft = () => {
+    update({ mobilityExercises: mobilityDraft, completedExercises: session.completedExercises.filter((name) => mobilityDraft.includes(name)) });
+    setShowMobilityPicker(false);
   };
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
@@ -281,6 +289,7 @@ export default function Home() {
     updateInjury({ reported: false, impact: "", bodyArea: "", note: "" });
     setShowInjury(false);
   };
+  const togglePanel = (panel: "workout" | "note" | "details" | "youtube", open: boolean) => setOpenPanel((current) => open ? panel : current === panel ? null : current);
 
   return <div className={`app-shell theme-${plan.key}`}>
     <header className="brand-bar">
@@ -291,32 +300,29 @@ export default function Home() {
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
-          <div className="hero-topline"><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</time></div>
-          <div className="hero-main"><div><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1><p>{plan.guidance}</p></div><div className="hero-score"><strong>{completedThisWeek}</strong><span>of 7 days<br/>on rhythm</span></div></div>
+          <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div><div className="rhythm-score"><span><strong>{completedThisWeek} / 7</strong> DAYS ON RHYTHM</span><i><b style={{ width: `${Math.round(completedThisWeek / 7 * 100)}%` }}/></i></div></div>
+          <div className="hero-main"><div><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1><p>{plan.guidance}</p></div></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
-          <RhythmStrip focus={activeDate} sessions={history} onOpen={openDate}/>
+          <RhythmStrip focus={activeDate} today={today} sessions={history} onOpen={openDate}/>
         </section>
 
-        <div className="control-row workout-injury-row">
-          <details className="surface-card compact-panel activity-card">
+        <div className="control-row workout-mobility-row">
+          <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose Workout</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
           </details>
-          <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={() => setShowMobilityPicker(!showMobilityPicker)} aria-expanded={showMobilityPicker}><span>↗</span><b>Load Mobility</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Choose exercises"}</small></button>
-          <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><b>Injury</b><i/></button><button className="injury-expand" onClick={() => setShowInjury(!showInjury)} disabled={!injuryReported} aria-label={showInjury ? "Hide injury details" : "Show injury details"}>⌄</button></div>
+          <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Load Mobility</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Choose exercises"}</small></button>
         </div>
-        {showMobilityPicker && <MobilityPicker session={session} toggleExercise={toggleMobilitySelection} onDone={() => setShowMobilityPicker(false)}/>}
-        {injuryReported && showInjury && <section className="surface-card injury-details-card"><div className="injury-heading"><div><span className="kicker">INJURY DETAILS</span><h2>What happened?</h2></div><button onClick={() => setShowInjury(false)} aria-label="Hide injury details">×</button></div><p>Did the injury stop today’s workout?</p><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury data</button></section>}
 
-        {session.mobilityExercises.length > 0 && <DailyMobility session={session} toggleExercise={toggleExercise} onEdit={() => setShowMobilityPicker(true)}/>}
+        {session.mobilityExercises.length > 0 && <DailyMobility session={session} toggleExercise={toggleExercise} onEdit={openMobilityPicker}/>}
 
         <div className="control-row note-details-row">
-          <details className="surface-card compact-panel note-card">
+          <details className="surface-card compact-panel note-card" open={openPanel === "note"} onToggle={(e) => togglePanel("note", e.currentTarget.open)}>
             <summary><span className="panel-icon">✎</span><span><b>Add note</b><small>{session.notes || "Add what matters"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="note-meta"><span className={`save-pill ${saveState === "Saving…" ? "saving" : ""}`}>● {saveState}</span></div><textarea value={session.notes} onChange={(e) => update({ notes: e.target.value })} placeholder="Add workout note…" rows={4} aria-label="Workout note"/><p>Tap and use the iPhone keyboard microphone to dictate. No Save button needed.</p></div>
           </details>
 
-          <details className="surface-card details-card">
+          <details className="surface-card details-card" open={openPanel === "details"} onToggle={(e) => togglePanel("details", e.currentTarget.open)}>
             <summary><span><b>Add details</b><small>Time, distance, effort</small></span><i>＋</i></summary>
             <div className="details-body">
               <div className="field-grid"><label><span>Duration</span><div><input inputMode="numeric" value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/><em>min</em></div></label><label><span>Distance</span><div><input inputMode="decimal" value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/><em>mi</em></div></label></div>
@@ -325,14 +331,19 @@ export default function Home() {
           </details>
         </div>
 
-        <div className="control-row youtube-finish-row">
-          <details className="surface-card details-card youtube-card">
+        <div className="control-row youtube-injury-row">
+          <details className="surface-card details-card youtube-card" open={openPanel === "youtube"} onToggle={(e) => togglePanel("youtube", e.currentTarget.open)}>
             <summary><span><b>YouTube</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
             <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div></div>
           </details>
-          <div className="finish-zone paired-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
+          <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><span><b>Injury</b><small>{injuryReported ? "Reported" : "No injury"}</small></span><i/></button>{injuryReported && <button className="injury-expand" onClick={() => setShowInjury(!showInjury)}>{showInjury ? "Hide" : "Details"}</button>}</div>
         </div>
+        {injuryReported && showInjury && <section className="surface-card injury-details-card"><div className="injury-heading"><div><span className="kicker">INJURY DETAILS</span><h2>What happened?</h2></div><button onClick={() => setShowInjury(false)} aria-label="Hide injury details">×</button></div><p>Did the injury stop today’s workout?</p><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury data</button></section>}
+
+        <div className="finish-zone primary-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
       </div>}
+
+      {showMobilityPicker && <MobilityPicker selected={mobilityDraft} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} onOpenDate={openDate}/>}
@@ -350,8 +361,16 @@ function VideoCard({ video, onDelete }: { video: Video; onDelete?: () => void })
   return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <><button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>{onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}</>}</article>;
 }
 
-function MobilityPicker({ session, toggleExercise, onDone }: { session: Session; toggleExercise: (name: string) => void; onDone: () => void }) {
-  return <section className="surface-card mobility-picker"><div className="mobility-picker-heading"><div><span className="kicker">MOBILITY LIBRARY</span><h2>Choose your exercises</h2><p>Select as many as you want for this day.</p></div><button onClick={onDone}>Done</button></div><div className="library-list">{exerciseLibrary.map(([name, equipment], index) => { const added = session.mobilityExercises.includes(name); return <button key={name} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></section>;
+function MobilityPicker({ selected, toggleExercise, onDone, onCancel }: { selected: string[]; toggleExercise: (name: string) => void; onDone: () => void; onCancel: () => void }) {
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") onCancel(); };
+    document.body.style.overflow = "hidden"; window.addEventListener("keydown", closeOnEscape);
+    return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", closeOnEscape); };
+  }, [onCancel]);
+  const filtered = exerciseLibrary.filter(([name, equipment]) => `${name} ${equipment}`.toLowerCase().includes(query.trim().toLowerCase()));
+  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">MOBILITY LIBRARY</span><h2 id="mobility-sheet-title">Choose your exercises</h2><p>Select as many as you want for this day.</p></div><button onClick={onCancel} aria-label="Close mobility library">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(([name, equipment], index) => { const added = selected.includes(name); return <button key={name} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected</span><button onClick={onDone}>Add selected exercises</button></div></section></div>;
 }
 
 function DailyMobility({ session, toggleExercise, onEdit }: { session: Session; toggleExercise: (name: string) => void; onEdit: () => void }) {
@@ -365,7 +384,7 @@ function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate 
   const days = weekDates(today);
   return <div className="subpage week-page">
     <section className="page-intro colorful"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>One day.<br/>Then the next.</h1><p>The objective stays steady even when the activity changes. Tap any day to review or record it.</p></section>
-    <section className="week-rhythm-card"><RhythmStrip focus={today} sessions={sessions} onOpen={onOpenDate}/><div className="rhythm-legend"><span><i className="completed"/>Complete</span><span><i className="modified"/>Adapted</span><span><i className="protected"/>Injury</span><span><i className="rest"/>Rest</span></div></section>
+    <section className="week-rhythm-card"><RhythmStrip focus={today} today={today} sessions={sessions} onOpen={onOpenDate}/><div className="rhythm-legend"><span><i className="completed"/>Complete</span><span><i className="modified"/>Adapted</span><span><i className="protected"/>Injury</span><span><i className="rest"/>Rest</span></div></section>
     <section className="week-list">{days.map((date) => { const plan = schedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateSymbol(state)}</i></button>; })}</section>
     <button className="library-toggle" onClick={() => setLibraryOpen(!libraryOpen)}><span><b>Mobility + exercise library</b><small>20 movement options for any day</small></span><i>{libraryOpen ? "−" : "+"}</i></button>
     {libraryOpen && <ExerciseLibrary session={currentSession} toggleExercise={toggleExercise}/>}
