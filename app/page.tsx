@@ -12,7 +12,7 @@ type Session = {
   notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
   updatedAt: string; completedAt?: string;
 };
-type PtExercise = { id: string; name: string; prescription: string; archived: boolean };
+type LibraryExercise = { id: string; name: string; equipment: string };
 type SavePickerWindow = Window & { showSaveFilePicker?: (options: { suggestedName: string; id: string; types: { description: string; accept: Record<string, string[]> }[] }) => Promise<{ createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }> }> };
 
 const schedule = [
@@ -39,8 +39,7 @@ const exerciseGroups = [
     ["Dead Hang", "Bar"], ["Balance — One Leg, Eyes Closed", "Bodyweight"], ["Farmer's Carry", "Dumbbells or kettlebells"], ["Side Plank", "Bodyweight · optional"],
   ] },
 ] as const;
-const exerciseLibrary = exerciseGroups.flatMap((group) => group.exercises);
-const exerciseEquipment = new Map<string, string>(exerciseLibrary.map(([name, equipment]) => [name, equipment]));
+const defaultExerciseLibrary: LibraryExercise[] = exerciseGroups.flatMap((group) => group.exercises).map(([name, equipment], index) => ({ id: `exercise-${index + 1}`, name, equipment }));
 
 function dateKey(date = new Date()) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; }
 function dateFromKey(key: string) { return new Date(`${key}T12:00:00`); }
@@ -100,12 +99,12 @@ function backupFilename(now = new Date()) {
   const part = (value: number) => String(value).padStart(2, "0");
   return `training-for-life-backup-${now.getFullYear()}-${part(now.getMonth() + 1)}-${part(now.getDate())}_${part(now.getHours())}-${part(now.getMinutes())}-${part(now.getSeconds())}.json`;
 }
-function makeBackupFile(sessions: Session[], ptExercises: PtExercise[]) {
-  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, ptExercises, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
+function makeBackupFile(sessions: Session[], libraryExercises: LibraryExercise[]) {
+  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, libraryExercises, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
   return new File([JSON.stringify(payload, null, 2)], backupFilename(), { type: "application/json" });
 }
-async function saveBackup(sessions: Session[], ptExercises: PtExercise[]) {
-  const file = makeBackupFile(sessions, ptExercises);
+async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise[]) {
+  const file = makeBackupFile(sessions, libraryExercises);
   const pickerWindow = window as SavePickerWindow;
   if (pickerWindow.showSaveFilePicker) {
     const handle = await pickerWindow.showSaveFilePicker({ suggestedName: file.name, id: "training-for-life-daily-backup", types: [{ description: "Training for Life backup", accept: { "application/json": [".json"] } }] });
@@ -164,12 +163,7 @@ export default function Home() {
   const [videoMessage, setVideoMessage] = useState("");
   const [attachingVideo, setAttachingVideo] = useState(false);
   const [finishBackupState, setFinishBackupState] = useState("");
-  const [ptExercises, setPtExercises] = useState<PtExercise[]>([
-    { id: "pt-1", name: "Face pulls", prescription: "2 × 10", archived: false },
-    { id: "pt-2", name: "Thoracic rotations at wall", prescription: "2 × 12 each", archived: false },
-    { id: "pt-3", name: "Supination / pronation with band", prescription: "2 × 10 each", archived: false },
-    { id: "pt-4", name: "KB wrist flexion / extension", prescription: "Elbow at 90° · as prescribed", archived: false },
-  ]);
+  const [libraryExercises, setLibraryExercises] = useState<LibraryExercise[]>(defaultExerciseLibrary);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
 
@@ -181,7 +175,7 @@ export default function Home() {
     }).finally(() => { setLoaded(true); setSaveState("Saved on this device"); });
   }, [activeKey]);
   useEffect(() => {
-    const savedPt = localStorage.getItem("t4l:pt"); if (savedPt) setPtExercises(JSON.parse(savedPt));
+    const savedLibrary = localStorage.getItem("t4l:library"); if (savedLibrary) setLibraryExercises(JSON.parse(savedLibrary));
   }, []);
   useEffect(() => {
     if (!loaded) return;
@@ -193,7 +187,7 @@ export default function Home() {
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [session, loaded, activeKey]);
   useEffect(() => { getAllSessions().then((items) => setHistory(items.map(normalizeSession).sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([])); }, [tab, session]);
-  useEffect(() => { localStorage.setItem("t4l:pt", JSON.stringify(ptExercises)); }, [ptExercises]);
+  useEffect(() => { localStorage.setItem("t4l:library", JSON.stringify(libraryExercises)); }, [libraryExercises]);
   useEffect(() => {
     const id = youtubeId(videoUrl.trim());
     if (!id) return;
@@ -236,7 +230,7 @@ export default function Home() {
     const current = { ...session, status: plan.key === "rest" ? "rest" as const : "completed" as const, completedAt: now, updatedAt: now };
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
     try {
-      await saveBackup(allSessions, ptExercises);
+      await saveBackup(allSessions, libraryExercises);
       try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
       setSession(current); setHistory(allSessions);
       setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
@@ -314,7 +308,7 @@ export default function Home() {
           <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Load Mobility</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Choose exercises"}</small></button>
         </div>
 
-        {session.mobilityExercises.length > 0 && <DailyMobility session={session} toggleExercise={toggleExercise} onEdit={openMobilityPicker}/>}
+        {session.mobilityExercises.length > 0 && <DailyMobility session={session} exercises={libraryExercises} toggleExercise={toggleExercise} onEdit={openMobilityPicker}/>}
 
         <div className="control-row note-details-row">
           <details className="surface-card compact-panel note-card" open={openPanel === "note"} onToggle={(e) => togglePanel("note", e.currentTarget.open)}>
@@ -343,11 +337,11 @@ export default function Home() {
         <div className="finish-zone primary-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
       </div>}
 
-      {showMobilityPicker && <MobilityPicker selected={mobilityDraft} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
+      {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
 
-      {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
+      {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} exercises={libraryExercises} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} onOpenDate={openDate}/>}
-      {tab === "more" && <MoreView ptExercises={ptExercises} setPtExercises={setPtExercises} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onOpenLibrary={() => navigate("week")}/>}
+      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo}/>}
     </main>
     <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
@@ -361,7 +355,7 @@ function VideoCard({ video, onDelete }: { video: Video; onDelete?: () => void })
   return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <><button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>{onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}</>}</article>;
 }
 
-function MobilityPicker({ selected, toggleExercise, onDone, onCancel }: { selected: string[]; toggleExercise: (name: string) => void; onDone: () => void; onCancel: () => void }) {
+function MobilityPicker({ exercises, selected, toggleExercise, onDone, onCancel }: { exercises: LibraryExercise[]; selected: string[]; toggleExercise: (name: string) => void; onDone: () => void; onCancel: () => void }) {
   const [query, setQuery] = useState("");
   useEffect(() => {
     const previous = document.body.style.overflow;
@@ -369,16 +363,17 @@ function MobilityPicker({ selected, toggleExercise, onDone, onCancel }: { select
     document.body.style.overflow = "hidden"; window.addEventListener("keydown", closeOnEscape);
     return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", closeOnEscape); };
   }, [onCancel]);
-  const filtered = exerciseLibrary.filter(([name, equipment]) => `${name} ${equipment}`.toLowerCase().includes(query.trim().toLowerCase()));
-  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">MOBILITY LIBRARY</span><h2 id="mobility-sheet-title">Choose your exercises</h2><p>Select as many as you want for this day.</p></div><button onClick={onCancel} aria-label="Close mobility library">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(([name, equipment], index) => { const added = selected.includes(name); return <button key={name} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected</span><button onClick={onDone}>Add selected exercises</button></div></section></div>;
+  const filtered = exercises.filter(({ name, equipment }) => `${name} ${equipment}`.toLowerCase().includes(query.trim().toLowerCase()));
+  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">MOBILITY LIBRARY</span><h2 id="mobility-sheet-title">Choose your exercises</h2><p>Select as many as you want for this day.</p></div><button onClick={onCancel} aria-label="Close mobility library">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(({ id, name, equipment }, index) => { const added = selected.includes(name); return <button key={id} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected</span><button onClick={onDone}>Add selected exercises</button></div></section></div>;
 }
 
-function DailyMobility({ session, toggleExercise, onEdit }: { session: Session; toggleExercise: (name: string) => void; onEdit: () => void }) {
+function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session: Session; exercises: LibraryExercise[]; toggleExercise: (name: string) => void; onEdit: () => void }) {
   const complete = session.mobilityExercises.filter((name) => session.completedExercises.includes(name)).length;
-  return <details className="surface-card daily-mobility" open><summary><span><b>Mobility exercises</b><small>{complete} of {session.mobilityExercises.length} completed</small></span><i>⌄</i></summary><div className="daily-mobility-body"><div className="checklist">{session.mobilityExercises.map((name, index) => { const checked = session.completedExercises.includes(name); return <button key={name} className={checked ? "checked" : ""} aria-pressed={checked} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span className="exercise-copy"><strong>{name}</strong><small>{exerciseEquipment.get(name) || "Mobility exercise"}</small></span><span className="check-target">{checked ? "✓" : ""}</span></button>; })}</div><button className="edit-mobility" onClick={onEdit}>Edit loaded exercises</button></div></details>;
+  const equipment = new Map(exercises.map((exercise) => [exercise.name, exercise.equipment]));
+  return <details className="surface-card daily-mobility" open><summary><span><b>Mobility exercises</b><small>{complete} of {session.mobilityExercises.length} completed</small></span><i>⌄</i></summary><div className="daily-mobility-body"><div className="checklist">{session.mobilityExercises.map((name, index) => { const checked = session.completedExercises.includes(name); return <button key={name} className={checked ? "checked" : ""} aria-pressed={checked} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span className="exercise-copy"><strong>{name}</strong><small>{equipment.get(name) || "Mobility exercise"}</small></span><span className="check-target">{checked ? "✓" : ""}</span></button>; })}</div><button className="edit-mobility" onClick={onEdit}>Edit loaded exercises</button></div></details>;
 }
 
-function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate }: { today: Date; sessions: Session[]; currentSession: Session; toggleExercise: (name: string) => void; onOpenDate: (date: Date) => void }) {
+function WeekView({ today, sessions, currentSession, exercises, toggleExercise, onOpenDate }: { today: Date; sessions: Session[]; currentSession: Session; exercises: LibraryExercise[]; toggleExercise: (name: string) => void; onOpenDate: (date: Date) => void }) {
   const [libraryOpen, setLibraryOpen] = useState(false);
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
@@ -387,12 +382,12 @@ function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate 
     <section className="week-rhythm-card"><RhythmStrip focus={today} today={today} sessions={sessions} onOpen={onOpenDate}/><div className="rhythm-legend"><span><i className="completed"/>Complete</span><span><i className="modified"/>Adapted</span><span><i className="protected"/>Injury</span><span><i className="rest"/>Rest</span></div></section>
     <section className="week-list">{days.map((date) => { const plan = schedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateSymbol(state)}</i></button>; })}</section>
     <button className="library-toggle" onClick={() => setLibraryOpen(!libraryOpen)}><span><b>Mobility + exercise library</b><small>20 movement options for any day</small></span><i>{libraryOpen ? "−" : "+"}</i></button>
-    {libraryOpen && <ExerciseLibrary session={currentSession} toggleExercise={toggleExercise}/>}
+    {libraryOpen && <ExerciseLibrary session={currentSession} exercises={exercises} toggleExercise={toggleExercise}/>}
   </div>;
 }
 
-function ExerciseLibrary({ session, toggleExercise }: { session: Session; toggleExercise: (name: string) => void }) {
-  return <div className="exercise-library"><div className="library-intro"><div><span className="kicker">MOVE WELL</span><h2>Exercise library</h2></div><p>One library for any day. Use a comfortable range, controlled movement, and an appropriate load.</p></div><div className="library-list unified-library">{exerciseLibrary.map(([name, equipment], index) => { const added = session.mobilityExercises.includes(name); return <button key={name} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></div>;
+function ExerciseLibrary({ session, exercises, toggleExercise }: { session: Session; exercises: LibraryExercise[]; toggleExercise: (name: string) => void }) {
+  return <div className="exercise-library"><div className="library-intro"><div><span className="kicker">MOVE WELL</span><h2>Exercise library</h2></div><p>One library for any day. Use a comfortable range, controlled movement, and an appropriate load.</p></div><div className="library-list unified-library">{exercises.map(({ id, name, equipment }, index) => { const added = session.mobilityExercises.includes(name); return <button key={id} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}</div></div>;
 }
 
 function HistoryView({ now, sessions, onOpenDate }: { now: Date; sessions: Session[]; onOpenDate: (date: Date) => void }) {
@@ -422,17 +417,17 @@ function calculateStreak(sessions: Session[], now: Date) {
   return streak;
 }
 
-function MoreView({ ptExercises, setPtExercises, sessions, setHistory, onDeleteVideo, onOpenLibrary }: { ptExercises: PtExercise[]; setPtExercises: React.Dispatch<React.SetStateAction<PtExercise[]>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void; onOpenLibrary: () => void }) {
-  const [newPt, setNewPt] = useState(""); const [notice, setNotice] = useState("");
+function MoreView({ libraryExercises, setLibraryExercises, sessions, setHistory, onDeleteVideo }: { libraryExercises: LibraryExercise[]; setLibraryExercises: React.Dispatch<React.SetStateAction<LibraryExercise[]>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void }) {
+  const [newExercise, setNewExercise] = useState(""); const [newEquipment, setNewEquipment] = useState(""); const [notice, setNotice] = useState("");
   const recentVideos = sessions.flatMap((s) => s.videos.map((video, videoIndex) => ({ ...video, sessionId: s.id, videoIndex }))).slice(0, 6);
-  async function exportData() { try { setNotice(await saveBackup(sessions, ptExercises)); } catch (error) { if (!(error instanceof DOMException && error.name === "AbortError")) setNotice("Backup could not be created. Please try again."); } }
-  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.ptExercises)) { localStorage.setItem("t4l:pt", JSON.stringify(payload.ptExercises)); setPtExercises(payload.ptExercises); } setHistory(restored); setNotice(`Restored ${restored.length} sessions. Reloading your plan…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
+  const updateExercise = (id: string, patch: Partial<LibraryExercise>) => setLibraryExercises((items) => items.map((item) => item.id === id ? { ...item, ...patch } : item));
+  const addExercise = () => { if (!newExercise.trim()) return; setLibraryExercises((items) => [...items, { id: crypto.randomUUID(), name: newExercise.trim(), equipment: newEquipment.trim() || "No equipment listed" }]); setNewExercise(""); setNewEquipment(""); };
+  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.libraryExercises)) { const restoredLibrary = payload.libraryExercises.filter((item: LibraryExercise) => item?.id && item?.name).map((item: LibraryExercise) => ({ id: item.id, name: item.name, equipment: item.equipment || "No equipment listed" })); localStorage.setItem("t4l:library", JSON.stringify(restoredLibrary)); setLibraryExercises(restoredLibrary); } setHistory(restored); setNotice(`Restored ${restored.length} sessions. Reloading your plan…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
   return <div className="subpage more-page">
-    <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Your movements, references, data, and privacy settings.</p></section>
-    <section className="settings-card action-list"><button onClick={onOpenLibrary}><span className="setting-icon mobility">↗</span><span><strong>Exercise library</strong><small>20 mobility and strength movements</small></span><i>›</i></button><div><span className="setting-icon speed">5/6</span><span><strong>Weekly goal</strong><small>5 of 6 training days · rest protected</small></span><i>›</i></div></section>
-    <section className="settings-card"><div className="settings-title"><span className="setting-icon strength">PT</span><div><h2>My PT exercises</h2><p>Saved only on this device</p></div></div>{ptExercises.filter((item) => !item.archived).map((item) => <div className="pt-row" key={item.id}><div><input aria-label="Exercise name" value={item.name} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, name: e.target.value } : x))}/><input aria-label="Prescription" value={item.prescription} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, prescription: e.target.value } : x))}/></div><button onClick={() => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, archived: true } : x))}>Archive</button></div>)}<div className="add-pt"><input value={newPt} onChange={(e) => setNewPt(e.target.value)} placeholder="Add a PT exercise"/><button onClick={() => { if (newPt.trim()) { setPtExercises((all) => [...all, { id: crypto.randomUUID(), name: newPt.trim(), prescription: "", archived: false }]); setNewPt(""); } }}>Add</button></div></section>
-    {recentVideos.length > 0 && <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div><div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div></section>}
-    <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↓</span><div><h2>Backup + restore</h2><p>Keep an external copy in Files or iCloud Drive</p></div></div><button className="wide-action primary" onClick={exportData}>Back up my data <span>↓</span></button><label className="wide-action file-action">Restore from backup <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Every backup filename includes its local save date and time. To recover after an update, tap Restore from backup and choose the newest file.</p></section>
+    <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Manage your exercise library, saved videos, and restored data.</p></section>
+    <details className="settings-card library-manager"><summary><span className="setting-icon mobility">↗</span><span><strong>Exercise library</strong><small>{libraryExercises.length} exercises · add or edit</small></span><i>＋</i></summary><p className="library-editor-help">Add a new exercise here, or tap any existing name or equipment line to edit it.</p><div className="add-library-exercise"><input value={newExercise} onChange={(e) => setNewExercise(e.target.value)} placeholder="New exercise name" aria-label="New exercise name"/><input value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} placeholder="Equipment or instructions" aria-label="New exercise equipment or instructions"/><button onClick={addExercise}>Add exercise</button></div><div className="library-editor-list">{libraryExercises.map((exercise) => <div className="library-editor-row" key={exercise.id}><span className="exercise-visual"><MovementMark type={libraryExercises.indexOf(exercise)}/></span><div><input aria-label="Exercise name" value={exercise.name} onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}/><input aria-label="Equipment or instructions" value={exercise.equipment} onChange={(e) => updateExercise(exercise.id, { equipment: e.target.value })}/></div></div>)}</div></details>
+    <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div>{recentVideos.length ? <div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div> : <p className="empty-state">Videos added to a workout will appear here.</p>}</section>
+    <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↑</span><div><h2>Restore from backup</h2><p>Reload workouts and library changes from a saved file</p></div></div><label className="wide-action file-action">Choose backup file <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Choose your newest dated Training for Life backup. Restoring replaces the app’s saved workout history and exercise library with the file’s contents.</p></section>
     <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history uploaded to GitHub or a Training for Life server. Saving a YouTube thumbnail or playing an embedded video contacts YouTube/Google.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;
 }
