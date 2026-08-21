@@ -174,7 +174,7 @@ export default function Home() {
   }, [session, loaded, todayKey]);
 
   useEffect(() => {
-    if (tab === "history") getAllSessions().then((items) => setHistory(items.sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([]));
+    getAllSessions().then((items) => setHistory(items.sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([]));
   }, [tab, session]);
 
   useEffect(() => {
@@ -284,7 +284,7 @@ export default function Home() {
 
         {tab === "mobility" && <div className="subpage">
           <section className="page-intro"><p className="eyebrow">MOVE WELL</p><h1>Mobility library</h1><p>Choose what your body needs today. Controlled movement matters more than completing every item.</p></section>
-          <div className="atlas-card"><img src="/og.png" alt="Line drawings of face pulls, open book rotation, farmer carry, side plank, dead hang, and single-leg balance"/><p>Movement reference · use a comfortable range and appropriate load.</p></div>
+          <div className="atlas-card"><img src="./og.png" alt="Line drawings of face pulls, open book rotation, farmer carry, side plank, dead hang, and single-leg balance"/><p>Movement reference · use a comfortable range and appropriate load.</p></div>
           {exerciseGroups.map((group, groupIndex) => <section className="library-group" key={group.title}><div className="group-title"><span>0{groupIndex + 1}</span><div><h2>{group.title}</h2><p>{group.subtitle}</p></div></div><div className="library-list">{group.exercises.map(([name, equipment], i) => <button key={name} onClick={() => { if (!session.completedExercises.includes(name)) toggleExercise(name); }}><MovementMark type={i + groupIndex}/><span><strong>{name}</strong><small>{equipment}</small></span><em>{session.completedExercises.includes(name) ? "✓ ADDED" : "+ ADD"}</em></button>)}</div></section>)}
         </div>}
 
