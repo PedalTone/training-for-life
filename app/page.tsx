@@ -13,6 +13,8 @@ type Session = {
   updatedAt: string; completedAt?: string;
 };
 type PtExercise = { id: string; name: string; prescription: string; archived: boolean };
+type BackupHandle = { createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }>; queryPermission?: (options: { mode: "readwrite" }) => Promise<PermissionState>; requestPermission?: (options: { mode: "readwrite" }) => Promise<PermissionState> };
+type SavePickerWindow = Window & { showSaveFilePicker?: (options: { suggestedName: string; id: string; types: { description: string; accept: Record<string, string[]> }[] }) => Promise<BackupHandle> };
 
 const schedule = [
   { short: "Sun", label: "S", theme: "Rest / Recovery", key: "rest", icon: "☾", guidance: "Rest is training, too. Easy walking and gentle recovery are welcome.", activities: ["Rest", "Easy walk", "Gentle mobility"] },
@@ -67,6 +69,7 @@ async function captureYoutubeThumbnail(id: string) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
+const BACKUP_NAME = "training-for-life-backup.json";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -81,6 +84,43 @@ function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) 
 const saveSession = (session: Session) => withStore("readwrite", (store) => store.put(session));
 const getSession = (id: string) => withStore<Session | undefined>("readonly", (store) => store.get(id));
 const getAllSessions = () => withStore<Session[]>("readonly", (store) => store.getAll());
+
+function backupHandleRequest<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("training-for-life-backup-target", 1);
+    request.onupgradeneeded = () => request.result.createObjectStore("target");
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => { const operation = action(request.result.transaction("target", mode).objectStore("target")); operation.onsuccess = () => resolve(operation.result); operation.onerror = () => reject(operation.error); };
+  });
+}
+const getBackupHandle = () => backupHandleRequest<BackupHandle | undefined>("readonly", (store) => store.get("daily"));
+const rememberBackupHandle = (handle: BackupHandle) => backupHandleRequest("readwrite", (store) => store.put(handle, "daily"));
+let cachedBackupHandle: BackupHandle | undefined;
+function makeBackupFile(sessions: Session[], ptExercises: PtExercise[]) {
+  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, ptExercises, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
+  return new File([JSON.stringify(payload, null, 2)], BACKUP_NAME, { type: "application/json" });
+}
+async function saveBackup(sessions: Session[], ptExercises: PtExercise[]) {
+  const file = makeBackupFile(sessions, ptExercises);
+  const pickerWindow = window as SavePickerWindow;
+  if (pickerWindow.showSaveFilePicker) {
+    let handle = cachedBackupHandle;
+    let permission = handle?.queryPermission ? await handle.queryPermission({ mode: "readwrite" }) : handle ? "granted" : "prompt";
+    if (handle && permission !== "granted" && handle.requestPermission) permission = await handle.requestPermission({ mode: "readwrite" });
+    if (!handle || permission !== "granted") {
+      handle = await pickerWindow.showSaveFilePicker({ suggestedName: BACKUP_NAME, id: "training-for-life-daily-backup", types: [{ description: "Training for Life backup", accept: { "application/json": [".json"] } }] });
+      cachedBackupHandle = handle; void rememberBackupHandle(handle).catch(() => undefined);
+    }
+    const writable = await handle.createWritable(); await writable.write(file); await writable.close();
+    return "Backup updated in your saved location.";
+  }
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    await navigator.share({ files: [file], title: "Training for Life Backup" });
+    return "Backup ready. In Save to Files, replace the existing backup.";
+  }
+  const url = URL.createObjectURL(file); const link = document.createElement("a"); link.href = url; link.download = BACKUP_NAME; link.click(); URL.revokeObjectURL(url);
+  return "Backup downloaded with the same filename.";
+}
 
 function stateFor(session: Session | undefined, planKey: string) {
   if (session?.injury?.impact === "prevented") return "protected";
@@ -122,6 +162,7 @@ export default function Home() {
   const [videoLabel, setVideoLabel] = useState("");
   const [videoMessage, setVideoMessage] = useState("");
   const [attachingVideo, setAttachingVideo] = useState(false);
+  const [dailyBackupState, setDailyBackupState] = useState("Backup Data");
   const [ptExercises, setPtExercises] = useState<PtExercise[]>([
     { id: "pt-1", name: "Face pulls", prescription: "2 × 10", archived: false },
     { id: "pt-2", name: "Thoracic rotations at wall", prescription: "2 × 12 each", archived: false },
@@ -140,6 +181,7 @@ export default function Home() {
   useEffect(() => {
     const savedPt = localStorage.getItem("t4l:pt"); if (savedPt) setPtExercises(JSON.parse(savedPt));
   }, []);
+  useEffect(() => { getBackupHandle().then((handle) => { cachedBackupHandle = handle; }).catch(() => undefined); }, []);
   useEffect(() => {
     if (!loaded) return;
     setSaveState("Saving…"); if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -159,6 +201,13 @@ export default function Home() {
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
   const openDate = (date: Date) => { setActiveDate(date); setTab("today"); window.scrollTo(0, 0); };
   const finishWorkout = () => { update({ status: plan.key === "rest" ? "rest" : "completed", completedAt: new Date().toISOString() }); setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved"); };
+  const backupToday = async () => {
+    setDailyBackupState("Backing up…");
+    const current = { ...session, updatedAt: new Date().toISOString() };
+    const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
+    try { void saveSession(current).catch(() => undefined); const message = await saveBackup(allSessions, ptExercises); setDailyBackupState(message.startsWith("Backup updated") ? "Backup Updated ✓" : "Backup Ready ✓"); }
+    catch (error) { setDailyBackupState(error instanceof DOMException && error.name === "AbortError" ? "Backup Data" : "Try Backup Again"); }
+  };
   const attachVideo = async () => {
     const url = videoUrl.trim();
     const id = youtubeId(url);
@@ -216,7 +265,7 @@ export default function Home() {
           </div>
         </details>
 
-        <div className="finish-zone"><div className="save-status"><span>→</span><div><strong>Relentless Forward Progress</strong><small>{saveState} · local + private</small></div></div><button onClick={finishWorkout} className={session.status === "completed" || session.status === "rest" ? "done" : ""}>{session.status === "completed" || session.status === "rest" ? "✓ Day recorded" : plan.key === "rest" ? "Honor recovery day" : "Finish workout"}<span>→</span></button></div>
+        <div className="finish-zone"><div className="save-status"><span>→</span><div><strong>Relentless Forward Progress</strong><small>{saveState} · local + private</small></div></div><div className="finish-actions"><button className="backup-button" onClick={backupToday}><span>↓</span>{dailyBackupState}</button><button onClick={finishWorkout} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}>{session.status === "completed" || session.status === "rest" ? "✓ Day recorded" : plan.key === "rest" ? "Honor recovery" : "Finish workout"}<span>→</span></button></div></div>
       </div>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} toggleExercise={toggleExercise} onOpenDate={openDate}/>}
@@ -281,14 +330,14 @@ function calculateStreak(sessions: Session[], now: Date) {
 function MoreView({ ptExercises, setPtExercises, sessions, setHistory, onOpenLibrary }: { ptExercises: PtExercise[]; setPtExercises: React.Dispatch<React.SetStateAction<PtExercise[]>>; sessions: Session[]; setHistory: (sessions: Session[]) => void; onOpenLibrary: () => void }) {
   const [newPt, setNewPt] = useState(""); const [notice, setNotice] = useState("");
   const recentVideos = sessions.flatMap((s) => s.videos.map((video) => ({ ...video, date: s.date }))).slice(0, 6);
-  function exportData() { const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, ptExercises, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } }; const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = `training-for-life-backup-${dateKey()}.json`; link.click(); URL.revokeObjectURL(url); setNotice("Backup created. Save it to Files or iCloud Drive."); }
+  async function exportData() { try { setNotice(await saveBackup(sessions, ptExercises)); } catch (error) { if (!(error instanceof DOMException && error.name === "AbortError")) setNotice("Backup could not be created. Please try again."); } }
   async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); await Promise.all(payload.sessions.map((item: Session) => saveSession(item))); if (Array.isArray(payload.ptExercises)) setPtExercises(payload.ptExercises); setHistory(payload.sessions); setNotice(`Restored ${payload.sessions.length} sessions from a validated backup.`); } catch { setNotice("That file is not a valid Training for Life backup."); } }
   return <div className="subpage more-page">
     <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Your movements, references, data, and privacy settings.</p></section>
     <section className="settings-card action-list"><button onClick={onOpenLibrary}><span className="setting-icon mobility">↗</span><span><strong>Exercise library</strong><small>20 mobility and strength movements</small></span><i>›</i></button><div><span className="setting-icon speed">5/6</span><span><strong>Weekly goal</strong><small>5 of 6 training days · rest protected</small></span><i>›</i></div></section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon strength">PT</span><div><h2>My PT exercises</h2><p>Saved only on this device</p></div></div>{ptExercises.filter((item) => !item.archived).map((item) => <div className="pt-row" key={item.id}><div><input aria-label="Exercise name" value={item.name} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, name: e.target.value } : x))}/><input aria-label="Prescription" value={item.prescription} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, prescription: e.target.value } : x))}/></div><button onClick={() => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, archived: true } : x))}>Archive</button></div>)}<div className="add-pt"><input value={newPt} onChange={(e) => setNewPt(e.target.value)} placeholder="Add a PT exercise"/><button onClick={() => { if (newPt.trim()) { setPtExercises((all) => [...all, { id: crypto.randomUUID(), name: newPt.trim(), prescription: "", archived: false }]); setNewPt(""); } }}>Add</button></div></section>
     {recentVideos.length > 0 && <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div><div className="video-grid">{recentVideos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></section>}
-    <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↓</span><div><h2>Backup + restore</h2><p>Keep an external copy in Files or iCloud Drive</p></div></div><button className="wide-action primary" onClick={exportData}>Back up my data <span>↓</span></button><label className="wide-action file-action">Restore from backup <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Clearing browser data can erase local history. A monthly backup is a good habit.</p></section>
+    <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↓</span><div><h2>Backup + restore</h2><p>Keep an external copy in Files or iCloud Drive</p></div></div><button className="wide-action primary" onClick={exportData}>Back up my data <span>↓</span></button><label className="wide-action file-action">Restore from backup <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">The backup uses the same filename each time. iPhone Safari opens Save to Files so you can replace the previous copy; browsers with folder permission support remember the chosen file.</p></section>
     <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history uploaded to GitHub or a Training for Life server. Saving a YouTube thumbnail or playing an embedded video contacts YouTube/Google.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;
 }

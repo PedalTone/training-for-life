@@ -176,8 +176,10 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .save-status > span { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.1); display: grid; place-items: center; color: #a9d0b0; }
 .save-status strong, .save-status small { display: block; }
 .save-status strong { font-size: 13px; }.save-status small { color: rgba(255,255,255,.6); font-size: 10px; }
-.finish-zone > button { min-height: 58px; padding: 0 18px; border: 0; border-radius: 16px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: space-between; font-weight: 780; box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 28%, transparent); }
-.finish-zone > button.done { background: #5f8064; }.finish-zone > button > span { font-size: 21px; }
+.finish-actions { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.2fr); gap: 8px; }
+.finish-actions button { min-height: 58px; min-width: 0; padding: 0 13px; border: 0; border-radius: 16px; color: white; display: flex; align-items: center; justify-content: space-between; gap: 7px; font-size: 12px; font-weight: 780; }
+.finish-actions .backup-button { background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }.finish-actions .finish-button { background: var(--accent); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 28%, transparent); }
+.finish-actions .finish-button.done { background: #5f8064; }.finish-actions button > span { font-size: 18px; }
 
 .bottom-nav { position: fixed; left: 50%; bottom: max(10px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 40; width: min(440px, calc(100% - 24px)); min-height: 70px; padding: 6px; border: 1px solid rgba(210,219,212,.9); border-radius: 23px; background: rgba(255,255,255,.92); backdrop-filter: blur(18px); display: grid; grid-template-columns: repeat(4, 1fr); box-shadow: 0 14px 35px rgba(26,43,35,.16); }
 .bottom-nav button { min-width: 0; min-height: 56px; border: 0; border-radius: 17px; background: transparent; color: #7b8781; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
@@ -242,7 +244,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .details-card { padding: 0; }.details-card summary { min-height: 60px; padding: 10px 14px; }.details-card summary > span b { font-size: 14px; }.details-card summary > span small { font-size: 10px; }.details-card summary > i { width: 28px; height: 28px; }.details-body { padding: 3px 14px 17px; }
   .secondary-actions { grid-template-columns: 1fr; }.sheet-options { grid-template-columns: 1fr; }
   .video-grid { grid-template-columns: 1fr; }.video-launch { grid-template-columns: 92px 1fr 16px; }
-  .finish-zone { margin-top: 8px; grid-template-columns: 1fr; padding: 6px; gap: 0; border-radius: 17px; }.save-status { display: none; }.finish-zone > button { min-height: 52px; border-radius: 13px; }
+  .finish-zone { margin-top: 8px; grid-template-columns: 1fr; padding: 6px; gap: 0; border-radius: 17px; }.save-status { display: none; }.finish-actions { grid-template-columns: 1fr 1.15fr; }.finish-actions button { min-height: 52px; padding: 0 10px; border-radius: 13px; font-size: 11px; }
   .bottom-nav { bottom: max(7px, env(safe-area-inset-bottom)); width: calc(100% - 16px); min-height: 66px; border-radius: 21px; }.bottom-nav button { min-height: 52px; border-radius: 15px; }
   .page-intro { padding: 23px 5px; }.page-intro h1 { font-size: clamp(45px, 14vw, 62px); }.page-intro p { font-size: 16px; }.page-intro.colorful { padding: 24px 20px; border-radius: 23px; }
   .week-rhythm-card { padding: 16px; border-radius: 18px; }.week-rhythm-card .rhythm-strip button { height: 60px; }.rhythm-legend { gap: 9px; }
@@ -269,9 +271,9 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 }
 
 @media (min-width: 1100px) {
-  .finish-zone { grid-template-columns: minmax(220px,1fr) 440px minmax(250px,1fr); }
+  .finish-zone { grid-template-columns: minmax(180px,1fr) 260px minmax(460px,1.4fr); }
   .finish-zone .save-status { grid-column: 1; }
-  .finish-zone > button { grid-column: 3; }
+  .finish-zone .finish-actions { grid-column: 3; }
 }
 
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
