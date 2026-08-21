@@ -4,6 +4,11 @@ type ExercisePattern = { name: string; aliases: string[]; graphicQuery?: string 
 type ExerciseGraphic = { name?: string; gifUrl?: string; equipments?: string[]; instructions?: string[] };
 
 const exercisePatterns: ExercisePattern[] = [
+  { name: "Pullover + triceps extension", aliases: ["pull over plus tricep extension", "pull-over plus tricep extension", "pull overs plus tricep extension", "pull-overs plus tricep extension", "pullover plus triceps extension"], graphicQuery: "" },
+  { name: "Curl + horizontal press", aliases: ["curl plus horizontal press", "curl plus horizontal presses"], graphicQuery: "" },
+  { name: "Crush curl + press", aliases: ["crush curl plus press", "crush curls plus press"], graphicQuery: "" },
+  { name: "Kettlebell halo", aliases: ["kettlebell halo", "head halo", "head halos"] },
+  { name: "Upright row", aliases: ["upright row", "upright rows"] },
   { name: "Bulgarian split squat", aliases: ["bulgarian split squat"], graphicQuery: "dumbbell bulgarian split squat" },
   { name: "Romanian deadlift", aliases: ["romanian deadlift", "r d l", "rdl"], graphicQuery: "barbell romanian deadlift" },
   { name: "Goblet squat", aliases: ["goblet squat"] },
@@ -67,13 +72,67 @@ function normalized(text: string) {
   return text.toLowerCase().replace(/[’]/g, "'").replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|sixty)\b/g, (word) => numberWords[word]);
 }
 
-function volumeFrom(text: string) {
+function aliasExpression(alias: string) {
+  return alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\ /g, "\\s+");
+}
+
+function volumeFrom(text: string, alias?: string) {
   const clean = normalized(text);
-  const sets = clean.match(/\b(\d{1,2})\s*(?:sets?|rounds?)\b/)?.[1];
-  const reps = clean.match(/\b(\d{1,3})\s*(?:reps?|repetitions?|times?)\b/)?.[1];
+  const sets = clean.match(/\b(\d{1,2})\s*sets?\b/)?.[1];
+  const namedReps = alias ? clean.match(new RegExp(`\\b(\\d{1,3})\\s+(?:${aliasExpression(alias)})s?\\b`, "i"))?.[1] : undefined;
+  const reps = namedReps || clean.match(/\b(\d{1,3})\s*(?:reps?|repetitions?|times?)\b/)?.[1];
   const seconds = clean.match(/\b(\d{1,3})\s*(?:seconds?|secs?)\b/)?.[1];
   const minutes = clean.match(/\b(\d{1,2})\s*(?:minutes?|mins?)\b/)?.[1];
   return { sets, reps, duration: seconds ? `${seconds} sec` : minutes ? `${minutes} min` : undefined };
+}
+
+function titleCaseExercise(value: string) {
+  return value.trim().replace(/[-]+/g, "-").replace(/\b\w/g, (letter) => letter.toUpperCase()).replace(/\bPlus\b/g, "+");
+}
+
+function cleanDiscoveredExercise(value: string) {
+  return value
+    .replace(/\b(?:you(?:'ll| will)?|try|remember|during|after|move|rest|complete|for every|as you|and then)\b.*$/i, "")
+    .replace(/[.,;:!?]+$/g, "")
+    .trim();
+}
+
+function discoveredName(value: string) {
+  const key = normalized(value).replace(/[-+]/g, " ").replace(/\bplus\b/g, " ").replace(/\s+/g, " ").trim();
+  const known = exercisePatterns.find((pattern) => pattern.aliases.some((alias) => normalized(alias).replace(/[-+]/g, " ").replace(/\bplus\b/g, " ").replace(/\s+/g, " ").trim() === key));
+  return known?.name || titleCaseExercise(value);
+}
+
+function discoverExercises(transcript: TranscriptResponse[], factor: number) {
+  const discovered: { name: string; graphicQuery: string; timestamp: number; reps?: string; transcriptText: string }[] = [];
+  const seen = new Set<string>();
+  const cue = /\b(?:start(?: each round)? with|move(?: directly)? into|doing next[.]?|which is|last exercise(?:\s+of\s+this\s+complex)?(?:,\s*)?(?:which is|is))\s+(\d{1,3})\s+(.+?)(?=[.!?]|\b(?:move|you(?:'ll| will)?|try|remember|during|after|rest|complete|for every|as you|and then)\b)/gi;
+
+  transcript.forEach((segment, index) => {
+    const context = normalized(transcript.slice(index, Math.min(transcript.length, index + 3)).map((item) => item.text).join(" "));
+    for (const match of context.matchAll(cue)) {
+      const candidate = cleanDiscoveredExercise(match[2]);
+      const key = candidate.replace(/\b(?:a|an|the)\b/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+      if (!candidate || seen.has(key) || /^(?:reps?|rounds?|minutes?|seconds?)\b/.test(candidate)) continue;
+      seen.add(key);
+      discovered.push({ name: discoveredName(candidate), graphicQuery: "", reps: match[1], timestamp: secondsFor(segment, factor), transcriptText: segment.text });
+    }
+  });
+  return discovered;
+}
+
+function workoutStructure(transcript: TranscriptResponse[]) {
+  const text = normalized(transcript.map((segment) => segment.text).join(" "));
+  const rounds = text.match(/\b(?:complete|perform|do)\s+(\d{1,2})\s*(?:to|[-–])\s*(\d{1,2})\s+rounds?\b/);
+  const fixedRounds = text.match(/\b(?:complete|perform|do)\s+(\d{1,2})\s+rounds?\b/);
+  const rest = text.match(/\brest(?:\s+easy)?(?:\s+for)?\s+(\d{1,2})\s*(?:to|[-–])\s*(\d{1,2})\s+minutes?\b/);
+  const fixedRest = text.match(/\brest(?:\s+easy)?(?:\s+for)?\s+(\d{1,2})\s+minutes?\b/);
+  return {
+    rounds: rounds ? `${rounds[1]}–${rounds[2]} rounds` : fixedRounds ? `${fixedRounds[1]} rounds` : undefined,
+    rest: rest ? `${rest[1]}–${rest[2]} min between rounds` : fixedRest ? `${fixedRest[1]} min between rounds` : undefined,
+    equipment: /\bkettlebell\b/.test(text) ? "Kettlebell" : /\bdumbbells?\b/.test(text) ? "Dumbbells" : undefined,
+    position: /\b(?:tall upright )?kneeling\b/.test(text) ? "Kneeling" : undefined,
+  };
 }
 
 function secondsFor(segment: TranscriptResponse, factor: number) {
@@ -103,17 +162,24 @@ export async function createWorkoutGuide(videoUrl: string) {
   transcript.forEach((segment, index) => {
     const text = normalized(segment.text);
     for (const pattern of exercisePatterns) {
-      if (found.has(pattern.name) || !pattern.aliases.some((alias) => new RegExp(`\\b${alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\ /g, "\\s+")}s?\\b`, "i").test(text))) continue;
+      const matchedAlias = pattern.aliases.find((alias) => new RegExp(`\\b${aliasExpression(alias)}s?\\b`, "i").test(text));
+      if (found.has(pattern.name) || !matchedAlias) continue;
       const context = transcript.slice(Math.max(0, index - 2), Math.min(transcript.length, index + 3)).map((item) => item.text).join(" ");
-      found.set(pattern.name, { name: pattern.name, graphicQuery: pattern.graphicQuery, timestamp: secondsFor(segment, offsetFactor), ...volumeFrom(context), transcriptText: segment.text });
+      found.set(pattern.name, { name: pattern.name, graphicQuery: pattern.graphicQuery, timestamp: secondsFor(segment, offsetFactor), ...volumeFrom(context, matchedAlias), transcriptText: segment.text });
       break;
     }
   });
 
-  const exercises = await Promise.all([...found.values()].slice(0, 16).map(async (exercise) => {
-    const graphic = await findGraphic(exercise.name, exercise.graphicQuery);
+  for (const exercise of discoverExercises(transcript, offsetFactor)) {
+    const duplicate = [...found.values()].some((known) => normalized(known.name).replace(/[^a-z0-9]+/g, " ").trim() === normalized(exercise.name).replace(/[^a-z0-9]+/g, " ").trim());
+    if (!duplicate) found.set(exercise.name, exercise);
+  }
+
+  const exercises = await Promise.all([...found.values()].sort((a, b) => a.timestamp - b.timestamp).slice(0, 16).map(async (exercise) => {
+    const graphic = exercise.graphicQuery === "" ? undefined : await findGraphic(exercise.name, exercise.graphicQuery);
+    const { graphicQuery: _graphicQuery, ...details } = exercise;
     return {
-      ...exercise,
+      ...details,
       displayName: exercise.name,
       graphicUrl: graphic?.gifUrl,
       equipment: graphic?.equipments?.join(", "),
@@ -125,6 +191,7 @@ export async function createWorkoutGuide(videoUrl: string) {
     generatedAt: new Date().toISOString(),
     transcriptSegments: transcript.length,
     exercises,
+    summary: workoutStructure(transcript),
     notice: exercises.length ? "Automatically identified from the video transcript. Verify sets, reps, and form before training." : "The transcript loaded, but no supported exercise names were identified.",
   };
 }

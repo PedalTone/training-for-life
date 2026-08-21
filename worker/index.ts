@@ -36,14 +36,19 @@ const worker = {
       const headers = { "Access-Control-Allow-Origin": allowedOrigin, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type", "Cache-Control": "no-store", Vary: "Origin" };
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
       if (request.method !== "POST") return Response.json({ error: "Method not allowed." }, { status: 405, headers });
+      let requestedUrl = "";
       try {
         const body = await request.json() as { url?: string };
+        requestedUrl = body.url || "";
         if (!body.url || !/^https?:\/\//.test(body.url)) return Response.json({ error: "Paste a valid YouTube link." }, { status: 400, headers });
         const guide = await createWorkoutGuide(body.url);
         return Response.json(guide, { headers });
       } catch (error) {
         const detail = error instanceof Error ? error.message : "Transcript unavailable.";
-        const message = /disabled|no transcript|not available/i.test(detail) ? "This video does not provide a usable transcript." : /too many|captcha|rate/i.test(detail) ? "YouTube temporarily blocked transcript access. Try again later." : "The workout guide could not be created from this video. Try again later.";
+        const videoId = requestedUrl.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{6,})/)?.[1] || "unknown";
+        const category = /disabled|no transcript|not available|no longer available/i.test(detail) ? "transcript_unavailable" : /too many|captcha|rate/i.test(detail) ? "youtube_throttled" : "unexpected";
+        console.warn("workout-guide failure", { category, detail, videoId });
+        const message = category === "transcript_unavailable" ? "This video does not provide a usable transcript." : category === "youtube_throttled" ? "YouTube temporarily blocked transcript access. Try again later." : "The workout guide could not be created from this video. Try again later.";
         return Response.json({ error: message }, { status: 422, headers });
       }
     }
