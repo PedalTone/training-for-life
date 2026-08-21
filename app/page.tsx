@@ -6,7 +6,7 @@ type Tab = "today" | "week" | "history" | "more";
 type Effort = "" | "easy" | "moderate" | "hard";
 type Status = "partial" | "completed" | "rest";
 type Injury = { impact: "" | "modified" | "stopped" | "prevented"; bodyArea: string; note: string };
-type Video = { url: string; label: string };
+type Video = { url: string; label: string; videoId?: string; thumbnailData?: string };
 type Session = {
   id: string; date: string; activity: string; duration: string; distance: string; effort: Effort;
   notes: string; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
@@ -58,6 +58,12 @@ function weekDates(date: Date) {
   return Array.from({ length: 7 }, (_, i) => { const day = new Date(monday); day.setDate(monday.getDate() + i); return day; });
 }
 function youtubeId(url: string) { return url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{6,})/)?.[1] ?? ""; }
+function blobAsDataUrl(blob: Blob) { return new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(reader.error); reader.readAsDataURL(blob); }); }
+async function captureYoutubeThumbnail(id: string) {
+  const response = await fetch(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`);
+  if (!response.ok) throw new Error("Thumbnail unavailable");
+  return blobAsDataUrl(await response.blob());
+}
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
@@ -114,6 +120,8 @@ export default function Home() {
   const [showVideo, setShowVideo] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoLabel, setVideoLabel] = useState("");
+  const [videoMessage, setVideoMessage] = useState("");
+  const [attachingVideo, setAttachingVideo] = useState(false);
   const [ptExercises, setPtExercises] = useState<PtExercise[]>([
     { id: "pt-1", name: "Face pulls", prescription: "2 × 10", archived: false },
     { id: "pt-2", name: "Thoracic rotations at wall", prescription: "2 × 12 each", archived: false },
@@ -151,7 +159,17 @@ export default function Home() {
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
   const openDate = (date: Date) => { setActiveDate(date); setTab("today"); window.scrollTo(0, 0); };
   const finishWorkout = () => { update({ status: plan.key === "rest" ? "rest" : "completed", completedAt: new Date().toISOString() }); setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved"); };
-  const attachVideo = () => { if (!videoUrl.trim()) return; update({ videos: [...session.videos, { url: videoUrl.trim(), label: videoLabel.trim() || "Workout video" }] }); setVideoUrl(""); setVideoLabel(""); setShowVideo(false); };
+  const attachVideo = async () => {
+    const url = videoUrl.trim();
+    const id = youtubeId(url);
+    if (!id) { setVideoMessage("Paste a valid YouTube video link."); return; }
+    setAttachingVideo(true); setVideoMessage("Saving video + thumbnail…");
+    let thumbnailData = "";
+    try { thumbnailData = await captureYoutubeThumbnail(id); } catch { setVideoMessage("Video saved. The thumbnail will load when online."); }
+    update({ videos: [...session.videos, { url, label: videoLabel.trim() || "Workout video", videoId: id, thumbnailData }] });
+    setVideoUrl(""); setVideoLabel(""); setAttachingVideo(false);
+    if (thumbnailData) setVideoMessage("Video + thumbnail saved on this device.");
+  };
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
   const completedThisWeek = weekDates(today).filter((date) => ["completed", "modified", "rest", "protected"].includes(stateFor(weekMap.get(dateKey(date)), schedule[date.getDay()].key))).length;
@@ -193,7 +211,7 @@ export default function Home() {
             <div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>
             <div className="secondary-actions"><button className={session.injury.impact ? "has-state" : ""} onClick={() => setShowInjury(!showInjury)}>⚑ {session.injury.impact ? `Modified · ${session.injury.impact}` : "Workout modified?"}</button><button onClick={() => setShowVideo(!showVideo)}>▶ Add YouTube reference</button></div>
             {showInjury && <div className="inline-sheet"><p className="sheet-title">How was the workout affected?</p><div className="sheet-options">{[["modified", "Modified"], ["stopped", "Stopped early"], ["prevented", "Unable to train"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => update({ injury: { ...session.injury, impact: value as Injury["impact"] } })}>{label}</button>)}</div><input value={session.injury.bodyArea} onChange={(e) => update({ injury: { ...session.injury, bodyArea: e.target.value } })} placeholder="Body area (optional)"/><textarea value={session.injury.note} onChange={(e) => update({ injury: { ...session.injury, note: e.target.value } })} placeholder="Add a dictated note…" rows={3}/>{session.injury.impact && <button className="text-button" onClick={() => update({ injury: { impact: "", bodyArea: "", note: "" } })}>Clear modification</button>}</div>}
-            {showVideo && <div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="Paste YouTube URL"/><input value={videoLabel} onChange={(e) => setVideoLabel(e.target.value)} placeholder="Your label (optional)"/><button className="compact-primary" onClick={attachVideo}>Attach video</button></div>}
+            {showVideo && <div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input value={videoLabel} onChange={(e) => setVideoLabel(e.target.value)} placeholder="Your label (optional)"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + thumbnail"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div>}
             <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div>
           </div>
         </details>
@@ -210,8 +228,10 @@ export default function Home() {
 }
 
 function VideoCard({ video }: { video: Video }) {
-  const id = youtubeId(video.url);
-  return <a className="video-card" href={video.url} target="_blank" rel="noreferrer"><span className="video-thumb">{id ? <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>YouTube · tap to watch</small></span><b aria-hidden="true">↗</b></a>;
+  const [playing, setPlaying] = useState(false);
+  const id = video.videoId || youtubeId(video.url);
+  const thumbnail = video.thumbnailData || (id ? `https://i.ytimg.com/vi/${id}/mqdefault.jpg` : "");
+  return <article className={`video-card ${playing ? "playing" : ""}`}>{playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={() => setPlaying(true)} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}</article>;
 }
 
 function WeekView({ today, sessions, currentSession, toggleExercise, onOpenDate }: { today: Date; sessions: Session[]; currentSession: Session; toggleExercise: (name: string) => void; onOpenDate: (date: Date) => void }) {
@@ -269,6 +289,6 @@ function MoreView({ ptExercises, setPtExercises, sessions, setHistory, onOpenLib
     <section className="settings-card"><div className="settings-title"><span className="setting-icon strength">PT</span><div><h2>My PT exercises</h2><p>Saved only on this device</p></div></div>{ptExercises.filter((item) => !item.archived).map((item) => <div className="pt-row" key={item.id}><div><input aria-label="Exercise name" value={item.name} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, name: e.target.value } : x))}/><input aria-label="Prescription" value={item.prescription} onChange={(e) => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, prescription: e.target.value } : x))}/></div><button onClick={() => setPtExercises((all) => all.map((x) => x.id === item.id ? { ...x, archived: true } : x))}>Archive</button></div>)}<div className="add-pt"><input value={newPt} onChange={(e) => setNewPt(e.target.value)} placeholder="Add a PT exercise"/><button onClick={() => { if (newPt.trim()) { setPtExercises((all) => [...all, { id: crypto.randomUUID(), name: newPt.trim(), prescription: "", archived: false }]); setNewPt(""); } }}>Add</button></div></section>
     {recentVideos.length > 0 && <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div><div className="video-grid">{recentVideos.map((video, i) => <VideoCard video={video} key={`${video.url}-${i}`}/>)}</div></section>}
     <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↓</span><div><h2>Backup + restore</h2><p>Keep an external copy in Files or iCloud Drive</p></div></div><button className="wide-action primary" onClick={exportData}>Back up my data <span>↓</span></button><label className="wide-action file-action">Restore from backup <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Clearing browser data can erase local history. A monthly backup is a good habit.</p></section>
-    <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history uploaded to GitHub or a Training for Life server. Opening YouTube contacts YouTube/Google.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
+    <section className="privacy-card"><span>LOCAL + PRIVATE</span><h2>Your history stays yours.</h2><p>No account. No analytics. No workout history uploaded to GitHub or a Training for Life server. Saving a YouTube thumbnail or playing an embedded video contacts YouTube/Google.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;
 }
