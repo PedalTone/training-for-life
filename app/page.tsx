@@ -91,7 +91,7 @@ async function fetchWorkoutGuide(videoUrl: string) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.1";
+const APP_VERSION = "v1.2";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -377,14 +377,19 @@ export default function Home() {
 function formatTimestamp(seconds: number) { const minutes = Math.floor(seconds / 60); return `${minutes}:${String(seconds % 60).padStart(2, "0")}`; }
 
 function VideoCard({ video, onDelete, onRetry }: { video: Video; onDelete?: () => void; onRetry?: () => void }) {
+  const cardRef = useRef<HTMLElement>(null);
   const [playing, setPlaying] = useState(false);
   const [startAt, setStartAt] = useState(0);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const id = video.videoId || youtubeId(video.url);
   const thumbnail = video.thumbnailData || (id ? `https://i.ytimg.com/vi/${id}/mqdefault.jpg` : "");
-  const playFrom = (seconds = 0) => { setStartAt(seconds); setPlaying(true); };
-  return <article className={`video-card ${playing ? "playing" : ""} ${video.workoutGuide ? "has-guide" : ""}`}>
-    {playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&start=${startAt}`} title={`${video.label} YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={() => playFrom()} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.workoutGuide?.exercises.length ? `${video.workoutGuide.exercises.length} exercise guide · play here` : video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}
+  const playFrom = (seconds = 0) => {
+    setStartAt(seconds);
+    setPlaying(true);
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })));
+  };
+  return <article ref={cardRef} className={`video-card ${playing ? "playing" : ""} ${video.workoutGuide ? "has-guide" : ""}`}>
+    {playing && id ? <div className="inline-player"><iframe key={`${id}-${startAt}`} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0&start=${startAt}`} title={`${video.label} — starting at ${formatTimestamp(startAt)}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={() => playFrom()} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.workoutGuide?.exercises.length ? `${video.workoutGuide.exercises.length} exercise guide · play here` : video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}
     {video.guideStatus === "analyzing" && <div className="guide-status analyzing" role="status"><span>↻</span><div><strong>Building workout guide</strong><small>Reading the transcript and identifying exercises…</small></div></div>}
     {video.guideStatus === "failed" && <div className="guide-status failed" role="alert"><div><strong>Workout guide unavailable</strong><small>{video.guideError || "The transcript could not be read."}</small></div>{onRetry && <button onClick={onRetry}>Retry</button>}</div>}
     {video.workoutGuide && <details className="workout-guide" open><summary><span><strong>Workout guide</strong><small>{video.workoutGuide.exercises.length} exercises identified</small></span><i>⌄</i></summary><div className="workout-guide-body">{video.workoutGuide.summary && Object.values(video.workoutGuide.summary).some(Boolean) && <ul className="guide-structure">{video.workoutGuide.summary.equipment && <li><b>Equipment</b><span>{video.workoutGuide.summary.equipment}</span></li>}{video.workoutGuide.summary.position && <li><b>Position</b><span>{video.workoutGuide.summary.position}</span></li>}{video.workoutGuide.summary.rounds && <li><b>Rounds</b><span>{video.workoutGuide.summary.rounds}</span></li>}{video.workoutGuide.summary.rest && <li><b>Rest</b><span>{video.workoutGuide.summary.rest}</span></li>}</ul>}{video.workoutGuide.exercises.length ? <ol className="guide-exercise-list">{video.workoutGuide.exercises.map((exercise, index) => <li className={`guide-exercise ${exercise.graphicUrl ? "" : "text-only"}`} key={`${exercise.name}-${exercise.timestamp}`}>{exercise.graphicUrl ? <span className="guide-graphic"><img src={exercise.graphicUrl} alt={`${exercise.displayName} demonstration`}/></span> : <span className="guide-bullet" aria-hidden="true">•</span>}<div><small>EXERCISE {index + 1} · {formatTimestamp(exercise.timestamp)}</small><strong>{exercise.displayName}</strong><p>{[exercise.sets && `${exercise.sets} sets`, exercise.reps && `${exercise.reps} reps`, exercise.duration].filter(Boolean).join(" · ") || "Sets and reps were not clearly stated"}</p>{exercise.equipment && <em>{exercise.equipment}</em>}{exercise.instructions[0] && <span>{exercise.instructions[0].replace(/^Step:\s*\d+\s*/i, "")}</span>}<button onClick={() => playFrom(exercise.timestamp)}>Watch from {formatTimestamp(exercise.timestamp)}</button></div></li>)}</ol> : <p className="empty-state">The transcript loaded, but no exercise sequence could be identified.</p>}<p className="guide-disclaimer">{video.workoutGuide.notice}</p></div></details>}
