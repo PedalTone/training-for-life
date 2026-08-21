@@ -92,7 +92,7 @@ async function fetchWorkoutGuide(videoUrl: string) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.4";
+const APP_VERSION = "v1.5";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -387,7 +387,7 @@ export default function Home() {
         <div className="finish-zone primary-finish"><div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${session.status === "completed" || session.status === "rest" ? "done" : ""}`}><span>↓</span>{finishBackupState || (session.status === "completed" || session.status === "rest" ? "Finish + Backup Again" : plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div></div>
       </div>}
 
-      {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
+      {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} exercises={libraryExercises} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} onOpenDate={openDate}/>}
@@ -421,7 +421,7 @@ function VideoCard({ video, onDelete, onRetry, onAddToday }: { video: Video; onD
   </article>;
 }
 
-function MobilityPicker({ exercises, selected, toggleExercise, onDone, onCancel }: { exercises: LibraryExercise[]; selected: string[]; toggleExercise: (name: string) => void; onDone: () => void; onCancel: () => void }) {
+function MobilityPicker({ exercises, selected, sessions, currentDate, toggleExercise, onDone, onCancel }: { exercises: LibraryExercise[]; selected: string[]; sessions: Session[]; currentDate: string; toggleExercise: (name: string) => void; onDone: () => void; onCancel: () => void }) {
   const [query, setQuery] = useState("");
   useEffect(() => {
     const previous = document.body.style.overflow;
@@ -429,8 +429,16 @@ function MobilityPicker({ exercises, selected, toggleExercise, onDone, onCancel 
     document.body.style.overflow = "hidden"; window.addEventListener("keydown", closeOnEscape);
     return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", closeOnEscape); };
   }, [onCancel]);
-  const filtered = exercises.filter(({ name, equipment }) => `${name} ${equipment}`.toLowerCase().includes(query.trim().toLowerCase()));
-  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">MOBILITY LIBRARY</span><h2 id="mobility-sheet-title">Choose your exercises</h2><p>Select as many as you want for this day.</p></div><button onClick={onCancel} aria-label="Close mobility library">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(({ id, name, equipment }, index) => { const added = selected.includes(name); return <button key={id} className={added ? "added" : ""} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected</span><button onClick={onDone}>Add selected exercises</button></div></section></div>;
+  const lastCompleted = new Map<string, string>();
+  sessions.filter((saved) => saved.date < currentDate).forEach((saved) => saved.completedExercises.forEach((name) => { if (!lastCompleted.get(name) || saved.date > lastCompleted.get(name)!) lastCompleted.set(name, saved.date); }));
+  const ordered = exercises.map((exercise) => ({ ...exercise, lastDone: lastCompleted.get(exercise.name) || "" })).sort((a, b) => {
+    if (!a.lastDone && b.lastDone) return -1;
+    if (a.lastDone && !b.lastDone) return 1;
+    return a.lastDone.localeCompare(b.lastDone) || a.name.localeCompare(b.name);
+  });
+  const filtered = ordered.filter(({ name, equipment }) => `${name} ${equipment}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const neverDone = ordered.filter((exercise) => !exercise.lastDone).length;
+  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">MOBILITY LIBRARY · {neverDone} NOT DONE YET</span><h2 id="mobility-sheet-title">Choose your exercises</h2><p>New and least-recently completed exercises appear first.</p></div><button onClick={onCancel} aria-label="Close mobility library">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(({ id, name, equipment, lastDone }, index) => { const added = selected.includes(name); const historyLabel = lastDone ? `Last done ${dateFromKey(lastDone).toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : "Not done yet"; return <button key={id} className={`${added ? "added" : ""} ${lastDone ? "done-before" : "not-done-yet"}`} aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark type={index}/></span><span><strong>{name}</strong><small>{equipment}</small><small className="mobility-history">{historyLabel}</small></span><em>{added ? "✓ Added" : "+ Add"}</em></button>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected</span><button onClick={onDone}>Add selected exercises</button></div></section></div>;
 }
 
 function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session: Session; exercises: LibraryExercise[]; toggleExercise: (name: string) => void; onEdit: () => void }) {
