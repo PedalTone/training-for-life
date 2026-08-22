@@ -3,6 +3,7 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import handler from "vinext/server/app-router-entry";
 import { createWorkoutGuide } from "./workout-guide";
 import { createTrainingInsights } from "./training-insights";
+import { extractWorkoutScreenshot } from "./workout-screenshot";
 
 interface Env {
   ASSETS: Fetcher;
@@ -32,6 +33,26 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/workout-screenshot") {
+      const origin = request.headers.get("Origin") || "";
+      const allowedOrigin = origin === "https://pedaltone.github.io" || origin.endsWith(".chatgpt.site") || origin.startsWith("http://127.0.0.1") || origin.startsWith("http://localhost") ? origin : "https://pedaltone.github.io";
+      const headers = { "Access-Control-Allow-Origin": allowedOrigin, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, X-Training-Insights-Key", "Cache-Control": "no-store", Vary: "Origin" };
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
+      if (request.method !== "POST") return Response.json({ error: "Method not allowed." }, { status: 405, headers });
+      try {
+        if (!env.INSIGHTS_ACCESS_CODE) return Response.json({ error: "Screenshot import is not configured yet." }, { status: 503, headers });
+        if (request.headers.get("X-Training-Insights-Key") !== env.INSIGHTS_ACCESS_CODE) return Response.json({ error: "The AI access code is incorrect." }, { status: 401, headers });
+        const body = await request.json() as { imageData?: string };
+        const workout = await extractWorkoutScreenshot(env.OPENAI_API_KEY || "", body.imageData || "");
+        return Response.json(workout, { headers });
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : "The screenshot could not be read.";
+        const status = /not configured/i.test(detail) ? 503 : /large|choose/i.test(detail) ? 400 : 422;
+        console.warn("workout-screenshot failure", { status, detail });
+        return Response.json({ error: status === 503 ? "Screenshot import is not configured yet." : detail }, { status, headers });
+      }
+    }
 
     if (url.pathname === "/api/training-insights") {
       const origin = request.headers.get("Origin") || "";

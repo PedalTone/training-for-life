@@ -11,6 +11,7 @@ type WorkoutGuide = { generatedAt: string; transcriptSegments: number; exercises
 type Video = { url: string; label: string; videoId?: string; thumbnailData?: string; guideStatus?: "analyzing" | "ready" | "failed"; guideError?: string; workoutGuide?: WorkoutGuide };
 type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
+  pace?: string; calories?: string; startTime?: string; detailSource?: string;
   notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
   updatedAt: string; completedAt?: string;
 };
@@ -20,6 +21,10 @@ type TrainingInsightReport = {
   id: string; generatedAt: string; periodDays: 0 | 30 | 90; sessionsAnalyzed: number;
   headline: string; summary: string; wins: string[]; patterns: string[];
   recommendations: InsightRecommendation[]; cautions: string[]; dataQuality: string;
+};
+type ScreenshotWorkout = {
+  activity: string; date: string; startTime: string; distance: string; duration: string; pace: string; calories: string;
+  source: string; confidence: "high" | "medium" | "low"; warnings: string[];
 };
 type SavePickerWindow = Window & { showSaveFilePicker?: (options: { suggestedName: string; id: string; types: { description: string; accept: Record<string, string[]> }[] }) => Promise<{ createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }> }> };
 
@@ -109,7 +114,7 @@ async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 9
   const service = localService ? "" : "https://training-4-life.tommy-tritone.chatgpt.site";
   const compactSessions = sessions.map((saved) => ({
     date: saved.date, plannedTheme: schedule[dateFromKey(saved.date).getDay()].theme, status: saved.status,
-    activities: saved.activities ?? (saved.activity ? [saved.activity] : []), duration: saved.duration, distance: saved.distance, effort: saved.effort,
+    activities: saved.activities ?? (saved.activity ? [saved.activity] : []), duration: saved.duration, distance: saved.distance, pace: saved.pace, calories: saved.calories, startTime: saved.startTime, effort: saved.effort,
     notes: saved.notes, mobilityExercises: saved.mobilityExercises, completedExercises: saved.completedExercises,
     injury: { reported: hasReportedInjury(saved), impact: saved.injury.impact, bodyArea: saved.injury.bodyArea, note: saved.injury.note },
   }));
@@ -118,10 +123,28 @@ async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 9
   if (!response.ok || !("headline" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "AI insights are temporarily unavailable.");
   return { ...payload, id: `${periodDays}-${Date.now()}` } as TrainingInsightReport;
 }
+async function fetchScreenshotWorkout(imageData: string, accessCode: string) {
+  const localService = typeof window !== "undefined" && (window.location.hostname.endsWith("chatgpt.site") || ["localhost", "127.0.0.1"].includes(window.location.hostname));
+  const service = localService ? "" : "https://training-4-life.tommy-tritone.chatgpt.site";
+  const response = await fetch(`${service}/api/workout-screenshot`, { method: "POST", headers: { "Content-Type": "application/json", "X-Training-Insights-Key": accessCode }, body: JSON.stringify({ imageData }) });
+  const payload = await response.json() as ScreenshotWorkout | { error?: string };
+  if (!response.ok || !("confidence" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "The screenshot could not be read.");
+  return payload;
+}
+async function prepareScreenshot(file: Blob) {
+  if (!file.type.startsWith("image/")) throw new Error("Choose or paste an image.");
+  if (file.size > 20_000_000) throw new Error("That image is too large. Try a regular screenshot.");
+  const source = await blobAsDataUrl(file);
+  const image = new Image(); image.src = source; await image.decode();
+  const scale = Math.min(1, 1600 / Math.max(image.naturalWidth, image.naturalHeight));
+  const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.round(image.naturalWidth * scale)); canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", .84);
+}
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.8";
+const APP_VERSION = "v1.9";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -211,10 +234,18 @@ export default function Home() {
   const [libraryExercises, setLibraryExercises] = useState<LibraryExercise[]>(defaultExerciseLibrary);
   const [futureVideos, setFutureVideos] = useState<Video[]>([]);
   const [insightReports, setInsightReports] = useState<TrainingInsightReport[]>([]);
+  const [screenshotState, setScreenshotState] = useState<"idle" | "reading" | "review">("idle");
+  const [screenshotPreview, setScreenshotPreview] = useState("");
+  const [screenshotWorkout, setScreenshotWorkout] = useState<ScreenshotWorkout | null>(null);
+  const [screenshotError, setScreenshotError] = useState("");
+  const [screenshotAccessCode, setScreenshotAccessCode] = useState("");
+  const [hasScreenshotAccess, setHasScreenshotAccess] = useState(false);
+  const screenshotInput = useRef<HTMLInputElement>(null);
+  const pasteTarget = useRef<HTMLDivElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
 
-  useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); }, []);
+  useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); const savedCode = localStorage.getItem("t4l:insights-access") || ""; setScreenshotAccessCode(savedCode); setHasScreenshotAccess(Boolean(savedCode)); }, []);
   useEffect(() => {
     setLoaded(false); setFinishBackupState(""); setShowMobilityPicker(false); setOpenPanel(null);
     getSession(activeKey).then((saved) => setSession(saved ? normalizeSession(saved) : emptySession(activeKey, plan.key === "rest"))).catch(() => {
@@ -368,6 +399,36 @@ export default function Home() {
     updateInjury({ reported: false, impact: "", bodyArea: "", note: "" });
     setShowInjury(false);
   };
+  const readScreenshot = async (file: Blob) => {
+    setOpenPanel("details"); setScreenshotState("reading"); setScreenshotError("");
+    try {
+      const imageData = await prepareScreenshot(file); setScreenshotPreview(imageData);
+      const accessCode = screenshotAccessCode.trim();
+      if (!accessCode) throw new Error("Enter your personal AI access code below, then try again.");
+      localStorage.setItem("t4l:insights-access", accessCode);
+      const extracted = await fetchScreenshotWorkout(imageData, accessCode);
+      setHasScreenshotAccess(true); setScreenshotWorkout(extracted); setScreenshotState("review");
+    } catch (error) { setScreenshotState("idle"); setScreenshotPreview(""); setScreenshotError(error instanceof Error ? error.message : "The screenshot could not be read."); }
+  };
+  const pasteScreenshot = async () => {
+    setScreenshotError("");
+    try {
+      if (!navigator.clipboard?.read) throw new Error();
+      const items = await navigator.clipboard.read();
+      const item = items.find((entry) => entry.types.some((type) => type.startsWith("image/")));
+      const type = item?.types.find((value) => value.startsWith("image/"));
+      if (!item || !type) throw new Error();
+      await readScreenshot(await item.getType(type));
+    } catch { pasteTarget.current?.focus(); setScreenshotError("Tap the box below, then choose Paste."); }
+  };
+  const applyScreenshot = () => {
+    if (!screenshotWorkout) return;
+    const extractedActivity = screenshotWorkout.activity.trim();
+    const activities = session.activities?.length ? session.activities : extractedActivity ? [extractedActivity] : [];
+    update({ activities, activity: activities.join(" + "), duration: screenshotWorkout.duration || session.duration, distance: screenshotWorkout.distance || session.distance, pace: screenshotWorkout.pace || session.pace, calories: screenshotWorkout.calories || session.calories, startTime: screenshotWorkout.startTime || session.startTime, detailSource: screenshotWorkout.source || session.detailSource });
+    setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); setScreenshotError(""); setOpenPanel("details");
+  };
+  const closeScreenshot = () => { setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); };
   const togglePanel = (panel: "workout" | "note" | "details" | "youtube", open: boolean) => setOpenPanel((current) => open ? panel : current === panel ? null : current);
 
   return <div className={`app-shell theme-${plan.key}`}>
@@ -402,10 +463,12 @@ export default function Home() {
           </details>
 
           <details className="surface-card details-card" open={openPanel === "details"} onToggle={(e) => togglePanel("details", e.currentTarget.open)}>
-            <summary><span><b>Details</b><small>Time, distance, effort</small></span><i>＋</i></summary>
+            <summary><span><b>Details</b><small>{session.duration || session.distance || session.pace ? "Workout data added" : "Type or import a screenshot"}</small></span><i>＋</i></summary>
             <div className="details-body">
-              <div className="field-grid"><label><span>Duration</span><div><input inputMode="numeric" value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/><em>min</em></div></label><label><span>Distance</span><div><input inputMode="decimal" value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/><em>mi</em></div></label></div>
+              <section className="screenshot-import"><div><strong>Import workout screenshot</strong><small>Paste one you copied, or choose one from Photos.</small></div>{!hasScreenshotAccess && <label className="screenshot-access"><span>Personal AI access code · once per device</span><input type="password" value={screenshotAccessCode} onChange={(event) => setScreenshotAccessCode(event.target.value)} placeholder="Enter access code" autoComplete="off"/></label>}<div className="screenshot-actions"><button onClick={() => void pasteScreenshot()} disabled={screenshotState === "reading"}>Paste screenshot</button><button onClick={() => screenshotInput.current?.click()} disabled={screenshotState === "reading"}>Choose from Photos</button></div><input ref={screenshotInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void readScreenshot(file); event.currentTarget.value = ""; }}/><div ref={pasteTarget} className="paste-target" contentEditable suppressContentEditableWarning onPaste={(event) => { event.preventDefault(); const file = Array.from(event.clipboardData.items).find((item) => item.type.startsWith("image/"))?.getAsFile(); if (file) void readScreenshot(file); else setScreenshotError("The clipboard does not contain an image."); }} aria-label="Paste a workout screenshot here">Tap here, then Paste</div>{screenshotState === "reading" && <p className="screenshot-status" role="status"><span/>Reading workout details…</p>}{screenshotError && <p className="screenshot-error" role="alert">{screenshotError}</p>}</section>
+              <div className="field-grid"><label><span>Duration</span><div><input value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/></div></label><label><span>Distance</span><div><input value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/></div></label><label><span>Pace</span><div><input value={session.pace ?? ""} onChange={(e) => update({ pace: e.target.value })} placeholder="—"/></div></label><label><span>Calories</span><div><input inputMode="numeric" value={session.calories ?? ""} onChange={(e) => update({ calories: e.target.value })} placeholder="—"/></div></label><label><span>Start time</span><div><input value={session.startTime ?? ""} onChange={(e) => update({ startTime: e.target.value })} placeholder="—"/></div></label></div>
               <div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>
+              {session.detailSource && <p className="detail-source">Imported from {session.detailSource} · You can edit any value.</p>}
             </div>
           </details>
         </div>
@@ -423,6 +486,7 @@ export default function Home() {
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
+      {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
       {tab === "week" && <WeekView today={today} sessions={history} currentSession={session} exercises={libraryExercises} toggleExercise={toggleMobilitySelection} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} insightReports={insightReports} setInsightReports={setInsightReports} onOpenDate={openDate}/>}
@@ -430,6 +494,13 @@ export default function Home() {
     </main>
     <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
+}
+
+function ScreenshotReview({ workout, setWorkout, preview, activeDate, hasExisting, onApply, onClose }: { workout: ScreenshotWorkout; setWorkout: React.Dispatch<React.SetStateAction<ScreenshotWorkout | null>>; preview: string; activeDate: string; hasExisting: boolean; onApply: () => void; onClose: () => void }) {
+  const updateField = (field: keyof ScreenshotWorkout, value: string) => setWorkout((current) => current ? { ...current, [field]: value } : current);
+  const dateMismatch = Boolean(workout.date && workout.date !== activeDate);
+  const fields: Array<[keyof ScreenshotWorkout, string, string]> = [["activity", "Activity", "Run"], ["date", "Workout date", "YYYY-MM-DD"], ["startTime", "Start time", "8:42 AM"], ["distance", "Distance", "6.89 mi"], ["duration", "Duration", "1:50:52"], ["pace", "Pace", "16:05 min/mi"], ["calories", "Calories", "745"]];
+  return <div className="screenshot-review-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="screenshot-review" role="dialog" aria-modal="true" aria-labelledby="screenshot-review-title"><header><div><span>AI SCREENSHOT IMPORT</span><h2 id="screenshot-review-title">Review workout details</h2><p>Correct anything that looks wrong, then apply it.</p></div><button onClick={onClose} aria-label="Close screenshot review">×</button></header><div className="screenshot-review-content">{preview && <figure><img src={preview} alt="Workout screenshot being reviewed"/><figcaption>The image is discarded after this review.</figcaption></figure>}<div className="review-fields">{fields.map(([field, label, placeholder]) => <label key={field}><span>{label}</span><input value={String(workout[field] ?? "")} onChange={(event) => updateField(field, event.target.value)} placeholder={placeholder}/></label>)}</div></div>{workout.warnings.length > 0 && <div className="review-warning"><strong>Check these details</strong><ul>{workout.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></div>}{dateMismatch && <p className="review-caution">This screenshot says {workout.date}, but you’re editing {activeDate}. Applying keeps the workout on the day you’re currently viewing.</p>}{hasExisting && <p className="review-caution">Applying will replace existing duration, distance, pace, calories, and start time on this day.</p>}<footer><button onClick={onClose}>Cancel</button><button className="apply-import" onClick={onApply}>Apply to Details</button></footer></section></div>;
 }
 
 function formatTimestamp(seconds: number) { const minutes = Math.floor(seconds / 60); return `${minutes}:${String(seconds % 60).padStart(2, "0")}`; }
@@ -613,6 +684,6 @@ function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutu
     <section className="settings-card future-video-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Future workout videos</h2><p>Save a YouTube link now and add it to today when you’re ready</p></div></div><div className="future-video-form"><input type="url" value={futureUrl} onChange={(e) => setFutureUrl(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void saveFutureVideo(); }} placeholder="Paste YouTube URL" aria-label="YouTube URL for a future workout"/><button onClick={() => void saveFutureVideo()} disabled={savingFutureVideo}>{savingFutureVideo ? "Saving…" : "Save for later"}</button></div>{futureNotice && <p className="notice" role="status">{futureNotice}</p>}{futureVideos.length ? <div className="video-grid future-video-grid">{futureVideos.map((video, index) => <VideoCard video={video} onAddToday={() => void addFutureToToday(video)} onDelete={() => setFutureVideos((items) => items.filter((_, itemIndex) => itemIndex !== index))} onRetry={() => void retryFutureVideo(video)} key={`${video.url}-${index}`}/>)}</div> : <p className="empty-state">No future workout videos saved yet.</p>}</section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div>{recentVideos.length ? <div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div> : <p className="empty-state">Videos added to a workout will appear here.</p>}</section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon data">↑</span><div><h2>Restore from backup</h2><p>Reload workouts, mobility exercises, and future videos from a saved file</p></div></div><label className="wide-action file-action">Choose backup file <span>↑</span><input type="file" accept="application/json" onChange={(e) => e.target.files?.[0] && restoreData(e.target.files[0])}/></label>{notice && <p className="notice">✓ {notice}</p>}<p className="backup-note">Choose your newest dated Training for Life backup. Restoring replaces the app’s saved workout history, mobility library, and future video library with the file’s contents.</p></section>
-    <section className="privacy-card"><span>PRIVATE BY DEFAULT</span><h2>Your history stays under your control.</h2><p>No analytics and no automatic workout uploads. Workout history stays on this device unless you tap Generate AI insights; then only the compact fields from your selected period are sent through the private Training for Life helper to OpenAI. Video links are sent only when you request a workout guide. Finished guides and insight reports are saved on this device and in your backup.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
+    <section className="privacy-card"><span>PRIVATE BY DEFAULT</span><h2>Your history stays under your control.</h2><p>No analytics and no automatic workout uploads. Workout history stays on this device unless you request an AI feature. A screenshot is sent only when you choose Paste or Photos, and the image is discarded after the review; only values you apply are saved and backed up. Compact history fields are sent when you generate AI insights. Video links are sent only when you request a workout guide.</p><p className="disclaimer">This is a tracking tool, not medical advice. Use controlled movement and an appropriate load; stop for sharp pain and seek qualified care when needed.</p></section>
   </div>;
 }

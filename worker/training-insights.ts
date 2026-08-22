@@ -5,6 +5,9 @@ type InsightSession = {
   activities: string[];
   duration: string;
   distance: string;
+  pace?: string;
+  calories?: string;
+  startTime?: string;
   effort: string;
   notes: string;
   mobilityExercises: string[];
@@ -46,7 +49,7 @@ export async function createTrainingInsights(apiKey: string, sessions: InsightSe
     plannedTheme: String(session.plannedTheme || "").slice(0, 80),
     status: String(session.status || "").slice(0, 20),
     activities: (session.activities || []).slice(0, 8).map((item) => String(item).slice(0, 80)),
-    duration: String(session.duration || "").slice(0, 80), distance: String(session.distance || "").slice(0, 80), effort: String(session.effort || "").slice(0, 20),
+    duration: String(session.duration || "").slice(0, 80), distance: String(session.distance || "").slice(0, 80), pace: String(session.pace || "").slice(0, 80), calories: String(session.calories || "").slice(0, 40), startTime: String(session.startTime || "").slice(0, 40), effort: String(session.effort || "").slice(0, 20),
     notes: String(session.notes || "").slice(0, 1200),
     mobilityExercises: (session.mobilityExercises || []).slice(0, 30).map((item) => String(item).slice(0, 100)),
     completedExercises: (session.completedExercises || []).slice(0, 30).map((item) => String(item).slice(0, 100)),
