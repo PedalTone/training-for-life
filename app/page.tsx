@@ -22,6 +22,7 @@ type TrainingInsightReport = {
   headline: string; summary: string; wins: string[]; patterns: string[];
   recommendations: InsightRecommendation[]; cautions: string[]; dataQuality: string;
 };
+type FitnessGoals = { primaryGoal: string; priorities: string; constraints: string; updatedAt: string };
 type ScreenshotWorkout = {
   activity: string; date: string; startTime: string; distance: string; duration: string; pace: string; calories: string;
   source: string; confidence: "high" | "medium" | "low"; warnings: string[];
@@ -109,7 +110,7 @@ async function fetchWorkoutGuide(videoUrl: string) {
   if (!response.ok || !("exercises" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "Workout guide unavailable.");
   return payload;
 }
-async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 90, accessCode: string) {
+async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 90, accessCode: string, goals: FitnessGoals) {
   const localService = typeof window !== "undefined" && (window.location.hostname.endsWith("chatgpt.site") || ["localhost", "127.0.0.1"].includes(window.location.hostname));
   const service = localService ? "" : "https://training-4-life.tommy-tritone.chatgpt.site";
   const compactSessions = sessions.map((saved) => ({
@@ -118,7 +119,7 @@ async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 9
     notes: saved.notes, mobilityExercises: saved.mobilityExercises, completedExercises: saved.completedExercises,
     injury: { reported: hasReportedInjury(saved), impact: saved.injury.impact, bodyArea: saved.injury.bodyArea, note: saved.injury.note },
   }));
-  const response = await fetch(`${service}/api/training-insights`, { method: "POST", headers: { "Content-Type": "application/json", "X-Training-Insights-Key": accessCode }, body: JSON.stringify({ sessions: compactSessions, periodDays }) });
+  const response = await fetch(`${service}/api/training-insights`, { method: "POST", headers: { "Content-Type": "application/json", "X-Training-Insights-Key": accessCode }, body: JSON.stringify({ sessions: compactSessions, periodDays, goals: { primaryGoal: goals.primaryGoal.slice(0, 500), priorities: goals.priorities.slice(0, 1000), constraints: goals.constraints.slice(0, 1000) } }) });
   const payload = await response.json() as Omit<TrainingInsightReport, "id"> | { error?: string };
   if (!response.ok || !("headline" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "AI insights are temporarily unavailable.");
   return { ...payload, id: `${periodDays}-${Date.now()}` } as TrainingInsightReport;
@@ -144,7 +145,7 @@ async function prepareScreenshot(file: Blob) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.10";
+const APP_VERSION = "v1.11";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -163,12 +164,12 @@ function backupFilename(now = new Date()) {
   const part = (value: number) => String(value).padStart(2, "0");
   return `training-for-life-backup-${now.getFullYear()}-${part(now.getMonth() + 1)}-${part(now.getDate())}_${part(now.getHours())}-${part(now.getMinutes())}-${part(now.getSeconds())}.json`;
 }
-function makeBackupFile(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[], insightReports: TrainingInsightReport[]) {
-  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, libraryExercises, futureVideos, insightReports, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
+function makeBackupFile(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[], insightReports: TrainingInsightReport[], goals: FitnessGoals) {
+  const payload = { schemaVersion: 1, exportedAt: new Date().toISOString(), sessions, libraryExercises, futureVideos, insightReports, goals, settings: { weekStartsOn: "monday", adherenceThreshold: 5 } };
   return new File([JSON.stringify(payload, null, 2)], backupFilename(), { type: "application/json" });
 }
-async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[], insightReports: TrainingInsightReport[]) {
-  const file = makeBackupFile(sessions, libraryExercises, futureVideos, insightReports);
+async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise[], futureVideos: Video[], insightReports: TrainingInsightReport[], goals: FitnessGoals) {
+  const file = makeBackupFile(sessions, libraryExercises, futureVideos, insightReports, goals);
   const pickerWindow = window as SavePickerWindow;
   if (pickerWindow.showSaveFilePicker) {
     const handle = await pickerWindow.showSaveFilePicker({ suggestedName: file.name, id: "training-for-life-daily-backup", types: [{ description: "Training for Life backup", accept: { "application/json": [".json"] } }] });
@@ -234,6 +235,7 @@ export default function Home() {
   const [libraryExercises, setLibraryExercises] = useState<LibraryExercise[]>(defaultExerciseLibrary);
   const [futureVideos, setFutureVideos] = useState<Video[]>([]);
   const [insightReports, setInsightReports] = useState<TrainingInsightReport[]>([]);
+  const [fitnessGoals, setFitnessGoals] = useState<FitnessGoals>({ primaryGoal: "", priorities: "", constraints: "", updatedAt: "" });
   const [screenshotState, setScreenshotState] = useState<"idle" | "reading" | "review">("idle");
   const [screenshotPreview, setScreenshotPreview] = useState("");
   const [screenshotWorkout, setScreenshotWorkout] = useState<ScreenshotWorkout | null>(null);
@@ -261,6 +263,7 @@ export default function Home() {
     }
     const savedFutureVideos = localStorage.getItem("t4l:future-videos"); if (savedFutureVideos) setFutureVideos(JSON.parse(savedFutureVideos));
     const savedInsightReports = localStorage.getItem("t4l:insight-reports"); if (savedInsightReports) setInsightReports(JSON.parse(savedInsightReports));
+    const savedGoals = localStorage.getItem("t4l:fitness-goals"); if (savedGoals) setFitnessGoals({ primaryGoal: "", priorities: "", constraints: "", updatedAt: "", ...JSON.parse(savedGoals) });
   }, []);
   useEffect(() => {
     if (!loaded) return;
@@ -275,6 +278,7 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("t4l:library", JSON.stringify(libraryExercises)); }, [libraryExercises]);
   useEffect(() => { localStorage.setItem("t4l:future-videos", JSON.stringify(futureVideos)); }, [futureVideos]);
   useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
+  useEffect(() => { localStorage.setItem("t4l:fitness-goals", JSON.stringify(fitnessGoals)); }, [fitnessGoals]);
   useEffect(() => {
     const id = youtubeId(videoUrl.trim());
     if (!id) return;
@@ -310,7 +314,7 @@ export default function Home() {
     const current = { ...session, status: plan.key === "rest" ? "rest" as const : "completed" as const, completedAt: now, updatedAt: now };
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
     try {
-      await saveBackup(allSessions, libraryExercises, futureVideos, insightReports);
+      await saveBackup(allSessions, libraryExercises, futureVideos, insightReports, fitnessGoals);
       try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
       setSession(current); setHistory(allSessions);
       setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
@@ -482,8 +486,8 @@ export default function Home() {
       {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
       {tab === "week" && <WeekView today={today} sessions={history} onOpenDate={openDate}/>}
-      {tab === "history" && <HistoryView now={today} sessions={history} insightReports={insightReports} setInsightReports={setInsightReports} onOpenDate={openDate}/>}
-      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
+      {tab === "history" && <HistoryView now={today} sessions={history} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} onOpenDate={openDate}/>}
+      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
     </main>
     <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
@@ -556,7 +560,7 @@ function WeekView({ today, sessions, onOpenDate }: { today: Date; sessions: Sess
   </div>;
 }
 
-function HistoryView({ now, sessions, insightReports, setInsightReports, onOpenDate }: { now: Date; sessions: Session[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; onOpenDate: (date: Date) => void }) {
+function HistoryView({ now, sessions, insightReports, setInsightReports, fitnessGoals, onOpenDate }: { now: Date; sessions: Session[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; onOpenDate: (date: Date) => void }) {
   const [view, setView] = useState<"weeks" | "month">("weeks");
   const [flaggedOnly, setFlaggedOnly] = useState(false);
   const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(30);
@@ -586,7 +590,7 @@ function HistoryView({ now, sessions, insightReports, setInsightReports, onOpenD
     setInsightState("analyzing"); setInsightError("");
     try {
       localStorage.setItem("t4l:insights-access", insightAccessCode.trim());
-      const report = await fetchTrainingInsights(insightSessions, insightPeriod, insightAccessCode.trim());
+      const report = await fetchTrainingInsights(insightSessions, insightPeriod, insightAccessCode.trim(), fitnessGoals);
       setInsightReports((items) => [report, ...items.filter((item) => item.periodDays !== insightPeriod)]);
     } catch (error) { setInsightError(error instanceof Error ? error.message : "AI insights are temporarily unavailable."); }
     finally { setInsightState("idle"); }
@@ -622,12 +626,13 @@ function calculateStreak(sessions: Session[], now: Date) {
   return streak;
 }
 
-function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutureVideos, insightReports, setInsightReports, sessions, setHistory, onDeleteVideo, onAddToToday }: { libraryExercises: LibraryExercise[]; setLibraryExercises: React.Dispatch<React.SetStateAction<LibraryExercise[]>>; futureVideos: Video[]; setFutureVideos: React.Dispatch<React.SetStateAction<Video[]>>; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void; onAddToToday: (video: Video) => Promise<string> }) {
+function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutureVideos, insightReports, setInsightReports, fitnessGoals, setFitnessGoals, sessions, setHistory, onDeleteVideo, onAddToToday }: { libraryExercises: LibraryExercise[]; setLibraryExercises: React.Dispatch<React.SetStateAction<LibraryExercise[]>>; futureVideos: Video[]; setFutureVideos: React.Dispatch<React.SetStateAction<Video[]>>; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; setFitnessGoals: React.Dispatch<React.SetStateAction<FitnessGoals>>; sessions: Session[]; setHistory: React.Dispatch<React.SetStateAction<Session[]>>; onDeleteVideo: (sessionId: string, videoIndex: number) => void; onAddToToday: (video: Video) => Promise<string> }) {
   const [newExercise, setNewExercise] = useState(""); const [newEquipment, setNewEquipment] = useState(""); const [notice, setNotice] = useState("");
   const [futureUrl, setFutureUrl] = useState(""); const [futureNotice, setFutureNotice] = useState(""); const [savingFutureVideo, setSavingFutureVideo] = useState(false);
   const recentVideos = sessions.flatMap((s) => s.videos.map((video, videoIndex) => ({ ...video, sessionId: s.id, videoIndex }))).slice(0, 6);
   const updateExercise = (id: string, patch: Partial<LibraryExercise>) => setLibraryExercises((items) => items.map((item) => item.id === id ? { ...item, ...patch } : item));
   const addExercise = () => { if (!newExercise.trim()) return; setLibraryExercises((items) => [...items, { id: crypto.randomUUID(), name: newExercise.trim(), equipment: newEquipment.trim() || "No equipment listed" }]); setNewExercise(""); setNewEquipment(""); };
+  const updateGoal = (field: keyof FitnessGoals, value: string) => setFitnessGoals((current) => ({ ...current, [field]: value, updatedAt: new Date().toISOString() }));
   const updateFutureVideo = (url: string, patch: Partial<Video>) => setFutureVideos((items) => items.map((item) => item.url === url ? { ...item, ...patch } : item));
   async function saveFutureVideo() {
     const url = futureUrl.trim(); const videoId = youtubeId(url);
@@ -663,9 +668,10 @@ function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutu
     if (video.guideStatus === "analyzing") { setFutureNotice("The workout guide is still building. Add it when the guide is ready."); return; }
     setFutureNotice(await onAddToToday(video));
   }
-  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (Array.isArray(payload.libraryExercises)) { const restoredLibrary = payload.libraryExercises.filter((item: LibraryExercise) => item?.id && item?.name).map((item: LibraryExercise) => ({ id: item.id, name: item.name, equipment: item.equipment || "No equipment listed" })); localStorage.setItem("t4l:library", JSON.stringify(restoredLibrary)); setLibraryExercises(restoredLibrary); } if (Array.isArray(payload.futureVideos)) { const restoredVideos = payload.futureVideos.filter((item: Video) => item?.url && item?.label); localStorage.setItem("t4l:future-videos", JSON.stringify(restoredVideos)); setFutureVideos(restoredVideos); } if (Array.isArray(payload.insightReports)) { const restoredReports = payload.insightReports.filter((item: TrainingInsightReport) => item?.id && item?.headline); localStorage.setItem("t4l:insight-reports", JSON.stringify(restoredReports)); setInsightReports(restoredReports); } setHistory(restored); setNotice(`Restored ${restored.length} sessions, ${Array.isArray(payload.insightReports) ? payload.insightReports.length : 0} insight reports, and your libraries. Reloading…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
+  async function restoreData(file: File) { try { const payload = JSON.parse(await file.text()); if (payload.schemaVersion !== 1 || !Array.isArray(payload.sessions)) throw new Error(); const restored = payload.sessions.map((item: Session) => normalizeSession(item)); await Promise.all(restored.map(saveSession)); if (payload.goals && typeof payload.goals === "object") { const restoredGoals = { primaryGoal: String(payload.goals.primaryGoal || ""), priorities: String(payload.goals.priorities || ""), constraints: String(payload.goals.constraints || ""), updatedAt: String(payload.goals.updatedAt || "") }; localStorage.setItem("t4l:fitness-goals", JSON.stringify(restoredGoals)); setFitnessGoals(restoredGoals); } if (Array.isArray(payload.libraryExercises)) { const restoredLibrary = payload.libraryExercises.filter((item: LibraryExercise) => item?.id && item?.name).map((item: LibraryExercise) => ({ id: item.id, name: item.name, equipment: item.equipment || "No equipment listed" })); localStorage.setItem("t4l:library", JSON.stringify(restoredLibrary)); setLibraryExercises(restoredLibrary); } if (Array.isArray(payload.futureVideos)) { const restoredVideos = payload.futureVideos.filter((item: Video) => item?.url && item?.label); localStorage.setItem("t4l:future-videos", JSON.stringify(restoredVideos)); setFutureVideos(restoredVideos); } if (Array.isArray(payload.insightReports)) { const restoredReports = payload.insightReports.filter((item: TrainingInsightReport) => item?.id && item?.headline); localStorage.setItem("t4l:insight-reports", JSON.stringify(restoredReports)); setInsightReports(restoredReports); } setHistory(restored); setNotice(`Restored ${restored.length} sessions, your goals, and saved libraries. Reloading…`); window.setTimeout(() => window.location.reload(), 700); } catch { setNotice("That file is not a valid Training for Life backup."); } }
   return <div className="subpage more-page">
     <section className="page-intro"><span className="kicker">YOUR APP</span><h1>More</h1><p>Manage your mobility library, saved videos, and restored data.</p></section>
+    <details className="settings-card goals-card" open><summary><span className="setting-icon data">◎</span><span><strong>Fitness goals & priorities</strong><small>{fitnessGoals.primaryGoal.trim() ? "Used as the AI Insights baseline" : "Add context for AI Insights"}</small></span><i>＋</i></summary><p className="library-editor-help">Tell the app what you are working toward so AI Insights can compare your training with what matters most to you.</p><label>Primary goal<input value={fitnessGoals.primaryGoal} onChange={(event) => updateGoal("primaryGoal", event.target.value)} placeholder="e.g., Run a comfortable half marathon"/></label><label>Priorities<textarea value={fitnessGoals.priorities} onChange={(event) => updateGoal("priorities", event.target.value)} placeholder="e.g., consistency, aerobic fitness, strength, mobility" rows={3}/></label><label>Constraints or considerations<textarea value={fitnessGoals.constraints} onChange={(event) => updateGoal("constraints", event.target.value)} placeholder="e.g., protect my right knee; two short sessions on weekdays" rows={3}/></label><p className="backup-note">Saved on this device and included in your backups. Sent to AI only when you generate insights.</p></details>
     <details className="settings-card library-manager"><summary><span className="setting-icon mobility">↗</span><span><strong>Edit Mobility Library</strong><small>{libraryExercises.length} exercises · add or edit</small></span><i>＋</i></summary><p className="library-editor-help">Add a new mobility exercise here, or tap any existing name or equipment line to edit it.</p><div className="add-library-exercise"><input value={newExercise} onChange={(e) => setNewExercise(e.target.value)} placeholder="New mobility exercise" aria-label="New mobility exercise"/><input value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} placeholder="Equipment or instructions" aria-label="New mobility exercise equipment or instructions"/><button onClick={addExercise}>Add mobility exercise</button></div><div className="library-editor-list">{libraryExercises.map((exercise) => <div className="library-editor-row" key={exercise.id}><span className="exercise-visual"><MovementMark exerciseId={exercise.id} name={exercise.name}/></span><div><input aria-label="Mobility exercise name" value={exercise.name} onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}/><input aria-label="Equipment or instructions" value={exercise.equipment} onChange={(e) => updateExercise(exercise.id, { equipment: e.target.value })}/></div></div>)}</div></details>
     <section className="settings-card future-video-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Future workout videos</h2><p>Save a YouTube link now and add it to today when you’re ready</p></div></div><div className="future-video-form"><input type="url" value={futureUrl} onChange={(e) => setFutureUrl(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void saveFutureVideo(); }} placeholder="Paste YouTube URL" aria-label="YouTube URL for a future workout"/><button onClick={() => void saveFutureVideo()} disabled={savingFutureVideo}>{savingFutureVideo ? "Saving…" : "Save for later"}</button></div>{futureNotice && <p className="notice" role="status">{futureNotice}</p>}{futureVideos.length ? <div className="video-grid future-video-grid">{futureVideos.map((video, index) => <VideoCard video={video} onAddToday={() => void addFutureToToday(video)} onDelete={() => setFutureVideos((items) => items.filter((_, itemIndex) => itemIndex !== index))} onRetry={() => void retryFutureVideo(video)} key={`${video.url}-${index}`}/>)}</div> : <p className="empty-state">No future workout videos saved yet.</p>}</section>
     <section className="settings-card"><div className="settings-title"><span className="setting-icon video">▶</span><div><h2>Recent videos</h2><p>Quickly reopen past workout references</p></div></div>{recentVideos.length ? <div className="video-grid">{recentVideos.map((video) => <VideoCard video={video} onDelete={() => onDeleteVideo(video.sessionId, video.videoIndex)} key={`${video.sessionId}-${video.videoIndex}`}/>)}</div> : <p className="empty-state">Videos added to a workout will appear here.</p>}</section>

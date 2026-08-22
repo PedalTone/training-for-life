@@ -63,10 +63,10 @@ const worker = {
       try {
         if (!env.INSIGHTS_ACCESS_CODE) return Response.json({ error: "AI insights are not configured yet." }, { status: 503, headers });
         if (request.headers.get("X-Training-Insights-Key") !== env.INSIGHTS_ACCESS_CODE) return Response.json({ error: "The AI access code is incorrect." }, { status: 401, headers });
-        const body = await request.json() as { sessions?: Parameters<typeof createTrainingInsights>[1]; periodDays?: number };
+        const body = await request.json() as { sessions?: Parameters<typeof createTrainingInsights>[1]; periodDays?: number; goals?: Parameters<typeof createTrainingInsights>[3] };
         const sessions = Array.isArray(body.sessions) ? body.sessions : [];
         const periodDays = [0, 30, 90].includes(Number(body.periodDays)) ? Number(body.periodDays) : 30;
-        const report = await createTrainingInsights(env.OPENAI_API_KEY || "", sessions, periodDays);
+        const report = await createTrainingInsights(env.OPENAI_API_KEY || "", sessions, periodDays, body.goals || {});
         return Response.json({ ...report, generatedAt: new Date().toISOString(), periodDays, sessionsAnalyzed: sessions.length }, { headers });
       } catch (error) {
         const detail = error instanceof Error ? error.message : "AI insights are unavailable.";
