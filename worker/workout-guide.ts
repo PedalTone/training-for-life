@@ -1,5 +1,55 @@
 import { fetchTranscript, type TranscriptResponse } from "youtube-transcript";
 
+const youtubeVideoId = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+
+function captionText(value: string) {
+  return value.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16))).replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(Number(dec))).trim();
+}
+
+function parseCaptionXml(xml: string, lang: string): TranscriptResponse[] {
+  const srv3: TranscriptResponse[] = [];
+  for (const match of xml.matchAll(/<p\s+t="(\d+)"\s+d="(\d+)"[^>]*>([\s\S]*?)<\/p>/g)) {
+    const text = captionText([...match[3].matchAll(/<s[^>]*>([\s\S]*?)<\/s>/g)].map((item) => item[1]).join("" ) || match[3]);
+    if (text) srv3.push({ text, duration: Number(match[2]), offset: Number(match[1]), lang });
+  }
+  if (srv3.length) return srv3;
+  return [...xml.matchAll(/<text\s+start="([^"]*)"\s+dur="([^"]*)"[^>]*>([\s\S]*?)<\/text>/g)].map((match) => ({ text: captionText(match[3]), duration: Number(match[2]), offset: Number(match[1]) * 1000, lang })).filter((item) => item.text);
+}
+
+async function fetchTranscriptFromCaptionTracks(videoUrl: string): Promise<TranscriptResponse[]> {
+  const videoId = videoUrl.match(youtubeVideoId)?.[1];
+  if (!videoId) throw new Error("Could not identify the YouTube video.");
+  const response = await fetch("https://www.youtube.com/youtubei/v1/player?prettyPrint=false", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "User-Agent": "com.google.android.youtube/20.10.38 (Linux; U; Android 14)" },
+    body: JSON.stringify({ context: { client: { clientName: "ANDROID", clientVersion: "20.10.38" } }, videoId }),
+  });
+  if (!response.ok) throw new Error("YouTube caption metadata was unavailable.");
+  const payload = await response.json() as { captions?: { playerCaptionsTracklistRenderer?: { captionTracks?: { baseUrl?: string; languageCode?: string }[] } } };
+  const tracks = payload.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
+  const track = tracks.find((item) => item.languageCode === "en" || item.languageCode?.startsWith("en-")) || tracks[0];
+  if (!track?.baseUrl) throw new Error(`No transcripts are available for this video (${videoId}).`);
+  const captionUrl = new URL(track.baseUrl);
+  captionUrl.searchParams.set("fmt", "srv3");
+  const captionResponse = await fetch(captionUrl, { headers: { "User-Agent": "com.google.android.youtube/20.10.38 (Linux; U; Android 14)" } });
+  if (!captionResponse.ok) throw new Error("YouTube caption text was unavailable.");
+  const transcript = parseCaptionXml(await captionResponse.text(), track.languageCode || "en");
+  if (!transcript.length) throw new Error(`No transcript was returned for this video (${videoId}).`);
+  return transcript;
+}
+
+async function fetchTranscriptWithFallback(videoUrl: string) {
+  try {
+    return await fetchTranscript(videoUrl);
+  } catch (firstError) {
+    try {
+      return await fetchTranscriptFromCaptionTracks(videoUrl);
+    } catch {
+      throw firstError;
+    }
+  }
+}
+
 type ExercisePattern = { name: string; aliases: string[]; graphicQuery?: string };
 type ExerciseGraphic = { name?: string; gifUrl?: string; equipments?: string[]; instructions?: string[] };
 
@@ -153,7 +203,7 @@ async function findGraphic(name: string, query = name): Promise<ExerciseGraphic 
 }
 
 export async function createWorkoutGuide(videoUrl: string) {
-  const transcript = await fetchTranscript(videoUrl);
+  const transcript = await fetchTranscriptWithFallback(videoUrl);
   if (!transcript.length) throw new Error("No transcript was returned for this video.");
   const maxOffset = Math.max(...transcript.map((segment) => segment.offset));
   const offsetFactor = maxOffset < 36000 ? 1000 : 1;
