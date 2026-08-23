@@ -196,6 +196,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .workout-guide > summary { min-height: 64px; padding: 10px 14px; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; }.workout-guide > summary::-webkit-details-marker { display: none; }
 .workout-guide > summary strong,.workout-guide > summary small { display: block; }.workout-guide > summary strong { font-size: 16px; }.workout-guide > summary small { margin-top: 3px; font-size: 13px; color: var(--muted); }.workout-guide > summary i { font-style: normal; color: var(--muted); }
 .workout-guide-body { padding: 0 12px 12px; display: grid; gap: 9px; }
+.guide-refresh { width: 100%; min-height: 42px; margin-top: 8px; border: 1px solid #c9d8e8; border-radius: 11px; background: #f2f7fc; color: #315f8b; font-size: 14px; font-weight: 760; }.guide-refresh:disabled { opacity: .62; }
 .guide-structure { margin: 0; padding: 11px 13px; border-radius: 12px; background: #e9f0ea; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px 14px; list-style: none; }.guide-structure li { min-width: 0; display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }.guide-structure b { color: #41604f; }.guide-structure span { text-align: right; }
 .guide-exercise-list { margin: 0; padding: 0; display: grid; gap: 9px; list-style: none; }
 .guide-exercise { padding: 10px; border: 1px solid #e0e5e0; border-radius: 13px; background: white; display: grid; grid-template-columns: 112px 1fr; gap: 13px; align-items: start; }
