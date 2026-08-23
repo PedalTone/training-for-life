@@ -103,10 +103,10 @@ async function captureYoutubeThumbnail(id: string) {
   if (!response.ok) throw new Error("Thumbnail unavailable");
   return blobAsDataUrl(await response.blob());
 }
-async function fetchWorkoutGuide(videoUrl: string) {
+async function fetchWorkoutGuide(videoUrl: string, videoTitle = "") {
   const localService = typeof window !== "undefined" && (window.location.hostname.endsWith("chatgpt.site") || ["localhost", "127.0.0.1"].includes(window.location.hostname));
   const service = localService ? "" : "https://training-4-life.tommy-tritone.chatgpt.site";
-  const response = await fetch(`${service}/api/workout-guide`, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ url: videoUrl }) });
+  const response = await fetch(`${service}/api/workout-guide`, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ url: videoUrl, title: videoTitle }) });
   const payload = await response.json() as WorkoutGuide | { error?: string };
   if (!response.ok || !("exercises" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "Workout guide unavailable.");
   return payload;
@@ -156,7 +156,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.20";
+const APP_VERSION = "v1.21";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -657,7 +657,7 @@ function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutu
     const video: Video = { url, label, videoId, thumbnailData, guideStatus: "analyzing" };
     setFutureVideos((items) => [video, ...items]); setFutureUrl(""); setSavingFutureVideo(false); setFutureNotice("Saved for later. Building its workout guide…");
     try {
-      const workoutGuide = await fetchWorkoutGuide(url);
+      const workoutGuide = await fetchWorkoutGuide(url, label);
       updateFutureVideo(url, { guideStatus: "ready", guideError: undefined, workoutGuide });
       setFutureNotice(`Saved for later with ${workoutGuide.exercises.length} exercises.`);
     } catch (error) {
@@ -669,7 +669,7 @@ function MoreView({ libraryExercises, setLibraryExercises, futureVideos, setFutu
   async function retryFutureVideo(video: Video) {
     updateFutureVideo(video.url, { guideStatus: "analyzing", guideError: undefined }); setFutureNotice("Rebuilding workout guide…");
     try {
-      const workoutGuide = await fetchWorkoutGuide(video.url);
+      const workoutGuide = await fetchWorkoutGuide(video.url, video.label);
       updateFutureVideo(video.url, { guideStatus: "ready", workoutGuide }); setFutureNotice("Workout guide is ready.");
     } catch (error) {
       const guideError = error instanceof Error ? error.message : "Workout guide unavailable.";

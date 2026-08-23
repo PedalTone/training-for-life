@@ -84,10 +84,10 @@ const worker = {
       if (request.method !== "POST") return Response.json({ error: "Method not allowed." }, { status: 405, headers });
       let requestedUrl = "";
       try {
-        const body = await request.json() as { url?: string };
+        const body = await request.json() as { url?: string; title?: string };
         requestedUrl = body.url || "";
         if (!body.url || !/^https?:\/\//.test(body.url)) return Response.json({ error: "Paste a valid YouTube link." }, { status: 400, headers });
-        const guide = await createWorkoutGuide(body.url);
+        const guide = await createWorkoutGuide(body.url, body.title || "");
         return Response.json(guide, { headers });
       } catch (error) {
         const detail = error instanceof Error ? error.message : "Transcript unavailable.";

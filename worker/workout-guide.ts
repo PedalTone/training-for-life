@@ -190,6 +190,21 @@ function secondsFor(segment: TranscriptResponse, factor: number) {
   return Math.max(0, Math.round((segment.offset * factor) / 1000));
 }
 
+function equipmentHint(text: string) {
+  const clean = normalized(text);
+  if (/\bkettlebells?\b/.test(clean)) return "kettlebell";
+  if (/\bdumbbells?\b/.test(clean)) return "dumbbell";
+  if (/\bbarbells?\b/.test(clean)) return "barbell";
+  return "";
+}
+
+function equipmentAwareQuery(name: string, query: string | undefined, equipment: string) {
+  if (!equipment || query === "") return query;
+  const base = query || name;
+  if (new RegExp(`\\b${equipment}s?\\b`, "i").test(base)) return base;
+  return `${equipment} ${base}`;
+}
+
 async function findGraphic(name: string, query = name): Promise<ExerciseGraphic | undefined> {
   try {
     const response = await fetch(`https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(query)}`, { headers: { Accept: "application/json" } });
@@ -203,12 +218,14 @@ async function findGraphic(name: string, query = name): Promise<ExerciseGraphic 
   }
 }
 
-export async function createWorkoutGuide(videoUrl: string) {
+export async function createWorkoutGuide(videoUrl: string, videoTitle = "") {
   const transcript = await fetchTranscriptWithFallback(videoUrl);
   if (!transcript.length) throw new Error("No transcript was returned for this video.");
   const maxOffset = Math.max(...transcript.map((segment) => segment.offset));
   const offsetFactor = maxOffset < 36000 ? 1000 : 1;
-  const found = new Map<string, { name: string; graphicQuery?: string; timestamp: number; sets?: string; reps?: string; duration?: string; transcriptText: string }>();
+  const fullContext = `${videoTitle} ${transcript.map((segment) => segment.text).join(" ")}`;
+  const workoutEquipment = equipmentHint(fullContext);
+  const found = new Map<string, { name: string; graphicQuery?: string; timestamp: number; sets?: string; reps?: string; duration?: string; transcriptText: string; equipmentHint?: string }>();
 
   transcript.forEach((segment, index) => {
     const text = normalized(segment.text);
@@ -216,7 +233,7 @@ export async function createWorkoutGuide(videoUrl: string) {
       const matchedAlias = pattern.aliases.find((alias) => new RegExp(`\\b${aliasExpression(alias)}s?\\b`, "i").test(text));
       if (found.has(pattern.name) || !matchedAlias) continue;
       const context = transcript.slice(Math.max(0, index - 2), Math.min(transcript.length, index + 3)).map((item) => item.text).join(" ");
-      found.set(pattern.name, { name: pattern.name, graphicQuery: pattern.graphicQuery, timestamp: secondsFor(segment, offsetFactor), ...volumeFrom(context, matchedAlias), transcriptText: segment.text });
+      found.set(pattern.name, { name: pattern.name, graphicQuery: pattern.graphicQuery, timestamp: secondsFor(segment, offsetFactor), ...volumeFrom(context, matchedAlias), transcriptText: segment.text, equipmentHint: equipmentHint(`${videoTitle} ${context}`) || workoutEquipment });
       break;
     }
   });
@@ -227,8 +244,8 @@ export async function createWorkoutGuide(videoUrl: string) {
   }
 
   const exercises = await Promise.all([...found.values()].sort((a, b) => a.timestamp - b.timestamp).slice(0, 16).map(async (exercise) => {
-    const graphic = exercise.graphicQuery === "" ? undefined : await findGraphic(exercise.name, exercise.graphicQuery);
-    const { graphicQuery: _graphicQuery, ...details } = exercise;
+    const graphic = exercise.graphicQuery === "" ? undefined : await findGraphic(exercise.name, equipmentAwareQuery(exercise.name, exercise.graphicQuery, exercise.equipmentHint || workoutEquipment));
+    const { graphicQuery: _graphicQuery, equipmentHint: _equipmentHint, ...details } = exercise;
     return {
       ...details,
       displayName: exercise.name,
