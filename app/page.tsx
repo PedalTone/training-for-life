@@ -145,7 +145,7 @@ async function prepareScreenshot(file: Blob) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.14";
+const APP_VERSION = "v1.15";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -197,7 +197,7 @@ function stateSymbol(state: string) { return state === "completed" ? "✓" : sta
 function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Injury" : state === "rest" ? "Rest" : state === "partial" ? "In progress" : "Not logged"; }
 
 function MovementMark({ exerciseId, name }: { exerciseId?: string; name: string }) {
-  const iconFile = exerciseIconFiles[exerciseId || ""] || exerciseIconFiles[defaultExerciseIdByName.get(name) || ""];
+  const iconFile = exerciseIconFiles[exerciseId || ""] || exerciseIconFiles[defaultExerciseIdByName.get(name) || ""] || "custom-mobility.png";
   if (iconFile) return <img className="exercise-icon" src={`./exercise-icons/${iconFile}`} alt="" aria-hidden="true"/>;
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase() || "MOVE";
   return <span className="movement-fallback" aria-hidden="true"><b>{initials}</b><i>↗</i></span>;
