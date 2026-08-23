@@ -44,7 +44,8 @@ async function fetchTranscriptWithFallback(videoUrl: string) {
   } catch (firstError) {
     try {
       return await fetchTranscriptFromCaptionTracks(videoUrl);
-    } catch {
+    } catch (fallbackError) {
+      if (fallbackError instanceof Error && /no transcripts|no transcript|caption tracks/i.test(fallbackError.message)) throw fallbackError;
       throw firstError;
     }
   }
