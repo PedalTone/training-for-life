@@ -51,7 +51,7 @@ const exerciseGroups = [
   ] },
   { title: "Grip, balance + carry", subtitle: "Useful capacity", exercises: [
     ["Dead Hang", "Bar"], ["Balance — One Leg, Eyes Closed", "Bodyweight"], ["Farmer's Carry", "Dumbbells or kettlebells"], ["Side Plank", "Bodyweight · optional"],
-    ["Walking", "Outside or treadmill"],
+    ["Walking", "Outside or treadmill"], ["Deep Squat", "Bodyweight"],
   ] },
 ] as const;
 const defaultExerciseLibrary: LibraryExercise[] = exerciseGroups.flatMap((group) => group.exercises).map(([name, equipment], index) => ({ id: `exercise-${index + 1}`, name, equipment }));
@@ -62,6 +62,7 @@ const exerciseIconFiles: Record<string, string> = {
   "exercise-12": "crossovers.png", "exercise-13": "push-ups.png", "exercise-14": "bench-press.png", "exercise-15": "hollow-body-hold.png",
   "exercise-16": "wall-slide.png", "exercise-17": "dead-hang.png", "exercise-18": "balance.png", "exercise-19": "farmers-carry.png",
   "exercise-20": "side-plank.png", "exercise-21": "walking.png",
+  "exercise-22": "deep-squat.png",
 };
 const defaultExerciseIdByName = new Map(defaultExerciseLibrary.map((exercise) => [exercise.name, exercise.id]));
 
@@ -145,7 +146,7 @@ async function prepareScreenshot(file: Blob) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.15";
+const APP_VERSION = "v1.16";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
