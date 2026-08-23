@@ -14,13 +14,13 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.18 with screenshot import", async () => {
+test("server-renders Training for Life v1.19 with screenshot import", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
-  assert.match(html, /Training for Life v1\.18/);
+  assert.match(html, /Training for Life v1\.19/);
   assert.match(html, /Relentless Forward Progress/);
   assert.match(html, /Type or import a screenshot/);
   assert.match(html, /Paste screenshot/);
