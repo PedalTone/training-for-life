@@ -187,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.11";
+const APP_VERSION = "v1.39.12";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -537,7 +537,7 @@ export default function Home() {
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div></div>
-          <div className="hero-main"><div><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1><p>{plan.guidance}</p></div></div>
+          <div className="hero-main"><div><div className="hero-title-row"><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1></div><p>{plan.guidance}</p></div></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
           <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} onOpen={openDate}/>
         </section>
