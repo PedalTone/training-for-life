@@ -6,4 +6,4 @@ The app follows semantic versioning so the version communicates the size of a ch
 - `1.40` — minor: a backward-compatible feature or meaningful workflow/UI addition, such as the Performance tab.
 - `2.0` — major: a deliberate release that changes the core data model, navigation contract, or user workflow enough to require a migration or a new-product agreement.
 
-The current release is `1.39`, a minor feature release. Patch fixes after it should use `1.39.1`, `1.39.2`, and so on. A major version only changes when we explicitly agree that the app has crossed that boundary; it is never incremented automatically.
+The current release is `1.39.1`, a patch refinement to the `1.39` minor feature release. Further fixes should use `1.39.2`, `1.39.3`, and so on. A major version only changes when we explicitly agree that the app has crossed that boundary; it is never incremented automatically.
