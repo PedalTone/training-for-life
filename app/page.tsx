@@ -58,6 +58,7 @@ function scheduleForKeys(keys: string[]): Schedule {
   }) as Schedule;
 }
 function scheduleForDate(date: Date, current: Schedule, history: ScheduleSnapshot[]) {
+  if (dateKey(date) >= dateKey(easternToday())) return current;
   const snapshot = [...history].filter((item) => item.effectiveDate <= dateKey(date)).sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate))[0];
   return snapshot ? scheduleForKeys(snapshot.keys) : current;
 }
@@ -184,7 +185,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.31";
+const APP_VERSION = "v1.32";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -366,6 +367,14 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("t4l:fitness-goals", JSON.stringify(fitnessGoals)); }, [fitnessGoals]);
   useEffect(() => { localStorage.setItem("t4l:schedule", JSON.stringify(scheduleKeys)); }, [scheduleKeys]);
   useEffect(() => { if (scheduleHistory.length) localStorage.setItem("t4l:schedule-history", JSON.stringify(scheduleHistory)); }, [scheduleHistory]);
+  useEffect(() => {
+    const effectiveDate = dateKey(easternToday());
+    setScheduleHistory((items) => {
+      const currentSnapshot = items.find((item) => item.effectiveDate === effectiveDate);
+      if (currentSnapshot && JSON.stringify(currentSnapshot.keys) === JSON.stringify(scheduleKeys)) return items;
+      return [...items.filter((item) => item.effectiveDate !== effectiveDate), { effectiveDate, keys: [...scheduleKeys] }].sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate));
+    });
+  }, [scheduleKeys]);
   useEffect(() => {
     const id = youtubeId(videoUrl.trim());
     if (!id) return;
