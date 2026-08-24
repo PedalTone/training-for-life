@@ -187,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.6";
+const APP_VERSION = "v1.39.7";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -660,7 +660,6 @@ function WeekView({ today, sessions, activeSchedule, onOpenDate }: { today: Date
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
   return <div className="subpage week-page">
-    <section className="page-intro colorful"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>One day.<br/>Then the next.</h1><p>The objective stays steady even when the activity changes. Tap any day to review or record it.</p></section>
     <section className="week-rhythm-card"><RhythmStrip focus={today} today={today} sessions={sessions} activeSchedule={activeSchedule} onOpen={onOpenDate}/></section>
     <section className="week-list">{days.map((date) => { const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key, date, today); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
   </div>;
