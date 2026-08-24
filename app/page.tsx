@@ -187,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.4";
+const APP_VERSION = "v1.39.5";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -594,7 +594,7 @@ export default function Home() {
       {tab === "performance" && <PerformanceView now={today} sessions={history} activeSchedule={activeSchedule} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
     </main>
-    <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item === "more" ? "Config" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
+    <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item === "more" ? "Config" : item === "week" ? "Plan" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
 }
 
