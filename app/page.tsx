@@ -60,7 +60,9 @@ function scheduleForKeys(keys: string[]): Schedule {
 function scheduleForDate(date: Date, current: Schedule, history: ScheduleSnapshot[]) {
   if (dateKey(date) >= dateKey(easternToday())) return current;
   const snapshot = [...history].filter((item) => item.effectiveDate <= dateKey(date)).sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate))[0];
-  return snapshot ? scheduleForKeys(snapshot.keys) : current;
+  // Before dated snapshots existed, the original weekly plan is the safest
+  // historical baseline; never apply today's remapping backward in time.
+  return snapshot ? scheduleForKeys(snapshot.keys) : scheduleForKeys(defaultScheduleKeys);
 }
 function historicalPlan(saved: Session | undefined, activeSchedule: Schedule, date?: Date) {
   const fallback = saved?.plannedKey ? schedule.find((plan) => plan.key === saved.plannedKey) : undefined;
@@ -185,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.32";
+const APP_VERSION = "v1.33";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
