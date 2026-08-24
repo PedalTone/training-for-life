@@ -172,7 +172,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.27";
+const APP_VERSION = "v1.28";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -232,7 +232,7 @@ async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise
   return "Dated backup downloaded.";
 }
 
-function stateFor(session: Session | undefined, planKey: string) {
+function stateFor(session: Session | undefined, planKey: string, date?: Date, today?: Date) {
   if (hasReportedInjury(session)) return "protected";
   if (session?.injury?.impact === "modified") return "modified";
   if (session?.status === "completed") return "completed";
@@ -240,7 +240,10 @@ function stateFor(session: Session | undefined, planKey: string) {
   // Older records could carry a rest placeholder status even after workout
   // details were added. Let the recorded data win over that placeholder.
   if (hasRecordedWork) return "partial";
-  if (planKey === "rest" || session?.status === "rest") return "rest";
+  // A scheduled future recovery day is meaningful before it is logged. For a
+  // past day with no saved session, show it as unlogged instead of implying
+  // that a rest day was recorded.
+  if (session?.status === "rest" || (planKey === "rest" && (!date || !today || dateKey(date) >= dateKey(today)))) return "rest";
   return "missed";
 }
 function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
@@ -261,7 +264,7 @@ function NavIcon({ name }: { name: Tab }) {
 function RhythmStrip({ focus, today, sessions, activeSchedule, onOpen }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; onOpen?: (date: Date) => void }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   return <div className="rhythm-strip" aria-label="This week’s training rhythm">
-    {weekDates(focus).map((date) => { const plan = activeSchedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${stateLabel(state)}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}><span>{plan.label}<b>{date.getDate()}</b></span>{isToday && <em>TODAY</em>}</button>; })}
+    {weekDates(focus).map((date) => { const plan = activeSchedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key, date, today); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${stateLabel(state)}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}><span>{plan.label}<b>{date.getDate()}</b></span>{isToday && <em>TODAY</em>}</button>; })}
   </div>;
 }
 
@@ -613,7 +616,7 @@ function WeekView({ today, sessions, activeSchedule, onOpenDate }: { today: Date
   return <div className="subpage week-page">
     <section className="page-intro colorful"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>One day.<br/>Then the next.</h1><p>The objective stays steady even when the activity changes. Tap any day to review or record it.</p></section>
     <section className="week-rhythm-card"><RhythmStrip focus={today} today={today} sessions={sessions} activeSchedule={activeSchedule} onOpen={onOpenDate}/></section>
-    <section className="week-list">{days.map((date) => { const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
+    <section className="week-list">{days.map((date) => { const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key, date, today); return <button key={dateKey(date)} className={`week-day-card ${plan.key}`} onClick={() => onOpenDate(date)}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
   </div>;
 }
 
@@ -676,13 +679,13 @@ function HistoryView({ now, sessions, activeSchedule, insightReports, setInsight
       </article>}
     </details>
     <div className="history-controls"><div className="segmented"><button className={view === "weeks" ? "active" : ""} onClick={() => setView("weeks")}>Weeks</button><button className={view === "month" ? "active" : ""} onClick={() => setView("month")}>Month</button></div><div className="history-period-nav"><button onClick={() => shiftHistory(-1)} aria-label={view === "month" ? "View previous month" : "View previous weeks"}>‹</button><span>{view === "month" ? historyCursor.toLocaleDateString("en-US", { month: "short", year: "numeric" }) : `Week of ${weekDates(historyCursor)[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}</span><button onClick={() => shiftHistory(1)} disabled={currentPeriod} aria-label={view === "month" ? "View next month" : "View next weeks"}>›</button></div><button className={flaggedOnly ? "filter active" : "filter"} onClick={() => setFlaggedOnly(!flaggedOnly)}>⚑ Injuries</button></div>
-    {flaggedOnly ? <section className="flagged-list"><h2>Injury-affected workouts</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {historicalPlan(saved, activeSchedule).theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Injury reported")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No injury-affected workouts yet.</p>}</section> : view === "weeks" ? <section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === 0 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.slice(0,6).filter((d) => ["completed", "modified", "protected"].includes(stateFor(map.get(dateKey(d)), activeSchedule[d.getDay()].key))).length} / 6</b></div><div className="scan-days">{days.map((date) => { const plan = historicalPlan(map.get(dateKey(date)), activeSchedule); const state = stateFor(map.get(dateKey(date)), plan.key); return <button key={dateKey(date)} className={`${state} ${plan.key}`} onClick={() => onOpenDate(date)}><span>{plan.label}</span><strong>{date.getDate()}</strong><i>{stateSymbol(state)}</i></button>; })}</div></div>)}</section> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Injury</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(historyCursor.getFullYear(), historyCursor.getMonth(), i + 1); const plan = historicalPlan(map.get(dateKey(date)), activeSchedule); const state = stateFor(map.get(dateKey(date)), plan.key); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{stateSymbol(state)}</small></button>; })}</div></section>}
+    {flaggedOnly ? <section className="flagged-list"><h2>Injury-affected workouts</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {historicalPlan(saved, activeSchedule).theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Injury reported")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No injury-affected workouts yet.</p>}</section> : view === "weeks" ? <section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === 0 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.slice(0,6).filter((d) => ["completed", "modified", "protected"].includes(stateFor(map.get(dateKey(d)), activeSchedule[d.getDay()].key, d, now))).length} / 6</b></div><div className="scan-days">{days.map((date) => { const plan = historicalPlan(map.get(dateKey(date)), activeSchedule); const state = stateFor(map.get(dateKey(date)), plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key}`} onClick={() => onOpenDate(date)}><span>{plan.label}</span><strong>{date.getDate()}</strong><i>{stateSymbol(state)}</i></button>; })}</div></div>)}</section> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Injury</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(historyCursor.getFullYear(), historyCursor.getMonth(), i + 1); const plan = historicalPlan(map.get(dateKey(date)), activeSchedule); const state = stateFor(map.get(dateKey(date)), plan.key, date, now); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{stateSymbol(state)}</small></button>; })}</div></section>}
   </div>;
 }
 
 function calculateStreak(sessions: Session[], now: Date, activeSchedule: Schedule) {
   const map = new Map(sessions.map((item) => [item.date, item])); let streak = 0;
-  for (let offset = 0; offset < 730; offset++) { const date = new Date(now); date.setDate(now.getDate() - offset); const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key); if (["completed", "modified", "protected", "rest"].includes(state)) streak++; else if (offset === 0 && state === "missed") continue; else break; }
+  for (let offset = 0; offset < 730; offset++) { const date = new Date(now); date.setDate(now.getDate() - offset); const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key, date, now); if (["completed", "modified", "protected", "rest"].includes(state)) streak++; else if (offset === 0 && state === "missed") continue; else break; }
   return streak;
 }
 
