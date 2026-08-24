@@ -187,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.8";
+const APP_VERSION = "v1.39.9";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -533,10 +533,6 @@ export default function Home() {
   const togglePanel = (panel: "workout" | "note" | "details" | "youtube", open: boolean) => setOpenPanel((current) => open ? panel : current === panel ? null : current);
 
   return <div className={`app-shell theme-${plan.key}`}>
-    <header className="brand-bar">
-      <button className="wordmark" onClick={() => { setActiveDate(today); navigate("today"); }} aria-label={`Training for Life ${APP_VERSION} — go to Today`}><span className="brand-mark">T4L</span><span><b>Training</b> for Life <small className="app-version">{APP_VERSION}</small></span></button>
-      <span className="privacy-dot"><i/>Relentless Forward Progress</span>
-    </header>
     <main>
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
