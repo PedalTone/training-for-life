@@ -172,7 +172,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.26";
+const APP_VERSION = "v1.27";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -192,7 +192,21 @@ async function loadAllSessions() {
   const legacy = Object.keys(localStorage).filter((key) => /^t4l:\d{4}-\d{2}-\d{2}$/.test(key)).flatMap((key) => {
     try { const parsed = JSON.parse(localStorage.getItem(key) || "null"); return parsed?.date ? [normalizeSession(parsed as Session)] : []; } catch { return []; }
   });
-  return [...indexed, ...legacy].reduce<Session[]>((items, item) => items.some((saved) => saved.id === item.id) ? items : [...items, normalizeSession(item)]).sort((a, b) => b.date.localeCompare(a.date));
+  // A session can exist in both stores after an older browser/app version or
+  // a failed IndexedDB write. Prefer the record with the most recent update,
+  // and use the richer record when timestamps are missing or identical. This
+  // prevents an empty/rest placeholder in IndexedDB from masking a populated
+  // workout saved in the legacy localStorage fallback.
+  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
+  const merged = new Map<string, Session>();
+  for (const item of [...indexed, ...legacy].map(normalizeSession)) {
+    const existing = merged.get(item.id);
+    if (!existing) { merged.set(item.id, item); continue; }
+    const itemTime = Date.parse(item.updatedAt || "") || 0;
+    const existingTime = Date.parse(existing.updatedAt || "") || 0;
+    if (itemTime > existingTime || (itemTime === existingTime && richness(item) > richness(existing))) merged.set(item.id, item);
+  }
+  return [...merged.values()].sort((a, b) => b.date.localeCompare(a.date));
 }
 function backupFilename(now = new Date()) {
   const part = (value: number) => String(value).padStart(2, "0");
@@ -222,8 +236,11 @@ function stateFor(session: Session | undefined, planKey: string) {
   if (hasReportedInjury(session)) return "protected";
   if (session?.injury?.impact === "modified") return "modified";
   if (session?.status === "completed") return "completed";
+  const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
+  // Older records could carry a rest placeholder status even after workout
+  // details were added. Let the recorded data win over that placeholder.
+  if (hasRecordedWork) return "partial";
   if (planKey === "rest" || session?.status === "rest") return "rest";
-  if (session && (session.activity || session.notes || session.mobilityExercises.length || session.completedExercises.length)) return "partial";
   return "missed";
 }
 function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
