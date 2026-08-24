@@ -187,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.34";
+const APP_VERSION = "v1.35";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -670,6 +670,7 @@ function HistoryView({ now, sessions, activeSchedule, scheduleHistory, insightRe
   const [historyCursor, setHistoryCursor] = useState(() => new Date(now));
   const [flaggedOnly, setFlaggedOnly] = useState(false);
   const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(30);
+  const [insightsOpen, setInsightsOpen] = useState(false);
   const [insightState, setInsightState] = useState<"idle" | "analyzing">("idle");
   const [insightError, setInsightError] = useState("");
   const [insightAccessCode, setInsightAccessCode] = useState("");
@@ -708,7 +709,7 @@ function HistoryView({ now, sessions, activeSchedule, scheduleHistory, insightRe
     <section className="page-intro"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>Your rhythm,<br/>over time.</h1><p>Progress is the pattern you return to—not a perfect streak.</p></section>
     <section className="insight-card"><span className="insight-icon">↗</span><div><span>LAST 30 DAYS</span><strong>{adherence}% on rhythm</strong><p>{adherent.length ? `${adherent.length} recorded days. Every return strengthens the pattern.` : "Record your first day to begin seeing the pattern."}</p></div></section>
     <section className="stat-row"><div><span>CURRENT RHYTHM</span><strong>{currentStreak}<small> {currentStreak === 1 ? "day" : "days"}</small></strong></div><div><span>CONSISTENT WEEKS</span><strong>{consistentWeeks}<small> of 8</small></strong></div><div><span>RECORDED</span><strong>{sessions.length}<small> {sessions.length === 1 ? "day" : "days"}</small></strong></div></section>
-    <details className="ai-insights-card"><summary className="ai-insights-heading"><span className="ai-orb" aria-hidden="true">✦</span><div><span className="kicker">TRAINING INSIGHTS</span><h2>Your history, interpreted</h2><p>AI reviews completed workouts, details, notes, mobility work, effort, and injury reports to find useful patterns.</p></div><i aria-hidden="true">＋</i></summary>
+    <details className="ai-insights-card" open={insightsOpen} onToggle={(event) => setInsightsOpen(event.currentTarget.open)}><summary className="ai-insights-heading"><span className="ai-orb" aria-hidden="true">✦</span><div><span className="kicker">TRAINING INSIGHTS</span><h2>Your history, interpreted</h2><p>AI reviews completed workouts, details, notes, mobility work, effort, and injury reports to find useful patterns.</p></div><i aria-hidden="true">＋</i></summary>
       <div className="insight-period" aria-label="Insight review period">{([[30, "30 days"], [90, "90 days"], [0, "All history"]] as const).map(([period, label]) => <button key={period} className={insightPeriod === period ? "active" : ""} aria-pressed={insightPeriod === period} onClick={() => { setInsightPeriod(period); setInsightError(""); }}>{label}</button>)}</div>
       {(!insightAccessCode || editingInsightAccess) && <div className="insight-access"><div><strong>Personal AI access</strong><small>Enter this once per device. It is not included in backups or sent to the AI model.</small></div><input type="password" value={insightAccessCode} onChange={(event) => setInsightAccessCode(event.target.value)} placeholder="Personal access code" aria-label="Personal AI access code" autoComplete="off"/><button onClick={() => { if (insightAccessCode.trim()) { localStorage.setItem("t4l:insights-access", insightAccessCode.trim()); setEditingInsightAccess(false); setInsightError(""); } }}>Save code</button></div>}
       {insightAccessCode && !editingInsightAccess && <div className="insight-access-ready"><span>✓ Personal AI access enabled on this device</span><button onClick={() => setEditingInsightAccess(true)}>Change</button></div>}
