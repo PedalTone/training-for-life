@@ -40,6 +40,7 @@ const schedule = [
   { short: "Sat", label: "S", theme: "Endurance", key: "endurance", icon: "∞", guidance: "60+ minutes of steady aerobic work. Choose the activity that fits today.", activities: ["Run", "Bike", "Peloton", "Hike / hike-run", "Swim", "Other"] },
 ] as const;
 type Schedule = typeof schedule;
+type ScheduleSnapshot = { effectiveDate: string; keys: string[] };
 const defaultScheduleKeys = schedule.map((plan) => plan.key);
 const scheduleTypeOptions = [
   { key: "rest", label: "Rest / Recovery" }, { key: "mobility", label: "Mobility + Ride" },
@@ -55,6 +56,10 @@ function scheduleForKeys(keys: string[]): Schedule {
     const match = schedule.find((candidate) => candidate.key === keys[index]);
     return match ? { ...match, short: fallback.short, label: fallback.label } : fallback;
   }) as Schedule;
+}
+function scheduleForDate(date: Date, current: Schedule, history: ScheduleSnapshot[]) {
+  const snapshot = [...history].filter((item) => item.effectiveDate <= dateKey(date)).sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate))[0];
+  return snapshot ? scheduleForKeys(snapshot.keys) : current;
 }
 function historicalPlan(saved: Session | undefined, activeSchedule: Schedule, date?: Date) {
   const fallback = saved?.plannedKey ? schedule.find((plan) => plan.key === saved.plannedKey) : undefined;
@@ -179,7 +184,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.30";
+const APP_VERSION = "v1.31";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -280,7 +285,18 @@ export default function Home() {
   const [activeDate, setActiveDate] = useState(() => new Date(2026, 7, 20, 12));
   const activeKey = dateKey(activeDate);
   const [scheduleKeys, setScheduleKeys] = useState<string[]>(defaultScheduleKeys);
+  const [scheduleHistory, setScheduleHistory] = useState<ScheduleSnapshot[]>([]);
   const activeSchedule = scheduleForKeys(scheduleKeys);
+  const setScheduleKeysWithHistory: React.Dispatch<React.SetStateAction<string[]>> = (update) => {
+    setScheduleKeys((current) => {
+      const next = typeof update === "function" ? update(current) : update;
+      if (JSON.stringify(next) !== JSON.stringify(current)) {
+        const effectiveDate = dateKey(easternToday());
+        setScheduleHistory((items) => [...items.filter((item) => item.effectiveDate !== effectiveDate), { effectiveDate, keys: next }].sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate)));
+      }
+      return next;
+    });
+  };
   const plan = activeSchedule[activeDate.getDay()];
   const [tab, setTab] = useState<Tab>("today");
   const [session, setSession] = useState<Session>(() => emptySession(activeKey, plan.key === "rest", plan));
@@ -328,7 +344,11 @@ export default function Home() {
     const savedFutureVideos = localStorage.getItem("t4l:future-videos"); if (savedFutureVideos) setFutureVideos(JSON.parse(savedFutureVideos));
     const savedInsightReports = localStorage.getItem("t4l:insight-reports"); if (savedInsightReports) setInsightReports(JSON.parse(savedInsightReports));
     const savedGoals = localStorage.getItem("t4l:fitness-goals"); if (savedGoals) setFitnessGoals({ primaryGoal: "", priorities: "", constraints: "", updatedAt: "", ...JSON.parse(savedGoals) });
-    const savedSchedule = localStorage.getItem("t4l:schedule"); if (savedSchedule) { try { const parsed = JSON.parse(savedSchedule); if (Array.isArray(parsed) && parsed.length === 7) setScheduleKeys(parsed.map(String)); } catch { /* Use the default schedule. */ } }
+    let loadedScheduleKeys = defaultScheduleKeys;
+    const savedSchedule = localStorage.getItem("t4l:schedule"); if (savedSchedule) { try { const parsed = JSON.parse(savedSchedule); if (Array.isArray(parsed) && parsed.length === 7) { loadedScheduleKeys = parsed.map(String); setScheduleKeys(loadedScheduleKeys); } } catch { /* Use the default schedule. */ } }
+    const savedScheduleHistory = localStorage.getItem("t4l:schedule-history");
+    if (savedScheduleHistory) { try { const parsed = JSON.parse(savedScheduleHistory); if (Array.isArray(parsed)) setScheduleHistory(parsed.filter((item) => item?.effectiveDate && Array.isArray(item.keys) && item.keys.length === 7).map((item) => ({ effectiveDate: String(item.effectiveDate), keys: item.keys.map(String) }))); } catch { /* Use the current schedule. */ } }
+    else setScheduleHistory([{ effectiveDate: dateKey(easternToday()), keys: loadedScheduleKeys }]);
   }, []);
   useEffect(() => {
     if (!loaded) return;
@@ -345,6 +365,7 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
   useEffect(() => { localStorage.setItem("t4l:fitness-goals", JSON.stringify(fitnessGoals)); }, [fitnessGoals]);
   useEffect(() => { localStorage.setItem("t4l:schedule", JSON.stringify(scheduleKeys)); }, [scheduleKeys]);
+  useEffect(() => { if (scheduleHistory.length) localStorage.setItem("t4l:schedule-history", JSON.stringify(scheduleHistory)); }, [scheduleHistory]);
   useEffect(() => {
     const id = youtubeId(videoUrl.trim());
     if (!id) return;
@@ -552,8 +573,8 @@ export default function Home() {
       {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
       {tab === "week" && <WeekView today={today} sessions={history} activeSchedule={activeSchedule} onOpenDate={openDate}/>}
-      {tab === "history" && <HistoryView now={today} sessions={history} activeSchedule={activeSchedule} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} onOpenDate={openDate}/>}
-      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeys} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
+      {tab === "history" && <HistoryView now={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} onOpenDate={openDate}/>}
+      {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addFutureVideoToToday}/>}
     </main>
     <nav className="bottom-nav" aria-label="Primary navigation">{(["today", "week", "history", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }}><NavIcon name={item}/><small>{item === "more" ? "Config" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
@@ -627,7 +648,7 @@ function WeekView({ today, sessions, activeSchedule, onOpenDate }: { today: Date
   </div>;
 }
 
-function HistoryView({ now, sessions, activeSchedule, insightReports, setInsightReports, fitnessGoals, onOpenDate }: { now: Date; sessions: Session[]; activeSchedule: Schedule; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; onOpenDate: (date: Date) => void }) {
+function HistoryView({ now, sessions, activeSchedule, scheduleHistory, insightReports, setInsightReports, fitnessGoals, onOpenDate }: { now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; onOpenDate: (date: Date) => void }) {
   const [view, setView] = useState<"weeks" | "month">("weeks");
   const [historyCursor, setHistoryCursor] = useState(() => new Date(now));
   const [flaggedOnly, setFlaggedOnly] = useState(false);
@@ -686,7 +707,7 @@ function HistoryView({ now, sessions, activeSchedule, insightReports, setInsight
       </article>}
     </details>
     <div className="history-controls"><div className="segmented"><button className={view === "weeks" ? "active" : ""} onClick={() => setView("weeks")}>2 weeks</button><button className={view === "month" ? "active" : ""} onClick={() => setView("month")}>Month</button></div><div className="history-period-nav"><button onClick={() => shiftHistory(-1)} aria-label={view === "month" ? "View previous month" : "View previous two weeks"}>‹</button><span>{view === "month" ? historyCursor.toLocaleDateString("en-US", { month: "short", year: "numeric" }) : `2 weeks from ${weekDates(historyCursor)[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}</span><button onClick={() => shiftHistory(1)} disabled={currentPeriod} aria-label={view === "month" ? "View next month" : "View next two weeks"}>›</button></div><button className={flaggedOnly ? "filter active" : "filter"} onClick={() => setFlaggedOnly(!flaggedOnly)}>⚑ Injuries</button></div>
-    {flaggedOnly ? <section className="flagged-list"><h2>Injury-affected workouts</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {historicalPlan(saved, activeSchedule, dateFromKey(saved.date)).theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Injury reported")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No injury-affected workouts yet.</p>}</section> : view === "weeks" ? <><div className="history-scan-legend">{activeSchedule.filter((plan, index, items) => items.findIndex((candidate) => candidate.key === plan.key) === index).map((plan) => <span key={plan.key}><b>{plan.icon}</b>{plan.theme}</span>)}</div><section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === 0 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.slice(0,6).filter((d) => ["completed", "modified", "protected"].includes(stateFor(map.get(dateKey(d)), activeSchedule[d.getDay()].key, d, now))).length} / 6 complete</b></div><div className="scan-days">{days.map((date) => { const plan = historicalPlan(map.get(dateKey(date)), activeSchedule, date); const state = stateFor(map.get(dateKey(date)), plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key}`} title={`${plan.theme} · ${stateLabel(state)}`} onClick={() => onOpenDate(date)}><span className="history-day-icon" aria-hidden="true">{plan.icon}</span><strong>{date.getDate()}</strong><small>{plan.short}</small><i>{stateSymbol(state)}</i></button>; })}</div></div>)}</section></> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Injury</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(historyCursor.getFullYear(), historyCursor.getMonth(), i + 1); const plan = historicalPlan(map.get(dateKey(date)), activeSchedule, date); const state = stateFor(map.get(dateKey(date)), plan.key, date, now); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{stateSymbol(state)}</small></button>; })}</div></section>}
+    {flaggedOnly ? <section className="flagged-list"><h2>Injury-affected workouts</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {historicalPlan(saved, activeSchedule, dateFromKey(saved.date)).theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Injury reported")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No injury-affected workouts yet.</p>}</section> : view === "weeks" ? <><div className="history-scan-legend">{activeSchedule.filter((plan, index, items) => items.findIndex((candidate) => candidate.key === plan.key) === index).map((plan) => <span key={plan.key}><b>{plan.icon}</b>{plan.theme}</span>)}</div><section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === 0 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.slice(0,6).filter((d) => ["completed", "modified", "protected"].includes(stateFor(map.get(dateKey(d)), scheduleForDate(d, activeSchedule, scheduleHistory)[d.getDay()].key, d, now))).length} / 6 complete</b></div><div className="scan-days">{days.map((date) => { const plan = historicalPlan(map.get(dateKey(date)), scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(map.get(dateKey(date)), plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key}`} title={`${plan.theme} · ${stateLabel(state)}`} onClick={() => onOpenDate(date)}><span className="history-day-icon" aria-hidden="true">{plan.icon}</span><strong>{date.getDate()}</strong><small>{plan.short}</small><i>{stateSymbol(state)}</i></button>; })}</div></div>)}</section></> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Injury</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(historyCursor.getFullYear(), historyCursor.getMonth(), i + 1); const plan = historicalPlan(map.get(dateKey(date)), scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(map.get(dateKey(date)), plan.key, date, now); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{stateSymbol(state)}</small></button>; })}</div></section>}
   </div>;
 }
 
