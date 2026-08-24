@@ -187,7 +187,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.10";
+const APP_VERSION = "v1.39.11";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -485,7 +485,6 @@ export default function Home() {
   };
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
-  const completedThisWeek = weekDates(today).filter((date) => { const saved = weekMap.get(dateKey(date)); return Boolean(saved && ["completed", "modified", "rest", "protected"].includes(stateFor(saved, activeSchedule[date.getDay()].key))); }).length;
   const injuryReported = hasReportedInjury(session);
   const handleInjuryControl = () => {
     const next = { ...session, injury: { ...session.injury, reported: !injuryReported }, updatedAt: new Date().toISOString() };
@@ -537,7 +536,7 @@ export default function Home() {
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
-          <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div><div className="rhythm-score"><span><strong>{completedThisWeek} / 7</strong> DAYS ON RHYTHM</span><i><b style={{ width: `${Math.round(completedThisWeek / 7 * 100)}%` }}/></i></div></div>
+          <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div></div>
           <div className="hero-main"><div><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1><p>{plan.guidance}</p></div></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
           <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} onOpen={openDate}/>
