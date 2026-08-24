@@ -172,7 +172,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.24";
+const APP_VERSION = "v1.25";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -187,6 +187,13 @@ function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) 
 const saveSession = (session: Session) => withStore("readwrite", (store) => store.put(session));
 const getSession = (id: string) => withStore<Session | undefined>("readonly", (store) => store.get(id));
 const getAllSessions = () => withStore<Session[]>("readonly", (store) => store.getAll());
+async function loadAllSessions() {
+  const indexed = await getAllSessions().catch(() => [] as Session[]);
+  const legacy = Object.keys(localStorage).filter((key) => /^t4l:\d{4}-\d{2}-\d{2}$/.test(key)).flatMap((key) => {
+    try { const parsed = JSON.parse(localStorage.getItem(key) || "null"); return parsed?.date ? [normalizeSession(parsed as Session)] : []; } catch { return []; }
+  });
+  return [...indexed, ...legacy].reduce<Session[]>((items, item) => items.some((saved) => saved.id === item.id) ? items : [...items, normalizeSession(item)]).sort((a, b) => b.date.localeCompare(a.date));
+}
 function backupFilename(now = new Date()) {
   const part = (value: number) => String(value).padStart(2, "0");
   return `training-for-life-backup-${now.getFullYear()}-${part(now.getMonth() + 1)}-${part(now.getDate())}_${part(now.getHours())}-${part(now.getMinutes())}-${part(now.getSeconds())}.json`;
@@ -305,7 +312,7 @@ export default function Home() {
     }, 400);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [session, loaded, activeKey]);
-  useEffect(() => { getAllSessions().then((items) => setHistory(items.map(normalizeSession).sort((a, b) => b.date.localeCompare(a.date)))).catch(() => setHistory([])); }, [tab, session]);
+  useEffect(() => { loadAllSessions().then(setHistory).catch(() => setHistory([])); }, [tab, session]);
   useEffect(() => { localStorage.setItem("t4l:library", JSON.stringify(libraryExercises)); }, [libraryExercises]);
   useEffect(() => { localStorage.setItem("t4l:future-videos", JSON.stringify(futureVideos)); }, [futureVideos]);
   useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
