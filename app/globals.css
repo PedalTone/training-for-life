@@ -281,6 +281,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .history-page > .insight-card { order: 5; }
 .history-page > .stat-row { order: 6; }
 .history-page > .ai-insights-card { order: 7; }
+.history-page > .recent-records { order: 4; }
 .history-page .page-intro { padding: 18px 6px 18px; }
 .history-page .page-intro h1 { margin: 5px 0 10px; font-size: clamp(40px, 5.5vw, 58px); }
 .history-page .page-intro p { font-size: 16px; }
