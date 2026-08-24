@@ -371,3 +371,13 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 }
 
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* Keep the Week tab's orientation compact so the calendar remains the focus. */
+.week-page .page-intro.colorful { padding: 20px 24px; }
+.week-page .page-intro h1 { margin: 5px 0 10px; font-size: clamp(40px, 5.5vw, 58px); }
+.week-page .page-intro p { font-size: 16px; }
+
+@media (max-width: 680px) {
+  .week-page .page-intro.colorful { padding: 18px 16px; border-radius: 20px; }
+  .week-page .page-intro h1 { font-size: clamp(38px, 11vw, 50px); }
+}
