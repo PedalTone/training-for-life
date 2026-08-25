@@ -53,6 +53,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .hero-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; position: relative; z-index: 1; }
 .hero-topline > div:first-child { display: flex; align-items: baseline; gap: 9px; font-size: 14px; letter-spacing: .12em; font-weight: 820; }
 .hero-topline time { letter-spacing: .05em; font-weight: 650; opacity: .78; }
+.today-version { margin-top: 2px; color: rgba(255,255,255,.72); font-size: 11px; line-height: 1; font-weight: 700; letter-spacing: .04em; }
 .rhythm-score { width: 190px; padding: 8px 11px; border: 1px solid rgba(255,255,255,.3); border-radius: 12px; background: rgba(255,255,255,.1); backdrop-filter: blur(8px); }
 .rhythm-score > span { display: block; font-size: 10px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; }.rhythm-score strong { font-size: 15px; letter-spacing: 0; }
 .rhythm-score > i { display: block; height: 4px; margin-top: 5px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }.rhythm-score > i > b { display: block; height: 100%; border-radius: inherit; background: white; }
