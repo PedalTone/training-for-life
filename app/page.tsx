@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.40";
+const APP_VERSION = "v1.39.41";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -555,7 +555,7 @@ export default function Home() {
       const populated = section.classList.contains("note-subsection") ? Boolean(session.notes.trim()) : section.classList.contains("data-subsection") ? Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime || session.detailSource) : section.classList.contains("links-subsection") ? session.videos.length > 0 : injuryReported;
       section.classList.toggle("collapsed", !populated);
       heading.tabIndex = 0; heading.setAttribute("role", "button"); heading.setAttribute("aria-expanded", String(populated));
-      const toggle = () => { const next = section.classList.toggle("collapsed"); heading.setAttribute("aria-expanded", String(!next)); };
+      const toggle = () => { const next = section.classList.toggle("collapsed"); if (next && section.classList.contains("links-subsection")) setShowVideoForm(false); heading.setAttribute("aria-expanded", String(!next)); };
       const keyToggle = (event: KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); } };
       heading.addEventListener("click", toggle); heading.addEventListener("keydown", keyToggle);
       return () => { heading.removeEventListener("click", toggle); heading.removeEventListener("keydown", keyToggle); };
