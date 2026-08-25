@@ -411,12 +411,18 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .today-page .workout-mobility-row,
   .today-page .note-details-row,
   .today-page .youtube-injury-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .today-page .compact-panel:not([open]) summary { min-height: 112px; padding: 12px; grid-template-columns: 1fr 28px; grid-template-rows: 34px 1fr; gap: 7px; align-items: start; }
-  .today-page .compact-panel:not([open]) summary > .panel-icon { grid-column: 1; grid-row: 1; width: 34px; height: 34px; }
-  .today-page .compact-panel:not([open]) summary > span:nth-child(2) { grid-column: 1; grid-row: 2; align-self: end; }
-  .today-page .compact-panel:not([open]) summary > i { grid-column: 2; grid-row: 1; width: 28px; height: 28px; }
-  .today-page .compact-panel:not([open]) summary b { font-size: 15px; }
-  .today-page .compact-panel:not([open]) summary small { margin-top: 3px; font-size: 12px; white-space: normal; line-height: 1.2; }
+  .today-page .compact-panel:not([open]) summary,
+  .today-page .details-card:not([open]) summary { min-height: 112px; padding: 12px; grid-template-columns: 1fr 28px; grid-template-rows: 34px 1fr; gap: 7px; align-items: start; }
+  .today-page .compact-panel:not([open]) summary > .panel-icon,
+  .today-page .details-card:not([open]) summary > .panel-icon { grid-column: 1; grid-row: 1; width: 34px; height: 34px; }
+  .today-page .compact-panel:not([open]) summary > span:nth-child(2),
+  .today-page .details-card:not([open]) summary > span:nth-child(2) { grid-column: 1; grid-row: 2; align-self: end; }
+  .today-page .compact-panel:not([open]) summary > i,
+  .today-page .details-card:not([open]) summary > i { grid-column: 2; grid-row: 1; width: 28px; height: 28px; }
+  .today-page .compact-panel:not([open]) summary b,
+  .today-page .details-card:not([open]) summary b { font-size: 15px; }
+  .today-page .compact-panel:not([open]) summary small,
+  .today-page .details-card:not([open]) summary small { margin-top: 3px; font-size: 12px; white-space: normal; line-height: 1.2; }
   .today-page .mobility-loader { min-height: 112px; margin-top: 0; padding: 12px; border-radius: 17px; grid-template-columns: 1fr; grid-template-rows: 34px auto auto; gap: 7px; align-content: stretch; }
   .today-page .mobility-loader > span { grid-row: 1; width: 34px; height: 34px; }
   .today-page .mobility-loader b { align-self: end; font-size: 15px; }

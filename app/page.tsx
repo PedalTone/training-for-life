@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.23";
+const APP_VERSION = "v1.39.24";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -553,7 +553,7 @@ export default function Home() {
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div></div>
           <div className="hero-main"><div><div className="hero-title-row"><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1></div><p>{plan.guidance}</p></div></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
-          <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpen={openDate}/>
+          <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpen={openDate} showIcons/>
         </section>
 
         <div className="control-row workout-mobility-row">
@@ -573,7 +573,7 @@ export default function Home() {
           </details>
 
           <details className="surface-card details-card" open={openPanel === "details"} onToggle={(e) => togglePanel("details", e.currentTarget.open)}>
-            <summary><span><b>Details</b><small>{session.duration || session.distance || session.pace ? "Workout data added" : "Type or import a screenshot"}</small></span><i>＋</i></summary>
+            <summary><span className="panel-icon">▤</span><span><b>Details</b><small>{session.duration || session.distance || session.pace ? "Workout data added" : "Type or import a screenshot"}</small></span><i>＋</i></summary>
             <div className="details-body">
               <section className="screenshot-import"><div><strong>Import workout screenshot</strong><small>Paste one you copied, or choose one from Photos.</small></div>{!hasScreenshotAccess && <div className="screenshot-access-note"><span>AI access is managed in Settings.</span><button onClick={() => navigate("more")}>Open Settings</button></div>}<div className="screenshot-actions"><button onClick={() => void pasteScreenshot()} disabled={screenshotState === "reading"}>Paste screenshot</button><button onClick={() => screenshotInput.current?.click()} disabled={screenshotState === "reading"}>Choose from Photos</button></div><input ref={screenshotInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void readScreenshot(file); event.currentTarget.value = ""; }}/><div ref={pasteTarget} className="paste-target" contentEditable suppressContentEditableWarning onPaste={(event) => { event.preventDefault(); const file = Array.from(event.clipboardData.items).find((item) => item.type.startsWith("image/"))?.getAsFile(); if (file) void readScreenshot(file); else setScreenshotError("The clipboard does not contain an image."); }} aria-label="Paste a workout screenshot here">Tap here, then Paste</div>{screenshotState === "reading" && <p className="screenshot-status" role="status"><span/>Reading workout details…</p>}{screenshotError && <p className="screenshot-error" role="alert">{screenshotError}</p>}</section>
               <div className="field-grid"><label><span>Duration</span><div><input value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/></div></label><label><span>Distance</span><div><input value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/></div></label><label><span>Pace</span><div><input value={session.pace ?? ""} onChange={(e) => update({ pace: e.target.value })} placeholder="—"/></div></label><label><span>Calories</span><div><input inputMode="numeric" value={session.calories ?? ""} onChange={(e) => update({ calories: e.target.value })} placeholder="—"/></div></label><label><span>Start time</span><div><input value={session.startTime ?? ""} onChange={(e) => update({ startTime: e.target.value })} placeholder="—"/></div></label></div>
@@ -585,7 +585,7 @@ export default function Home() {
 
         <div className="control-row youtube-injury-row">
           <details className="surface-card details-card youtube-card" open={openPanel === "youtube"} onToggle={(e) => togglePanel("youtube", e.currentTarget.open)}>
-            <summary><span><b>Links</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
+            <summary><span className="panel-icon">▶</span><span><b>Links</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a video"}</small></span><i>＋</i></summary>
             <div className="details-body"><div className="inline-sheet"><p className="sheet-title">Add a YouTube workout</p><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + build guide"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div><div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} onClearGuide={video.workoutGuide ? () => clearWorkoutGuide(session.id, i) : undefined} onRetry={() => analyzeVideo(i, video)} key={`${video.url}-${i}`}/>)}</div></div>
           </details>
           <div className={`injury-control ${injuryReported ? "active" : ""}`}><button className="injury-toggle" onClick={handleInjuryControl} aria-pressed={injuryReported}><span>⚑</span><span><b>Injury</b><small>{injuryReported ? "Reported" : "No injury"}</small></span><i/></button>{injuryReported && <button className="injury-expand" onClick={() => setShowInjury(!showInjury)}>{showInjury ? "Hide" : "Details"}</button>}</div>
