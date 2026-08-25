@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.41";
+const APP_VERSION = "v1.39.42";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -545,7 +545,7 @@ export default function Home() {
     setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); setScreenshotError(""); setOpenPanel("log");
   };
   const closeScreenshot = () => { setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); };
-  const togglePanel = (panel: "workout" | "log", open: boolean) => setOpenPanel((current) => open ? panel : current === panel ? null : current);
+  const togglePanel = (panel: "workout" | "log", open: boolean) => { if (!open && panel === "log") setShowVideoForm(false); setOpenPanel((current) => open ? panel : current === panel ? null : current); };
   useEffect(() => {
     if (tab !== "today" || openPanel !== "log") return;
     const sections = [...document.querySelectorAll<HTMLElement>(".log-workout-body > .log-subsection")];
