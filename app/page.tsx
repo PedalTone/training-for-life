@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.21";
+const APP_VERSION = "v1.39.22";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -558,10 +558,10 @@ export default function Home() {
 
         <div className="control-row workout-mobility-row">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
-            <summary><span className="panel-icon">{plan.icon}</span><span><b>Choose</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
+            <summary><span className="panel-icon">{plan.icon}</span><span><b>Select</b><small>{session.activity || "Select one or more"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
           </details>
-          <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Load Mobility</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Choose exercises"}</small></button>
+          <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Add-ons</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} loaded` : "Add supporting work"}</small></button>
         </div>
 
         {session.mobilityExercises.length > 0 && <DailyMobility session={session} exercises={libraryExercises} toggleExercise={toggleExercise} onEdit={openMobilityPicker}/>}
