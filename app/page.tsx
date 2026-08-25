@@ -65,9 +65,11 @@ function scheduleForDate(date: Date, current: Schedule, history: ScheduleSnapsho
   return snapshot ? scheduleForKeys(snapshot.keys) : scheduleForKeys(defaultScheduleKeys);
 }
 function historicalPlan(saved: Session | undefined, activeSchedule: Schedule, date?: Date) {
-  const fallback = saved?.plannedKey ? schedule.find((plan) => plan.key === saved.plannedKey) : undefined;
   const current = activeSchedule[saved ? dateFromKey(saved.date).getDay() : date?.getDay() ?? 0];
-  return saved?.plannedTheme || fallback ? { ...current, key: saved?.plannedKey || fallback?.key || current.key, theme: saved?.plannedTheme || fallback?.theme || current.theme } : current;
+  const savedType = saved?.plannedKey ? schedule.find((plan) => plan.key === saved.plannedKey) : undefined;
+  if (!saved?.plannedKey && !saved?.plannedTheme) return current;
+  const resolved = savedType ? { ...savedType, short: current.short, label: current.label } : current;
+  return { ...resolved, key: saved?.plannedKey || resolved.key, theme: saved?.plannedTheme || resolved.theme };
 }
 
 const exerciseGroups = [
@@ -187,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.14";
+const APP_VERSION = "v1.39.15";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -282,10 +284,10 @@ function NavIcon({ name }: { name: Tab }) {
   return <span aria-hidden="true">{name === "today" ? "●" : name === "week" ? "◫" : name === "history" ? "◷" : name === "performance" ? "✦" : "•••"}</span>;
 }
 
-function RhythmStrip({ focus, today, sessions, activeSchedule, onOpen, showIcons = false }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; onOpen?: (date: Date) => void; showIcons?: boolean }) {
+function RhythmStrip({ focus, today, sessions, activeSchedule, scheduleHistory, onOpen, showIcons = false }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory?: ScheduleSnapshot[]; onOpen?: (date: Date) => void; showIcons?: boolean }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   return <div className="rhythm-strip" aria-label="This week’s training rhythm">
-    {weekDates(focus).map((date) => { const plan = activeSchedule[date.getDay()]; const state = stateFor(map.get(dateKey(date)), plan.key, date, today); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${stateLabel(state)}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}>{showIcons && <strong className="rhythm-day-icon" aria-hidden="true">{plan.icon}</strong>}<span>{plan.label}<b>{date.getDate()}</b></span>{isToday && <em>TODAY</em>}</button>; })}
+    {weekDates(focus).map((date) => { const daySchedule = scheduleHistory ? scheduleForDate(date, activeSchedule, scheduleHistory) : activeSchedule; const plan = historicalPlan(map.get(dateKey(date)), daySchedule, date); const state = stateFor(map.get(dateKey(date)), plan.key, date, today); const selected = dateKey(date) === dateKey(focus); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`${plan.key} ${state} ${selected ? "selected" : ""} ${isToday ? "actual-today" : ""}`} onClick={() => onOpen?.(date)} aria-current={isToday ? "date" : undefined} aria-label={`${plan.short} ${date.getDate()}, ${plan.theme}: ${stateLabel(state)}${isToday ? ", today" : ""}${selected ? ", selected" : ""}`}>{showIcons && <strong className="rhythm-day-icon" aria-hidden="true">{plan.icon}</strong>}<span>{plan.label}<b>{date.getDate()}</b></span>{isToday && <em>TODAY</em>}</button>; })}
   </div>;
 }
 
@@ -306,9 +308,9 @@ export default function Home() {
       return next;
     });
   };
-  const plan = activeSchedule[activeDate.getDay()];
+  const basePlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
   const [tab, setTab] = useState<Tab>("today");
-  const [session, setSession] = useState<Session>(() => emptySession(activeKey, plan.key === "rest", plan));
+  const [session, setSession] = useState<Session>(() => emptySession(activeKey, basePlan.key === "rest", basePlan));
   const [loaded, setLoaded] = useState(false);
   const [saveState, setSaveState] = useState("Loading your plan…");
   const [history, setHistory] = useState<Session[]>([]);
@@ -335,6 +337,7 @@ export default function Home() {
   const pasteTarget = useRef<HTMLDivElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
+  const plan = historicalPlan(session.date === activeKey ? session : undefined, scheduleForDate(activeDate, activeSchedule, scheduleHistory), activeDate);
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); const savedCode = localStorage.getItem("t4l:insights-access") || ""; setScreenshotAccessCode(savedCode); setHasScreenshotAccess(Boolean(savedCode)); }, []);
   useEffect(() => {
@@ -539,7 +542,7 @@ export default function Home() {
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div></div>
           <div className="hero-main"><div><div className="hero-title-row"><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1></div><p>{plan.guidance}</p></div></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
-          <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} onOpen={openDate}/>
+          <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpen={openDate}/>
         </section>
 
         <div className="control-row workout-mobility-row">
