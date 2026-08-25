@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.26";
+const APP_VERSION = "v1.39.27";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -316,7 +316,7 @@ export default function Home() {
   const [history, setHistory] = useState<Session[]>([]);
   const [showMobilityPicker, setShowMobilityPicker] = useState(false);
   const [mobilityDraft, setMobilityDraft] = useState<string[]>([]);
-  const [openPanel, setOpenPanel] = useState<"workout" | "log" | null>(null);
+  const [openPanel, setOpenPanel] = useState<"workout" | "log" | null>("log");
   const [videoUrl, setVideoUrl] = useState("");
   const [videoLabel, setVideoLabel] = useState("");
   const [videoMessage, setVideoMessage] = useState("");
@@ -341,7 +341,7 @@ export default function Home() {
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); const savedCode = localStorage.getItem("t4l:insights-access") || ""; setScreenshotAccessCode(savedCode); setHasScreenshotAccess(Boolean(savedCode)); }, []);
   useEffect(() => {
-    setLoaded(false); setFinishBackupState(""); setShowMobilityPicker(false); setOpenPanel(null);
+    setLoaded(false); setFinishBackupState(""); setShowMobilityPicker(false); setOpenPanel("log");
     getSession(activeKey).then((saved) => setSession(saved ? normalizeSession(saved) : emptySession(activeKey, plan.key === "rest", plan))).catch(() => {
       const fallback = localStorage.getItem(`t4l:${activeKey}`); setSession(fallback ? normalizeSession(JSON.parse(fallback)) : emptySession(activeKey, plan.key === "rest", plan));
     }).finally(() => { setLoaded(true); setSaveState("Saved on this device"); });
@@ -409,7 +409,9 @@ export default function Home() {
   const openMobilityPicker = () => { setMobilityDraft([...session.mobilityExercises]); setShowMobilityPicker(true); };
   const toggleMobilityDraft = (name: string) => setMobilityDraft((items) => items.includes(name) ? items.filter((item) => item !== name) : [...items, name]);
   const applyMobilityDraft = () => {
-    update({ mobilityExercises: mobilityDraft, completedExercises: session.completedExercises.filter((name) => mobilityDraft.includes(name)) });
+    const libraryOrder = libraryExercises.map((exercise) => exercise.name);
+    const ordered = [...mobilityDraft].sort((a, b) => libraryOrder.indexOf(a) - libraryOrder.indexOf(b));
+    update({ mobilityExercises: ordered, completedExercises: session.completedExercises.filter((name) => ordered.includes(name)) });
     setShowMobilityPicker(false);
   };
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
@@ -513,7 +515,7 @@ export default function Home() {
     setShowInjury(false);
   };
   const readScreenshot = async (file: Blob) => {
-    setOpenPanel("details"); setScreenshotState("reading"); setScreenshotError("");
+    setOpenPanel("log"); setScreenshotState("reading"); setScreenshotError("");
     try {
       const imageData = await prepareScreenshot(file); setScreenshotPreview(imageData);
       const accessCode = screenshotAccessCode.trim();
@@ -539,7 +541,7 @@ export default function Home() {
     const extractedActivity = screenshotWorkout.activity.trim();
     const activities = session.activities?.length ? session.activities : extractedActivity ? [extractedActivity] : [];
     update({ activities, activity: activities.join(" + "), duration: screenshotWorkout.duration || session.duration, distance: screenshotWorkout.distance || session.distance, pace: screenshotWorkout.pace || session.pace, calories: screenshotWorkout.calories || session.calories, startTime: screenshotWorkout.startTime || session.startTime, detailSource: screenshotWorkout.source || session.detailSource });
-    setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); setScreenshotError(""); setOpenPanel("details");
+    setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); setScreenshotError(""); setOpenPanel("log");
   };
   const closeScreenshot = () => { setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); };
   const togglePanel = (panel: "workout" | "log", open: boolean) => setOpenPanel((current) => open ? panel : current === panel ? null : current);
