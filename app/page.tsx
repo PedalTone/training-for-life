@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.15";
+const APP_VERSION = "v1.39.16";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -693,7 +693,7 @@ function PerformanceView({ now, sessions, activeSchedule, insightReports, setIns
   const map = new Map(sessions.map((item) => [item.date, item]));
   const last30 = sessions.filter((item) => { const age = (now.getTime() - dateFromKey(item.date).getTime()) / 86400000; return age >= 0 && age <= 30; });
   const adherence = last30.length ? Math.round(last30.filter((item) => item.status !== "partial" || hasReportedInjury(item)).length / last30.length * 100) : 0;
-  const currentStreak = calculateStreak(sessions, now, activeSchedule);
+  const currentStreak = calculateStreak(sessions, now, activeSchedule, scheduleHistory);
   const consistentWeeks = Array.from({ length: 8 }, (_, w) => { const start = new Date(now); start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - w * 7); return Array.from({ length: 6 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return map.get(dateKey(d)); }).filter((s) => s?.status === "completed" || hasReportedInjury(s) || s?.injury.impact === "modified").length >= 5; }).filter(Boolean).length;
   const week = weekDates(now).slice(0, 6);
   const weekRecorded = week.filter((date) => { const saved = map.get(dateKey(date)); return Boolean(saved && (saved.status !== "partial" || saved.activity || saved.notes || saved.duration || saved.mobilityExercises.length)); }).length;
@@ -731,9 +731,9 @@ function PerformanceView({ now, sessions, activeSchedule, insightReports, setIns
   </div>;
 }
 
-function calculateStreak(sessions: Session[], now: Date, activeSchedule: Schedule) {
+function calculateStreak(sessions: Session[], now: Date, activeSchedule: Schedule, scheduleHistory: ScheduleSnapshot[] = []) {
   const map = new Map(sessions.map((item) => [item.date, item])); let streak = 0;
-  for (let offset = 0; offset < 730; offset++) { const date = new Date(now); date.setDate(now.getDate() - offset); const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key, date, now); if (["completed", "modified", "protected", "rest"].includes(state)) streak++; else if (offset === 0 && state === "missed") continue; else break; }
+  for (let offset = 0; offset < 730; offset++) { const date = new Date(now); date.setDate(now.getDate() - offset); const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); if (["completed", "modified", "protected", "rest"].includes(state)) streak++; else if (offset === 0 && state === "missed") continue; else break; }
   return streak;
 }
 
