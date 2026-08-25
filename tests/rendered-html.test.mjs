@@ -14,7 +14,7 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.39.34 with screenshot import", async () => {
+test("server-renders Training for Life v1.39.35 with screenshot import", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
