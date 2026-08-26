@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.46";
+const APP_VERSION = "v1.39.47";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -337,7 +337,13 @@ export default function Home() {
   const pasteTarget = useRef<HTMLDivElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
-  const plan = historicalPlan(session.date === activeKey ? session : undefined, scheduleForDate(activeDate, activeSchedule, scheduleHistory), activeDate);
+  const currentDayPlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
+  const sessionIsBlank = !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.detailSource;
+  // A blank current-day session follows the current Settings mapping. This
+  // also prevents the initial default schedule from winning a race with the
+  // user's saved mapping during startup; recorded history remains anchored to
+  // its saved plannedKey/plannedTheme.
+  const plan = session.date === activeKey && sessionIsBlank ? currentDayPlan : historicalPlan(session.date === activeKey ? session : undefined, scheduleForDate(activeDate, activeSchedule, scheduleHistory), activeDate);
   const saveAiAccessCode = (value: string) => { const code = value.trim(); setScreenshotAccessCode(code); setHasScreenshotAccess(Boolean(code)); localStorage.setItem("t4l:insights-access", code); };
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); const savedCode = localStorage.getItem("t4l:insights-access") || ""; setScreenshotAccessCode(savedCode); setHasScreenshotAccess(Boolean(savedCode)); }, []);
@@ -347,6 +353,11 @@ export default function Home() {
       const fallback = localStorage.getItem(`t4l:${activeKey}`); setSession(fallback ? normalizeSession(JSON.parse(fallback)) : emptySession(activeKey, plan.key === "rest", plan));
     }).finally(() => { setLoaded(true); setSaveState("Saved on this device"); });
   }, [activeKey]);
+  useEffect(() => {
+    if (!loaded || session.id !== activeKey || !sessionIsBlank) return;
+    if (session.plannedKey === currentDayPlan.key && session.plannedTheme === currentDayPlan.theme && session.status === (currentDayPlan.key === "rest" ? "rest" : "partial")) return;
+    setSession((current) => ({ ...current, plannedKey: currentDayPlan.key, plannedTheme: currentDayPlan.theme, status: currentDayPlan.key === "rest" ? "rest" : "partial" }));
+  }, [loaded, activeKey, currentDayPlan.key, currentDayPlan.theme, session.id, sessionIsBlank, session.plannedKey, session.plannedTheme, session.status]);
   useEffect(() => {
     const savedLibrary = localStorage.getItem("t4l:library");
     if (savedLibrary) {
