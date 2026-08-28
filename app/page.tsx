@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.48";
+const APP_VERSION = "v1.39.49";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -706,6 +706,35 @@ function HistoryView({ now, sessions, activeSchedule, scheduleHistory, onOpenDat
   </div>;
 }
 
+const performanceAreas = [
+  { key: "mobility", label: "Mobility", icon: "↗", terms: ["mobility", "stretch", "flexibility"] },
+  { key: "aerobic", label: "Easy aerobic", icon: "≈", terms: ["aerobic", "zone 2", "easy", "cardio"] },
+  { key: "strength", label: "Strength", icon: "🏋️", terms: ["strength", "kettlebell", "weight", "lift"] },
+  { key: "speed", label: "Speed", icon: "⚡", terms: ["speed", "interval", "tempo", "intensity"] },
+  { key: "endurance", label: "Endurance", icon: "∞", terms: ["endurance", "long", "distance"] },
+  { key: "rest", label: "Recovery", icon: "☾", terms: ["rest", "recovery", "recover"] },
+] as const;
+type PerformanceDirection = "stay" | "increase" | "decrease";
+const directionMeta: Record<PerformanceDirection, { icon: string; label: string }> = {
+  stay: { icon: "→", label: "Stay the course" },
+  increase: { icon: "↗", label: "Increase" },
+  decrease: { icon: "↘", label: "Ease back" },
+};
+function directionForArea(report: TrainingInsightReport, area: (typeof performanceAreas)[number]): PerformanceDirection {
+  const text = [
+    ...report.wins,
+    ...report.patterns,
+    ...report.cautions,
+    ...report.recommendations.flatMap((item) => [item.title, item.reason, item.action]),
+  ].join(" ").toLowerCase();
+  const relevant = text.split(/[.!?\n]+/).filter((sentence) => area.terms.some((term) => sentence.includes(term)));
+  if (!relevant.length) return "stay";
+  const joined = relevant.join(" ");
+  if (/reduce|decrease|less |cut back|back off|avoid|limit|ease|protect|modify|recover/.test(joined)) return "decrease";
+  if (/increase|add |more |build|prioriti[sz]e|progress|extra/.test(joined)) return "increase";
+  return "stay";
+}
+
 function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insightReports, setInsightReports, fitnessGoals, accessCode, onOpenSettings }: { now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; accessCode: string; onOpenSettings: () => void }) {
   const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(30);
   const [insightsOpen, setInsightsOpen] = useState(false);
@@ -747,7 +776,7 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
       {insightAccessCode && <div className="insight-access-ready"><span>✓ Personal AI access enabled on this device</span><button onClick={onOpenSettings}>Change in Settings</button></div>}
       <div className="insight-action"><div><strong>{insightSessions.length} recorded {insightSessions.length === 1 ? "day" : "days"}</strong><small>Only this period’s compact workout data is sent when you generate.</small></div><button onClick={() => void generateInsights()} disabled={insightState === "analyzing" || !insightSessions.length}>{insightState === "analyzing" ? "Reviewing your history…" : currentReport ? "Refresh insights" : "Generate AI insights"}</button></div>
       {insightError && <p className="insight-error" role="alert">{insightError}</p>}
-      {currentReport && <article className="insight-report"><header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{currentReport.headline}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><p className="insight-summary">{currentReport.summary}</p><div className="insight-report-grid"><section><h4>What’s working</h4><ul>{currentReport.wins.map((item) => <li key={item}>{item}</li>)}</ul></section><section><h4>Patterns to notice</h4><ul>{currentReport.patterns.map((item) => <li key={item}>{item}</li>)}</ul></section></div><section className="next-focus"><h4>Recommended next steps</h4>{currentReport.recommendations.map((item) => <div key={item.title}><span>→</span><p><strong>{item.title}</strong>{item.reason}<b>{item.action}</b></p></div>)}</section>{currentReport.cautions.length > 0 && <section className="insight-cautions"><h4>Use extra care</h4><ul>{currentReport.cautions.map((item) => <li key={item}>{item}</li>)}</ul></section>}<footer><span>{currentReport.dataQuality}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
+      {currentReport && <article className="insight-report"><header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{currentReport.headline}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><p className="insight-summary">{currentReport.summary}</p><section className="training-direction-section"><div className="training-direction-heading"><h4>Training direction</h4><span>Quick read by area</span></div><div className="training-direction-grid">{performanceAreas.map((area) => { const direction = directionForArea(currentReport, area); const meta = directionMeta[direction]; return <div className={`training-direction-card ${direction}`} key={area.key}><span className="training-area-icon" aria-hidden="true">{area.icon}</span><div><strong>{area.label}</strong><span className="training-direction-status"><b aria-hidden="true">{meta.icon}</b>{meta.label}</span></div></div>; })}</div></section><div className="insight-report-grid"><section><h4>What’s working</h4><ul>{currentReport.wins.map((item) => <li key={item}>{item}</li>)}</ul></section><section><h4>Patterns to notice</h4><ul>{currentReport.patterns.map((item) => <li key={item}>{item}</li>)}</ul></section></div><section className="next-focus"><h4>Recommended next steps</h4>{currentReport.recommendations.map((item) => <div key={item.title}><span>→</span><p><strong>{item.title}</strong>{item.reason}<b>{item.action}</b></p></div>)}</section>{currentReport.cautions.length > 0 && <section className="insight-cautions"><h4>Use extra care</h4><ul>{currentReport.cautions.map((item) => <li key={item}>{item}</li>)}</ul></section>}<footer><span>{currentReport.dataQuality}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
     </details>
   </div>;
 }
