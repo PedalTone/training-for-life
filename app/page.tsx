@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.51";
+const APP_VERSION = "v1.39.52";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -520,6 +520,16 @@ export default function Home() {
   };
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
+  // The open Today session is the freshest source for its date. Include it in
+  // calendar views immediately after Finish so Plan cannot lag behind History
+  // while the background store refresh completes.
+  const viewHistory = (() => {
+    const existing = history.find((item) => item.id === session.id);
+    const currentTime = Date.parse(session.updatedAt || "") || 0;
+    const existingTime = Date.parse(existing?.updatedAt || "") || 0;
+    const chosen = !existing || session.status === "completed" || session.status === "rest" || currentTime >= existingTime ? session : existing;
+    return [chosen, ...history.filter((item) => item.id !== session.id)].sort((a, b) => b.date.localeCompare(a.date));
+  })();
   const injuryReported = hasReportedInjury(session);
   const handleInjuryControl = () => {
     const next = { ...session, injury: { ...session.injury, reported: !injuryReported }, updatedAt: new Date().toISOString() };
@@ -616,7 +626,7 @@ export default function Home() {
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
       {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
-      {tab === "week" && <WeekView today={today} sessions={history} activeSchedule={activeSchedule} onOpenDate={openDate}/>}
+      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate}/>}
       {tab === "performance" && <PerformanceView now={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onClearGuide={clearWorkoutGuide} onAddToToday={addFutureVideoToToday}/>}
