@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.50";
+const APP_VERSION = "v1.39.51";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -383,7 +383,15 @@ export default function Home() {
     }, 400);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [session, loaded, activeKey]);
-  useEffect(() => { loadAllSessions().then(setHistory).catch(() => setHistory([])); }, [tab, session]);
+  // Refresh the shared history when a tab that presents it opens. Keeping the
+  // session object out of this dependency list avoids an older IndexedDB
+  // snapshot racing a just-finished Today save and briefly masking completion.
+  useEffect(() => {
+    if (!loaded || !["week", "history", "performance", "more"].includes(tab)) return;
+    let cancelled = false;
+    loadAllSessions().then((items) => { if (!cancelled) setHistory(items); }).catch(() => { if (!cancelled) setHistory([]); });
+    return () => { cancelled = true; };
+  }, [tab, loaded]);
   useEffect(() => { localStorage.setItem("t4l:library", JSON.stringify(libraryExercises)); }, [libraryExercises]);
   useEffect(() => { localStorage.setItem("t4l:future-videos", JSON.stringify(futureVideos)); }, [futureVideos]);
   useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
