@@ -21,6 +21,21 @@ type OpenAIResponse = {
   error?: { message?: string };
 };
 
+function parseInsightJson(text: string) {
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  const start = cleaned.indexOf("{");
+  const candidate = start >= 0 ? cleaned.slice(start) : cleaned;
+  try { return JSON.parse(candidate) as Record<string, unknown>; }
+  catch {
+    // Some model responses include harmless trailing commas even when the
+    // requested schema is strict. Remove only commas immediately before a
+    // closing object/array and retry; never invent or rewrite content.
+    const withoutTrailingCommas = candidate.replace(/,\s*([}\]])/g, "$1");
+    try { return JSON.parse(withoutTrailingCommas) as Record<string, unknown>; }
+    catch { throw new Error("The AI review returned incomplete data. Please try Refresh insights again."); }
+  }
+}
+
 const reportSchema = {
   type: "object",
   additionalProperties: false,
@@ -66,7 +81,7 @@ export async function createTrainingInsights(apiKey: string, sessions: InsightSe
     body: JSON.stringify({
       model: "gpt-5-mini",
       store: false,
-      max_output_tokens: 1800,
+      max_output_tokens: 2400,
       instructions: "You are a cautious, encouraging fitness training analyst. Analyze only the supplied workout log. Identify evidence-based patterns without inventing facts. Distinguish observations from suggestions. Never diagnose injuries, prescribe treatment, or recommend training through pain. If injury reports recur, recommend reducing aggravating work and consulting a qualified clinician. Prefer small, practical adjustments, balanced training, recovery, and gradual progression. Acknowledge sparse or inconsistent data. Use plain language and concise sentences.",
       input: `Review this ${periodDays === 0 ? "all-history" : `${periodDays}-day`} training log. Compare the observed training to the user's stated goals and priorities when they are provided. Completed workouts, notes, workout details, mobility completion, effort, and injury reports may all be relevant. Return useful progress insights and a short next-step plan.\n\n${goalContext}\n\nWorkout log:\n${JSON.stringify(compactSessions)}`,
       text: { format: { type: "json_schema", name: "training_insight_report", strict: true, schema: reportSchema } },
@@ -76,5 +91,5 @@ export async function createTrainingInsights(apiKey: string, sessions: InsightSe
   if (!response.ok) throw new Error(payload.error?.message || "AI insights are temporarily unavailable.");
   const outputText = payload.output?.flatMap((item) => item.content || []).find((content) => content.type === "output_text")?.text;
   if (!outputText) throw new Error("The AI review did not return a usable report.");
-  return JSON.parse(outputText) as Record<string, unknown>;
+  return parseInsightJson(outputText);
 }
