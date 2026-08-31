@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.54";
+const APP_VERSION = "v1.39.55";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -252,7 +252,7 @@ async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise
 function stateFor(session: Session | undefined, planKey: string, date?: Date, today?: Date) {
   if (hasReportedInjury(session)) return "protected";
   if (session?.injury?.impact === "modified") return "modified";
-  if (session?.status === "completed") return "completed";
+  if (session?.status === "completed" || session?.completedAt) return "completed";
   const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
   // Older records could carry a rest placeholder status even after workout
   // details were added. Let the recorded data win over that placeholder.
