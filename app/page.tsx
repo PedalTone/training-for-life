@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.58";
+const APP_VERSION = "v1.39.59";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -249,31 +249,32 @@ async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise
   return "Dated backup downloaded.";
 }
 
+type ResolvedStatus = "unassigned" | "planned" | "in-progress" | "complete";
+function resolveSessionStatus(session: Session | undefined, planKey: string, date?: Date, today?: Date): ResolvedStatus {
+  if (session?.status === "completed" || session?.completedAt) return "complete";
+  const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
+  if (hasRecordedWork) return "in-progress";
+  if (session || planKey) return date && today && dateKey(date) < dateKey(today) && !session ? "unassigned" : "planned";
+  return "unassigned";
+}
 function stateFor(session: Session | undefined, planKey: string, date?: Date, today?: Date) {
   if (hasReportedInjury(session)) return "protected";
   if (session?.injury?.impact === "modified") return "modified";
-  if (session?.status === "completed" || session?.completedAt) return "completed";
-  const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
-  // Older records could carry a rest placeholder status even after workout
-  // details were added. Let the recorded data win over that placeholder.
-  // A recovery-day placeholder can become a real completed workout when the
-  // user records an activity, duration, note, or add-on work.
-  if (hasRecordedWork) return session?.status === "rest" ? "completed" : "partial";
-  // A scheduled future recovery day is meaningful before it is logged. For a
-  // past day with no saved session, show it as unlogged instead of implying
-  // that a rest day was recorded.
-  if (session?.status === "rest" || (planKey === "rest" && (!date || !today || dateKey(date) >= dateKey(today)))) return "rest";
-  return "missed";
+  const resolved = resolveSessionStatus(session, planKey, date, today);
+  if (resolved === "complete") return "completed";
+  if (resolved === "in-progress") return "partial";
+  if (resolved === "planned") return "planned";
+  return "unassigned";
 }
 function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
-function stateSymbol(state: string) { return state === "completed" ? "✓" : state === "modified" ? "↗" : state === "protected" ? "⚑" : state === "rest" ? "R" : state === "partial" ? "◐" : "·"; }
+function stateSymbol(state: string) { return state === "completed" ? "✓" : state === "modified" ? "↗" : state === "protected" ? "⚑" : state === "partial" ? "◐" : state === "planned" ? "•" : "·"; }
 function displayStateSymbol(session: Session | undefined, planKey: string, date?: Date, today?: Date) {
   const state = stateFor(session, planKey, date, today);
   if (!hasReportedInjury(session)) return stateSymbol(state);
   const withoutInjury = session ? { ...session, injury: { ...session.injury, reported: false, impact: "" as const } } : session;
   return `${stateSymbol(stateFor(withoutInjury, planKey, date, today))}⚑`;
 }
-function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Injury" : state === "rest" ? "Recovery" : state === "partial" ? "In progress" : "Not logged"; }
+function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Injury" : state === "partial" ? "In progress" : state === "planned" ? "Planned" : "Unassigned"; }
 
 function MovementMark({ exerciseId, name, graphicData }: { exerciseId?: string; name: string; graphicData?: string }) {
   if (graphicData) return <img className="exercise-icon" src={graphicData} alt="" aria-hidden="true"/>;
@@ -532,7 +533,7 @@ export default function Home() {
     const existing = history.find((item) => item.id === session.id);
     const currentTime = Date.parse(session.updatedAt || "") || 0;
     const existingTime = Date.parse(existing?.updatedAt || "") || 0;
-    const chosen = !existing || session.status === "completed" || session.status === "rest" || currentTime >= existingTime ? session : existing;
+    const chosen = !existing || session.status === "completed" || Boolean(session.completedAt) || currentTime >= existingTime ? session : existing;
     return [chosen, ...history.filter((item) => item.id !== session.id)].sort((a, b) => b.date.localeCompare(a.date));
   })();
   const injuryReported = hasReportedInjury(session);
@@ -600,7 +601,7 @@ export default function Home() {
   // All Today/Plan/History surfaces use this same resolved state, including
   // legacy records that have a completion timestamp but an older status value.
   const activeState = stateFor(session, plan.key, activeDate, today);
-  const activeFinished = activeState === "completed" || activeState === "rest";
+  const activeFinished = activeState === "completed";
 
   return <div className={`app-shell theme-${plan.key}`}>
     <main>
@@ -613,7 +614,7 @@ export default function Home() {
           <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpen={openDate} showIcons/>
         </section>
 
-        <div className="today-session-heading"><span className="kicker">TODAY’S SESSION</span><span>Choose the format, add supporting work, then log what matters.</span></div>
+        <section className="today-session-workspace"><div className="today-session-heading"><span className="kicker">TODAY’S SESSION</span><span>Choose the format, add supporting work, then log what matters.</span></div>
         <div className="control-row workout-mobility-row today-primary-actions">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
@@ -631,7 +632,7 @@ export default function Home() {
             <section className={`log-subsection injury-subsection ${injuryReported ? "active" : ""}`}><div className="log-subsection-heading"><span>⚑</span><div><b>Injury</b><small>{injuryReported ? "Reported" : "No injury reported"}</small></div><button className="injury-toggle-inline" onClick={handleInjuryControl} aria-pressed={injuryReported}><i/></button></div>{injuryReported && <><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Injured body area" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Body area (optional)"/><textarea aria-label="Injury note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add an injury note…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear injury data</button></>}</section>
           </div>
         </details>
-        <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span>✓</span><div><strong>{activeState === "rest" ? "Recovery day recorded" : "Workout finished"}</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: plan.key === "rest" ? "rest" : "partial", completedAt: undefined })); setFinishBackupState(""); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div>
+        <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span>✓</span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div></section>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
@@ -776,15 +777,16 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
   const insightAccessCode = accessCode;
   const map = new Map(sessions.map((item) => [item.date, item]));
   const last30 = sessions.filter((item) => { const age = (now.getTime() - dateFromKey(item.date).getTime()) / 86400000; return age >= 0 && age <= 30; });
-  const adherence = last30.length ? Math.round(last30.filter((item) => item.status !== "partial" || hasReportedInjury(item)).length / last30.length * 100) : 0;
+  const sessionState = (item: Session) => stateFor(item, item.plannedKey || activeSchedule[dateFromKey(item.date).getDay()].key, dateFromKey(item.date), now);
+  const adherence = last30.length ? Math.round(last30.filter((item) => ["completed", "modified", "protected"].includes(sessionState(item))).length / last30.length * 100) : 0;
   const currentStreak = calculateStreak(sessions, now, activeSchedule, scheduleHistory);
   const consistentWeeks = Array.from({ length: 8 }, (_, w) => { const start = new Date(now); start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - w * 7); return Array.from({ length: 6 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return map.get(dateKey(d)); }).filter((s) => s?.status === "completed" || hasReportedInjury(s) || s?.injury.impact === "modified").length >= 5; }).filter(Boolean).length;
   const week = weekDates(now).slice(0, 6);
-  const weekRecorded = week.filter((date) => { const saved = map.get(dateKey(date)); return Boolean(saved && (saved.status !== "partial" || saved.activity || saved.notes || saved.duration || saved.mobilityExercises.length)); }).length;
+  const weekRecorded = week.filter((date) => { const saved = map.get(dateKey(date)); return Boolean(saved && ["completed", "modified", "protected", "partial"].includes(stateFor(saved, activeSchedule[date.getDay()].key, date, now))); }).length;
   const injuryDays = sessions.filter(hasReportedInjury).length;
   const insightSessions = sessions.filter((saved) => {
     const age = (now.getTime() - dateFromKey(saved.date).getTime()) / 86400000;
-    const hasData = saved.status === "completed" || saved.status === "rest" || Boolean(saved.activity || saved.notes || saved.duration || saved.distance || saved.completedExercises.length || hasReportedInjury(saved));
+    const hasData = ["completed", "modified", "protected", "partial"].includes(sessionState(saved));
     return hasData && age >= 0 && (insightPeriod === 0 || age <= insightPeriod);
   }).sort((a, b) => a.date.localeCompare(b.date));
   const currentReport = insightReports.find((report) => report.periodDays === insightPeriod);
@@ -802,7 +804,7 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
     <section className="page-intro"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>Your progress,<br/>interpreted.</h1><p>Performance brings your patterns, consistency, and AI assessment together in one place.</p></section>
     <section className="performance-hero"><div><span className="kicker">LAST 30 DAYS</span><strong>{adherence}% on rhythm</strong><p>{last30.length ? `${last30.length} recorded ${last30.length === 1 ? "day" : "days"} in this window.` : "Record a workout to begin seeing your pattern."}</p></div><span className="performance-arrow">↗</span></section>
     <section className="stat-row performance-stats"><div><span>CURRENT RHYTHM</span><strong>{currentStreak}<small> {currentStreak === 1 ? "day" : "days"}</small></strong></div><div><span>CONSISTENT WEEKS</span><strong>{consistentWeeks}<small> of 8</small></strong></div><div><span>RECORDED</span><strong>{sessions.length}<small> {sessions.length === 1 ? "day" : "days"}</small></strong></div></section>
-    <section className="performance-breakdown"><div className="card-heading"><div><span className="kicker">THIS WEEK</span><h2>Plan vs. record</h2></div><strong>{weekRecorded} / {week.length}</strong></div><p>Use Week to plan ahead; this is the quick performance readout.</p><div className="performance-bar"><i style={{ width: `${Math.round(weekRecorded / Math.max(1, week.length) * 100)}%` }}/></div><div className="performance-foot"><span>{injuryDays} injury {injuryDays === 1 ? "flag" : "flags"} in history</span><span>{last30.filter((item) => item.status === "completed").length} completed in 30 days</span></div></section>
+    <section className="performance-breakdown"><div className="card-heading"><div><span className="kicker">THIS WEEK</span><h2>Plan vs. record</h2></div><strong>{weekRecorded} / {week.length}</strong></div><p>Use Plan to look ahead; this is the quick performance readout.</p><div className="performance-bar"><i style={{ width: `${Math.round(weekRecorded / Math.max(1, week.length) * 100)}%` }}/></div><div className="performance-foot"><span>{injuryDays} injury {injuryDays === 1 ? "flag" : "flags"} in history</span><span>{last30.filter((item) => sessionState(item) === "completed").length} completed in 30 days</span></div></section>
     <details className="ai-insights-card performance-insights" open={insightsOpen} onToggle={(event) => setInsightsOpen(event.currentTarget.open)}><summary className="ai-insights-heading"><span className="ai-orb" aria-hidden="true">✦</span><div><span className="kicker">TRAINING INSIGHTS</span><h2>Your history, interpreted</h2><p>AI reviews completed workouts, details, notes, mobility work, effort, and injury reports against your goals.</p></div><i aria-hidden="true">＋</i></summary>
       <div className="insight-period" aria-label="Insight review period">{([[30, "30 days"], [90, "90 days"], [0, "All history"]] as const).map(([period, label]) => <button key={period} className={insightPeriod === period ? "active" : ""} aria-pressed={insightPeriod === period} onClick={() => { setInsightPeriod(period); setInsightError(""); }}>{label}</button>)}</div>
       {!insightAccessCode && <div className="insight-access"><div><strong>AI access is managed in Settings</strong><small>Keep your personal access code in one place for screenshot import and AI insights.</small></div><button onClick={onOpenSettings}>Open Settings</button></div>}
