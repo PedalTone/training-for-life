@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.52";
+const APP_VERSION = "v1.39.53";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -256,7 +256,9 @@ function stateFor(session: Session | undefined, planKey: string, date?: Date, to
   const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
   // Older records could carry a rest placeholder status even after workout
   // details were added. Let the recorded data win over that placeholder.
-  if (hasRecordedWork) return "partial";
+  // A recovery-day placeholder can become a real completed workout when the
+  // user records an activity, duration, note, or add-on work.
+  if (hasRecordedWork) return session?.status === "rest" ? "completed" : "partial";
   // A scheduled future recovery day is meaningful before it is logged. For a
   // past day with no saved session, show it as unlogged instead of implying
   // that a rest day was recorded.
@@ -440,7 +442,8 @@ export default function Home() {
   const finishAndBackup = async () => {
     setFinishBackupState("Choose backup location…");
     const now = new Date().toISOString();
-    const current = { ...session, status: plan.key === "rest" ? "rest" as const : "completed" as const, completedAt: now, updatedAt: now };
+    const hasWorkoutData = Boolean(session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length);
+    const current = { ...session, status: plan.key === "rest" && !hasWorkoutData ? "rest" as const : "completed" as const, completedAt: now, updatedAt: now };
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
     try {
       await saveBackup(allSessions, libraryExercises, futureVideos, insightReports, fitnessGoals, scheduleKeys);
