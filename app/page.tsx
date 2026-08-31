@@ -31,7 +31,7 @@ type ScreenshotWorkout = {
 type SavePickerWindow = Window & { showSaveFilePicker?: (options: { suggestedName: string; id: string; types: { description: string; accept: Record<string, string[]> }[] }) => Promise<{ createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }> }> };
 
 const schedule = [
-  { short: "Sun", label: "S", theme: "Rest / Recovery", key: "rest", icon: "☾", guidance: "Rest is training, too. Easy walking and gentle recovery are welcome.", activities: ["Rest", "Easy walk", "Gentle mobility", "Bike"] },
+  { short: "Sun", label: "S", theme: "Recovery", key: "rest", icon: "☾", guidance: "Recovery is training, too. Easy walking and gentle mobility are welcome.", activities: ["Recovery", "Easy walk", "Gentle mobility", "Bike"] },
   { short: "Mon", label: "M", theme: "Mobility", key: "mobility", icon: "↗", guidance: "Move well and address what needs attention. Add a ride only if it serves you.", activities: ["Mobility", "Peloton HIIT", "Easy ride", "Bike", "Other"] },
   { short: "Tue", label: "T", theme: "Easy Aerobic", key: "aerobic", icon: "≈", guidance: "30–45 minutes at a conversational, Zone 2 effort.", activities: ["Walk", "Easy run", "Peloton", "Bike", "Other"] },
   { short: "Wed", label: "W", theme: "Full-Body Strength", key: "strength", icon: "🏋️", guidance: "20–30 minutes of controlled, full-body strength work.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Bike", "Other"] },
@@ -43,7 +43,7 @@ type Schedule = typeof schedule;
 type ScheduleSnapshot = { effectiveDate: string; keys: string[] };
 const defaultScheduleKeys = schedule.map((plan) => plan.key);
 const scheduleTypeOptions = [
-  { key: "rest", label: "Rest / Recovery" }, { key: "mobility", label: "Mobility" },
+  { key: "rest", label: "Recovery" }, { key: "mobility", label: "Mobility" },
   { key: "aerobic", label: "Easy Aerobic" }, { key: "strength", label: "Strength" },
   { key: "speed", label: "Speed / Intensity" }, { key: "endurance", label: "Endurance" },
 ];
@@ -189,7 +189,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.53";
+const APP_VERSION = "v1.39.54";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -273,7 +273,7 @@ function displayStateSymbol(session: Session | undefined, planKey: string, date?
   const withoutInjury = session ? { ...session, injury: { ...session.injury, reported: false, impact: "" as const } } : session;
   return `${stateSymbol(stateFor(withoutInjury, planKey, date, today))}⚑`;
 }
-function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Injury" : state === "rest" ? "Rest" : state === "partial" ? "In progress" : "Not logged"; }
+function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Injury" : state === "rest" ? "Recovery" : state === "partial" ? "In progress" : "Not logged"; }
 
 function MovementMark({ exerciseId, name, graphicData }: { exerciseId?: string; name: string; graphicData?: string }) {
   if (graphicData) return <img className="exercise-icon" src={graphicData} alt="" aria-hidden="true"/>;
