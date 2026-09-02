@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.75";
+const APP_VERSION = "v1.39.76";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -717,6 +717,7 @@ function MobilityPicker({ exercises, selected, completed, sessions, currentDate,
   const lastCompleted = new Map<string, string>();
   sessions.filter((saved) => saved.date < currentDate).forEach((saved) => saved.completedExercises.forEach((name) => { if (!lastCompleted.get(name) || saved.date > lastCompleted.get(name)!) lastCompleted.set(name, saved.date); }));
   const ordered = exercises.map((exercise) => ({ ...exercise, added: selected.includes(exercise.name), done: completed.includes(exercise.name), lastDone: lastCompleted.get(exercise.name) || "" })).sort((a, b) => {
+    if (a.done !== b.done) return a.done ? -1 : 1;
     if (a.added !== b.added) return a.added ? -1 : 1;
     if (!a.lastDone && b.lastDone) return -1;
     if (a.lastDone && !b.lastDone) return 1;

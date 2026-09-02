@@ -36,6 +36,7 @@
 .screenshot-count { flex: 0 0 auto; padding: 7px 10px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-deep); font-size: 15px; line-height: 1.1; white-space: nowrap; }
 .screenshot-count span { font-size: 12px; font-weight: 650; }
 .mobility-picker-remove { position: absolute; right: 67px; bottom: 9px; min-height: 28px; padding: 0 8px; border: 1px solid #c78678; border-radius: 8px; background: #fff7f4; color: #9f3f31; font-size: 11px; font-weight: 800; z-index: 1; }
+.mobility-sheet-list .mobility-picker-remove { width: auto; height: 28px; min-height: 28px; padding: 0 8px; border-radius: 8px; background: #fff7f4; display: grid; place-items: center; }
 .imported-workout-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
 .imported-workout-row > div { min-width: 0; display: grid; gap: 2px; }
 .imported-workout-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; margin-top: 8px; }
