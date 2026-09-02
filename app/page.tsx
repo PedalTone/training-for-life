@@ -45,7 +45,7 @@ type ScheduleSnapshot = { effectiveDate: string; keys: string[] };
 const defaultScheduleKeys = schedule.map((plan) => plan.key);
 function resizeNoteField(element: HTMLTextAreaElement | null) {
   if (!element) return;
-  element.style.height = "auto";
+  element.style.height = "0px";
   element.style.height = `${Math.max(element.scrollHeight, 184)}px`;
 }
 const scheduleTypeOptions = [
@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.72";
+const APP_VERSION = "v1.39.73";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
