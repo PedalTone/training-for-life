@@ -1,9 +1,16 @@
 # Training for Life versioning
 
-The app follows semantic versioning so the version communicates the size of a change:
+The detailed release decision policy lives in [`AGENTS.md`](./AGENTS.md). In
+short:
 
-- `1.39.1` — patch: bug fixes, copy changes, accessibility refinements, and small visual adjustments that do not add a new user capability.
-- `1.40` — minor: a backward-compatible feature or meaningful workflow/UI addition, such as the Performance tab.
-- `2.0` — major: a deliberate release that changes the core data model, navigation contract, or user workflow enough to require a migration or a new-product agreement.
+- **No version** for internal-only or deployment-only work.
+- **Patch** (`1.40.1`) for backward-compatible fixes and polish.
+- **Minor** (`1.40`) for a new capability, workflow, tab, or substantial
+  user-facing redesign; reset the patch component when moving to a new minor.
+- **Major** (`2.0`) only after explicit agreement that the core product or
+  compatibility contract has changed.
 
-The current release is `1.39.78`, a patch refinement to the `1.39` minor feature release. Further fixes should use `1.39.79`, `1.39.80`, and so on. A major version only changes when we explicitly agree that the app has crossed that boundary; it is never incremented automatically.
+The current published line is `1.39.78`, retained as historical context. The
+next release must be classified against the policy above rather than blindly
+continuing the patch number. The displayed app version, tests, release notes,
+and live deployment must always agree.
