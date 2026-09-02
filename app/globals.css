@@ -40,6 +40,9 @@
 .imported-workout-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; margin-top: 8px; }
 .imported-workout-metrics span { display: grid; gap: 1px; color: var(--ink); white-space: normal; overflow: visible; text-overflow: clip; }
 .imported-workout-metrics b { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+.data-subsection.has-imported-screenshots > .field-grid,
+.data-subsection.has-imported-screenshots > .effort-row,
+.data-subsection.has-imported-screenshots > .detail-source { display: none; }
 .imported-workout-row b { font-size: 14px; }
 .imported-workout-row span { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .imported-workout-row .text-button { flex: 0 0 auto; margin: 0; }
