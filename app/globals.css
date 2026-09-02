@@ -35,6 +35,7 @@
 .screenshot-import-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .screenshot-count { flex: 0 0 auto; padding: 7px 10px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-deep); font-size: 15px; line-height: 1.1; white-space: nowrap; }
 .screenshot-count span { font-size: 12px; font-weight: 650; }
+/* Add-on actions share one compact, centered footprint. */
 .mobility-picker-remove { position: absolute; right: 67px; bottom: 9px; min-height: 28px; padding: 0 8px; border: 1px solid #c78678; border-radius: 8px; background: #fff7f4; color: #9f3f31; font-size: 11px; font-weight: 800; z-index: 1; }
 .mobility-sheet-list .mobility-picker-remove { width: auto; height: 28px; min-height: 28px; padding: 0 8px; border-radius: 8px; background: #fff7f4; display: grid; place-items: center; }
 .mobility-sheet-list .mobility-picker-remove { right: 67px; bottom: 9px; width: 96px; height: 30px; min-height: 30px; padding: 0; box-sizing: border-box; font-size: 10px; }
