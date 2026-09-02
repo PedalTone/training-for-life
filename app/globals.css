@@ -18,6 +18,19 @@
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
 }
 
+/* Long dictated notes stay in one comfortable, fully editable surface. */
+.note-subsection textarea {
+  height: 184px;
+  min-height: 184px;
+  max-height: none;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: hidden;
+  resize: none;
+  field-sizing: content;
+  line-height: 1.5;
+}
+
 * { box-sizing: border-box; }
 html { background: var(--bg); color: var(--ink); -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 18px; line-height: 1.5; }
