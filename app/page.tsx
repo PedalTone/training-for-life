@@ -157,6 +157,7 @@ async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 9
     date: saved.date, plannedTheme: saved.plannedTheme || historicalPlan(saved, activeSchedule, dateFromKey(saved.date)).theme, status: saved.status,
     activities: saved.activities ?? (saved.activity ? [saved.activity] : []), duration: saved.duration, distance: saved.distance, pace: saved.pace, calories: saved.calories, startTime: saved.startTime, effort: saved.effort,
     notes: saved.notes, mobilityExercises: saved.mobilityExercises, completedExercises: saved.completedExercises,
+    importedWorkouts: (saved.importedWorkouts ?? []).map((workout) => ({ activity: workout.activity, date: workout.date, startTime: workout.startTime, duration: workout.duration, distance: workout.distance, pace: workout.pace, calories: workout.calories, source: workout.source })),
     injury: { reported: hasReportedInjury(saved), impact: saved.injury.impact, bodyArea: saved.injury.bodyArea, note: saved.injury.note },
   }));
   const response = await fetch(`${service}/api/training-insights`, { method: "POST", headers: { "Content-Type": "application/json", "X-Training-Insights-Key": accessCode }, body: JSON.stringify({ sessions: compactSessions, periodDays, goals: { primaryGoal: goals.primaryGoal.slice(0, 500), priorities: goals.priorities.slice(0, 1000), constraints: goals.constraints.slice(0, 1000) } }) });
@@ -195,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.71";
+const APP_VERSION = "v1.39.72";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
