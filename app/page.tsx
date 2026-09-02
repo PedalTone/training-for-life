@@ -195,7 +195,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.67";
+const APP_VERSION = "v1.39.68";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -614,7 +614,9 @@ export default function Home() {
   // legacy records that have a completion timestamp but an older status value.
   const activeState = stateFor(session, plan.key, activeDate, today);
   const activeFinished = activeState === "completed";
-  const legacyScreenshotOffset = session.detailSource && !(session.importedWorkouts?.length) ? 1 : 0;
+  // Older screenshot imports stored the extracted metrics directly on the day
+  // without an import list. Recognize that shape so it is not shown as 0/6.
+  const legacyScreenshotOffset = !(session.importedWorkouts?.length) && Boolean(session.detailSource || (session.duration && session.distance && session.pace)) ? 1 : 0;
   const importedScreenshotCount = Math.min(6, (session.importedWorkouts?.length ?? 0) + legacyScreenshotOffset);
 
   return <div className={`app-shell theme-${plan.key}`}>
