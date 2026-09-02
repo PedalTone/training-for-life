@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.73";
+const APP_VERSION = "v1.39.74";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -403,8 +403,10 @@ export default function Home() {
     return () => { cancelled = true; };
   }, [tab, loaded]);
   useLayoutEffect(() => {
-    resizeNoteField(noteTextarea.current);
-  }, [session.notes]);
+    if (tab !== "today" || openPanel !== "log") return;
+    const frame = window.requestAnimationFrame(() => resizeNoteField(noteTextarea.current));
+    return () => window.cancelAnimationFrame(frame);
+  }, [session.notes, tab, openPanel]);
   useEffect(() => {
     if (!loaded || session.importedWorkouts?.length || !(session.detailSource || (session.duration && session.distance && session.pace))) return;
     const legacy = { activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] };
