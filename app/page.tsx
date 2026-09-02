@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.76";
+const APP_VERSION = "v1.39.77";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -446,7 +446,7 @@ export default function Home() {
     const activities = selected.includes(activity) ? selected.filter((item) => item !== activity) : [...selected, activity];
     update({ activities, activity: activities.join(" + ") });
   };
-  const openMobilityPicker = () => { setMobilityDraft([...session.mobilityExercises]); setShowMobilityPicker(true); };
+  const openMobilityPicker = () => { setMobilityDraft([...session.mobilityExercises]); setShowMobilityPicker(true); loadAllSessions().then(setHistory).catch(() => { /* Keep the cached history if refresh is unavailable. */ }); };
   const toggleMobilityDraft = (name: string) => setMobilityDraft((items) => items.includes(name) ? items.filter((item) => item !== name) : [...items, name]);
   const applyMobilityDraft = () => {
     const libraryOrder = libraryExercises.map((exercise) => exercise.name);
