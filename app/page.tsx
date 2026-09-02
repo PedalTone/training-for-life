@@ -195,7 +195,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.68";
+const APP_VERSION = "v1.39.69";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -404,6 +404,11 @@ export default function Home() {
   useLayoutEffect(() => {
     resizeNoteField(noteTextarea.current);
   }, [session.notes]);
+  useEffect(() => {
+    if (!loaded || session.importedWorkouts?.length || !(session.detailSource || (session.duration && session.distance && session.pace))) return;
+    const legacy = { activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] };
+    setSession((current) => current.importedWorkouts?.length ? current : { ...current, importedWorkouts: [legacy] });
+  }, [loaded, session.id, session.importedWorkouts?.length]);
   useEffect(() => { localStorage.setItem("t4l:library", JSON.stringify(libraryExercises)); }, [libraryExercises]);
   useEffect(() => { localStorage.setItem("t4l:future-videos", JSON.stringify(futureVideos)); }, [futureVideos]);
   useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
@@ -585,7 +590,8 @@ export default function Home() {
     if (!screenshotWorkout) return;
     const extractedActivity = screenshotWorkout.activity.trim();
     const activities = session.activities?.length ? session.activities : extractedActivity ? [extractedActivity] : [];
-    const importedWorkouts = [...(session.importedWorkouts ?? []), screenshotWorkout].slice(-6);
+    const legacyImport = !session.importedWorkouts?.length && Boolean(session.detailSource || (session.duration && session.distance && session.pace)) ? [{ activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] }] : [];
+    const importedWorkouts = [...legacyImport, ...(session.importedWorkouts ?? []), screenshotWorkout].slice(-6);
     const firstImport = importedWorkouts.length === 1 && !session.detailSource;
     update({ importedWorkouts, activities, activity: activities.join(" + "), duration: firstImport ? (screenshotWorkout.duration || session.duration) : session.duration, distance: firstImport ? (screenshotWorkout.distance || session.distance) : session.distance, pace: firstImport ? (screenshotWorkout.pace || session.pace) : session.pace, calories: firstImport ? (screenshotWorkout.calories || session.calories) : session.calories, startTime: firstImport ? (screenshotWorkout.startTime || session.startTime) : session.startTime, detailSource: screenshotWorkout.source || session.detailSource });
     setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); setScreenshotError(""); setOpenPanel("log");
@@ -618,6 +624,7 @@ export default function Home() {
   // without an import list. Recognize that shape so it is not shown as 0/6.
   const legacyScreenshotOffset = !(session.importedWorkouts?.length) && Boolean(session.detailSource || (session.duration && session.distance && session.pace)) ? 1 : 0;
   const importedScreenshotCount = Math.min(6, (session.importedWorkouts?.length ?? 0) + legacyScreenshotOffset);
+  const displayedImportedWorkouts = session.importedWorkouts?.length ? session.importedWorkouts : legacyScreenshotOffset ? [{ activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] }] : [];
 
   return <div className={`app-shell theme-${plan.key}`}>
     <main>
