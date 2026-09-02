@@ -37,6 +37,9 @@
 .screenshot-count span { font-size: 12px; font-weight: 650; }
 .imported-workout-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
 .imported-workout-row > div { min-width: 0; display: grid; gap: 2px; }
+.imported-workout-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; margin-top: 8px; }
+.imported-workout-metrics span { display: grid; gap: 1px; color: var(--ink); white-space: normal; overflow: visible; text-overflow: clip; }
+.imported-workout-metrics b { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
 .imported-workout-row b { font-size: 14px; }
 .imported-workout-row span { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .imported-workout-row .text-button { flex: 0 0 auto; margin: 0; }
