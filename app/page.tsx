@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.42.1";
+const APP_VERSION = "v1.43";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -714,6 +714,10 @@ function VideoCard({ video, onDelete, onRetry, onRefresh, onClearGuide, onAddTod
   </article>;
 }
 
+function ExerciseHeatMap({ days, completedDates, count }: { days: string[]; completedDates: Set<string>; count: number }) {
+  return <span className={`mobility-heat heat-${Math.min(4, count)}`} aria-label={`${count} completed sessions in the past 14 days`}>{days.map((day) => <i key={day} className={completedDates.has(day) ? "completed" : ""}/>)}</span>;
+}
+
 function MobilityPicker({ exercises, selected, completed, sessions, currentDate, toggleExercise, toggleCompleted, onDone, onCancel }: { exercises: LibraryExercise[]; selected: string[]; completed: string[]; sessions: Session[]; currentDate: string; toggleExercise: (name: string) => void; toggleCompleted: (name: string) => void; onDone: () => void; onCancel: () => void }) {
   const [query, setQuery] = useState("");
   useEffect(() => {
@@ -722,19 +726,21 @@ function MobilityPicker({ exercises, selected, completed, sessions, currentDate,
     document.body.style.overflow = "hidden"; window.addEventListener("keydown", closeOnEscape);
     return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", closeOnEscape); };
   }, [onCancel]);
-  const lastCompleted = new Map<string, string>();
-  sessions.filter((saved) => saved.date < currentDate).forEach((saved) => saved.completedExercises.forEach((name) => { if (!lastCompleted.get(name) || saved.date > lastCompleted.get(name)!) lastCompleted.set(name, saved.date); }));
-  const ordered = exercises.map((exercise) => ({ ...exercise, added: selected.includes(exercise.name), done: completed.includes(exercise.name), lastDone: lastCompleted.get(exercise.name) || "" })).sort((a, b) => {
+  const heatDays = Array.from({ length: 14 }, (_, index) => { const day = dateFromKey(currentDate); day.setDate(day.getDate() - 13 + index); return dateKey(day); });
+  const heatDaySet = new Set(heatDays);
+  const completedByExercise = new Map<string, Set<string>>();
+  const recordCompletion = (name: string, day: string) => { if (!completedByExercise.has(name)) completedByExercise.set(name, new Set()); completedByExercise.get(name)!.add(day); };
+  sessions.filter((saved) => heatDaySet.has(saved.date)).forEach((saved) => saved.completedExercises.forEach((name) => recordCompletion(name, saved.date)));
+  completed.forEach((name) => recordCompletion(name, currentDate));
+  const ordered = exercises.map((exercise) => { const completedDates = completedByExercise.get(exercise.name) || new Set<string>(); return { ...exercise, added: selected.includes(exercise.name), done: completed.includes(exercise.name), completedDates, heatCount: completedDates.size }; }).sort((a, b) => {
     if (a.done !== b.done) return a.done ? -1 : 1;
+    if (a.heatCount !== b.heatCount) return a.heatCount - b.heatCount;
     if (a.added !== b.added) return a.added ? -1 : 1;
-    if (!a.lastDone && b.lastDone) return -1;
-    if (a.lastDone && !b.lastDone) return 1;
-    return a.lastDone.localeCompare(b.lastDone) || a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name);
   });
   const completedCount = selected.filter((name) => completed.includes(name)).length;
   const filtered = ordered.filter(({ name, equipment }) => `${name} ${equipment}`.toLowerCase().includes(query.trim().toLowerCase()));
-  const neverDone = ordered.filter((exercise) => !exercise.lastDone).length;
-  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">ADD-ONS · {selected.length} SELECTED · {completedCount} COMPLETED</span><h2 id="mobility-sheet-title">Choose and check exercises</h2><p>Selected exercises stay at the top so you can check them off in the same window.</p></div><button onClick={onCancel} aria-label="Close add-ons">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(({ id, name, equipment, added, done, lastDone, graphicData }) => { const historyLabel = lastDone ? `Last done ${dateFromKey(lastDone).toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : "Not done yet"; const timerUrl = `https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`; return <div key={id} className={`mobility-picker-row ${added ? "added" : ""} ${done ? "checked" : ""}`}><button className="mobility-picker-select" aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark exerciseId={id} name={name} graphicData={graphicData}/></span><span><strong>{name}</strong><small>{equipment}</small><small className="mobility-history">{historyLabel}</small></span>{!added && <em>+ Add</em>}</button><button className="mobility-picker-check" aria-label={`${done ? "Uncheck" : "Check off"} ${name}`} aria-pressed={done} disabled={!added} onClick={() => toggleCompleted(name)}><span>{done ? "✓" : ""}</span><small>Done</small></button>{added && <button className="mobility-picker-remove" onClick={() => toggleExercise(name)}>Remove</button>}{added && <a className="picker-start-timer" href={timerUrl} target="_blank" rel="noreferrer">Start timer</a>}</div>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected · {completedCount} completed</span><button onClick={onDone}>Done</button></div></section></div>;
+  return <div className="mobility-sheet-backdrop" onClick={onCancel}><section className="mobility-sheet" role="dialog" aria-modal="true" aria-labelledby="mobility-sheet-title" onClick={(e) => e.stopPropagation()}><div className="mobility-sheet-header"><div><span className="kicker">ADD-ONS · {selected.length} SELECTED · {completedCount} COMPLETED</span><h2 id="mobility-sheet-title">Choose and check exercises</h2><p>Cooler options are least used in the past two weeks; hotter options are used more often.</p></div><button onClick={onCancel} aria-label="Close add-ons">×</button></div><div className="mobility-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search exercises" aria-label="Search mobility exercises"/></div><div className="library-list mobility-sheet-list">{filtered.map(({ id, name, equipment, added, done, completedDates, heatCount, graphicData }) => { const timerUrl = `https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`; return <div key={id} className={`mobility-picker-row heat-${Math.min(4, heatCount)} ${added ? "added" : ""} ${done ? "checked" : ""}`}><button className="mobility-picker-select" aria-pressed={added} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark exerciseId={id} name={name} graphicData={graphicData}/></span><span><strong>{name}</strong><small>{equipment}</small><span className="mobility-heat-row"><small>{heatCount ? `${heatCount} of 14 days` : "No sessions in 14 days"}</small><ExerciseHeatMap days={heatDays} completedDates={completedDates} count={heatCount}/></span></span>{!added && <em>+ Add</em>}</button><button className="mobility-picker-check" aria-label={`${done ? "Uncheck" : "Check off"} ${name}`} aria-pressed={done} disabled={!added} onClick={() => toggleCompleted(name)}><span>{done ? "✓" : ""}</span><small>Done</small></button>{added && <button className="mobility-picker-remove" onClick={() => toggleExercise(name)}>Remove</button>}{added && <a className="picker-start-timer" href={timerUrl} target="_blank" rel="noreferrer">Start timer</a>}</div>; })}{filtered.length === 0 && <p className="empty-state">No exercises match that search.</p>}</div><div className="mobility-sheet-footer"><span>{selected.length} selected · {completedCount} completed</span><button onClick={onDone}>Done</button></div></section></div>;
 }
 
 function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session: Session; exercises: LibraryExercise[]; toggleExercise: (name: string) => void; onEdit: () => void }) {

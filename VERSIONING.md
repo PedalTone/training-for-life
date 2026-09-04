@@ -10,8 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.42.1`, a patch that fixes the mobile CSS cascade so
-Plan’s day rows actually use the full width of an iPhone screen. The next
-small fix should be `1.42.2`; a future capability or substantial redesign may
-become `1.43`. The displayed app version, tests, release notes, and live
+The current release is `1.43`, a minor capability release that adds a rolling
+14-day Add-ons heat map and cool-to-hot exercise ordering. The next small fix
+should be `1.43.1`; a future capability or substantial redesign may become
+`1.44`. The displayed app version, tests, release notes, and live
 deployment must always agree.
