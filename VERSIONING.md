@@ -10,7 +10,7 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.40`, a minor release for the branded app home screen
-and entry workflow. The next small fix should be `1.40.1`; a future capability
-or substantial redesign may become `1.41`. The displayed app version, tests,
+The current release is `1.40.1`, a patch refinement to the branded app home
+screen. The next small fix should be `1.40.2`; a future capability or
+substantial redesign may become `1.41`. The displayed app version, tests,
 release notes, and live deployment must always agree.
