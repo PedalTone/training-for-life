@@ -67,8 +67,9 @@ h1, h2, h3, p { text-wrap: pretty; }
 .splash-letterbox > * { position: relative; z-index: 1; }.splash-letterbox-mark { width: 84px; height: 84px; flex: 0 0 auto; border-radius: 23px; box-shadow: 0 7px 14px rgba(0,0,0,.18); }.splash-letterbox-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }.splash-letterbox .kicker { color: #b9dfc4; font-size: 11px; }.splash-letterbox strong { margin-top: 4px; font-size: clamp(27px, 7vw, 43px); line-height: .98; letter-spacing: -.055em; }.splash-letterbox small { margin-top: 8px; color: #c9ddd0; font-size: 14px; }
 .splash-version { flex: 0 0 auto; margin-top: 4px; padding: 5px 8px; border: 1px solid rgba(38,76,61,.18); border-radius: 99px; color: #587067; font-size: 11px; font-weight: 800; letter-spacing: .03em; }
 .splash-version-bottom { align-self: center; margin-top: 12px; padding: 3px 7px; border-color: rgba(38,76,61,.14); color: #71827b; font-size: 10px; }
+.splash-letterbox-copy > .kicker { display: none; }
 .splash-copy { margin: clamp(38px, 10vw, 76px) 0 28px; }
-.splash-copy h1 { margin: 10px 0 12px; color: #142a24; font-size: clamp(48px, 13vw, 78px); line-height: .94; letter-spacing: -.07em; }
+.splash-copy h1 { margin: 10px 0 12px; color: #142a24; font-size: clamp(24px, 7vw, 42px); line-height: 1; letter-spacing: -.07em; white-space: nowrap; }
 .splash-copy p { max-width: 440px; margin: 0; color: #60746c; font-size: clamp(17px, 4.5vw, 21px); line-height: 1.4; }
 .splash-menu { display: grid; gap: 10px; }
 .splash-menu button { min-height: 69px; padding: 10px 14px 10px 12px; border: 1px solid rgba(39,76,61,.14); border-radius: 19px; background: rgba(255,255,255,.78); color: #142a24; display: grid; grid-template-columns: 46px minmax(0,1fr) auto; align-items: center; gap: 12px; text-align: left; box-shadow: 0 5px 15px rgba(35,67,53,.06); transition: transform .15s ease, background .15s ease; }

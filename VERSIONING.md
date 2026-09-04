@@ -10,8 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.41.2`, a patch that fixes the service-worker update
-path so installed home-screen apps can receive new releases instead of serving
-an older cached worker. The next small fix should be `1.41.3`; a future capability or substantial redesign
+The current release is `1.41.3`, a patch that removes the duplicate splash title
+treatment and sizes the “Relentless forward progress” line to stay on one
+mobile line. The next small fix should be `1.41.4`; a future capability or substantial redesign
 may become `1.42`. The displayed app version, tests, release notes, and live
 deployment must always agree.
