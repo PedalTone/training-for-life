@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f4f6f2;
+  --bg: #eef3f0;
   --surface: #ffffff;
   --surface-2: #f8faf7;
   --ink: #17231f;
   --muted: #66736d;
   --line: #dfe5e0;
-  --accent: #d65d49;
-  --accent-deep: #9f3f31;
-  --accent-soft: #f7dfd9;
+  --accent: #e0443e;
+  --accent-deep: #a5232d;
+  --accent-soft: #f8d8d6;
   --shadow: 0 8px 30px rgba(31, 48, 40, .08);
   --shadow-soft: 0 3px 14px rgba(31, 48, 40, .06);
   --radius-xl: 28px;
@@ -59,12 +59,12 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, label:focus-within { outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 3px; }
 h1, h2, h3, p { text-wrap: pretty; }
 
-.splash-shell { min-height: 100svh; padding: 0; background: linear-gradient(160deg, #eef5f0 0%, #e0ece6 55%, #d6e5df 100%); }
+.splash-shell { min-height: 100svh; padding: 0; background: linear-gradient(160deg, #edf4f1 0%, #dcebe5 55%, #cfe3dc 100%); }
 .splash-screen { width: min(620px, 100%); min-height: 100svh; margin: 0 auto; padding: clamp(34px, 8vw, 74px) clamp(22px, 6vw, 42px) 34px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
 .splash-brand { display: flex; align-items: flex-start; gap: 12px; }
-.splash-letterbox { min-width: 0; flex: 1; min-height: 122px; padding: 20px 24px 17px; border-radius: 20px; background: #142a24; color: #f4fbf5; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 12px 24px rgba(24,54,43,.16); }
+.splash-letterbox { min-width: 0; flex: 1; min-height: 122px; padding: 16px 22px 16px 16px; border-radius: 20px; background: #062f28; color: #f4fbf5; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; box-shadow: 0 12px 24px rgba(24,54,43,.18); }
 .splash-letterbox::after { content: "∞"; position: absolute; right: -7px; bottom: -47px; color: rgba(190,223,197,.13); font-size: 164px; font-weight: 800; line-height: 1; }
-.splash-letterbox > * { position: relative; z-index: 1; }.splash-letterbox .kicker { color: #b9dfc4; font-size: 11px; }.splash-letterbox strong { margin-top: 4px; font-size: clamp(28px, 7vw, 43px); line-height: .98; letter-spacing: -.055em; }.splash-letterbox small { margin-top: 8px; color: #c9ddd0; font-size: 14px; }
+.splash-letterbox > * { position: relative; z-index: 1; }.splash-letterbox-mark { width: 84px; height: 84px; flex: 0 0 auto; border-radius: 23px; box-shadow: 0 7px 14px rgba(0,0,0,.18); }.splash-letterbox-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }.splash-letterbox .kicker { color: #b9dfc4; font-size: 11px; }.splash-letterbox strong { margin-top: 4px; font-size: clamp(27px, 7vw, 43px); line-height: .98; letter-spacing: -.055em; }.splash-letterbox small { margin-top: 8px; color: #c9ddd0; font-size: 14px; }
 .splash-version { flex: 0 0 auto; margin-top: 4px; padding: 5px 8px; border: 1px solid rgba(38,76,61,.18); border-radius: 99px; color: #587067; font-size: 11px; font-weight: 800; letter-spacing: .03em; }
 .splash-copy { margin: clamp(38px, 10vw, 76px) 0 28px; }
 .splash-copy h1 { margin: 10px 0 12px; color: #142a24; font-size: clamp(48px, 13vw, 78px); line-height: .94; letter-spacing: -.07em; }
@@ -79,13 +79,13 @@ h1, h2, h3, p { text-wrap: pretty; }
 .splash-menu button strong, .splash-menu button small { display: block; }.splash-menu button strong { font-size: 18px; line-height: 1.1; }.splash-menu button small { margin-top: 3px; color: #6c7e76; font-size: 13px; }.splash-menu button > b { color: #82948b; font-size: 28px; font-weight: 400; }
 .splash-footnote { margin: 25px 0 0; color: #71827b; font-size: 13px; text-align: center; }
 
-.app-shell { min-height: 100vh; padding-bottom: calc(96px + env(safe-area-inset-bottom)); --accent: #cb4b42; --accent-deep: #8d2d2a; --accent-soft: #f8dfdc; background: color-mix(in srgb, var(--accent-soft) 22%, var(--bg)); }
-.app-shell.theme-mobility { --accent: #3f8793; --accent-deep: #255d69; --accent-soft: #dceff2; }
-.app-shell.theme-aerobic { --accent: #347fa8; --accent-deep: #245a7b; --accent-soft: #dcecf5; }
-.app-shell.theme-strength { --accent: #b66a3e; --accent-deep: #7d4225; --accent-soft: #f5e4d8; }
-.app-shell.theme-speed { --accent: #cb4b42; --accent-deep: #8d2d2a; --accent-soft: #f8dfdc; }
-.app-shell.theme-endurance { --accent: #4c62a4; --accent-deep: #334477; --accent-soft: #e2e6f5; }
-.app-shell.theme-rest { --accent: #4e83a3; --accent-deep: #315d78; --accent-soft: #dcebf2; }
+.app-shell { min-height: 100vh; padding-bottom: calc(96px + env(safe-area-inset-bottom)); --accent: #e0443e; --accent-deep: #a5232d; --accent-soft: #f8d8d6; background: color-mix(in srgb, var(--accent-soft) 28%, var(--bg)); }
+.app-shell.theme-mobility { --accent: #008b98; --accent-deep: #005d6a; --accent-soft: #cfeef1; }
+.app-shell.theme-aerobic { --accent: #087fc0; --accent-deep: #075486; --accent-soft: #d2ebfa; }
+.app-shell.theme-strength { --accent: #d26932; --accent-deep: #93401e; --accent-soft: #f8dfd1; }
+.app-shell.theme-speed { --accent: #e0443e; --accent-deep: #a5232d; --accent-soft: #f8d8d6; }
+.app-shell.theme-endurance { --accent: #4b5fc4; --accent-deep: #303f8e; --accent-soft: #dfe4fb; }
+.app-shell.theme-rest { --accent: #287fa8; --accent-deep: #175575; --accent-soft: #d4ebf5; }
 
 .brand-bar { height: 74px; position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 0 max(24px, calc((100vw - 1080px)/2)); background: rgba(244,246,242,.88); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(223,229,224,.8); }
 .wordmark { border: 0; background: transparent; padding: 8px 0; display: flex; align-items: center; gap: 11px; color: var(--ink); }
@@ -441,6 +441,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .control-row { margin-top: 8px; gap: 8px; }.control-row > .surface-card,.control-row > .injury-control,.control-row > .finish-zone,.control-row > .mobility-loader { margin-top: 0; }.workout-mobility-row,.note-details-row,.youtube-injury-row { grid-template-columns: repeat(2,minmax(0,1fr)); }.primary-finish { min-height: 66px; padding: 5px; }
   .screenshot-review-backdrop { padding: 0; place-items: end center; }.screenshot-review { width: 100%; max-height: 94dvh; border-radius: 24px 24px 0 0; }.screenshot-review > header { padding: 17px 18px 14px; }.screenshot-review > header h2 { font-size: 24px; }.screenshot-review-content { padding: 14px 18px; grid-template-columns: 86px 1fr; gap: 12px; }.screenshot-review figure img { max-height: 150px; }.review-fields { grid-template-columns: 1fr; }.review-fields label:first-child,.review-fields label:nth-child(2) { grid-column: auto; }.review-warning,.review-caution { margin-left: 18px; margin-right: 18px; }.screenshot-review > footer { padding-left: 18px; padding-right: 18px; }
   .mobility-sheet-backdrop { padding: 0; }.mobility-sheet { width: 100%; max-height: 91vh; border-radius: 24px 24px 0 0; }.mobility-sheet-header { padding: 18px 18px 10px; }.mobility-sheet-header h2 { font-size: 23px; }.mobility-sheet-header p { font-size: 14px; }.mobility-search { margin: 0 18px 10px; }.mobility-sheet-list { padding: 0 18px 12px; }.mobility-sheet-footer { padding: 10px 18px max(10px,env(safe-area-inset-bottom)); }.mobility-sheet-footer button { min-height: 48px; padding: 0 15px; font-size: 14px; }
+  .splash-letterbox { min-height: 108px; padding: 13px 16px 13px 13px; gap: 11px; }.splash-letterbox-mark { width: 72px; height: 72px; border-radius: 19px; }.splash-letterbox strong { font-size: clamp(24px, 7vw, 34px); }.splash-letterbox small { margin-top: 5px; font-size: 12px; }.splash-letterbox .kicker { font-size: 10px; }.splash-version { font-size: 10px; padding: 4px 6px; }
   .mobility-picker-row { width: 100%; grid-template-columns: minmax(0,1fr) 52px; gap: 6px; }.mobility-sheet-list .mobility-picker-select { width: 100%; padding: 7px 78px 7px 7px; grid-template-columns: 52px minmax(0,1fr); gap: 8px; }.mobility-picker-select .exercise-visual { width: 52px; height: 52px; border-radius: 13px; }.mobility-picker-select em { grid-column: 2; font-size: 11px; }.mobility-sheet-list .mobility-picker-check { width: 100%; grid-template-columns: 1fr; border-radius: 12px; }.mobility-picker-check span { width: 25px; height: 25px; }.picker-start-timer { right: 59px; min-height: 30px; padding: 0 7px; font-size: 10px; }
   .daily-mobility > summary { min-height: 66px; padding: 12px 16px; }.daily-mobility-body { padding: 0 14px 14px; }
   .bottom-nav { bottom: max(7px, env(safe-area-inset-bottom)); width: calc(100% - 16px); min-height: 66px; border-radius: 21px; }.bottom-nav button { min-height: 52px; border-radius: 15px; }.bottom-nav button > span { font-size: 17px; }.bottom-nav button small { font-size: 11px; }
