@@ -14,7 +14,7 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.39.78 with screenshot import", async () => {
+test("server-renders Training for Life v1.40 with the app home screen", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
@@ -22,10 +22,11 @@ test("server-renders Training for Life v1.39.78 with screenshot import", async (
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /Relentless Forward Progress/);
-  assert.match(html, /Type it in or import a screenshot/);
-  assert.match(html, /Paste screenshot/);
-  assert.match(html, /Choose from Photos/);
+  assert.match(html, /v1\.40/);
+  assert.match(html, /Keep showing up/);
+  assert.match(html, /Today/);
+  assert.match(html, /Performance/);
+  assert.doesNotMatch(html, /Primary navigation/);
 });
 
 test("protects screenshot extraction with the personal access code", async () => {

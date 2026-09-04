@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.39.78";
+const APP_VERSION = "v1.40";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -294,6 +294,11 @@ function NavIcon({ name }: { name: Tab }) {
   return <span aria-hidden="true">{name === "today" ? "●" : name === "week" ? "◫" : name === "history" ? "◷" : name === "performance" ? "✦" : "•••"}</span>;
 }
 
+function SplashScreen({ version, onEnter }: { version: string; onEnter: (tab: Tab) => void }) {
+  const destinations: Array<[Tab, string, string]> = [["today", "Today", "Your session"], ["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
+  return <main className="splash-screen"><div className="splash-brand"><div className="splash-logo" aria-hidden="true"><span>T4L</span><i>↗</i></div><span className="splash-version">{version}</span></div><div className="splash-copy"><span className="kicker">TRAINING FOR LIFE</span><h1>Keep showing up.</h1><p>A simple place to train, recover, and notice your progress.</p></div><div className="splash-menu" aria-label="App sections">{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><NavIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><p className="splash-footnote">Your training history stays on this device.</p></main>;
+}
+
 function RhythmStrip({ focus, today, sessions, activeSchedule, scheduleHistory, onOpen, showIcons = false }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory?: ScheduleSnapshot[]; onOpen?: (date: Date) => void; showIcons?: boolean }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   return <div className="rhythm-strip" aria-label="This week’s training rhythm">
@@ -320,6 +325,7 @@ export default function Home() {
   };
   const basePlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
   const [tab, setTab] = useState<Tab>("today");
+  const [enteredApp, setEnteredApp] = useState(() => { try { return sessionStorage.getItem("t4l:entered-app") === "1"; } catch { return false; } });
   const [session, setSession] = useState<Session>(() => emptySession(activeKey, basePlan.key === "rest", basePlan));
   const [loaded, setLoaded] = useState(false);
   const [saveState, setSaveState] = useState("Loading your plan…");
@@ -456,6 +462,7 @@ export default function Home() {
   };
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
+  const enterApp = (next: Tab) => { try { sessionStorage.setItem("t4l:entered-app", "1"); } catch { /* Continue without a session preference. */ } setTab(next); setEnteredApp(true); window.scrollTo(0, 0); };
   const openDate = (date: Date) => { setActiveDate(date); setTab("today"); window.scrollTo(0, 0); };
   const finishAndBackup = async () => {
     setFinishBackupState("Choose backup location…");
@@ -629,6 +636,7 @@ export default function Home() {
   const importedScreenshotCount = Math.min(6, (session.importedWorkouts?.length ?? 0) + legacyScreenshotOffset);
   const displayedImportedWorkouts = session.importedWorkouts?.length ? session.importedWorkouts : legacyScreenshotOffset ? [{ activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] }] : [];
 
+  if (!enteredApp) return <div className={`app-shell theme-${plan.key} splash-shell`}><SplashScreen version={APP_VERSION} onEnter={enterApp}/></div>;
   return <div className={`app-shell theme-${plan.key}`}>
     <main>
       {tab === "today" && <div className="today-page">
