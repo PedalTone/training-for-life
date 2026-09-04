@@ -61,11 +61,12 @@ h1, h2, h3, p { text-wrap: pretty; }
 
 .splash-shell { min-height: 100svh; padding: 0; background: linear-gradient(160deg, #edf4f1 0%, #dcebe5 55%, #cfe3dc 100%); }
 .splash-screen { width: min(620px, 100%); min-height: 100svh; margin: 0 auto; padding: clamp(34px, 8vw, 74px) clamp(22px, 6vw, 42px) 34px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
-.splash-brand { display: flex; align-items: flex-start; gap: 12px; }
+.splash-brand { display: flex; align-items: stretch; }
 .splash-letterbox { min-width: 0; flex: 1; min-height: 122px; padding: 16px 22px 16px 16px; border-radius: 20px; background: #062f28; color: #f4fbf5; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; box-shadow: 0 12px 24px rgba(24,54,43,.18); }
 .splash-letterbox::after { content: "∞"; position: absolute; right: -7px; bottom: -47px; color: rgba(190,223,197,.13); font-size: 164px; font-weight: 800; line-height: 1; }
 .splash-letterbox > * { position: relative; z-index: 1; }.splash-letterbox-mark { width: 84px; height: 84px; flex: 0 0 auto; border-radius: 23px; box-shadow: 0 7px 14px rgba(0,0,0,.18); }.splash-letterbox-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }.splash-letterbox .kicker { color: #b9dfc4; font-size: 11px; }.splash-letterbox strong { margin-top: 4px; font-size: clamp(27px, 7vw, 43px); line-height: .98; letter-spacing: -.055em; }.splash-letterbox small { margin-top: 8px; color: #c9ddd0; font-size: 14px; }
 .splash-version { flex: 0 0 auto; margin-top: 4px; padding: 5px 8px; border: 1px solid rgba(38,76,61,.18); border-radius: 99px; color: #587067; font-size: 11px; font-weight: 800; letter-spacing: .03em; }
+.splash-version-bottom { align-self: center; margin-top: 12px; padding: 3px 7px; border-color: rgba(38,76,61,.14); color: #71827b; font-size: 10px; }
 .splash-copy { margin: clamp(38px, 10vw, 76px) 0 28px; }
 .splash-copy h1 { margin: 10px 0 12px; color: #142a24; font-size: clamp(48px, 13vw, 78px); line-height: .94; letter-spacing: -.07em; }
 .splash-copy p { max-width: 440px; margin: 0; color: #60746c; font-size: clamp(17px, 4.5vw, 21px); line-height: 1.4; }
