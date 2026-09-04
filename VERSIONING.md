@@ -10,8 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.41.3`, a patch that removes the duplicate splash title
-treatment and sizes the “Relentless forward progress” line to stay on one
-mobile line. The next small fix should be `1.41.4`; a future capability or substantial redesign
-may become `1.42`. The displayed app version, tests, release notes, and live
+The current release is `1.42`, a minor release that makes Plan a day-by-day
+mobile agenda with full-width rows and a clearer planning purpose. The next
+small fix should be `1.42.1`; a future capability or substantial redesign may
+become `1.43`. The displayed app version, tests, release notes, and live
 deployment must always agree.
