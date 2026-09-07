@@ -10,8 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.43.1`, a patch that renames injury tracking to Body
-check-in and clarifies the History filter as Notables. The next small fix should
-be `1.43.2`; a future capability or substantial redesign may become `1.44`. The
+The current release is `1.43.2`, a patch that completes the Body check-in and
+Notables terminology across Performance. The next small fix should be `1.43.3`;
+a future capability or substantial redesign may become `1.44`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
