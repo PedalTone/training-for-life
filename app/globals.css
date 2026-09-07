@@ -568,3 +568,65 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .week-page .week-day-card > span:nth-child(2) em { font-size: 12px; }
   .week-page .week-status { grid-column: auto; min-width: 88px; min-height: 32px; padding: 0 8px; font-size: 11px; }
 }
+
+/* Bold primary palette: shared category colors keep every screen legible while
+   giving the app a stronger, more energetic visual signature. */
+:root {
+  --bg: #f3f7fb;
+  --surface: #ffffff;
+  --surface-2: #f6f9fc;
+  --ink: #10243d;
+  --muted: #556b81;
+  --line: #cbd8e5;
+  --accent: #e33d3a;
+  --accent-deep: #b3262c;
+  --accent-soft: #ffd7d5;
+  --shadow: 0 10px 28px rgba(16, 36, 61, .12);
+  --shadow-soft: 0 5px 16px rgba(16, 36, 61, .09);
+}
+
+.splash-shell { background: linear-gradient(145deg, #e7f7fb 0%, #dcecff 55%, #f7e1d4 100%); }
+.splash-letterbox { background: linear-gradient(110deg, #063b52, #075a6a 55%, #126e7c); }
+.app-shell { background: color-mix(in srgb, var(--accent-soft) 22%, var(--bg)); }
+.app-shell.theme-mobility { --accent: #008f9e; --accent-deep: #006570; --accent-soft: #c5f2f4; }
+.app-shell.theme-aerobic { --accent: #087fc0; --accent-deep: #005a95; --accent-soft: #cbeaff; }
+.app-shell.theme-strength { --accent: #dc641e; --accent-deep: #a23b0c; --accent-soft: #ffdfc3; }
+.app-shell.theme-speed { --accent: #e33d3a; --accent-deep: #b3262c; --accent-soft: #ffd7d5; }
+.app-shell.theme-endurance { --accent: #4056c7; --accent-deep: #283b9f; --accent-soft: #dce4ff; }
+.app-shell.theme-rest { --accent: #287fae; --accent-deep: #15567f; --accent-soft: #d4efff; }
+
+.rhythm-strip button.mobility { --day-color: #008f9e; }
+.rhythm-strip button.aerobic { --day-color: #087fc0; }
+.rhythm-strip button.strength { --day-color: #c95717; }
+.rhythm-strip button.speed { --day-color: #d83e38; }
+.rhythm-strip button.endurance { --day-color: #4056b6; }
+.rhythm-strip button.rest { --day-color: #287fae; }
+
+.week-color-legend span.mobility, .history-scan-legend .mobility { --legend: #008f9e; --legend-soft: #c5f2f4; }
+.week-color-legend span.aerobic, .history-scan-legend .aerobic { --legend: #087fc0; --legend-soft: #cbeaff; }
+.week-color-legend span.strength, .history-scan-legend .strength { --legend: #c95717; --legend-soft: #ffdfc3; }
+.week-color-legend span.speed, .history-scan-legend .speed { --legend: #d83e38; --legend-soft: #ffd7d5; }
+.week-color-legend span.endurance, .history-scan-legend .endurance { --legend: #4056b6; --legend-soft: #dce4ff; }
+.week-color-legend span.rest, .history-scan-legend .rest { --legend: #287fae; --legend-soft: #d4efff; }
+
+.week-day-card.mobility { --day: #008f9e; --day-soft: #c5f2f4; }
+.week-day-card.aerobic { --day: #087fc0; --day-soft: #cbeaff; }
+.week-day-card.strength { --day: #c95717; --day-soft: #ffdfc3; }
+.week-day-card.speed { --day: #d83e38; --day-soft: #ffd7d5; }
+.week-day-card.endurance { --day: #4056b6; --day-soft: #dce4ff; }
+.week-day-card.rest { --day: #287fae; --day-soft: #d4efff; }
+
+.recent-record-icon.mobility { background: #c5f2f4; color: #006f7d; }
+.recent-record-icon.aerobic { background: #cbeaff; color: #005f9b; }
+.recent-record-icon.strength { background: #ffdfc3; color: #a63f0b; }
+.recent-record-icon.speed { background: #ffd7d5; color: #b3262c; }
+.recent-record-icon.endurance { background: #dce4ff; color: #3047ab; }
+.recent-record-icon.rest { background: #d4efff; color: #155f89; }
+
+.calendar-grid > button.completed, .recent-record-state.completed { background: #c8f0d4; color: #17663a; }
+.calendar-grid > button.modified, .calendar-grid > button.protected,
+.recent-record-state.modified, .recent-record-state.protected { background: #ffe19b; color: #775300; }
+.calendar-grid > button.rest, .recent-record-state.rest { background: #d4efff; color: #155f89; }
+.week-status.completed { background: #c8f0d4; color: #17663a; }
+.week-status.modified, .week-status.protected { background: #ffe19b; color: #775300; }
+.week-status.rest { background: #d4efff; color: #155f89; }
