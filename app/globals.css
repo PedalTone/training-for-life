@@ -572,7 +572,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 /* Bold primary palette: shared category colors keep every screen legible while
    giving the app a stronger, more energetic visual signature. */
 :root {
-  --bg: #f3f7fb;
+  --bg: #edf0f3;
   --surface: #ffffff;
   --surface-2: #f6f9fc;
   --ink: #10243d;
@@ -587,7 +587,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 
 .splash-shell { background: linear-gradient(145deg, #e7f7fb 0%, #dcecff 55%, #f7e1d4 100%); }
 .splash-letterbox { background: linear-gradient(110deg, #063b52, #075a6a 55%, #126e7c); }
-.app-shell { background: color-mix(in srgb, var(--accent-soft) 22%, var(--bg)); }
+.app-shell { background: var(--bg); }
 .app-shell.theme-mobility { --accent: #008f9e; --accent-deep: #006570; --accent-soft: #c5f2f4; }
 .app-shell.theme-aerobic { --accent: #087fc0; --accent-deep: #005a95; --accent-soft: #cbeaff; }
 .app-shell.theme-strength { --accent: #dc641e; --accent-deep: #a23b0c; --accent-soft: #ffdfc3; }

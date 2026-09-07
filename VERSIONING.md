@@ -10,9 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.44`, a minor visual-system release that replaces the
-muted palette with bolder, consistent primary category colors across the app.
-The next small fix should be `1.44.1`; a future capability or substantial
-redesign may become `1.45`. The
+The current release is `1.44.1`, a patch that places the bolder category colors
+on a neutral gray app background for clearer surface hierarchy. The next small
+fix should be `1.44.2`; a future capability or substantial redesign may become
+`1.45`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
