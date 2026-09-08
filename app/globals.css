@@ -616,6 +616,13 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .week-day-card.endurance { --day: #4056b6; --day-soft: #dce4ff; }
 .week-day-card.rest { --day: #287fae; --day-soft: #d4efff; }
 
+/* Plan stays clean: category color is carried by the edge, icon, and labels,
+   while the large reading surface remains white. */
+.week-page .week-day-card { background: #fff; border-color: var(--line); }
+.week-page .week-day-card .day-icon { background: var(--day-soft); color: var(--day); }
+.week-page .week-day-card > span:nth-child(2) small { color: var(--day); }
+.week-page .week-status { background: #f2f5f8; color: #465f74; }
+
 .recent-record-icon.mobility { background: #c5f2f4; color: #006f7d; }
 .recent-record-icon.aerobic { background: #cbeaff; color: #005f9b; }
 .recent-record-icon.strength { background: #ffdfc3; color: #a63f0b; }
