@@ -670,10 +670,12 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .calendar-grid > button.completed, .recent-record-state.completed { background: #c8f0d4; color: #17663a; }
 .calendar-grid > button.modified, .calendar-grid > button.protected,
 .recent-record-state.modified, .recent-record-state.protected { background: #ffe19b; color: #775300; }
-.calendar-grid > button.rest:not(.completed):not(.modified):not(.protected) { background: var(--surface-2); color: var(--ink); }
+.calendar-grid > button.rest:not(.completed):not(.modified):not(.protected):not(.skipped) { background: var(--surface-2); color: var(--ink); }
 .recent-record-state.rest { background: #d4efff; color: #155f89; }
 .week-status.completed { background: #c8f0d4; color: #17663a; }
 .week-status.modified, .week-status.protected { background: #ffe19b; color: #775300; }
 .week-status.rest { background: #d4efff; color: #155f89; }
+.calendar-grid > button.skipped { background: #ffe1df; color: #a52f2b; }.scan-days button.skipped i { background: #f3aba6; color: #8b2420; }.scan-days button.skipped .history-day-icon { color: #a52f2b; }.week-status.skipped { background: #ffe1df; color: #a52f2b; }
 
 .month-card .legend span:last-child { display: none; }
+.month-card .legend::after { content: "— Skipped"; color: #a52f2b; }

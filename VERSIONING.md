@@ -10,9 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.46.6`, a patch that lets recorded recovery days use
-the same green-complete and yellow-body-consideration statuses as every other
-workout day, while removing the redundant Rest legend. The next small fix
-should be `1.46.7`; a future substantial redesign may become `1.47`. The
+The current release is `1.46.7`, a patch that adds a muted-red skipped state
+with a dash icon for past, unlogged planned workouts in History. The next small
+fix should be `1.46.8`; a future substantial redesign may become `1.47`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.

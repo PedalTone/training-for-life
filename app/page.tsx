@@ -196,7 +196,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.46.6";
+const APP_VERSION = "v1.46.7";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -271,17 +271,17 @@ function stateFor(session: Session | undefined, planKey: string, date?: Date, to
   if (resolved === "complete") return "completed";
   if (resolved === "in-progress") return "partial";
   if (resolved === "planned") return "planned";
-  return "unassigned";
+  return "skipped";
 }
 function hasReportedInjury(session: Session | undefined) { return session?.injury?.reported === true; }
-function stateSymbol(state: string) { return state === "completed" ? "✓" : state === "modified" ? "↗" : state === "protected" ? "⚑" : state === "partial" ? "◐" : state === "planned" ? "•" : "·"; }
+function stateSymbol(state: string) { return state === "completed" ? "✓" : state === "modified" ? "↗" : state === "protected" ? "⚑" : state === "partial" ? "◐" : state === "planned" ? "•" : state === "skipped" ? "—" : "·"; }
 function displayStateSymbol(session: Session | undefined, planKey: string, date?: Date, today?: Date) {
   const state = stateFor(session, planKey, date, today);
   if (!hasReportedInjury(session)) return stateSymbol(state);
   const withoutInjury = session ? { ...session, injury: { ...session.injury, reported: false, impact: "" as const } } : session;
   return `${stateSymbol(stateFor(withoutInjury, planKey, date, today))}⚑`;
 }
-function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Body consideration" : state === "partial" ? "In progress" : state === "planned" ? "Planned" : "Unassigned"; }
+function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Body consideration" : state === "partial" ? "In progress" : state === "planned" ? "Planned" : state === "skipped" ? "Skipped" : "Unassigned"; }
 
 function MovementMark({ exerciseId, name, graphicData }: { exerciseId?: string; name: string; graphicData?: string }) {
   if (graphicData) return <img className="exercise-icon" src={graphicData} alt="" aria-hidden="true"/>;
