@@ -623,6 +623,16 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .week-page .week-day-card > span:nth-child(2) small { color: var(--day); }
 .week-page .week-status { background: #f2f5f8; color: #465f74; }
 
+/* Plan and History carry their meaning within the day rows: no duplicate key
+   or calendar strip is needed. The current Plan row gets the sole stronger
+   outline so it is easy to locate at a glance. */
+.week-page .week-rhythm-card, .week-page .week-color-legend, .history-page .history-scan-legend { display: none; }
+.week-page .week-list { margin-top: 0; }
+.week-page .week-day-card.today { border: 3px solid var(--ink); box-shadow: 0 0 0 2px color-mix(in srgb, var(--day) 30%, transparent), var(--shadow-soft); }
+.history-period-nav { width: 120px; justify-content: space-between; gap: 0; }
+.history-period-nav .history-nav-divider { display: block; flex: 0 0 1px; min-width: 1px; width: 1px; height: 27px; padding: 0; background: var(--line); }
+@media (max-width: 680px) { .history-period-nav { width: 100%; }.week-page .week-day-card.today { box-shadow: 0 0 0 2px color-mix(in srgb, var(--day) 30%, transparent), var(--shadow-soft); } }
+
 /* Performance overview: one connected assessment instead of separate cards. */
 .performance-overview { margin-top: 8px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-xl); background: #fff; box-shadow: var(--shadow); }
 .performance-overview-hero { padding: 22px 24px; background: #173c33; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
