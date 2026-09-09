@@ -3,14 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#f5f2ea" />
+    <meta name="theme-color" content="#edf0f3" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="description" content="A private, offline-first weekly fitness tracker for broad, lifelong readiness." />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./favicon.svg" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
-    <title>Training 4 Life — Move well. Stay ready.</title>
+    <title>Training for Life</title>
+    <script>
+      // GitHub Pages is retained only as a stable handoff for earlier links.
+      // The maintained app (and its iPhone service worker) lives at this
+      // production origin, so never load the obsolete parallel Vite build.
+      window.location.replace("https://training-4-life.tommy-tritone.chatgpt.site/");
+    </script>
   </head>
   <body>
     <div id="root"></div>
