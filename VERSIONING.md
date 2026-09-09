@@ -10,8 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.44.2`, a patch that makes Plan's day cards white and
-uses category colors only as readable accents. The next small fix should be
-`1.44.3`; a future capability or substantial redesign may become `1.45`. The
+The current release is `1.45`, a minor presentation release that consolidates
+the Performance summary and weekly readout into one clear overview block. The
+next small fix should be `1.45.1`; a future capability or substantial redesign
+may become `1.46`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
