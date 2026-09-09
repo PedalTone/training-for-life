@@ -10,9 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.46.2`, a patch that moves the weekly History forward
-control below the displayed weeks and gives it an accent treatment. The next
-small fix should be `1.46.3`; a future substantial redesign may become
-`1.47`. The
+The current release is `1.46.3`, a patch that restores the paired History
+arrows in one colored control fixed above the bottom navigation. The next small
+fix should be `1.46.4`; a future substantial redesign may become `1.47`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
