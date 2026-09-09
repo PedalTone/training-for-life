@@ -634,6 +634,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .history-period-nav .history-nav-divider { display: block; flex: 0 0 1px; min-width: 1px; width: 1px; height: 27px; padding: 0; background: var(--line); }
 @media (max-width: 680px) { .history-period-nav { width: 100%; }.week-page .week-day-card.today { box-shadow: 0 0 0 2px color-mix(in srgb, var(--day) 30%, transparent), var(--shadow-soft); } }
 
+.history-page .history-next-period { width: 100%; min-height: 50px; margin-top: 12px; border: 0; border-radius: 15px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 800; box-shadow: var(--shadow-soft); }.history-page .history-next-period span { font-size: 25px; line-height: .7; }
+
 /* Performance overview: one connected assessment instead of separate cards. */
 .performance-overview { margin-top: 8px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-xl); background: #fff; box-shadow: var(--shadow); }
 .performance-overview-hero { padding: 22px 24px; background: #173c33; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
