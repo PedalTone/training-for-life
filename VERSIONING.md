@@ -10,9 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.46.5`, a patch that corrects the final Month View
-palette override so unlogged Sunday recovery plans render neutral. The next
-small fix should be `1.46.6`; a future substantial redesign may become `1.47`.
-The
+The current release is `1.46.6`, a patch that lets recorded recovery days use
+the same green-complete and yellow-body-consideration statuses as every other
+workout day, while removing the redundant Rest legend. The next small fix
+should be `1.46.7`; a future substantial redesign may become `1.47`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
