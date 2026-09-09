@@ -10,9 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.45.1`, a patch that compacts the consolidated
-Performance overview by removing duplicated copy without reducing readable type.
-The next small fix should be `1.45.2`; a future capability or substantial
-redesign may become `1.46`. The
+The current release is `1.45.2`, a patch that reduces the Performance overview's
+vertical footprint while preserving its readable metrics. The next small fix
+should be `1.45.3`; a future capability or substantial redesign may become
+`1.46`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
