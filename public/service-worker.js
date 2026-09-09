@@ -1,4 +1,6 @@
-const CACHE = "training-4-life-v5";
+// Advance this whenever a release changes the client startup experience. It
+// makes an installed iPhone app discard stale shell assets on activation.
+const CACHE = "training-4-life-v6";
 const ICONS = [
   "block-up-overs.png", "plank-to-rotation.png", "scapular-push-up.png", "overhead-press.png", "i-t-y.png", "face-pulls.png",
   "swimmers.png", "open-book.png", "banded-7s.png", "windmill.png", "kb-waiter.png", "crossovers.png", "push-ups.png",
