@@ -638,6 +638,10 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .history-page .history-bottom-nav { position: fixed; left: 50%; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 84px); transform: translateX(-50%); z-index: 39; width: 128px; min-height: 48px; padding: 5px; border-color: #9bace6; border-radius: 15px; background: #dce4ff; box-shadow: 0 8px 20px rgba(64,86,182,.18); }.history-page .history-bottom-nav button { width: 48px; height: 38px; border-radius: 10px; background: rgba(255,255,255,.7); color: #283b9f; }.history-page .history-bottom-nav button:disabled { background: rgba(255,255,255,.38); color: #6475b5; opacity: 1; }.history-page .history-bottom-nav .history-nav-divider { height: 28px; background: #9bace6; }
 @media (max-width: 680px) { .history-page .history-bottom-nav { bottom: calc(max(7px, env(safe-area-inset-bottom)) + 76px); width: 128px; } }
 
+/* Monthly History reports what was recorded. A planned Sunday recovery should
+   not tint an otherwise unlogged day. */
+.calendar-grid > button.rest { background: var(--surface-2); color: var(--ink); }
+
 /* Performance overview: one connected assessment instead of separate cards. */
 .performance-overview { margin-top: 8px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-xl); background: #fff; box-shadow: var(--shadow); }
 .performance-overview-hero { padding: 22px 24px; background: #173c33; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
