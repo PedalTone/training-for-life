@@ -10,9 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.45.5`, a patch that simplifies Plan and History by
-removing redundant calendar/icon keys and marking today directly on its Plan
-row. The next small fix should be `1.45.6`; a future capability or substantial
-redesign may become `1.46`. The
+The current release is `1.46`, a minor release that adds a persistent Home
+destination, returning from any app tab to the opening splash screen. The next
+small fix should be `1.46.1`; a future substantial redesign may become
+`1.47`. The
 displayed app version, tests, release notes, and live
 deployment must always agree.
