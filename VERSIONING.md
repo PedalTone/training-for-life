@@ -10,8 +10,7 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.47`, a minor release that adds categorized future
-workout videos and in-place filters for Mobility, Easy aerobic, Strength, Speed
-/ intensity, and Endurance. Existing uncategorized videos remain available.
-The next small fix should be `1.47.1`. The displayed app version, tests,
-release notes, and live deployment must always agree.
+The current release is `1.47.1`, a patch that lets people categorize existing
+future workout videos as well as new ones. The next small fix should be
+`1.47.2`. The displayed app version, tests, release notes, and live deployment
+must always agree.
