@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><head><meta name="theme-color" content="#edf0f3"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/></head><body className={`${geistSans.variable} ${geistMono.variable}`}>{children}<script dangerouslySetInnerHTML={{__html:`if('serviceWorker' in navigator&&!['localhost','127.0.0.1'].includes(location.hostname)){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?release=1.47.1').catch(()=>{}))}`}}/></body></html>;
+  return <html lang="en"><head><meta name="theme-color" content="#edf0f3"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/></head><body className={`${geistSans.variable} ${geistMono.variable}`}>{children}<script dangerouslySetInnerHTML={{__html:`if('serviceWorker' in navigator&&!['localhost','127.0.0.1'].includes(location.hostname)){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?release=1.48').catch(()=>{}))}`}}/></body></html>;
 }

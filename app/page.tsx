@@ -23,7 +23,7 @@ type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
   plannedKey?: string; plannedTheme?: string;
   pace?: string; calories?: string; startTime?: string; detailSource?: string;
-  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[];
+  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[]; workoutPhoto?: string;
   importedWorkouts?: ScreenshotWorkout[];
   updatedAt: string; completedAt?: string;
 };
@@ -193,6 +193,16 @@ async function prepareScreenshot(file: Blob) {
   canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL("image/jpeg", .84);
 }
+async function prepareWorkoutPhoto(file: File) {
+  if (!file.type.startsWith("image/")) throw new Error("Choose a photo.");
+  if (file.size > 20_000_000) throw new Error("That photo is too large. Try a regular photo.");
+  const source = await blobAsDataUrl(file);
+  const image = new Image(); image.src = source; await image.decode();
+  const scale = Math.min(1, 480 / Math.max(image.naturalWidth, image.naturalHeight));
+  const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.round(image.naturalWidth * scale)); canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", .62);
+}
 async function prepareExerciseReference(file: File) {
   if (!file.type.startsWith("image/")) throw new Error("Choose an image file.");
   if (file.size > 20_000_000) throw new Error("That image is too large. Try a regular photo.");
@@ -206,7 +216,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.47.1";
+const APP_VERSION = "v1.48";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -357,14 +367,16 @@ export default function Home() {
   const [screenshotPreview, setScreenshotPreview] = useState("");
   const [screenshotWorkout, setScreenshotWorkout] = useState<ScreenshotWorkout | null>(null);
   const [screenshotError, setScreenshotError] = useState("");
+  const [photoNotice, setPhotoNotice] = useState("");
   const [screenshotAccessCode, setScreenshotAccessCode] = useState("");
   const [hasScreenshotAccess, setHasScreenshotAccess] = useState(false);
   const screenshotInput = useRef<HTMLInputElement>(null);
+  const workoutPhotoInput = useRef<HTMLInputElement>(null);
   const noteTextarea = useRef<HTMLTextAreaElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
   const currentDayPlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
-  const sessionIsBlank = !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.detailSource;
+  const sessionIsBlank = !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.workoutPhoto && !session.detailSource;
   // A blank current-day session follows the current Settings mapping. This
   // also prevents the initial default schedule from winning a race with the
   // user's saved mapping during startup; recorded history remains anchored to
@@ -477,7 +489,7 @@ export default function Home() {
   const finishAndBackup = async () => {
     setFinishBackupState("Choose backup location…");
     const now = new Date().toISOString();
-    const hasWorkoutData = Boolean(session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length);
+    const hasWorkoutData = Boolean(session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length || session.workoutPhoto);
     // A completed recovery day is still a completed record. Keep the plan
     // type as Recovery while using the same completion state everywhere.
     const current = { ...session, status: "completed" as const, completedAt: now, updatedAt: now };
@@ -617,6 +629,10 @@ export default function Home() {
     setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); setScreenshotError(""); setOpenPanel("log");
   };
   const removeImportedWorkout = (index: number) => update({ importedWorkouts: (session.importedWorkouts ?? []).filter((_, itemIndex) => itemIndex !== index) });
+  const addWorkoutPhoto = async (file: File) => {
+    try { setPhotoNotice("Compressing photo…"); update({ workoutPhoto: await prepareWorkoutPhoto(file) }); setPhotoNotice("Photo saved with this workout and its backups."); }
+    catch (error) { setPhotoNotice(error instanceof Error ? error.message : "That photo could not be saved."); }
+  };
   const closeScreenshot = () => { setScreenshotWorkout(null); setScreenshotPreview(""); setScreenshotState("idle"); };
   const togglePanel = (panel: "workout" | "log", open: boolean) => { if (!open && panel === "log") setShowVideoForm(false); setOpenPanel((current) => open ? panel : current === panel ? null : current); };
   useEffect(() => {
@@ -625,7 +641,7 @@ export default function Home() {
     const handlers = sections.map((section) => {
       const heading = section.querySelector<HTMLElement>(".log-subsection-heading");
       if (!heading) return null;
-      const populated = section.classList.contains("note-subsection") ? Boolean(session.notes.trim()) : section.classList.contains("data-subsection") ? Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime || session.detailSource) : section.classList.contains("links-subsection") ? session.videos.length > 0 : injuryReported;
+      const populated = section.classList.contains("note-subsection") ? Boolean(session.notes.trim()) : section.classList.contains("data-subsection") ? Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime || session.detailSource) : section.classList.contains("links-subsection") ? session.videos.length > 0 : section.classList.contains("photo-subsection") ? Boolean(session.workoutPhoto) : injuryReported;
       section.classList.toggle("collapsed", !populated);
       heading.tabIndex = 0; heading.setAttribute("role", "button"); heading.setAttribute("aria-expanded", String(populated));
       const toggle = () => { const next = section.classList.toggle("collapsed"); if (next && section.classList.contains("links-subsection")) setShowVideoForm(false); heading.setAttribute("aria-expanded", String(!next)); };
@@ -634,7 +650,7 @@ export default function Home() {
       return () => { heading.removeEventListener("click", toggle); heading.removeEventListener("keydown", keyToggle); };
     });
     return () => handlers.forEach((cleanup) => cleanup?.());
-  }, [tab, openPanel, activeKey, session.notes, session.duration, session.distance, session.pace, session.calories, session.startTime, session.detailSource, session.videos.length, injuryReported]);
+  }, [tab, openPanel, activeKey, session.notes, session.duration, session.distance, session.pace, session.calories, session.startTime, session.detailSource, session.videos.length, session.workoutPhoto, injuryReported]);
 
   // All Today/Plan/History surfaces use this same resolved state, including
   // legacy records that have a completion timestamp but an older status value.
@@ -668,9 +684,10 @@ export default function Home() {
         </div>
 
         <details className="surface-card log-workout-card" open={openPanel === "log"} onToggle={(e) => togglePanel("log", e.currentTarget.open)}>
-          <summary><span className="panel-icon">▤</span><span><b>Log Workout</b><small>{session.duration || session.notes || injuryReported ? "Workout data, notes, or body check-in added" : "Workout data, notes, and body check-in"}</small></span><i>＋</i></summary>
+          <summary><span className="panel-icon">▤</span><span><b>Log Workout</b><small>{session.duration || session.notes || session.workoutPhoto || injuryReported ? "Workout data, notes, photo, or body check-in added" : "Workout data, notes, photo, and body check-in"}</small></span><i>＋</i></summary>
           <div className="log-workout-body">
             <details className="log-subsection note-subsection" open={Boolean(session.notes)}><summary className="log-subsection-heading"><span>✎</span><div><b>Note</b><small>Dictate important details about your workout</small></div><i>＋</i></summary><textarea ref={noteTextarea} value={session.notes} onChange={(e) => update({ notes: e.target.value })} onInput={(e) => resizeNoteField(e.currentTarget)} placeholder="Add workout note…" rows={7} aria-label="Workout note"/></details>
+            <section className="log-subsection photo-subsection"><div className="log-subsection-heading"><span>▧</span><div><b>Workout photo</b><small>{session.workoutPhoto ? "Saved with this workout" : "Add a small visual reminder"}</small></div></div><div className="workout-photo-body">{session.workoutPhoto ? <><img src={session.workoutPhoto} alt="Workout reference"/><div><button onClick={() => workoutPhotoInput.current?.click()}>Replace photo</button><button className="quiet-photo" onClick={() => { update({ workoutPhoto: undefined }); setPhotoNotice("Photo removed from this workout."); }}>Remove</button></div></> : <button className="workout-photo-add" onClick={() => workoutPhotoInput.current?.click()}>＋ Add workout photo</button>}<input ref={workoutPhotoInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void addWorkoutPhoto(file); event.currentTarget.value = ""; }}/>{photoNotice && <p className="photo-notice" role="status">{photoNotice}</p>}<small className="workout-photo-help">Compressed for quick recognition and included in your backups.</small></div></section>
             <section className={`log-subsection data-subsection ${importedScreenshotCount ? "has-imported-screenshots" : ""}`}><div className="log-subsection-heading"><span>▤</span><div><b>Workout data</b><small>Add up to six screenshots without overwriting earlier details</small></div></div><section className="screenshot-import"><div className="screenshot-import-title"><div><strong>{importedScreenshotCount ? "Screenshots added" : "Add a workout screenshot"}</strong><small>{importedScreenshotCount ? "Add another screenshot to keep its details alongside the earlier one." : "Paste or choose a screenshot to pull out its workout details."}</small></div><b className="screenshot-count" aria-label={`${importedScreenshotCount} of 6 screenshots added`}>{importedScreenshotCount} / 6 <span>screenshots</span></b></div>{!hasScreenshotAccess && <div className="screenshot-access-note"><span>AI access is managed in Settings.</span><button onClick={() => navigate("more")}>Open Settings</button></div>}<div className="screenshot-actions"><button onClick={() => void pasteScreenshot()} disabled={screenshotState === "reading" || importedScreenshotCount >= 6}>{importedScreenshotCount ? "Add another screenshot" : "Paste screenshot"}</button><button onClick={() => screenshotInput.current?.click()} disabled={screenshotState === "reading" || importedScreenshotCount >= 6}>{importedScreenshotCount ? "Add from Photos" : "Choose from Photos"}</button></div><input ref={screenshotInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void readScreenshot(file); event.currentTarget.value = ""; }}/>{screenshotState === "reading" && <p className="screenshot-status" role="status"><span/>Reading workout details…</p>}{screenshotError && <p className="screenshot-error" role="alert">{screenshotError}</p>}{Boolean(session.importedWorkouts?.length) && <div className="imported-workout-list" aria-label="Added workout screenshots">{session.importedWorkouts?.map((workout, index) => <div className="imported-workout-row" key={`${workout.date}-${workout.startTime}-${index}`}><div><b>Screenshot {index + 1}</b><span>{[workout.date, workout.startTime].filter(Boolean).join(" · ") || "Workout details added"}</span><div className="imported-workout-metrics">{[["Duration", workout.duration], ["Distance", workout.distance], ["Pace", workout.pace], ["Calories", workout.calories], ["Activity", workout.activity]].filter(([, value]) => value).map(([label, value]) => <span key={label}><b>{label}</b>{value}</span>)}</div></div><button className="text-button" onClick={() => removeImportedWorkout(index)}>Remove</button></div>)}</div>}</section><div className="field-grid"><label><span>Duration</span><div><input value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/></div></label><label><span>Distance</span><div><input value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/></div></label><label><span>Pace</span><div><input value={session.pace ?? ""} onChange={(e) => update({ pace: e.target.value })} placeholder="—"/></div></label><label><span>Calories</span><div><input inputMode="numeric" value={session.calories ?? ""} onChange={(e) => update({ calories: e.target.value })} placeholder="—"/></div></label><label><span>Start time</span><div><input value={session.startTime ?? ""} onChange={(e) => update({ startTime: e.target.value })} placeholder="—"/></div></label></div><div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>{session.detailSource && <p className="detail-source">Imported from {session.detailSource} · You can edit any value.</p>}</section>
             <section className="log-subsection links-subsection"><div className="log-subsection-heading"><span>▶</span><div><b>YouTube links</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a workout video"}</small></div></div>{session.videos.length > 0 && <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} onClearGuide={video.workoutGuide ? () => clearWorkoutGuide(session.id, i) : undefined} onRetry={() => analyzeVideo(i, video)} key={`${video.url}-${i}`}/>)}</div>}{session.videos.length > 0 && !showVideoForm ? <button className="add-video-toggle" onClick={() => setShowVideoForm(true)}>＋ Add Video</button> : <div className="inline-sheet"><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video + build guide"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div>}</section>
             <section className={`log-subsection injury-subsection ${injuryReported ? "active" : ""}`}><div className="log-subsection-heading"><span>⚑</span><div><b>Body check-in</b><small>{injuryReported ? "Noted for this workout" : "No concerns noted"}</small></div><button className="injury-toggle-inline" onClick={handleInjuryControl} aria-pressed={injuryReported}><i/></button></div>{injuryReported && <><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Body area to be mindful of" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Area to be mindful of (optional)"/><textarea aria-label="Body check-in note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add a note about what you noticed…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear body check-in</button></>}</section>
