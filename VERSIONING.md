@@ -10,8 +10,8 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.46.7`, a patch that adds a muted-red skipped state
-with a dash icon for past, unlogged planned workouts in History. The next small
-fix should be `1.46.8`; a future substantial redesign may become `1.47`. The
-displayed app version, tests, release notes, and live
-deployment must always agree.
+The current release is `1.47`, a minor release that adds categorized future
+workout videos and in-place filters for Mobility, Easy aerobic, Strength, Speed
+/ intensity, and Endurance. Existing uncategorized videos remain available.
+The next small fix should be `1.47.1`. The displayed app version, tests,
+release notes, and live deployment must always agree.
