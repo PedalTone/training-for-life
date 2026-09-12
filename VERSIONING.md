@@ -10,10 +10,10 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-Release decision: **Minor** — user-directed `1.50` release to validate that an
-installed GitHub Pages app detects and applies a new version.
+Release decision: **Minor** — `1.51` adds user-defined workout types to Weekly
+workout mapping. Custom types are available for any weekday and one-day
+overrides, and are preserved in local backups.
 
-The current release is `1.50`. It refreshes the installed-app cache while
-preserving the existing local-only data model. The next small fix should be
-`1.50.1`. The displayed app version, tests, release notes, and live deployment
-must always agree.
+The current release is `1.51`. The next small fix should be `1.51.1`. The
+displayed app version, tests, release notes, and live deployment must always
+agree.

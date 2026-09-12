@@ -3,7 +3,7 @@
 // GitHub Pages previously served a redirect at this origin. A new cache name
 // clears that obsolete shell for existing visitors now that Pages serves the
 // application directly.
-const CACHE = "training-4-life-v8";
+const CACHE = "training-4-life-v9";
 const ICONS = [
   "block-up-overs.png", "plank-to-rotation.png", "scapular-push-up.png", "overhead-press.png", "i-t-y.png", "face-pulls.png",
   "swimmers.png", "open-book.png", "banded-7s.png", "windmill.png", "kb-waiter.png", "crossovers.png", "push-ups.png",
