@@ -21,7 +21,7 @@ function isVideoCategory(value: unknown): value is VideoCategory { return videoC
 function videoCategoryLabel(category?: VideoCategory) { return videoCategories.find((item) => item.key === category)?.label || "Uncategorized"; }
 type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
-  plannedKey?: string; plannedTheme?: string;
+  plannedKey?: string; plannedTheme?: string; planOverride?: boolean;
   pace?: string; calories?: string; startTime?: string; detailSource?: string;
   notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[]; workoutPhoto?: string;
   importedWorkouts?: ScreenshotWorkout[];
@@ -82,6 +82,7 @@ function scheduleForDate(date: Date, current: Schedule, history: ScheduleSnapsho
 }
 function historicalPlan(saved: Session | undefined, activeSchedule: Schedule, date?: Date) {
   const current = activeSchedule[saved ? dateFromKey(saved.date).getDay() : date?.getDay() ?? 0];
+  if (saved?.planOverride === false) return current;
   const savedType = saved?.plannedKey ? schedule.find((plan) => plan.key === saved.plannedKey) : undefined;
   if (!saved?.plannedKey && !saved?.plannedTheme) return current;
   const resolved = savedType ? { ...savedType, short: current.short, label: current.label } : current;
@@ -131,7 +132,7 @@ function normalizeSession(saved: Session): Session {
   const activities = saved.activities ?? (saved.activity ? [saved.activity] : []);
   const completedExercises = saved.completedExercises ?? [];
   const mobilityExercises = saved.mobilityExercises ?? completedExercises;
-  return { ...saved, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: saved.videos ?? [], injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
+  return { ...saved, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: saved.videos ?? [], planOverride: typeof saved.planOverride === "boolean" ? saved.planOverride : undefined, injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
 }
 function weekDates(date: Date) {
   const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() + 6) % 7));
@@ -216,7 +217,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.48";
+const APP_VERSION = "v1.49";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -279,7 +280,7 @@ async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise
 type ResolvedStatus = "unassigned" | "planned" | "in-progress" | "complete";
 function resolveSessionStatus(session: Session | undefined, planKey: string, date?: Date, today?: Date): ResolvedStatus {
   if (session?.status === "completed" || session?.completedAt) return "complete";
-  const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
+  const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.workoutPhoto || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
   if (hasRecordedWork) return "in-progress";
   if (session || planKey) return date && today && dateKey(date) < dateKey(today) && !session ? "unassigned" : "planned";
   return "unassigned";
@@ -376,7 +377,7 @@ export default function Home() {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
   const currentDayPlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
-  const sessionIsBlank = !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.workoutPhoto && !session.detailSource;
+  const sessionIsBlank = !session.planOverride && !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.workoutPhoto && !session.detailSource;
   // A blank current-day session follows the current Settings mapping. This
   // also prevents the initial default schedule from winning a race with the
   // user's saved mapping during startup; recorded history remains anchored to
@@ -469,6 +470,12 @@ export default function Home() {
   }, [videoUrl]);
 
   const update = (patch: Partial<Session>) => { setFinishBackupState(""); setSession((current) => ({ ...current, ...patch })); };
+  const setDayWorkoutType = (key: string) => {
+    const choice = scheduleTypeOptions.find((option) => option.key === key);
+    if (!choice) return;
+    update({ planOverride: true, plannedKey: choice.key, plannedTheme: choice.label, status: session.status === "completed" ? "completed" : choice.key === "rest" ? "rest" : "partial" });
+  };
+  const restoreWeeklyWorkoutType = () => update({ planOverride: false, plannedKey: undefined, plannedTheme: undefined, status: session.status === "completed" ? "completed" : currentDayPlan.key === "rest" ? "rest" : "partial" });
   const toggleActivity = (activity: string) => {
     const selected = session.activities ?? (session.activity ? [session.activity] : []);
     const activities = selected.includes(activity) ? selected.filter((item) => item !== activity) : [...selected, activity];
@@ -678,7 +685,7 @@ export default function Home() {
         <div className="control-row workout-mobility-row today-primary-actions">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
-            <div className="panel-body"><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
+            <div className="panel-body"><div className="day-workout-override"><label><span>Workout for this day</span><select value={plan.key} onChange={(event) => setDayWorkoutType(event.target.value)}>{scheduleTypeOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><div><small>{session.planOverride ? "One-day change · weekly cadence stays the same" : "Following your weekly cadence"}</small>{session.planOverride && <button onClick={restoreWeeklyWorkoutType}>Use weekly cadence</button>}</div></div><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
           </details>
           <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Add-ons</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} selected · ${session.completedExercises.filter((name) => session.mobilityExercises.includes(name)).length} completed` : "Choose supporting work"}</small></button>
         </div>
@@ -699,7 +706,7 @@ export default function Home() {
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
       {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
-      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} onOpenDate={openDate}/>}
+      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate}/>}
       {tab === "history" && <HistoryView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate}/>}
       {tab === "performance" && <PerformanceView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onClearGuide={clearWorkoutGuide} onAddToToday={addFutureVideoToToday}/>}
@@ -778,11 +785,11 @@ function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session
   return <details className="surface-card daily-mobility"><summary><span><b>Mobility exercises</b><small>{complete} of {session.mobilityExercises.length} completed</small></span><i>⌄</i></summary><div className="daily-mobility-body"><div className="checklist">{session.mobilityExercises.map((name) => { const checked = session.completedExercises.includes(name); const exercise = exerciseByName.get(name); const timerUrl = `https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`; return <div key={name} className={`daily-exercise-row ${checked ? "checked" : ""}`}><button className="daily-exercise-toggle" aria-pressed={checked} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark exerciseId={exercise?.id} name={name} graphicData={exercise?.graphicData}/></span><span className="exercise-copy"><strong>{name}</strong><small>{exercise?.equipment || "Mobility exercise"}</small></span><span className="check-target">{checked ? "✓" : ""}</span></button><a className="start-timer" href={timerUrl} target="_blank" rel="noreferrer">Start timer</a></div>; })}</div><button className="edit-mobility" onClick={onEdit}>Edit loaded exercises</button></div></details>;
 }
 
-function WeekView({ today, sessions, activeSchedule, onOpenDate }: { today: Date; sessions: Session[]; activeSchedule: Schedule; onOpenDate: (date: Date) => void }) {
+function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
   return <div className="subpage week-page">
-    <section className="week-list">{days.map((date) => { const plan = activeSchedule[date.getDay()]; const saved = map.get(dateKey(date)); const state = stateFor(saved, plan.key, date, today); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
+    <section className="week-list">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, today); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
   </div>;
 }
 
