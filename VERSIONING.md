@@ -10,8 +10,10 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-The current release is `1.49`, a minor release that adds one-day workout-plan
-overrides. A change to a current or future date remains on that date only and
-does not alter the recurring weekly cadence in Settings. The next small fix
-should be `1.49.1`. The displayed app version, tests, release notes, and live
-deployment must always agree.
+Release decision: **Minor** — user-directed `1.50` release to validate that an
+installed GitHub Pages app detects and applies a new version.
+
+The current release is `1.50`. It refreshes the installed-app cache while
+preserving the existing local-only data model. The next small fix should be
+`1.50.1`. The displayed app version, tests, release notes, and live deployment
+must always agree.
