@@ -11,6 +11,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js`).catch(() => {});
+    // The release query forces installed GitHub Pages apps to request the
+    // current worker rather than relying on a previously cached redirect-era
+    // service-worker response.
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js?release=1.50`, { updateViaCache: "none" }).catch(() => {});
   });
 }
