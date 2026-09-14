@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { isCompleteInsightReport } from "./insight-validation";
 
 type Tab = "today" | "week" | "history" | "performance" | "more";
 type Effort = "" | "easy" | "moderate" | "hard";
@@ -187,7 +188,8 @@ async function fetchTrainingInsights(sessions: Session[], periodDays: 0 | 30 | 9
   }));
   const response = await fetch(`${service}/api/training-insights`, { method: "POST", headers: { "Content-Type": "application/json", "X-Training-Insights-Key": accessCode }, body: JSON.stringify({ sessions: compactSessions, periodDays, goals: { primaryGoal: goals.primaryGoal.slice(0, 500), priorities: goals.priorities.slice(0, 1000), constraints: goals.constraints.slice(0, 1000) } }) });
   const payload = await response.json() as Omit<TrainingInsightReport, "id"> | { error?: string };
-  if (!response.ok || !("headline" in payload)) throw new Error("error" in payload && payload.error ? payload.error : "AI insights are temporarily unavailable.");
+  if (!response.ok) throw new Error(payload && "error" in payload && payload.error ? payload.error : "AI insights are temporarily unavailable.");
+  if (!isCompleteInsightReport(payload)) throw new Error("The review returned incomplete data. Your previous insights are still available. Please try again.");
   return { ...payload, id: `${periodDays}-${Date.now()}` } as TrainingInsightReport;
 }
 async function fetchScreenshotWorkout(imageData: string, accessCode: string) {
@@ -231,7 +233,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.51";
+const APP_VERSION = "v1.51.1";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -689,7 +691,7 @@ export default function Home() {
   const displayedImportedWorkouts = session.importedWorkouts?.length ? session.importedWorkouts : legacyScreenshotOffset ? [{ activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] }] : [];
 
   if (!enteredApp) return <div className={`app-shell theme-${plan.key} splash-shell`}><SplashScreen version={APP_VERSION} onEnter={enterApp}/></div>;
-  return <div className={`app-shell theme-${plan.key}`}>
+  return <div className={`app-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}`}>
     <main>
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
@@ -886,7 +888,7 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
   const currentReport = insightReports.find((report) => report.periodDays === insightPeriod);
   async function generateInsights() {
     if (!insightSessions.length) { setInsightError("Record at least one workout before generating insights."); return; }
-    if (!insightAccessCode.trim()) { onOpenSettings(); setInsightError("Add your personal AI access code in Settings first."); return; }
+    if (!insightAccessCode.trim()) { setInsightError("Add your personal AI access code using Open Settings above, then try again."); return; }
     setInsightState("analyzing"); setInsightError("");
     try {
       const report = await fetchTrainingInsights(insightSessions, insightPeriod, insightAccessCode.trim(), fitnessGoals, activeSchedule);

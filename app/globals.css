@@ -312,6 +312,11 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .bottom-nav button > span { font-size: 19px; line-height: 1; }.bottom-nav button small { font-size: 12px; font-weight: 700; }
 .bottom-nav button.active { background: var(--accent-soft); color: var(--accent-deep); }.bottom-nav button.active > span { transform: translateY(-1px); }
 .bottom-nav .home-nav { color: #52675d; }.bottom-nav .home-nav > span { font-size: 22px; line-height: .8; }
+/* Progress scrolls above a reserved navigation row. No action can sit under Home. */
+.app-shell.progress-shell { height: 100dvh; min-height: 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+.progress-shell > main { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; width: 100%; }
+.progress-shell > .bottom-nav { position: relative; left: auto; bottom: auto; transform: none; flex-shrink: 0; margin: 10px auto 0; background: #fff; }
+.progress-shell .performance-page { margin-inline: auto; }
 
 .page-intro { padding: 30px 6px 28px; }
 .page-intro h1 { margin: 9px 0 14px; font-size: clamp(48px, 7vw, 72px); line-height: .96; letter-spacing: -.06em; }

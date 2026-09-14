@@ -10,10 +10,10 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-Release decision: **Minor** — `1.51` adds user-defined workout types to Weekly
-workout mapping. Custom types are available for any weekday and one-day
-overrides, and are preserved in local backups.
+Release decision: **Patch** — `1.51.1` keeps Progress controls clear of bottom
+navigation and keeps failed or incomplete insight refreshes on Progress with
+the previous report available.
 
-The current release is `1.51`. The next small fix should be `1.51.1`. The
+The current release is `1.51.1`. The next small fix should be `1.51.2`. The
 displayed app version, tests, release notes, and live deployment must always
 agree.
