@@ -10,10 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-Release decision: **Patch** — `1.51.1` keeps Progress controls clear of bottom
-navigation and keeps failed or incomplete insight refreshes on Progress with
-the previous report available.
+Release decision: **Minor** — `1.52` replaces the long AI review with a concise
+executive summary and one recommendation for each exercise type.
 
-The current release is `1.51.1`. The next small fix should be `1.51.2`. The
+The current release is `1.52`. The next small fix should be `1.52.1`. The
 displayed app version, tests, release notes, and live deployment must always
 agree.

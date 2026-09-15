@@ -39,20 +39,18 @@ function parseInsightJson(text: string) {
 const reportSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["headline", "summary", "wins", "patterns", "recommendations", "cautions", "dataQuality"],
+  required: ["headline", "executiveSummary", "areaRecommendations", "dataQuality"],
   properties: {
     headline: { type: "string" },
-    summary: { type: "string" },
-    wins: { type: "array", minItems: 1, maxItems: 4, items: { type: "string" } },
-    patterns: { type: "array", minItems: 1, maxItems: 4, items: { type: "string" } },
-    recommendations: {
-      type: "array", minItems: 1, maxItems: 4,
-      items: {
-        type: "object", additionalProperties: false, required: ["title", "reason", "action"],
-        properties: { title: { type: "string" }, reason: { type: "string" }, action: { type: "string" } },
-      },
+    executiveSummary: { type: "string" },
+    areaRecommendations: {
+      type: "object", additionalProperties: false,
+      required: ["mobility", "aerobic", "strength", "speed", "endurance", "recovery"],
+      properties: Object.fromEntries(["mobility", "aerobic", "strength", "speed", "endurance", "recovery"].map((key) => [key, {
+        type: "object", additionalProperties: false, required: ["direction", "recommendation"],
+        properties: { direction: { type: "string", enum: ["keep", "increase", "decrease", "no_signal"] }, recommendation: { type: "string" } },
+      }])),
     },
-    cautions: { type: "array", maxItems: 3, items: { type: "string" } },
     dataQuality: { type: "string" },
   },
 } as const;
@@ -81,9 +79,9 @@ export async function createTrainingInsights(apiKey: string, sessions: InsightSe
     body: JSON.stringify({
       model: "gpt-5-mini",
       store: false,
-      max_output_tokens: 2400,
-      instructions: "You are a cautious, encouraging fitness training analyst. Analyze only the supplied workout log. Identify evidence-based patterns without inventing facts. Distinguish observations from suggestions. Never diagnose injuries, prescribe treatment, or recommend training through pain. If injury reports recur, recommend reducing aggravating work and consulting a qualified clinician. Prefer small, practical adjustments, balanced training, recovery, and gradual progression. Acknowledge sparse or inconsistent data. Use plain language and concise sentences.",
-      input: `Review this ${periodDays === 0 ? "all-history" : `${periodDays}-day`} training log. Compare the observed training to the user's stated goals and priorities when they are provided. Completed workouts, notes, workout details, mobility completion, effort, and injury reports may all be relevant. Return useful progress insights and a short next-step plan.\n\n${goalContext}\n\nWorkout log:\n${JSON.stringify(compactSessions)}`,
+      max_output_tokens: 1100,
+      instructions: "You are a cautious, encouraging fitness training analyst. Analyze only the supplied workout log and never invent facts. Never diagnose injuries, prescribe treatment, or recommend training through pain. If body issues recur, recommend easing aggravating work and consulting a qualified clinician. Output an executive brief, not a narrative report. The headline must be no more than 10 words. The executive summary must be no more than 45 words and two sentences. Give exactly one recommendation for each exercise type; each recommendation must be no more than 18 words. Use no_signal and 'No clear signal yet.' when the log has insufficient evidence for an area. Do not repeat the executive summary in the recommendations. Keep dataQuality to one short sentence.",
+      input: `Review this ${periodDays === 0 ? "all-history" : `${periodDays}-day`} training log. Compare observed training with the user's stated goals and priorities. Return only a brief executive summary and one recommendation each for mobility, easy aerobic, strength, speed/intensity, endurance, and recovery.\n\n${goalContext}\n\nWorkout log:\n${JSON.stringify(compactSessions)}`,
       text: { format: { type: "json_schema", name: "training_insight_report", strict: true, schema: reportSchema } },
     }),
   });

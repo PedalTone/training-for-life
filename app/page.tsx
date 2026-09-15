@@ -30,10 +30,13 @@ type Session = {
 };
 type LibraryExercise = { id: string; name: string; equipment: string; referencePhotoData?: string; graphicDescription?: string; graphicData?: string; graphicReviewStatus?: "pending" | "reviewed" };
 type InsightRecommendation = { title: string; reason: string; action: string };
+type InsightDirection = "keep" | "increase" | "decrease" | "no_signal";
+type InsightAreaRecommendation = { direction: InsightDirection; recommendation: string };
+type InsightAreaRecommendations = Record<"mobility" | "aerobic" | "strength" | "speed" | "endurance" | "recovery", InsightAreaRecommendation>;
 type TrainingInsightReport = {
   id: string; generatedAt: string; periodDays: 0 | 30 | 90; sessionsAnalyzed: number;
-  headline: string; summary: string; wins: string[]; patterns: string[];
-  recommendations: InsightRecommendation[]; cautions: string[]; dataQuality: string;
+  headline: string; executiveSummary?: string; areaRecommendations?: InsightAreaRecommendations; dataQuality: string;
+  summary?: string; wins?: string[]; patterns?: string[]; recommendations?: InsightRecommendation[]; cautions?: string[];
 };
 type FitnessGoals = { primaryGoal: string; priorities: string; constraints: string; updatedAt: string };
 type ScreenshotWorkout = {
@@ -233,7 +236,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.51.1";
+const APP_VERSION = "v1.52";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -841,17 +844,12 @@ const performanceAreas = [
   { key: "rest", label: "Recovery", icon: "☾", terms: ["rest", "recovery", "recover"] },
 ] as const;
 type PerformanceDirection = "stay" | "increase" | "decrease";
-const directionMeta: Record<PerformanceDirection, { icon: string; label: string }> = {
-  stay: { icon: "→", label: "Stay the course" },
-  increase: { icon: "↗", label: "Increase" },
-  decrease: { icon: "↘", label: "Ease back" },
-};
 function directionForArea(report: TrainingInsightReport, area: (typeof performanceAreas)[number]): PerformanceDirection {
   const text = [
-    ...report.wins,
-    ...report.patterns,
-    ...report.cautions,
-    ...report.recommendations.flatMap((item) => [item.title, item.reason, item.action]),
+    ...(report.wins || []),
+    ...(report.patterns || []),
+    ...(report.cautions || []),
+    ...(report.recommendations || []).flatMap((item) => [item.title, item.reason, item.action]),
   ].join(" ").toLowerCase();
   const relevant = text.split(/[.!?\n]+/).filter((sentence) => area.terms.some((term) => sentence.includes(term)));
   if (!relevant.length) return "stay";
@@ -860,10 +858,26 @@ function directionForArea(report: TrainingInsightReport, area: (typeof performan
   if (/increase|add |more |build|prioriti[sz]e|progress|extra/.test(joined)) return "increase";
   return "stay";
 }
-function areaHasSignal(report: TrainingInsightReport, area: (typeof performanceAreas)[number]) {
-  const text = [...report.wins, ...report.patterns, ...report.cautions, ...report.recommendations.flatMap((item) => [item.title, item.reason, item.action])].join(" ").toLowerCase();
-  return text.split(/[.!?\n]+/).some((sentence) => area.terms.some((term) => sentence.includes(term)));
+function recommendationForArea(report: TrainingInsightReport, area: (typeof performanceAreas)[number]) {
+  const newAreaKey = area.key === "rest" ? "recovery" : area.key;
+  const concise = report.areaRecommendations?.[newAreaKey];
+  if (concise) return { direction: concise.direction, recommendation: conciseText(concise.recommendation, 18) };
+  const entries = [
+    ...(report.recommendations || []).flatMap((item) => [item.action, item.reason]),
+    ...(report.cautions || []), ...(report.wins || []), ...(report.patterns || []),
+  ];
+  const recommendation = entries.find((item) => area.terms.some((term) => item.toLowerCase().includes(term)));
+  if (!recommendation) return { direction: "no_signal" as const, recommendation: "No clear signal yet." };
+  return { direction: directionForArea(report, area) === "stay" ? "keep" as const : directionForArea(report, area), recommendation: conciseText(recommendation, 18) };
 }
+function conciseText(value: string, maxWords: number) {
+  const words = value.trim().split(/\s+/);
+  return words.length > maxWords ? `${words.slice(0, maxWords).join(" ")}…` : value.trim();
+}
+const insightDirectionMeta: Record<InsightDirection, { icon: string; label: string }> = {
+  keep: { icon: "→", label: "Stay the course" }, increase: { icon: "↗", label: "Do more" },
+  decrease: { icon: "↘", label: "Ease back" }, no_signal: { icon: "·", label: "No clear signal" },
+};
 
 function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insightReports, setInsightReports, fitnessGoals, accessCode, onOpenSettings }: { now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; accessCode: string; onOpenSettings: () => void }) {
   const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(30);
@@ -905,7 +919,7 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
       {insightAccessCode && <div className="insight-access-ready"><span>✓ Personal AI access enabled on this device</span><button onClick={onOpenSettings}>Change in Settings</button></div>}
       <div className="insight-action"><div><strong>{insightSessions.length} recorded {insightSessions.length === 1 ? "day" : "days"}</strong><small>Only this period’s compact workout data is sent when you generate.</small></div><button onClick={() => void generateInsights()} disabled={insightState === "analyzing" || !insightSessions.length}>{insightState === "analyzing" ? "Reviewing your history…" : currentReport ? "Refresh insights" : "Generate AI insights"}</button></div>
       {insightError && <p className="insight-error" role="alert">{insightError}</p>}
-      {currentReport && <article className="insight-report"><header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{currentReport.headline}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><p className="insight-summary">{currentReport.summary}</p><section className="training-direction-section"><div className="training-direction-heading"><h4>Training direction</h4><span>Keep · Start · Ease back</span></div><div className="training-direction-grid">{performanceAreas.map((area) => { const signal = areaHasSignal(currentReport, area); const direction = directionForArea(currentReport, area); const meta = directionMeta[direction]; return <div className={`training-direction-card ${direction} ${signal ? "" : "no-signal"}`} key={area.key}><span className="training-area-icon" aria-hidden="true">{area.icon}</span><div><strong>{area.label}</strong><span className="training-direction-status"><b aria-hidden="true">{signal ? meta.icon : "·"}</b>{signal ? meta.label : "No clear change"}</span></div></div>; })}</div></section><div className="insight-report-grid"><section><h4>Keep doing</h4><ul>{currentReport.wins.map((item) => <li key={item}>{item}</li>)}</ul></section><section><h4>Patterns to notice</h4><ul>{currentReport.patterns.map((item) => <li key={item}>{item}</li>)}</ul></section></div><section className="next-focus"><h4>Start doing</h4>{currentReport.recommendations.map((item) => <div key={item.title}><span>→</span><p><strong>{item.title}</strong>{item.reason}<b>{item.action}</b></p></div>)}</section>{currentReport.cautions.length > 0 && <section className="insight-cautions"><h4>Ease back / stop</h4><ul>{currentReport.cautions.map((item) => <li key={item}>{item}</li>)}</ul></section>}<footer><span>{currentReport.dataQuality}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
+      {currentReport && <article className="insight-report concise-insight-report"><header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{conciseText(currentReport.headline, 10)}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><section className="executive-summary"><h4>Executive summary</h4><p>{conciseText(currentReport.executiveSummary || currentReport.summary || currentReport.headline, 45)}</p></section><section className="exercise-recommendations"><h4>Recommendations by exercise type</h4><div>{performanceAreas.map((area) => { const item = recommendationForArea(currentReport, area); const meta = insightDirectionMeta[item.direction]; return <div className={`exercise-recommendation ${item.direction}`} key={area.key}><span className="training-area-icon" aria-hidden="true">{area.icon}</span><div><strong>{area.label}</strong><span className="exercise-direction"><b aria-hidden="true">{meta.icon}</b>{meta.label}</span><p>{item.recommendation}</p></div></div>; })}</div></section><footer><span>{conciseText(currentReport.dataQuality, 18)}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
     </details>
   </div>;
 }
