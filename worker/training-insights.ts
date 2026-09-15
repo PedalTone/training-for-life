@@ -79,7 +79,9 @@ export async function createTrainingInsights(apiKey: string, sessions: InsightSe
     body: JSON.stringify({
       model: "gpt-5-mini",
       store: false,
-      max_output_tokens: 1100,
+      // The visible response is tightly word-limited below, but the model also
+      // needs room for internal reasoning before it emits the strict JSON.
+      max_output_tokens: 2000,
       instructions: "You are a cautious, encouraging fitness training analyst. Analyze only the supplied workout log and never invent facts. Never diagnose injuries, prescribe treatment, or recommend training through pain. If body issues recur, recommend easing aggravating work and consulting a qualified clinician. Output an executive brief, not a narrative report. The headline must be no more than 10 words. The executive summary must be no more than 45 words and two sentences. Give exactly one recommendation for each exercise type; each recommendation must be no more than 18 words. Use no_signal and 'No clear signal yet.' when the log has insufficient evidence for an area. Do not repeat the executive summary in the recommendations. Keep dataQuality to one short sentence.",
       input: `Review this ${periodDays === 0 ? "all-history" : `${periodDays}-day`} training log. Compare observed training with the user's stated goals and priorities. Return only a brief executive summary and one recommendation each for mobility, easy aerobic, strength, speed/intensity, endurance, and recovery.\n\n${goalContext}\n\nWorkout log:\n${JSON.stringify(compactSessions)}`,
       text: { format: { type: "json_schema", name: "training_insight_report", strict: true, schema: reportSchema } },
