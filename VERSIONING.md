@@ -10,9 +10,10 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-Release decision: **Patch** — `1.52.1` counts all seven workout days and gives
-completed Recovery days the standard green circle and white checkmark.
+Release decision: **Patch** — `1.52.2` lets every Progress recommendation card
+expand to its full text and requires category-specific evidence before AI can
+recommend decreasing an exercise type.
 
-The current release is `1.52.1`. The next small fix should be `1.52.2`. The
+The current release is `1.52.2`. The next small fix should be `1.52.3`. The
 displayed app version, tests, release notes, and live deployment must always
 agree.

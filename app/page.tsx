@@ -236,7 +236,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.52.1";
+const APP_VERSION = "v1.52.2";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -854,21 +854,21 @@ function directionForArea(report: TrainingInsightReport, area: (typeof performan
   const relevant = text.split(/[.!?\n]+/).filter((sentence) => area.terms.some((term) => sentence.includes(term)));
   if (!relevant.length) return "stay";
   const joined = relevant.join(" ");
-  if (/reduce|decrease|less |cut back|back off|avoid|limit|ease|protect|modify|recover/.test(joined)) return "decrease";
+  if (/reduce|decrease|less |cut back|back off|avoid|limit|ease|protect|modify/.test(joined)) return "decrease";
   if (/increase|add |more |build|prioriti[sz]e|progress|extra/.test(joined)) return "increase";
   return "stay";
 }
 function recommendationForArea(report: TrainingInsightReport, area: (typeof performanceAreas)[number]) {
   const newAreaKey = area.key === "rest" ? "recovery" : area.key;
   const concise = report.areaRecommendations?.[newAreaKey];
-  if (concise) return { direction: concise.direction, recommendation: conciseText(concise.recommendation, 18) };
+  if (concise) return { direction: concise.direction, recommendation: concise.recommendation.trim() };
   const entries = [
     ...(report.recommendations || []).flatMap((item) => [item.action, item.reason]),
     ...(report.cautions || []), ...(report.wins || []), ...(report.patterns || []),
   ];
   const recommendation = entries.find((item) => area.terms.some((term) => item.toLowerCase().includes(term)));
   if (!recommendation) return { direction: "no_signal" as const, recommendation: "No clear signal yet." };
-  return { direction: directionForArea(report, area) === "stay" ? "keep" as const : directionForArea(report, area), recommendation: conciseText(recommendation, 18) };
+  return { direction: directionForArea(report, area) === "stay" ? "keep" as const : directionForArea(report, area), recommendation: recommendation.trim() };
 }
 function conciseText(value: string, maxWords: number) {
   const words = value.trim().split(/\s+/);
@@ -919,7 +919,7 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
       {insightAccessCode && <div className="insight-access-ready"><span>✓ Personal AI access enabled on this device</span><button onClick={onOpenSettings}>Change in Settings</button></div>}
       <div className="insight-action"><div><strong>{insightSessions.length} recorded {insightSessions.length === 1 ? "day" : "days"}</strong><small>Only this period’s compact workout data is sent when you generate.</small></div><button onClick={() => void generateInsights()} disabled={insightState === "analyzing" || !insightSessions.length}>{insightState === "analyzing" ? "Reviewing your history…" : currentReport ? "Refresh insights" : "Generate AI insights"}</button></div>
       {insightError && <p className="insight-error" role="alert">{insightError}</p>}
-      {currentReport && <article className="insight-report concise-insight-report"><header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{conciseText(currentReport.headline, 10)}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><section className="executive-summary"><h4>Executive summary</h4><p>{conciseText(currentReport.executiveSummary || currentReport.summary || currentReport.headline, 45)}</p></section><section className="exercise-recommendations"><h4>Recommendations by exercise type</h4><div>{performanceAreas.map((area) => { const item = recommendationForArea(currentReport, area); const meta = insightDirectionMeta[item.direction]; return <div className={`exercise-recommendation ${item.direction}`} key={area.key}><span className="training-area-icon" aria-hidden="true">{area.icon}</span><div><strong>{area.label}</strong><span className="exercise-direction"><b aria-hidden="true">{meta.icon}</b>{meta.label}</span><p>{item.recommendation}</p></div></div>; })}</div></section><footer><span>{conciseText(currentReport.dataQuality, 18)}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
+      {currentReport && <article className="insight-report concise-insight-report"><header><div><span>AI REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{conciseText(currentReport.headline, 10)}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><section className="executive-summary"><h4>Executive summary</h4><p>{(currentReport.executiveSummary || currentReport.summary || currentReport.headline).trim()}</p></section><section className="exercise-recommendations"><h4>Recommendations by exercise type</h4><div>{performanceAreas.map((area) => { const item = recommendationForArea(currentReport, area); const meta = insightDirectionMeta[item.direction]; return <div className={`exercise-recommendation ${item.direction}`} key={area.key}><span className="training-area-icon" aria-hidden="true">{area.icon}</span><div><strong>{area.label}</strong><span className="exercise-direction"><b aria-hidden="true">{meta.icon}</b>{meta.label}</span><p>{item.recommendation}</p></div></div>; })}</div></section><footer><span>{currentReport.dataQuality.trim()}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
     </details>
   </div>;
 }

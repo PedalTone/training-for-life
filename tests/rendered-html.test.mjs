@@ -15,7 +15,7 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.52.1 with the app home screen", async () => {
+test("server-renders Training for Life v1.52.2 with the app home screen", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
@@ -23,12 +23,25 @@ test("server-renders Training for Life v1.52.1 with the app home screen", async 
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /v1\.52\.1/);
+  assert.match(html, /v1\.52\.2/);
   assert.match(html, /Relentless forward progress/);
   assert.match(html, /Keep showing up/);
   assert.match(html, /Today/);
   assert.match(html, /Performance/);
   assert.doesNotMatch(html, /Primary navigation/);
+});
+
+test("Progress recommendations show their full text in auto-sizing cards", async () => {
+  const [page, css, insightsWorker] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../worker/training-insights.ts", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(page, /conciseText\(concise\.recommendation,\s*18\)/);
+  assert.match(css, /\.exercise-recommendation \{[^}]*height:\s*auto/);
+  assert.match(css, /\.exercise-recommendation p \{[^}]*overflow-wrap:\s*anywhere/);
+  assert.match(insightsWorker, /Do not choose decrease merely to be cautious/);
+  assert.match(insightsWorker, /Never generalize one body concern across unrelated exercise types/);
 });
 
 test("protects screenshot extraction with the personal access code", async () => {

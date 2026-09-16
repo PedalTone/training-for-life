@@ -6,7 +6,7 @@ import "../app/globals.css";
 
 const mode = new URLSearchParams(location.search).get("mode") || "success";
 const date = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date(Date.now() - 86400000));
-const areaRecommendations = Object.fromEntries(["mobility", "aerobic", "strength", "speed", "endurance", "recovery"].map((key) => [key, { direction: key === "strength" ? "increase" : "keep", recommendation: key === "strength" ? "Add one controlled strength session." : "Stay consistent with the current rhythm." }]));
+const areaRecommendations = Object.fromEntries(["mobility", "aerobic", "strength", "speed", "endurance", "recovery"].map((key) => [key, { direction: key === "strength" ? "increase" : "keep", recommendation: key === "strength" ? "Add one controlled strength session, progressing only when the movement remains smooth and comfortable." : "Stay consistent with the current rhythm while noting how each session feels before making a larger change." }]));
 const report = { id: "fixture", periodDays: 30, generatedAt: new Date().toISOString(), sessionsAnalyzed: 1, headline: "Previous saved review", executiveSummary: "Your recent training is consistent. Build strength gradually while maintaining the rest of your rhythm.", areaRecommendations, dataQuality: "Synthetic test data" };
 localStorage.setItem("t4l:insights-access", mode === "no-key" ? "" : "fixture-not-a-real-key");
 localStorage.setItem("t4l:insight-reports", JSON.stringify([report]));
