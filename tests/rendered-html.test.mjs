@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function loadWorker() {
@@ -14,7 +15,7 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.52 with the app home screen", async () => {
+test("server-renders Training for Life v1.52.1 with the app home screen", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
@@ -22,7 +23,7 @@ test("server-renders Training for Life v1.52 with the app home screen", async ()
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /v1\.52/);
+  assert.match(html, /v1\.52\.1/);
   assert.match(html, /Relentless forward progress/);
   assert.match(html, /Keep showing up/);
   assert.match(html, /Today/);
@@ -40,4 +41,15 @@ test("protects screenshot extraction with the personal access code", async () =>
   assert.equal(response.status, 401);
   assert.deepEqual(await response.json(), { error: "The AI access code is incorrect." });
   assert.equal(response.headers.get("cache-control"), "no-store");
+});
+
+test("counts all seven History days and does not override completed Recovery styling", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(page, /days\.slice\(0,\s*6\).*complete/);
+  assert.match(page, /\{days\.length\} complete/);
+  assert.match(css, /button\.rest:not\(\.completed\).* i/);
+  assert.doesNotMatch(css, /button\.rest i \{ background: #dce9dd/);
 });
