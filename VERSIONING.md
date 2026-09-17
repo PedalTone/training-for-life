@@ -10,10 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-Release decision: **Patch** — `1.52.2` lets every Progress recommendation card
-expand to its full text and requires category-specific evidence before AI can
-recommend decreasing an exercise type.
+Release decision: **Patch** — `1.52.3` makes one-day workout changes appear
+immediately and persistently in both Plan and History, including their icons.
 
-The current release is `1.52.2`. The next small fix should be `1.52.3`. The
+The current release is `1.52.3`. The next small fix should be `1.52.4`. The
 displayed app version, tests, release notes, and live deployment must always
 agree.

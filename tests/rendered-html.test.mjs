@@ -15,7 +15,7 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.52.2 with the app home screen", async () => {
+test("server-renders Training for Life v1.52.3 with the app home screen", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
@@ -23,7 +23,7 @@ test("server-renders Training for Life v1.52.2 with the app home screen", async 
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /v1\.52\.2/);
+  assert.match(html, /v1\.52\.3/);
   assert.match(html, /Relentless forward progress/);
   assert.match(html, /Keep showing up/);
   assert.match(html, /Today/);
@@ -65,4 +65,14 @@ test("counts all seven History days and does not override completed Recovery sty
   assert.match(page, /\{days\.length\} complete/);
   assert.match(css, /button\.rest:not\(\.completed\).* i/);
   assert.doesNotMatch(css, /button\.rest i \{ background: #dce9dd/);
+});
+
+test("one-day workout changes are the authoritative Plan and History type", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /update\(\{ planOverride: true,[\s\S]*?\}, true\)/);
+  assert.match(page, /setHistory\(\(items\) => \[next, \.\.\.items\.filter/);
+  assert.match(page, /const chosen = loaded \? session : existing \|\| session/);
+  assert.match(page, /function WeekView[\s\S]*?historicalPlan\(saved, scheduleForDate/);
+  assert.match(page, /function HistoryView[\s\S]*?const plan = historicalPlan\(saved, scheduleForDate/);
+  assert.match(page, /<span className="history-day-icon"[^>]*>\{plan\.icon\}<\/span>/);
 });

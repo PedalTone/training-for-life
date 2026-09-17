@@ -236,7 +236,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "v1.52.2";
+const APP_VERSION = "v1.52.3";
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -369,6 +369,8 @@ export default function Home() {
   const [tab, setTab] = useState<Tab>("today");
   const [enteredApp, setEnteredApp] = useState(() => { try { return sessionStorage.getItem("t4l:entered-app") === "1"; } catch { return false; } });
   const [session, setSession] = useState<Session>(() => emptySession(activeKey, basePlan.key === "rest", basePlan));
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
   const [loaded, setLoaded] = useState(false);
   const [saveState, setSaveState] = useState("Loading your plan…");
   const [history, setHistory] = useState<Session[]>([]);
@@ -493,13 +495,23 @@ export default function Home() {
     return () => { cancelled = true; window.clearTimeout(timer); };
   }, [videoUrl]);
 
-  const update = (patch: Partial<Session>) => { setFinishBackupState(""); setSession((current) => ({ ...current, ...patch })); };
+  const update = (patch: Partial<Session>, persistNow = false) => {
+    setFinishBackupState("");
+    const next = { ...sessionRef.current, ...patch, updatedAt: new Date().toISOString() };
+    sessionRef.current = next;
+    setSession(next);
+    // The open session is the authoritative record for its date. Mirror every
+    // edit into the shared collection immediately so Plan and History never
+    // wait for the debounced device save before showing a one-day override.
+    setHistory((items) => [next, ...items.filter((item) => item.id !== next.id)].sort((a, b) => b.date.localeCompare(a.date)));
+    if (persistNow) void saveSession(next).catch(() => localStorage.setItem(`t4l:${next.date}`, JSON.stringify(next)));
+  };
   const setDayWorkoutType = (key: string) => {
     const choice = workoutOptions.find((option) => option.key === key);
     if (!choice) return;
-    update({ planOverride: true, plannedKey: choice.key, plannedTheme: choice.label, status: session.status === "completed" ? "completed" : choice.key === "rest" ? "rest" : "partial" });
+    update({ planOverride: true, plannedKey: choice.key, plannedTheme: choice.label, status: session.status === "completed" ? "completed" : choice.key === "rest" ? "rest" : "partial" }, true);
   };
-  const restoreWeeklyWorkoutType = () => update({ planOverride: false, plannedKey: undefined, plannedTheme: undefined, status: session.status === "completed" ? "completed" : currentDayPlan.key === "rest" ? "rest" : "partial" });
+  const restoreWeeklyWorkoutType = () => update({ planOverride: false, plannedKey: undefined, plannedTheme: undefined, status: session.status === "completed" ? "completed" : currentDayPlan.key === "rest" ? "rest" : "partial" }, true);
   const toggleActivity = (activity: string) => {
     const selected = session.activities ?? (session.activity ? [session.activity] : []);
     const activities = selected.includes(activity) ? selected.filter((item) => item !== activity) : [...selected, activity];
@@ -608,9 +620,9 @@ export default function Home() {
   // while the background store refresh completes.
   const viewHistory = (() => {
     const existing = history.find((item) => item.id === session.id);
-    const currentTime = Date.parse(session.updatedAt || "") || 0;
-    const existingTime = Date.parse(existing?.updatedAt || "") || 0;
-    const chosen = !existing || session.status === "completed" || Boolean(session.completedAt) || currentTime >= existingTime ? session : existing;
+    // Once the active date has loaded, its open editor state is newer than any
+    // storage snapshot—even before the background save finishes.
+    const chosen = loaded ? session : existing || session;
     return [chosen, ...history.filter((item) => item.id !== session.id)].sort((a, b) => b.date.localeCompare(a.date));
   })();
   const injuryReported = hasReportedInjury(session);
@@ -830,7 +842,7 @@ function HistoryView({ now, sessions, activeSchedule, scheduleHistory, onOpenDat
   const shiftHistory = (direction: number) => setHistoryCursor((current) => { const next = new Date(current); if (view === "month") next.setMonth(next.getMonth() + direction); else next.setDate(next.getDate() + direction * 21); return next; });
   return <div className="subpage history-page">
     <div className="history-controls"><div className="segmented"><button className={view === "weeks" ? "active" : ""} onClick={() => setView("weeks")}>Weekly Details</button><button className={view === "month" ? "active" : ""} onClick={() => setView("month")}>Month</button></div><button className={flaggedOnly ? "filter active" : "filter"} onClick={() => setFlaggedOnly(!flaggedOnly)}>✚ Notables</button></div>
-    {flaggedOnly ? <section className="flagged-list"><h2>Workouts with body considerations</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {historicalPlan(saved, activeSchedule, dateFromKey(saved.date)).theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Body check-in recorded")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No body considerations recorded yet.</p>}</section> : view === "weeks" ? <section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === weekBlocks.length - 1 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.filter((d) => ["completed", "modified", "protected"].includes(stateFor(map.get(dateKey(d)), scheduleForDate(d, activeSchedule, scheduleHistory)[d.getDay()].key, d, now))).length} / {days.length} complete</b></div><div className="scan-days">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key}`} title={`${plan.theme} · ${stateLabel(state)}${hasReportedInjury(saved) ? " · Body consideration" : ""}`} onClick={() => onOpenDate(date)}><span className="history-day-icon" aria-hidden="true">{plan.icon}</span><strong>{date.getDate()}</strong><small>{plan.short}</small><i>{displayStateSymbol(saved, plan.key, date, now)}</i></button>; })}</div></div>)}</section> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Body note</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(historyCursor.getFullYear(), historyCursor.getMonth(), i + 1); const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{displayStateSymbol(saved, plan.key, date, now)}</small></button>; })}</div></section>}
+    {flaggedOnly ? <section className="flagged-list"><h2>Workouts with body considerations</h2>{sessions.filter(hasReportedInjury).length ? sessions.filter(hasReportedInjury).map((saved) => <button key={saved.id} onClick={() => onOpenDate(dateFromKey(saved.date))}><span className="status-mark modified">⚑</span><span><strong>{dateFromKey(saved.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {historicalPlan(saved, activeSchedule, dateFromKey(saved.date)).theme}</strong><small>{saved.injury.bodyArea || (saved.injury.impact === "prevented" ? "Couldn’t start" : saved.injury.impact === "stopped" ? "Stopped early" : "Body check-in recorded")} {saved.injury.note ? `· ${saved.injury.note}` : ""}</small></span><i>›</i></button>) : <p className="empty-state">No body considerations recorded yet.</p>}</section> : view === "weeks" ? <section className="multi-week">{weekBlocks.map((days, index) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{index === weekBlocks.length - 1 ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.filter((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); return ["completed", "modified", "protected"].includes(stateFor(saved, plan.key, date, now)); }).length} / {days.length} complete</b></div><div className="scan-days">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key}`} title={`${plan.theme} · ${stateLabel(state)}${hasReportedInjury(saved) ? " · Body consideration" : ""}`} onClick={() => onOpenDate(date)}><span className="history-day-icon" aria-hidden="true">{plan.icon}</span><strong>{date.getDate()}</strong><small>{plan.short}</small><i>{displayStateSymbol(saved, plan.key, date, now)}</i></button>; })}</div></div>)}</section> : <section className="month-card"><div className="month-title"><div><span className="kicker">MONTH VIEW</span><h2>{historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2></div><div className="legend"><span>● Complete</span><span>⚑ Body note</span><span>R Rest</span></div></div><div className="calendar-grid">{["M","T","W","T","F","S","S"].map((day,index) => <b key={`${day}-${index}`}>{day}</b>)}{Array.from({ length: monthOffset }, (_, i) => <i key={`empty-${i}`}/>)}{Array.from({ length: monthDays }, (_, i) => { const date = new Date(historyCursor.getFullYear(), historyCursor.getMonth(), i + 1); const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); return <button className={`${state} ${plan.key} ${i + 1 === now.getDate() ? "today" : ""}`} key={i + 1} onClick={() => onOpenDate(date)}><em>{i + 1}</em><small>{displayStateSymbol(saved, plan.key, date, now)}</small></button>; })}</div></section>}
     <div className="history-period-nav history-bottom-nav" aria-label={view === "month" ? `${historyCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })} navigation` : `${weekDates(historyCursor)[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} history navigation`}><button onClick={() => shiftHistory(-1)} aria-label={view === "month" ? "View previous month" : "View previous three weeks"}>‹</button><span className="history-nav-divider" aria-hidden="true"/><button onClick={() => shiftHistory(1)} disabled={currentPeriod} aria-label={view === "month" ? "View next month" : "View next three weeks"}>›</button></div>
   </div>;
 }
