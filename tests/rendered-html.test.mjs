@@ -15,7 +15,7 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-test("server-renders Training for Life v1.52.3 with the app home screen", async () => {
+test("server-renders Training for Life v1.52.4 with the app home screen", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), env, ctx);
   assert.equal(response.status, 200);
@@ -23,7 +23,7 @@ test("server-renders Training for Life v1.52.3 with the app home screen", async 
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /v1\.52\.3/);
+  assert.match(html, /v1\.52\.4/);
   assert.match(html, /Relentless forward progress/);
   assert.match(html, /Keep showing up/);
   assert.match(html, /Today/);
@@ -75,4 +75,10 @@ test("one-day workout changes are the authoritative Plan and History type", asyn
   assert.match(page, /function WeekView[\s\S]*?historicalPlan\(saved, scheduleForDate/);
   assert.match(page, /function HistoryView[\s\S]*?const plan = historicalPlan\(saved, scheduleForDate/);
   assert.match(page, /<span className="history-day-icon"[^>]*>\{plan\.icon\}<\/span>/);
+});
+
+test("Weekly workout mapping follows the app's Monday-through-Sunday order", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /\[1, 2, 3, 4, 5, 6, 0\]\.map\(\(index\) =>/);
+  assert.doesNotMatch(page, /className="schedule-editor">\{schedule\.map/);
 });

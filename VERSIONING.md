@@ -10,9 +10,9 @@ short:
 - **Major** (`2.0`) only after explicit agreement that the core product or
   compatibility contract has changed.
 
-Release decision: **Patch** — `1.52.3` makes one-day workout changes appear
-immediately and persistently in both Plan and History, including their icons.
+Release decision: **Patch** — `1.52.4` makes one-day workout changes appear in
+Plan and History and aligns Weekly workout mapping to Monday-through-Sunday.
 
-The current release is `1.52.3`. The next small fix should be `1.52.4`. The
+The current release is `1.52.4`. The next small fix should be `1.52.5`. The
 displayed app version, tests, release notes, and live deployment must always
 agree.
