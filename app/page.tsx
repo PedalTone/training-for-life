@@ -236,10 +236,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.22 1854";
+const APP_VERSION = "2026.09.22 1935";
 const RELEASE_CHANGES = [
-  "The release stamp now opens a quick What’s new summary.",
-  "Release labels now show the publication date and time.",
+  "The What’s new label now stands out with a warm accent color.",
+  "Release updates are organized into cleaner, easy-to-scan bullets.",
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -341,7 +341,7 @@ function NavIcon({ name }: { name: Tab }) {
 function SplashScreen({ version, onEnter }: { version: string; onEnter: (tab: Tab) => void }) {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const destinations: Array<[Tab, string, string]> = [["today", "Today", "Your session"], ["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
-  return <main className="splash-screen"><div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./icon-192.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small>Move well. Stay ready.</small></span></div></div><div className="splash-copy"><span className="kicker">YOUR DAILY PRACTICE</span><h1>Relentless forward progress.</h1><p>Keep showing up. A simple place to train, recover, and notice your progress.</p></div><div className="splash-menu" aria-label="App sections">{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><NavIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><p className="splash-footnote">Your training history stays on this device.</p><div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label={`What’s new in ${version}`}><strong>What’s new</strong><ul>{RELEASE_CHANGES.map((change) => <li key={change}>{change}</li>)}</ul></section>}</div></main>;
+  return <main className="splash-screen"><div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./icon-192.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small>Move well. Stay ready.</small></span></div></div><div className="splash-copy"><span className="kicker">YOUR DAILY PRACTICE</span><h1>Relentless forward progress.</h1><p>Keep showing up. A simple place to train, recover, and notice your progress.</p></div><div className="splash-menu" aria-label="App sections">{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><NavIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><p className="splash-footnote">Your training history stays on this device.</p><div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label={`What’s new in ${version}`}><strong>What’s new</strong><ul>{RELEASE_CHANGES.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></section>}</div></main>;
 }
 
 function RhythmStrip({ focus, today, sessions, activeSchedule, scheduleHistory, onOpen, showIcons = false }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory?: ScheduleSnapshot[]; onOpen?: (date: Date) => void; showIcons?: boolean }) {
