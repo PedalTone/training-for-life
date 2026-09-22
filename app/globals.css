@@ -66,7 +66,14 @@ h1, h2, h3, p { text-wrap: pretty; }
 .splash-letterbox::after { content: "∞"; position: absolute; right: -7px; bottom: -47px; color: rgba(190,223,197,.13); font-size: 164px; font-weight: 800; line-height: 1; }
 .splash-letterbox > * { position: relative; z-index: 1; }.splash-letterbox-mark { width: 84px; height: 84px; flex: 0 0 auto; border-radius: 23px; box-shadow: 0 7px 14px rgba(0,0,0,.18); }.splash-letterbox-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }.splash-letterbox .kicker { color: #b9dfc4; font-size: 11px; }.splash-letterbox strong { margin-top: 4px; font-size: clamp(27px, 7vw, 43px); line-height: .98; letter-spacing: -.055em; }.splash-letterbox small { margin-top: 8px; color: #c9ddd0; font-size: 14px; }
 .splash-version { flex: 0 0 auto; margin-top: 4px; padding: 5px 8px; border: 1px solid rgba(38,76,61,.18); border-radius: 99px; color: #587067; font-size: 11px; font-weight: 800; letter-spacing: .03em; }
-.splash-version-bottom { align-self: center; margin-top: 12px; padding: 3px 7px; border-color: rgba(38,76,61,.14); color: #71827b; font-size: 10px; }
+.splash-release { position: relative; align-self: center; width: min(360px, 100%); display: grid; justify-items: center; }
+.splash-version-bottom { min-height: 35px; margin-top: 10px; padding: 4px 9px; border-color: rgba(38,76,61,.14); background: rgba(255,255,255,.38); color: #71827b; display: inline-flex; align-items: center; gap: 7px; font-size: 10px; }
+.splash-version-bottom small { padding-left: 7px; border-left: 1px solid rgba(38,76,61,.16); color: #49685d; font-size: 10px; font-weight: 800; letter-spacing: 0; }
+.splash-version-bottom[aria-expanded="true"] { background: rgba(255,255,255,.72); color: #294f42; }
+.splash-release-notes { position: absolute; z-index: 4; bottom: calc(100% + 7px); width: 100%; padding: 13px 15px; border: 1px solid rgba(38,76,61,.14); border-radius: 15px; background: rgba(255,255,255,.96); color: #344f45; box-shadow: 0 8px 24px rgba(35,67,53,.14); }
+.splash-release-notes strong { display: block; font-size: 13px; }
+.splash-release-notes ul { margin: 6px 0 0; padding-left: 18px; }
+.splash-release-notes li { margin-top: 3px; color: #60746c; font-size: 12px; line-height: 1.35; }
 .splash-letterbox-copy > .kicker { display: none; }
 .splash-copy { margin: clamp(38px, 10vw, 76px) 0 28px; }
 .splash-copy h1 { margin: 10px 0 12px; color: #142a24; font-size: clamp(24px, 7vw, 42px); line-height: 1; letter-spacing: -.07em; white-space: nowrap; }

@@ -1,18 +1,12 @@
-# Training for Life versioning
+# Training for Life release labels
 
-The detailed release decision policy lives in [`AGENTS.md`](./AGENTS.md). In
-short:
+The detailed release-label policy lives in [`AGENTS.md`](./AGENTS.md). Public
+releases use the Eastern Time publication stamp `YYYY.MM.DD HHmm`. Internal-only
+work and deployment repairs do not create a new release label.
 
-- **No version** for internal-only or deployment-only work.
-- **Patch** (`1.40.1`) for backward-compatible fixes and polish.
-- **Minor** (`1.40`) for a new capability, workflow, tab, or substantial
-  user-facing redesign; reset the patch component when moving to a new minor.
-- **Major** (`2.0`) only after explicit agreement that the core product or
-  compatibility contract has changed.
+Release decision: **New public release** — `2026.09.22 1854` adds a discreet,
+expandable “What’s new?” summary to the splash screen and replaces semantic
+version text with a publication date and time.
 
-Release decision: **Patch** — `1.52.4` makes one-day workout changes appear in
-Plan and History and aligns Weekly workout mapping to Monday-through-Sunday.
-
-The current release is `1.52.4`. The next small fix should be `1.52.5`. The
-displayed app version, tests, release notes, and live deployment must always
-agree.
+The current release is `2026.09.22 1854`. The displayed app release, tests,
+release notes, cache identifier, and live deployment must always agree.
