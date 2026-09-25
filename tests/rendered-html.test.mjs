@@ -23,11 +23,11 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.24 1942/);
+  assert.match(html, /2026\.09\.25 0726/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
-  assert.match(html, /Relentless forward progress/);
-  assert.match(html, /Keep showing up/);
+  assert.match(html, /Move well, daily\. Relentless Forward Progress\./);
+  assert.doesNotMatch(html, /Keep showing up/);
   assert.match(html, /Today/);
   assert.match(html, /Performance/);
   assert.doesNotMatch(html, /Primary navigation/);
