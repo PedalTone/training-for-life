@@ -88,7 +88,14 @@ h1, h2, h3, p { text-wrap: pretty; }
 .splash-menu button:hover { background: #fff; }
 .splash-menu-icon { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: #dcece2; color: #2f6b4d; }
 .splash-menu-icon.week { background: #dcebf4; color: #2b6684; }.splash-menu-icon.history { background: #eee6f5; color: #694d88; }.splash-menu-icon.performance { background: #f4e5cf; color: #98602c; }.splash-menu-icon.more { background: #f6dfdd; color: #9a443e; }
-.splash-menu-icon > span { font-size: 20px; line-height: 1; }
+.splash-screen .splash-menu button { grid-template-columns: 56px minmax(0,1fr) auto; gap: 14px; }
+.splash-menu-icon { width: 56px; height: 56px; border-radius: 17px; }
+.splash-menu-icon svg { width: 32px; height: 32px; }
+.splash-menu-icon.today { background: #1259ae; color: white; }
+.splash-menu-icon.week { background: #146f68; color: white; }
+.splash-menu-icon.history { background: #7441b7; color: white; }
+.splash-menu-icon.performance { background: #aa4b08; color: white; }
+.splash-menu-icon.more { background: #aa3550; color: white; }
 .splash-menu button strong, .splash-menu button small { display: block; }.splash-menu button strong { font-size: 18px; line-height: 1.1; }.splash-menu button small { margin-top: 3px; color: #6c7e76; font-size: 13px; }.splash-menu button > b { color: #82948b; font-size: 28px; font-weight: 400; }
 .splash-footnote { margin: 25px 0 0; color: #71827b; font-size: 13px; text-align: center; }
 

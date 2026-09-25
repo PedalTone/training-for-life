@@ -236,10 +236,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.25 0802";
+const APP_VERSION = "2026.09.25 0803";
 const RELEASE_CHANGES = [
   "The home banner now has a deep-blue gradient.",
-  "Short descriptions beneath each menu title are back.",
+  "Prominent colorful icons and short descriptions make each menu choice clearer.",
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -338,10 +338,20 @@ function NavIcon({ name }: { name: Tab }) {
   return <span aria-hidden="true">{name === "today" ? "●" : name === "week" ? "◫" : name === "history" ? "◷" : name === "performance" ? "✦" : "•••"}</span>;
 }
 
+function SplashIcon({ name }: { name: Tab }) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {name === "today" ? <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></>
+    : name === "week" ? <><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-13 4h2m4 0h2m-8 4h2"/></>
+    : name === "history" ? <><path d="M3 11a9 9 0 1 1 2.6 7.4M3 5v6h6"/><path d="M12 7v5l3 2"/></>
+    : name === "performance" ? <><path d="M4 3v17h17M7 14l4-4 4 2 6-7m-5 0h5v5"/></>
+    : <><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="9" cy="18" r="2" fill="currentColor"/></>}
+  </svg>;
+}
+
 function SplashScreen({ version, onEnter }: { version: string; onEnter: (tab: Tab) => void }) {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const destinations: Array<[Tab, string, string]> = [["today", "Today", "Your session"], ["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
-  return <main className="splash-screen"><div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./icon-192.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small>Move well, daily. Relentless Forward Progress.</small></span></div></div><div className="splash-menu" aria-label="App sections">{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><NavIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label={`What’s new in ${version}`}><strong>What’s new</strong><ul>{RELEASE_CHANGES.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></section>}</div></main>;
+  return <main className="splash-screen"><div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./icon-192.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small>Move well, daily. Relentless Forward Progress.</small></span></div></div><div className="splash-menu" aria-label="App sections">{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label={`What’s new in ${version}`}><strong>What’s new</strong><ul>{RELEASE_CHANGES.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></section>}</div></main>;
 }
 
 function RhythmStrip({ focus, today, sessions, activeSchedule, scheduleHistory, onOpen, showIcons = false }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory?: ScheduleSnapshot[]; onOpen?: (date: Date) => void; showIcons?: boolean }) {

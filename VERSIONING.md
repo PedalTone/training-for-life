@@ -4,8 +4,8 @@ The detailed release-label policy lives in [`AGENTS.md`](./AGENTS.md). Public
 releases use the Eastern Time publication stamp `YYYY.MM.DD HHmm`. Internal-only
 work and deployment repairs do not create a new release label.
 
-Release decision: **New public release** — `2026.09.25 0802` adds a deep-blue
-banner gradient and restores helpful descriptions beneath the home menu titles.
+Release decision: **New public release** — `2026.09.25 0803` adds a deep-blue
+banner gradient, prominent menu icons, and helpful descriptions beneath the home menu titles.
 
-The current release is `2026.09.25 0802`. The displayed app release, tests,
+The current release is `2026.09.25 0803`. The displayed app release, tests,
 release notes, cache identifier, and live deployment must always agree.

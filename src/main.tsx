@@ -14,6 +14,6 @@ if ("serviceWorker" in navigator) {
     // The release query forces installed GitHub Pages apps to request the
     // current worker rather than relying on a previously cached redirect-era
     // service-worker response.
-    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js?release=2026.09.25-0802`, { updateViaCache: "none" }).catch(() => {});
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js?release=2026.09.25-0803`, { updateViaCache: "none" }).catch(() => {});
   });
 }
