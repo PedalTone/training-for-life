@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.22 1935/);
+  assert.match(html, /2026\.09\.24 1942/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Relentless forward progress/);
@@ -83,4 +83,14 @@ test("Weekly workout mapping follows the app's Monday-through-Sunday order", asy
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   assert.match(page, /\[1, 2, 3, 4, 5, 6, 0\]\.map\(\(index\) =>/);
   assert.doesNotMatch(page, /className="schedule-editor">\{schedule\.map/);
+});
+
+test("add-on exercise titles are explicitly editable and rename saved selections", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /Add-on exercise library/);
+  assert.match(page, /Exercise title/);
+  assert.match(page, /saveExerciseTitle/);
+  assert.match(page, /const mobilityExercises = renameList/);
+  assert.match(page, /const completedExercises = renameList/);
+  assert.match(page, /Existing workout selections were updated/);
 });
