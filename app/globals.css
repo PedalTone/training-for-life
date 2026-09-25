@@ -709,3 +709,48 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 
 .custom-workout-adder { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 9px; padding: 4px 20px 0; align-items: end; }.custom-workout-adder label { display: grid; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 760; }.custom-workout-adder input { width: 100%; min-height: 44px; box-sizing: border-box; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }.custom-workout-adder button { min-height: 44px; padding: 0 13px; border: 0; border-radius: 10px; background: var(--ink); color: white; font: inherit; font-size: 14px; font-weight: 760; }.custom-workout-list { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 20px 0; color: var(--muted); font-size: 13px; }.custom-workout-list b { width: 100%; color: var(--ink); font-size: 13px; }.custom-workout-list span { padding: 5px 8px; border-radius: 999px; background: #eef2f3; color: #405d66; font-weight: 720; }
 @media (max-width: 680px) { .custom-workout-adder { grid-template-columns: 1fr; padding: 4px 14px 0; }.custom-workout-adder button { width: 100%; }.custom-workout-list { margin-left: 14px; margin-right: 14px; } }
+
+/* Brand colors are stable across days. Category colors remain on workout
+   icons/edges; green, amber and red retain their status meanings. */
+:root {
+  --brand: #174a91;
+  --brand-deep: #081d49;
+  --brand-soft: #e6eefb;
+  --brand-orange: #d56825;
+  --bg: #f0f2f5;
+  --surface: #fff;
+  --surface-2: #f6f8fb;
+  --ink: #142640;
+  --muted: #52647a;
+  --line: #d3dce7;
+}
+.app-shell[class] { --accent: var(--brand); --accent-deep: #123878; --accent-soft: var(--brand-soft); background: var(--bg); }
+.splash-shell { background: var(--bg); }
+.splash-letterbox, .today-hero { background: linear-gradient(110deg, var(--brand-deep), #123878 55%, #2054a0); }
+.splash-screen .splash-menu-icon { background: var(--brand); color: white; }
+.splash-menu button { background: white; border-color: var(--line); }
+.splash-menu button strong { color: var(--ink); }
+.splash-menu button small { color: var(--muted); }
+.splash-version-bottom small { background: #a94712; box-shadow: none; }
+.splash-release-notes { background: white; border-color: var(--line); color: var(--ink); }
+.splash-release-notes strong { color: var(--brand-deep); }
+.splash-release-notes li { background: var(--surface-2); color: var(--muted); }
+.splash-release-notes li > span:first-child { background: var(--brand-soft); color: var(--brand); }
+.bottom-nav button.active { background: var(--brand-soft); color: var(--brand); }
+.finish-zone, .performance-overview-hero, .insight-report, .privacy-card { background: var(--brand-deep); }
+.insight-report > header span { color: #c4d8fa; }
+.insight-action > button { background: var(--brand); }
+.finish-zone.finished { background: #475569; }
+.compact-primary, .finish-actions .finish-button, .start-timer,
+.wide-action.primary, .exercise-title-row button:not(:disabled),
+.future-video-form button, .video-add-today, .custom-workout-adder button { background: var(--brand); color: white; }
+.finish-actions .finish-button.error { background: #a52f2b; }
+.more-page .settings-card .setting-icon,
+.more-page > details.settings-card > summary > i,
+.mobility-loader > span { background: var(--brand-soft); color: var(--brand); }
+.mobility-loader.active { background: var(--brand-soft); border-color: var(--brand); }
+.day-workout-override { background: var(--surface-2); border-color: var(--line); }
+.day-workout-override button { background: var(--brand-soft); color: var(--brand); }
+.history-page .history-bottom-nav { background: var(--brand-soft); border-color: #9bb4d7; box-shadow: var(--shadow-soft); }
+.history-page .history-bottom-nav button { color: var(--brand); }
+.history-page .history-bottom-nav button:disabled { color: #67778e; }
