@@ -754,3 +754,20 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .history-page .history-bottom-nav { background: var(--brand-soft); border-color: #9bb4d7; box-shadow: var(--shadow-soft); }
 .history-page .history-bottom-nav button { color: var(--brand); }
 .history-page .history-bottom-nav button:disabled { color: #67778e; }
+.insight-card, .ai-orb { background: var(--brand-deep); }
+.insight-card > div > span { color: #c4d8fa; }
+.insight-icon, .ai-insights-heading > i { background: var(--brand-soft); color: var(--brand); }
+.insight-period { background: var(--brand-soft); }
+.insight-period button { color: var(--muted); }
+.insight-period button.active { color: var(--brand-deep); }
+.insight-access { border-color: var(--line); }
+.insight-access button { background: var(--brand); color: white; }
+.insight-action { border-color: var(--line); background: white; }
+.picker-start-timer { background: var(--brand); }
+.mobility-sheet-header > button { background: var(--brand-soft); color: var(--brand); }
+.edit-mobility { background: var(--brand-soft); color: var(--brand); }
+.future-video-filters button.active { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); }
+.video-category-badge { background: var(--brand-soft); color: var(--brand); }
+.more-page .future-video-card .setting-icon.video,
+.more-page .recent-videos-card .setting-icon.video { background: var(--brand-soft); color: var(--brand); }
+.recent-record-state.rest, .week-status.rest { background: var(--surface-2); color: var(--muted); }

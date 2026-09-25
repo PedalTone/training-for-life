@@ -236,7 +236,7 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.25 1111";
+const APP_VERSION = "2026.09.25 1230";
 const RELEASE_CHANGES = [
   "Deep blue now unifies navigation and actions across the app.",
   "The T4L banner logo is black and white with its orange swoosh.",
