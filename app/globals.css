@@ -606,7 +606,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 }
 
 .splash-shell { background: linear-gradient(145deg, #e7f7fb 0%, #dcecff 55%, #f7e1d4 100%); }
-.splash-letterbox { background: linear-gradient(110deg, #063b52, #075a6a 55%, #126e7c); }
+.splash-letterbox { background: linear-gradient(110deg, #081d49, #123878 55%, #2054a0); }
+.splash-letterbox small { color: #dce8ff; }
 .app-shell { background: var(--bg); }
 .app-shell.theme-mobility { --accent: #008f9e; --accent-deep: #006570; --accent-soft: #c5f2f4; }
 .app-shell.theme-aerobic { --accent: #087fc0; --accent-deep: #005a95; --accent-soft: #cbeaff; }
