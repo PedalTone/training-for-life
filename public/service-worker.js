@@ -3,13 +3,13 @@
 // GitHub Pages previously served a redirect at this origin. A new cache name
 // clears that obsolete shell for existing visitors now that Pages serves the
 // application directly.
-const CACHE = "training-4-life-2026.09.26-1613";
+const CACHE = "training-4-life-2026.09.26-1625";
 const ICONS = [
   "block-up-overs.png", "plank-to-rotation.png", "scapular-push-up.png", "overhead-press.png", "i-t-y.png", "face-pulls.png",
   "swimmers.png", "open-book.png", "banded-7s.png", "windmill.png", "kb-waiter.png", "crossovers.png", "push-ups.png",
   "bench-press.png", "hollow-body-hold.png", "wall-slide.png", "dead-hang.png", "balance.png", "farmers-carry.png", "side-plank.png", "walking.png",
 ].map((file) => `./exercise-icons/${file}`);
-const SHELL = ["./", "./manifest.webmanifest", "./og.png", "./favicon.svg", "./t4l-monochrome.png", ...ICONS];
+const SHELL = ["./", "./manifest.webmanifest", "./og.png", "./favicon.svg", "./t4l-monochrome.png", "./splash-training-texture.jpg", ...ICONS];
 self.addEventListener("install", (event) => event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting())));
 self.addEventListener("activate", (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", (event) => {

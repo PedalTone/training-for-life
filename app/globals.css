@@ -725,8 +725,10 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   --line: #d3dce7;
 }
 .app-shell[class] { --accent: var(--brand); --accent-deep: #123878; --accent-soft: var(--brand-soft); background: var(--bg); }
-.splash-shell { background: var(--bg); }
+.app-shell.splash-shell { padding-bottom: 0; background: #f0eeea url("/splash-training-texture.jpg") center center / cover no-repeat; }
 .splash-letterbox, .today-hero { background: linear-gradient(110deg, var(--brand-deep), #123878 55%, #2054a0); }
+.splash-letterbox-copy small span { display: block; }
+.splash-menu button { box-shadow: 0 5px 18px rgba(20,38,64,.13); }
 .splash-screen .splash-menu-icon { background: var(--brand); color: white; }
 .splash-menu button { background: white; border-color: var(--line); }
 .splash-menu button strong { color: var(--ink); }

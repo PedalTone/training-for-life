@@ -23,14 +23,23 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.26 1613/);
+  assert.match(html, /2026\.09\.26 1625/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
-  assert.match(html, /Move well, daily\. Relentless Forward Progress\./);
+  assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
   assert.doesNotMatch(html, /Keep showing up/);
   assert.match(html, /Today/);
   assert.match(html, /Performance/);
   assert.doesNotMatch(html, /Primary navigation/);
+});
+
+test("splash uses the supplied textured background only on the opening screen", async () => {
+  const [css, worker] = await Promise.all([
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/service-worker.js", import.meta.url), "utf8"),
+  ]);
+  assert.match(css, /\.app-shell\.splash-shell \{[^}]*splash-training-texture\.jpg/);
+  assert.match(worker, /\.\/splash-training-texture\.jpg/);
 });
 
 test("Progress recommendations show their full text in auto-sizing cards", async () => {
