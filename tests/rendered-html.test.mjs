@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.26 1625/);
+  assert.match(html, /2026\.09\.26 1633/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -40,6 +40,29 @@ test("splash uses the supplied textured background only on the opening screen", 
   ]);
   assert.match(css, /\.app-shell\.splash-shell \{[^}]*splash-training-texture\.jpg/);
   assert.match(worker, /\.\/splash-training-texture\.jpg/);
+});
+
+test("History, Progress, and Settings share the texture while Home buttons float", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /\["history", "performance", "more"\]\.includes\(tab\) \? " textured-shell"/);
+  assert.match(css, /\.app-shell\.textured-shell::before \{[^}]*splash-training-texture\.jpg/);
+  assert.match(css, /\.splash-menu button \{[^}]*backdrop-filter: blur\(16px\)/);
+});
+
+test("What’s new groups exactly three dated releases", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
+  assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 3);
+  assert.match(releaseBlock, /2026\.09\.26 1625/);
+  assert.match(releaseBlock, /2026\.09\.26 1613/);
+  assert.match(page, /RECENT_RELEASES\.map\(\(release\) => <div className="splash-release-group"/);
+  assert.match(css, /\.splash-release-notes \{ box-sizing: border-box; max-height:/);
 });
 
 test("Progress recommendations show their full text in auto-sizing cards", async () => {

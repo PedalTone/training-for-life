@@ -726,11 +726,15 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 }
 .app-shell[class] { --accent: var(--brand); --accent-deep: #123878; --accent-soft: var(--brand-soft); background: var(--bg); }
 .app-shell.splash-shell { padding-bottom: 0; background: #f0eeea url("/splash-training-texture.jpg") center center / cover no-repeat; }
+.app-shell.textured-shell { position: relative; isolation: isolate; }
+.app-shell.textured-shell::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: #f0eeea url("/splash-training-texture.jpg") center center / cover no-repeat; }
+.textured-shell .more-page > details.settings-card::before,
+.textured-shell .more-page > section.settings-card::before { background: rgba(255,255,255,.88); }
 .splash-letterbox, .today-hero { background: linear-gradient(110deg, var(--brand-deep), #123878 55%, #2054a0); }
 .splash-letterbox-copy small span { display: block; }
-.splash-menu button { box-shadow: 0 5px 18px rgba(20,38,64,.13); }
+.splash-menu button { background: rgba(255,255,255,.86); border-color: rgba(255,255,255,.82); backdrop-filter: blur(16px) saturate(125%); -webkit-backdrop-filter: blur(16px) saturate(125%); box-shadow: 0 12px 26px rgba(20,38,64,.19), 0 3px 7px rgba(20,38,64,.08), inset 0 1px 0 rgba(255,255,255,.95); }
 .splash-screen .splash-menu-icon { background: var(--brand); color: white; }
-.splash-menu button { background: white; border-color: var(--line); }
+.splash-menu button:hover { background: rgba(255,255,255,.94); }
 .splash-menu button strong { color: var(--ink); }
 .splash-menu button small { color: var(--muted); }
 .splash-version-bottom small { background: #a94712; box-shadow: none; }
@@ -738,6 +742,11 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .splash-release-notes strong { color: var(--brand-deep); }
 .splash-release-notes li { background: var(--surface-2); color: var(--muted); }
 .splash-release-notes li > span:first-child { background: var(--brand-soft); color: var(--brand); }
+.splash-release-notes { box-sizing: border-box; max-height: min(70svh, 560px); overflow-y: auto; overscroll-behavior: contain; }
+.splash-release-group + .splash-release-group { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.splash-release-group h3 { margin: 10px 0 0; color: var(--brand); font-size: 13px; font-weight: 800; letter-spacing: .03em; }
+.splash-release-group ul { margin-top: 6px; }
+.splash-release-notes li { font-size: 14px; }
 .bottom-nav button.active { background: var(--brand-soft); color: var(--brand); }
 .finish-zone, .performance-overview-hero, .insight-report, .privacy-card { background: var(--brand-deep); }
 .insight-report > header span { color: #c4d8fa; }
