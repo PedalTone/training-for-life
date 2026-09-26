@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.25 1230/);
+  assert.match(html, /2026\.09\.26 1613/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\. Relentless Forward Progress\./);
@@ -67,6 +67,12 @@ test("counts all seven History days and does not override completed Recovery sty
   assert.match(page, /\{days\.length\} complete/);
   assert.match(css, /button\.rest:not\(\.completed\).* i/);
   assert.doesNotMatch(css, /button\.rest i \{ background: #dce9dd/);
+});
+
+test("History labels only the actual current calendar week as This Week", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /dateKey\(days\[0\]\) === dateKey\(weekDates\(now\)\[0\]\) \? "THIS WEEK"/);
+  assert.doesNotMatch(page, /index === weekBlocks\.length - 1 \? "THIS WEEK"/);
 });
 
 test("one-day workout changes are the authoritative Plan and History type", async () => {
