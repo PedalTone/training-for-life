@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.26 1633/);
+  assert.match(html, /2026\.09\.26 1805/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -49,7 +49,10 @@ test("History, Progress, and Settings share the texture while Home buttons float
   ]);
   assert.match(page, /\["history", "performance", "more"\]\.includes\(tab\) \? " textured-shell"/);
   assert.match(css, /\.app-shell\.textured-shell::before \{[^}]*splash-training-texture\.jpg/);
-  assert.match(css, /\.splash-menu button \{[^}]*backdrop-filter: blur\(16px\)/);
+  assert.match(css, /\.splash-menu button \{[^}]*backdrop-filter: blur\(20px\)/);
+  assert.match(css, /\.splash-menu button \{[^}]*0 18px 36px rgba\(20,38,64,\.24\)/);
+  assert.match(css, /\.splash-today-button::after \{[^}]*var\(--brand-orange\)/);
+  assert.match(page, /todayPlan\.theme/);
 });
 
 test("What’s new groups exactly three dated releases", async () => {
@@ -59,8 +62,8 @@ test("What’s new groups exactly three dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 3);
+  assert.match(releaseBlock, /2026\.09\.26 1633/);
   assert.match(releaseBlock, /2026\.09\.26 1625/);
-  assert.match(releaseBlock, /2026\.09\.26 1613/);
   assert.match(page, /RECENT_RELEASES\.map\(\(release\) => <div className="splash-release-group"/);
   assert.match(css, /\.splash-release-notes \{ box-sizing: border-box; max-height:/);
 });

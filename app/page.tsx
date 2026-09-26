@@ -236,9 +236,14 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.26 1633";
+const APP_VERSION = "2026.09.26 1805";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Home now shows today’s assigned workout and a quick training cue, including one-day changes.",
+    "The Home buttons have a stronger glass finish, with blue navigation and a restrained orange accent.",
+    "The T4L mark now reads clearly against the blue banner.",
+  ] },
+  { version: "2026.09.26 1633", changes: [
     "The textured background now carries through History, Progress, and Settings.",
     "Home buttons now float above the texture with a soft glass finish.",
     "What’s new now groups updates from the three latest releases.",
@@ -246,9 +251,6 @@ const RECENT_RELEASES = [
   { version: "2026.09.26 1625", changes: [
     "The opening screen gained a textured training background.",
     "The banner tagline moved onto two lines.",
-  ] },
-  { version: "2026.09.26 1613", changes: [
-    "History now labels only the actual current week as This Week.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -358,10 +360,11 @@ function SplashIcon({ name }: { name: Tab }) {
   </svg>;
 }
 
-function SplashScreen({ version, onEnter }: { version: string; onEnter: (tab: Tab) => void }) {
+function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version: string; todayPlan: WorkoutPlan; todayActivity: string; onEnter: (tab: Tab) => void }) {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
-  const destinations: Array<[Tab, string, string]> = [["today", "Today", "Your session"], ["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
-  return <main className="splash-screen"><div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div><div className="splash-menu" aria-label="App sections">{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last three releases"><strong>What’s new</strong>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div></main>;
+  const todayCue = todayActivity || todayPlan.guidance;
+  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
+  return <main className="splash-screen"><div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div><div className="splash-menu" aria-label="App sections"><button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><b aria-hidden="true">›</b></button>{destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}</div><div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last three releases"><strong>What’s new</strong>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div></main>;
 }
 
 function RhythmStrip({ focus, today, sessions, activeSchedule, scheduleHistory, onOpen, showIcons = false }: { focus: Date; today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory?: ScheduleSnapshot[]; onOpen?: (date: Date) => void; showIcons?: boolean }) {
@@ -757,7 +760,8 @@ export default function Home() {
   const importedScreenshotCount = Math.min(6, (session.importedWorkouts?.length ?? 0) + legacyScreenshotOffset);
   const displayedImportedWorkouts = session.importedWorkouts?.length ? session.importedWorkouts : legacyScreenshotOffset ? [{ activity: session.activity, date: session.date, startTime: session.startTime || "", distance: session.distance, duration: session.duration, pace: session.pace || "", calories: session.calories || "", source: session.detailSource || "Existing screenshot", confidence: "medium" as const, warnings: [] as string[] }] : [];
 
-  if (!enteredApp) return <div className={`app-shell theme-${plan.key} splash-shell`}><SplashScreen version={APP_VERSION} onEnter={enterApp}/></div>;
+  const splashPlan = activeKey === dateKey(today) ? plan : historicalPlan(undefined, scheduleForDate(today, activeSchedule, scheduleHistory), today);
+  if (!enteredApp) return <div className={`app-shell theme-${splashPlan.key} splash-shell`}><SplashScreen version={APP_VERSION} todayPlan={splashPlan} todayActivity={activeKey === dateKey(today) && session.date === activeKey ? session.activity : ""} onEnter={enterApp}/></div>;
   return <div className={`app-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}${["history", "performance", "more"].includes(tab) ? " textured-shell" : ""}`}>
     <main>
       {tab === "today" && <div className="today-page">
@@ -799,7 +803,7 @@ export default function Home() {
       {tab === "performance" && <PerformanceView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onClearGuide={clearWorkoutGuide} onAddToToday={addFutureVideoToToday}/>}
     </main>
-    <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setEnteredApp(false); window.scrollTo(0, 0); }}><span aria-hidden="true">⌂</span><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Performance" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
+    <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setActiveDate(today); setEnteredApp(false); window.scrollTo(0, 0); }}><span aria-hidden="true">⌂</span><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Performance" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
 }
 
