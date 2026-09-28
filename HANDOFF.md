@@ -4,8 +4,16 @@ Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current release
 
-Release `2026.09.28 0727` is prepared for GitHub Pages publication from `main`.
-Deployment and live HTTP verification are pending; update this section afterward.
+Release `2026.09.28 0727` is published on GitHub Pages from commit
+`bdd5729ea14fc1395a9cd58827393d0f452cb5c6` on `main`.
+GitHub Actions run `36415904493` completed successfully for that exact commit:
+https://github.com/PedalTone/training-for-life/actions/runs/36415904493
+
+Command-line HTTPS verification confirmed the live HTML icon reference and
+release label in the delivered JS. JS, CSS, service worker, manifest, and all
+three dated icons match the tested local build byte for byte. Cache identifier:
+`training-4-life-2026.09.28-0727`. No browser was used. A documentation-only
+follow-up commit records these results without changing the release.
 
 Changes: What’s new close button with focus restoration; textured backgrounds
 on all tabs; Make Plan for Next Week opens Weekly workout mapping; home-screen
@@ -17,13 +25,13 @@ throw when toggling or clearing a check-in. Browser storage remains unchanged.
 - Both Pages and vinext builds pass. All 13 rendered-HTML tests and three focused
   insight tests pass. `git diff --check` passes.
 - TypeScript still has nine pre-existing diagnostics (exercise tuple inference,
-  insight types, and Vite/Cloudflare environment declarations). Lint also fails,
+  insight types, and Vite/Cloudflare environment declarations). Lint reports 1,832 errors and 10 warnings,
   including generated Pages output; do not describe either check as clean.
 - User explicitly requested publication using non-browser verification only,
   overriding the usual visual-release check for this release. No browser,
   computer-use tools, screenshots, visualizations, or automated visual layout
   checks may be used this session. Visual behavior remains unverified.
-- No worker/API code changed; only GitHub Pages is being deployed.
+- No worker/API code changed; only GitHub Pages was deployed.
 - Leave generated untracked `tsconfig.tsbuildinfo` out of product commits.
 
 ## Continuing work
