@@ -1,5 +1,20 @@
 # Training for Life development standards
 
+## Continuing development across chats
+
+Read `HANDOFF.md`, `README.md`, and `VERSIONING.md` before editing. Inspect
+`git status` and the existing diff; preserve unfinished work from earlier chats.
+Update `HANDOFF.md` after a substantial change with what was verified, what was
+published, and what remains. Keep it concise and current.
+
+The public frontend is GitHub Pages; the Sites worker supplies separate API
+features. See README for the two build paths. Preserve browser-stored workout
+data and dated schedule history. Render and visually inspect desktop, tablet,
+and phone layouts before declaring interface changes complete.
+
+The user's general learning-app and readability standards also live in
+`~/.codex/AGENTS.md`. Apply them where relevant to this fitness tracker.
+
 ## Release labels and release control
 
 Use a publication timestamp instead of semantic versioning for user-visible

@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.27 1336/);
+  assert.match(html, /2026\.09\.28 0727/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -42,12 +42,12 @@ test("splash uses the supplied textured background only on the opening screen", 
   assert.match(worker, /\.\/splash-training-texture\.jpg/);
 });
 
-test("History, Progress, and Settings share the texture while Home buttons float", async () => {
+test("all entered tabs share the texture while Home buttons float", async () => {
   const [page, css] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /\["history", "performance", "more"\]\.includes\(tab\) \? " textured-shell"/);
+  assert.match(page, /app-shell textured-shell theme-/);
   assert.match(css, /\.app-shell\.textured-shell::before \{[^}]*splash-training-texture\.jpg/);
   assert.match(css, /\.splash-menu button \{[^}]*backdrop-filter: blur\(20px\)/);
   assert.match(css, /\.splash-menu button \{[^}]*0 18px 36px rgba\(20,38,64,\.24\)/);
@@ -65,10 +65,38 @@ test("What’s new groups exactly five dated releases", async () => {
   assert.match(releaseBlock, /2026\.09\.26 1805/);
   assert.match(releaseBlock, /2026\.09\.26 1633/);
   assert.match(releaseBlock, /2026\.09\.26 1625/);
-  assert.match(releaseBlock, /2026\.09\.26 1613/);
+  assert.match(releaseBlock, /2026\.09\.27 1336/);
   assert.match(page, /What’s new in the last five releases/);
   assert.match(page, /RECENT_RELEASES\.map\(\(release\) => <div className="splash-release-group"/);
   assert.match(css, /\.splash-release-notes \{ box-sizing: border-box; max-height:/);
+  assert.match(page, /aria-label="Close What’s new"/);
+  assert.match(css, /\.splash-release-header button \{[^}]*44px/);
+});
+
+test("Plan shortcut opens weekly mapping and leaves room above navigation", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /Make Plan for Next Week/);
+  assert.match(page, /const makePlanForNextWeek = \(\) => \{ setOpenScheduleOnSettings\(true\); navigate\("more"\); \}/);
+  assert.match(page, /mapping\.open = true/);
+  assert.match(page, /Weekly workout mapping/);
+  assert.match(css, /\.week-page \{ padding-bottom: calc\(116px \+ env\(safe-area-inset-bottom\)\)/);
+});
+
+test("new home-screen icon is referenced by both iPhone and PWA metadata", async () => {
+  const [manifest, html, layout, worker] = await Promise.all([
+    readFile(new URL("../public/manifest.webmanifest", import.meta.url), "utf8"),
+    readFile(new URL("../index.html", import.meta.url), "utf8"),
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../public/service-worker.js", import.meta.url), "utf8"),
+  ]);
+  assert.match(manifest, /icon-192-2026\.09\.28-0727\.png/);
+  assert.match(manifest, /icon-512-2026\.09\.28-0727\.png/);
+  assert.match(html, /apple-touch-icon-2026\.09\.28-0727\.png/);
+  assert.match(layout, /apple-touch-icon-2026\.09\.28-0727\.png/);
+  assert.match(worker, /apple-touch-icon-2026\.09\.28-0727\.png/);
 });
 
 test("Progress recommendations show their full text in auto-sizing cards", async () => {

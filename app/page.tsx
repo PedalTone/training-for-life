@@ -236,9 +236,16 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.27 1336";
+const APP_VERSION = "2026.09.28 0727";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "What’s new has an easy-to-reach close button.",
+    "Body check-in can be toggled and cleared without an error.",
+    "Today and Plan now share the textured background used throughout the app.",
+    "Plan now opens Weekly workout mapping directly from a new bottom button.",
+    "The iPhone home-screen icon now matches the blue splash banner.",
+  ] },
+  { version: "2026.09.27 1336", changes: [
     "What’s new now shows the five latest releases.",
   ] },
   { version: "2026.09.26 1805", changes: [
@@ -254,9 +261,6 @@ const RECENT_RELEASES = [
   { version: "2026.09.26 1625", changes: [
     "The opening screen gained a textured training background.",
     "The banner tagline moved onto two lines.",
-  ] },
-  { version: "2026.09.26 1613", changes: [
-    "History now labels only the actual current week as This Week.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -368,6 +372,8 @@ function SplashIcon({ name }: { name: Tab }) {
 
 function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version: string; todayPlan: WorkoutPlan; todayActivity: string; onEnter: (tab: Tab) => void }) {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
+  const releaseButtonRef = useRef<HTMLButtonElement>(null);
+  const closeReleaseNotes = () => { setShowReleaseNotes(false); releaseButtonRef.current?.focus(); };
   const todayCue = todayActivity || todayPlan.guidance;
   const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
   return <main className="splash-screen">
@@ -376,7 +382,7 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
       <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><b aria-hidden="true">›</b></button>
       {destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}
     </div>
-    <div className="splash-release"><button className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last five releases"><strong>What’s new</strong>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
+    <div className="splash-release"><button ref={releaseButtonRef} className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last five releases"><div className="splash-release-header"><strong>What’s new</strong><button type="button" onClick={closeReleaseNotes} aria-label="Close What’s new"><span aria-hidden="true">×</span></button></div>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
   </main>;
 }
 
@@ -408,6 +414,7 @@ export default function Home() {
   };
   const basePlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
   const [tab, setTab] = useState<Tab>("today");
+  const [openScheduleOnSettings, setOpenScheduleOnSettings] = useState(false);
   const [enteredApp, setEnteredApp] = useState(() => { try { return sessionStorage.getItem("t4l:entered-app") === "1"; } catch { return false; } });
   const [session, setSession] = useState<Session>(() => emptySession(activeKey, basePlan.key === "rest", basePlan));
   const sessionRef = useRef(session);
@@ -595,6 +602,16 @@ export default function Home() {
     return { saved: true, message: `Renamed to ${name}. Existing workout selections were updated.` };
   };
   const navigate = (next: Tab) => { setTab(next); window.scrollTo(0, 0); };
+  const makePlanForNextWeek = () => { setOpenScheduleOnSettings(true); navigate("more"); };
+  useEffect(() => {
+    if (tab !== "more" || !openScheduleOnSettings) return;
+    const mapping = document.querySelector<HTMLDetailsElement>(".more-page .schedule-card");
+    if (!mapping) return;
+    mapping.open = true;
+    mapping.scrollIntoView({ block: "start", behavior: "smooth" });
+    mapping.querySelector<HTMLElement>("summary")?.focus({ preventScroll: true });
+    setOpenScheduleOnSettings(false);
+  }, [tab, openScheduleOnSettings]);
   const enterApp = (next: Tab) => { try { sessionStorage.setItem("t4l:entered-app", "1"); } catch { /* Continue without a session preference. */ } setTab(next); setEnteredApp(true); window.scrollTo(0, 0); };
   const openDate = (date: Date) => { setActiveDate(date); setTab("today"); window.scrollTo(0, 0); };
   const finishAndBackup = async () => {
@@ -697,7 +714,6 @@ export default function Home() {
   const handleInjuryControl = () => {
     const next = { ...session, injury: { ...session.injury, reported: !injuryReported }, updatedAt: new Date().toISOString() };
     setFinishBackupState(""); setSession(next); void saveSession(next).catch(() => localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(next)));
-    setShowInjury(!injuryReported);
   };
   const updateInjury = (injury: Injury) => {
     const next = { ...session, injury, updatedAt: new Date().toISOString() };
@@ -705,7 +721,6 @@ export default function Home() {
   };
   const clearInjury = () => {
     updateInjury({ reported: false, impact: "", bodyArea: "", note: "" });
-    setShowInjury(false);
   };
   const readScreenshot = async (file: Blob) => {
     setOpenPanel("log"); setScreenshotState("reading"); setScreenshotError("");
@@ -775,7 +790,7 @@ export default function Home() {
 
   const splashPlan = activeKey === dateKey(today) ? plan : historicalPlan(undefined, scheduleForDate(today, activeSchedule, scheduleHistory), today);
   if (!enteredApp) return <div className={`app-shell theme-${splashPlan.key} splash-shell`}><SplashScreen version={APP_VERSION} todayPlan={splashPlan} todayActivity={activeKey === dateKey(today) && session.date === activeKey ? session.activity : ""} onEnter={enterApp}/></div>;
-  return <div className={`app-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}${["history", "performance", "more"].includes(tab) ? " textured-shell" : ""}`}>
+  return <div className={`app-shell textured-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}`}>
     <main>
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
@@ -811,7 +826,7 @@ export default function Home() {
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
       {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
-      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate}/>}
+      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate} onMakeNextWeekPlan={makePlanForNextWeek}/>}
       {tab === "history" && <HistoryView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate}/>}
       {tab === "performance" && <PerformanceView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onClearGuide={clearWorkoutGuide} onAddToToday={addFutureVideoToToday}/>}
@@ -890,11 +905,12 @@ function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session
   return <details className="surface-card daily-mobility"><summary><span><b>Mobility exercises</b><small>{complete} of {session.mobilityExercises.length} completed</small></span><i>⌄</i></summary><div className="daily-mobility-body"><div className="checklist">{session.mobilityExercises.map((name) => { const checked = session.completedExercises.includes(name); const exercise = exerciseByName.get(name); const timerUrl = `https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`; return <div key={name} className={`daily-exercise-row ${checked ? "checked" : ""}`}><button className="daily-exercise-toggle" aria-pressed={checked} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark exerciseId={exercise?.id} name={name} graphicData={exercise?.graphicData}/></span><span className="exercise-copy"><strong>{name}</strong><small>{exercise?.equipment || "Mobility exercise"}</small></span><span className="check-target">{checked ? "✓" : ""}</span></button><a className="start-timer" href={timerUrl} target="_blank" rel="noreferrer">Start timer</a></div>; })}</div><button className="edit-mobility" onClick={onEdit}>Edit loaded exercises</button></div></details>;
 }
 
-function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void }) {
+function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate, onMakeNextWeekPlan }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void; onMakeNextWeekPlan: () => void }) {
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
   return <div className="subpage week-page">
     <section className="week-list">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, today); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
+    <button className="week-next-plan-button" type="button" onClick={onMakeNextWeekPlan}>Make Plan for Next Week <span aria-hidden="true">›</span></button>
   </div>;
 }
 

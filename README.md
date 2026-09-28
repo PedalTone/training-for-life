@@ -1,100 +1,111 @@
-# vinext-starter
+# Training for Life
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
+Plan, History, Performance, and Settings. The app supports recurring schedules,
+one-day changes, mobility exercises, videos, photos, backup/restore, and optional
+AI-assisted features.
 
-## Prerequisites
+## Continue development
 
-- Node.js `>=22.13.0`
+Read `AGENTS.md`, `HANDOFF.md`, `VERSIONING.md`, and `TESTING_CHECKLIST.md` first.
+Inspect `git status` before editing: this folder can contain unfinished work.
+Keep the handoff updated after substantial changes.
 
-## Quick Start
+- Project folder: `/Users/thomasmorris/Documents/ChatGPT/Fitness Plan`
+- GitHub: https://github.com/PedalTone/training-for-life
+- Public frontend: https://pedaltone.github.io/training-for-life/app/
+- Separate API service: https://training-4-life.tommy-tritone.chatgpt.site
 
-```bash
-npm install
-npm run dev
-npm run build
+## Architecture and files
+
+React 19 + TypeScript, with a Vite static frontend and a vinext/Cloudflare worker
+build for server features. Node must be at least 22.13.0; CI uses Node 22.
+
+| File | Responsibility |
+| --- | --- |
+| `app/page.tsx` | Main client UI, state, scheduling, persistence, backups, API calls |
+| `app/globals.css` | Responsive styles and design system |
+| `app/insight-validation.ts` | Guards against incomplete insight responses |
+| `src/main.tsx`, `index.html` | GitHub Pages entry and service-worker registration |
+| `vite.github.config.ts` | Static build, base `/training-for-life/app/` |
+| `scripts/write-github-pages-root.mjs` | Redirect from repository root to `/app/` |
+| `app/layout.tsx`, `vite.config.ts` | vinext layout, metadata and server build |
+| `worker/index.ts` | API routes and server entry |
+| `worker/training-insights.ts` | Training assessment generation |
+| `worker/workout-screenshot.ts` | Screenshot import |
+| `worker/workout-guide.ts` | Video exercise guides |
+| `public/` | Brand artwork, texture, exercise illustrations, icons, PWA files |
+| `.github/workflows/deploy-pages.yml` | Builds and publishes GitHub Pages |
+
+Workout sessions are stored in browser IndexedDB (`training-for-life`, store
+`sessions`) with a localStorage fallback. Settings, library, goals, insight
+reports and schedule snapshots use `t4l:` localStorage keys. Data is tied to the
+browser/origin; local preview data is separate from live iPhone data. Preserve
+storage names and migrations. Backup/restore exports/imports JSON. Do not erase
+storage to solve a deployment or cache issue.
+
+On GitHub Pages, the frontend calls the separate Sites service for worker APIs.
+The service uses server-side `OPENAI_API_KEY` and `INSIGHTS_ACCESS_CODE`; never
+put their values in documentation or client code. Existing credential setup is
+separate from this chat migration. Inspect applicable API/hosting instructions
+before changing that infrastructure.
+
+## Run and verify
+
+Install dependencies with `npm ci` when needed.
+
+For a preview matching the deployed static frontend:
+
+```sh
+npx vite --config vite.github.config.ts --host 127.0.0.1 --port 5173
 ```
 
-This starter does not use `wrangler.jsonc`.
+Open `http://127.0.0.1:5173/training-for-life/app/`.
+This preview does not provide the worker API routes. For the vinext/server path,
+use `npm run dev` and the URL printed by the command.
 
-## Included Shape
+Primary checks:
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```sh
+npm run build:pages
+npm test
+git diff --check
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+`npm run build:pages` writes `gh-pages-dist/` (app under `app/`).
+`npm test` runs the vinext build and `tests/rendered-html.test.mjs`; it does not
+include every test file. On a Node version supporting TypeScript stripping,
+additional focused tests can be run with:
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+```sh
+node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs
+```
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+`npm run lint` and `npx tsc --noEmit` are additional diagnostics. Earlier runs
+failed; see HANDOFF.md and investigate current output before claiming they pass.
+Inspect the rendered app at desktop, tablet, and phone sizes and walk through
+changed interactions. Automated assertions alone do not verify layout quality.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+## Publish requested frontend changes
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+The configured remote is named `github`. Pushing a tested commit to its `main`
+branch triggers `.github/workflows/deploy-pages.yml`. Confirm the exact diff,
+commit only intended files, and follow the release rules in AGENTS.md.
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+```sh
+git push github main
+gh run list --repo PedalTone/training-for-life --workflow deploy-pages.yml --limit 3
+```
 
-## Useful Commands
+Verify the successful workflow corresponds to the intended commit, then verify
+the live app release and service-worker cache identifier. A local version change
+is not proof of deployment. Installed iPhone behavior also requires checking
+cache refresh and icon references.
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+The GitHub workflow only deploys the static frontend. Worker/API changes require
+a separate Sites deployment using the applicable Sites hosting workflow. Do not
+assume a GitHub push updates the API service.
 
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+Public release labels use `YYYY.MM.DD HHmm` in America/New_York. Documentation
+updates alone do not create a new public release. See HANDOFF.md for the current
+local candidate versus the last verified deployment.

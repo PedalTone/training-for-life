@@ -1,11 +1,14 @@
 # Training for Life release labels
 
-The detailed release-label policy lives in [`AGENTS.md`](./AGENTS.md). Public
-releases use the Eastern Time publication stamp `YYYY.MM.DD HHmm`. Internal-only
-work and deployment repairs do not create a new release label.
+Public releases use the Eastern publication timestamp `YYYY.MM.DD HHmm`.
+See AGENTS.md for the full policy.
 
-Release decision: **New public release** — `2026.09.27 1336` expands the
-splash-screen What’s new panel from three to five dated releases.
+Release decision: **New public release** — `2026.09.28 0727` adds the What’s new close
+button, textured backgrounds across all tabs, the Plan shortcut to Weekly
+workout mapping, matching home-screen icons, and fixes Body check-in errors.
 
-The current release is `2026.09.27 1336`. The displayed app release, tests,
-release notes, cache identifier, and live deployment must always agree.
+The release label is `2026.09.28 0727`. App, notes, tests, icon references, service-worker
+cache and deployment must match. Publication verification is recorded in HANDOFF.md.
+
+For this release the user explicitly requested publication with non-browser
+verification only. Visual review is omitted under that instruction.

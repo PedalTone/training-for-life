@@ -797,3 +797,12 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .more-page .future-video-card .setting-icon.video,
 .more-page .recent-videos-card .setting-icon.video { background: var(--brand-soft); color: var(--brand); }
 .recent-record-state.rest, .week-status.rest { background: var(--surface-2); color: var(--muted); }
+
+.splash-release-header { position: sticky; top: -13px; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -13px -15px 4px; padding: 8px 9px 8px 15px; background: white; border-bottom: 1px solid var(--line); }
+.splash-release-header button { flex: 0 0 44px; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--brand-soft); color: var(--brand-deep); font: 700 26px/1 var(--sans); cursor: pointer; }
+.splash-release-header button:focus-visible, .week-next-plan-button:focus-visible { outline: 3px solid var(--brand-orange); outline-offset: 2px; }
+.week-page { padding-bottom: calc(116px + env(safe-area-inset-bottom)); }
+.week-next-plan-button { width: 100%; min-height: 60px; margin-top: 18px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 12px; border: 0; border-radius: 18px; background: var(--brand-deep); color: white; box-shadow: 0 10px 24px rgba(8,29,73,.18); font: 800 17px/1.25 var(--sans); cursor: pointer; }
+.week-next-plan-button span { font-size: 29px; line-height: 1; }
+@media (max-width: 680px) { .week-next-plan-button { margin-top: 12px; min-height: 58px; } }
+.more-page .schedule-card { scroll-margin-top: 18px; }
