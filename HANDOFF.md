@@ -17,16 +17,13 @@ was changed.
 
 ## Current release
 
-Release `2026.09.28 2047` is published from commit `966fa80`.
-GitHub Pages run `36504813562` succeeded. HTTPS checks confirmed the release
-and byte-identical JS, CSS, service worker, manifest and icons against the
-tested local build. History and Settings use 6px left-edge accents matching Plan;
-Settings open sections keep their orange accent on the left. Today’s Main
-workout, Add-ons, Log Workout, add-video and finish buttons have left accents.
-No workout data or behavior changes. The startup-cache repair is retained.
+Release `2026.09.28 2051` is prepared for publication; deployment checks pending.
+Tall portrait phones (up to 680px wide and at least 800px tall) get a flexible
+splash menu with 80px minimum buttons, a 128px Today button, wider gaps and
+safe-area-aware padding. Shorter screens keep their compact layout. No data
+or navigation behavior changes. Startup cache repair retained.
 
-Previous verified release: `2026.09.28 2037`; cache repair commit `d2a7857`,
-GitHub Actions run `36504530490`. Phone update confirmation remains outstanding.
+Previous verified release: `2026.09.28 2047`, commit `966fa80`, run `36504813562`.
 
 ## Verification and session constraints
 

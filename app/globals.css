@@ -844,3 +844,14 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .today-page .log-workout-card[open],
 .today-page .mobility-loader.active { border-left-color: var(--brand-orange); }
 .today-page .finish-actions .finish-button { border-left: 6px solid var(--brand-orange); }
+
+/* Let tall portrait phones use their available height for the splash menu. */
+@media (max-width: 680px) and (min-height: 800px) {
+  .splash-screen { min-height: 100svh; justify-content: flex-start; padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+  .splash-screen .splash-brand, .splash-screen .splash-release { flex-shrink: 0; }
+  .splash-screen .splash-menu { flex: 1 0 auto; grid-template-rows: minmax(128px, 1.35fr) repeat(4, minmax(80px, 1fr)); gap: clamp(12px, 1.8svh, 18px); margin: 24px 0 16px; }
+  .splash-screen .splash-menu button { min-height: 80px; padding-top: 14px; padding-bottom: 14px; }
+  .splash-screen .splash-menu button.splash-today-button { min-height: 128px; }
+  .splash-screen .splash-menu button strong { font-size: 19px; }
+  .splash-screen .splash-menu button small { font-size: 14px; }
+}

@@ -236,9 +236,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.28 2047";
+const APP_VERSION = "2026.09.28 2051";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Splash buttons are larger and spread out to better use tall phone screens.",
+  ] },
+  { version: "2026.09.28 2047", changes: [
     "History and Settings now use Plan-style left-edge accents, with matching accents on Today’s main buttons.",
   ] },
   { version: "2026.09.28 2037", changes: [
@@ -255,9 +258,7 @@ const RECENT_RELEASES = [
     "Plan now opens Weekly workout mapping directly from a new bottom button.",
     "The iPhone home-screen icon now matches the blue splash banner.",
   ] },
-  { version: "2026.09.27 1336", changes: [
-    "What’s new now shows the five latest releases.",
-  ] },
+
 
 
 
