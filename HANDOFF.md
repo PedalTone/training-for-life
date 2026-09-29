@@ -17,8 +17,10 @@ was changed.
 
 ## Current release
 
-Release `2026.09.28 2047` is prepared for publication; deployment verification
-is pending. History and Settings use 6px left-edge accents matching Plan;
+Release `2026.09.28 2047` is published from commit `966fa80`.
+GitHub Pages run `36504813562` succeeded. HTTPS checks confirmed the release
+and byte-identical JS, CSS, service worker, manifest and icons against the
+tested local build. History and Settings use 6px left-edge accents matching Plan;
 Settings open sections keep their orange accent on the left. Today’s Main
 workout, Add-ons, Log Workout, add-video and finish buttons have left accents.
 No workout data or behavior changes. The startup-cache repair is retained.
