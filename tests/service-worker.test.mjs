@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
+
+const source = await readFile(new URL('../public/service-worker.js', import.meta.url), 'utf8');
+function harness(fetch, cached) {
+  const handlers = {};
+  vm.runInNewContext(source, {
+    self: { addEventListener: (name, handler) => { handlers[name] = handler; } },
+    URL,
+    fetch,
+    caches: { open: async () => ({ put: async () => {} }), match: async () => cached },
+  });
+  return async () => {
+    let response;
+    handlers.fetch({ request: { method: 'GET', mode: 'navigate', url: 'https://example.com/app/' }, respondWith: (value) => { response = value; } });
+    return response;
+  };
+}
+test('online navigation bypasses stale HTTP HTML cache', async () => {
+  const fresh = { clone: () => ({}) };
+  const navigate = harness(async (_request, options) => {
+    assert.equal(options.cache, 'no-store');
+    return fresh;
+  }, { old: true });
+  assert.equal(await navigate(), fresh);
+});
+test('offline navigation still returns the saved page', async () => {
+  const cached = { offline: true };
+  const navigate = harness(async () => { throw new Error('offline'); }, cached);
+  assert.equal(await navigate(), cached);
+});

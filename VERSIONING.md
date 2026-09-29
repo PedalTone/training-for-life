@@ -13,3 +13,6 @@ For this release the user explicitly requested publication with non-browser
 verification only. Visual review is omitted under that instruction.
 
 Unchanged icons retain their existing asset names from `2026.09.28 0727`.
+
+Release decision: **No new release** — repair startup HTML caching so online
+launches request fresh HTML; retain `2026.09.28 2037` and the offline fallback.

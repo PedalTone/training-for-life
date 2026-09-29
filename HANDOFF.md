@@ -2,6 +2,16 @@
 
 Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
+## Latest update-delivery repair
+
+Phone reported `2032` after `2037` deployed. Live HTTP headers show a 600-second
+HTML cache lifetime. Navigation fetch previously used the default HTTP cache;
+it now uses `cache: "no-store"` to request fresh HTML online, preserving the
+offline fallback. This is a likely cause, not a confirmed phone-side diagnosis.
+Release remains `2026.09.28 2037` under the deployment-repair policy.
+Both builds and 18 tests pass, including two service-worker behavior tests.
+Repair deployment verification is pending. No workout storage was changed.
+
 ## Current release
 
 Release `2026.09.28 2037` is published from commit `859627c`.

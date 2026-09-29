@@ -78,7 +78,7 @@ include every test file. On a Node version supporting TypeScript stripping,
 additional focused tests can be run with:
 
 ```sh
-node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs
+node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs tests/service-worker.test.mjs
 ```
 
 `npm run lint` and `npx tsc --noEmit` are additional diagnostics. Earlier runs
