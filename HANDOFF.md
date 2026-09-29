@@ -10,7 +10,10 @@ it now uses `cache: "no-store"` to request fresh HTML online, preserving the
 offline fallback. This is a likely cause, not a confirmed phone-side diagnosis.
 Release remains `2026.09.28 2037` under the deployment-repair policy.
 Both builds and 18 tests pass, including two service-worker behavior tests.
-Repair deployment verification is pending. No workout storage was changed.
+Repair commit `d2a7857` deployed successfully in run `36504530490`. HTTPS
+verification confirmed the repaired worker and all checked assets match the
+local build. Phone-side confirmation remains outstanding. No workout storage
+was changed.
 
 ## Current release
 
