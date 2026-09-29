@@ -806,3 +806,21 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .week-next-plan-button span { font-size: 29px; line-height: 1; }
 @media (max-width: 680px) { .week-next-plan-button { margin-top: 12px; min-height: 58px; } }
 .more-page .schedule-card { scroll-margin-top: 18px; }
+
+/* Carry the splash palette into planning and history without replacing status colors. */
+.week-page .week-day-card { border-left-color: var(--brand); }
+.week-page .week-day-card strong { color: var(--brand-deep); }
+.week-page .week-day-card.today { border-color: var(--brand); border-left-color: var(--brand-orange); box-shadow: 0 0 0 2px var(--brand-soft), var(--shadow-soft); }
+.week-page .week-next-plan-button { background: linear-gradient(110deg, var(--brand-deep), #123878 55%, #2054a0); }
+.week-page .week-next-plan-button span { color: #f3a66e; }
+.history-page .segmented { background: var(--brand-soft); }
+.history-page .segmented button.active { background: var(--brand-deep); color: white; }
+.history-page .scan-heading { padding-bottom: 10px; border-bottom: 2px solid var(--brand-soft); }
+.history-page .scan-heading span, .history-page .scan-heading b,
+.history-page .month-title h2, .history-page .month-title .kicker,
+.history-page .flagged-list h2 { color: var(--brand-deep); }
+.history-page .week-scan, .history-page .month-card, .history-page .flagged-list { border-top: 3px solid var(--brand); }
+.history-page .history-bottom-nav { background: var(--brand-deep); border-color: var(--brand); }
+.history-page .history-bottom-nav button { background: #123878; color: white; }
+.history-page .history-bottom-nav button:disabled { background: var(--brand-deep); color: #8b9bb8; }
+.history-page .history-bottom-nav .history-nav-divider { background: #42628f; }

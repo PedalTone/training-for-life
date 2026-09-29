@@ -4,21 +4,15 @@ Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current release
 
-Release `2026.09.28 0727` is published on GitHub Pages from commit
-`bdd5729ea14fc1395a9cd58827393d0f452cb5c6` on `main`.
-GitHub Actions run `36415904493` completed successfully for that exact commit:
-https://github.com/PedalTone/training-for-life/actions/runs/36415904493
+Release `2026.09.28 2032` is prepared for publication. Deployment verification
+is pending. Plan now uses blue card edges/titles, an orange accent on today,
+and a splash-style gradient on its shortcut. History uses navy selected controls,
+blue section edges/headings, and navy paging controls. Existing workout and
+completion colors remain. No storage or worker changes. Icon assets remain
+unchanged from `2026.09.28 0727`.
 
-Command-line HTTPS verification confirmed the live HTML icon reference and
-release label in the delivered JS. JS, CSS, service worker, manifest, and all
-three dated icons match the tested local build byte for byte. Cache identifier:
-`training-4-life-2026.09.28-0727`. No browser was used. A documentation-only
-follow-up commit records these results without changing the release.
-
-Changes: What’s new close button with focus restoration; textured backgrounds
-on all tabs; Make Plan for Next Week opens Weekly workout mapping; home-screen
-icons match the splash; removed obsolete Body check-in setter calls that could
-throw when toggling or clearing a check-in. Browser storage remains unchanged.
+Previous verified release: `2026.09.28 0727`, commit `bdd5729`, successful
+GitHub Actions run `36415904493`.
 
 ## Verification and session constraints
 

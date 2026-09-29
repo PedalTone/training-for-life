@@ -236,9 +236,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.28 0727";
+const APP_VERSION = "2026.09.28 2032";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Plan and History now echo the splash screen with deep blue accents and small orange details.",
+  ] },
+  { version: "2026.09.28 0727", changes: [
     "What’s new has an easy-to-reach close button.",
     "Body check-in can be toggled and cleared without an error.",
     "Today and Plan now share the textured background used throughout the app.",
@@ -258,10 +261,7 @@ const RECENT_RELEASES = [
     "Home buttons now float above the texture with a soft glass finish.",
     "What’s new now groups updates from the three latest releases.",
   ] },
-  { version: "2026.09.26 1625", changes: [
-    "The opening screen gained a textured training background.",
-    "The banner tagline moved onto two lines.",
-  ] },
+
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
