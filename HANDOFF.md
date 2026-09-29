@@ -4,8 +4,10 @@ Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current release
 
-Release `2026.09.28 2037` is prepared for publication; deployment verification
-is pending. Settings now has blue card edges and navy headings/expand controls,
+Release `2026.09.28 2037` is published from commit `859627c`.
+GitHub Pages run `36504061000` deployed this commit. HTTPS verification
+confirmed the release label and byte-identical JS, CSS, worker, manifest and
+icons against the tested build. Settings now has blue card edges and navy headings/expand controls,
 with orange top edges on open sections. Splash now reads “Progress” with
 “How you’re doing” underneath. Internal `performance` routing is unchanged.
 No data, worker, or icon changes.
