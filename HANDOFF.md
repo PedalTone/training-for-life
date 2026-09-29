@@ -4,8 +4,10 @@ Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current release
 
-Release `2026.09.28 2032` is prepared for publication. Deployment verification
-is pending. Plan now uses blue card edges/titles, an orange accent on today,
+Release `2026.09.28 2032` is published from commit `da2c3ab`.
+GitHub Pages run `36503672545` deployed this commit. HTTPS checks confirmed
+the release label and byte-identical JS, CSS, service worker, manifest and icons
+against the tested local build. Plan now uses blue card edges/titles, an orange accent on today,
 and a splash-style gradient on its shortcut. History uses navy selected controls,
 blue section edges/headings, and navy paging controls. Existing workout and
 completion colors remain. No storage or worker changes. Icon assets remain
