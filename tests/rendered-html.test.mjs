@@ -23,13 +23,13 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.28 2032/);
+  assert.match(html, /2026\.09\.28 2037/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
   assert.doesNotMatch(html, /Keep showing up/);
   assert.match(html, /Today/);
-  assert.match(html, /Performance/);
+  assert.match(html, /<strong>Progress<\/strong><small>How you’re doing<\/small>/);
   assert.doesNotMatch(html, /Primary navigation/);
 });
 
@@ -63,7 +63,7 @@ test("What’s new groups exactly five dated releases", async () => {
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 5);
   assert.match(releaseBlock, /2026\.09\.26 1805/);
-  assert.match(releaseBlock, /2026\.09\.26 1633/);
+  assert.match(releaseBlock, /2026\.09\.28 2032/);
   assert.match(releaseBlock, /2026\.09\.28 0727/);
   assert.match(releaseBlock, /2026\.09\.27 1336/);
   assert.match(page, /What’s new in the last five releases/);

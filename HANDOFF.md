@@ -4,17 +4,14 @@ Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current release
 
-Release `2026.09.28 2032` is published from commit `da2c3ab`.
-GitHub Pages run `36503672545` deployed this commit. HTTPS checks confirmed
-the release label and byte-identical JS, CSS, service worker, manifest and icons
-against the tested local build. Plan now uses blue card edges/titles, an orange accent on today,
-and a splash-style gradient on its shortcut. History uses navy selected controls,
-blue section edges/headings, and navy paging controls. Existing workout and
-completion colors remain. No storage or worker changes. Icon assets remain
-unchanged from `2026.09.28 0727`.
+Release `2026.09.28 2037` is prepared for publication; deployment verification
+is pending. Settings now has blue card edges and navy headings/expand controls,
+with orange top edges on open sections. Splash now reads “Progress” with
+“How you’re doing” underneath. Internal `performance` routing is unchanged.
+No data, worker, or icon changes.
 
-Previous verified release: `2026.09.28 0727`, commit `bdd5729`, successful
-GitHub Actions run `36415904493`.
+Previous verified release: `2026.09.28 2032`, commit `da2c3ab`, successful
+GitHub Actions run `36503672545`.
 
 ## Verification and session constraints
 
@@ -44,8 +41,8 @@ GitHub Actions run `36415904493`.
 
 - An iPhone-friendly workout planner/logger for sustainable fitness. Prioritize
   clear next actions, compact readable screens, and easy logging over clutter.
-- Current destinations: Home/splash, Today, Plan, History, Performance, Settings.
-  Internally, `week` means Plan, `performance` means Performance, `more` means
+- Current destinations: Home/splash, Today, Plan, History, Progress, Settings.
+  Internally, `week` means Plan, `performance` means Progress, `more` means
   Settings. Old notes also use Week, Progress, Config, and More.
 - Deep blue/navy is the main brand color across all tabs. Use muted orange as a
   small accent, especially the T4L swoosh. Preserve status meanings of green,

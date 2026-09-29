@@ -3,10 +3,10 @@
 Public releases use the Eastern publication timestamp `YYYY.MM.DD HHmm`.
 See AGENTS.md for the full policy.
 
-Release decision: **New public release** — `2026.09.28 2032` brings splash-inspired
-blue accents and restrained orange details to Plan and History.
+Release decision: **New public release** — `2026.09.28 2037` adds blue and orange
+Settings accents and labels the splash card “Progress — How you’re doing.”
 
-The release label is `2026.09.28 2032`. App, notes, tests, service-worker
+The release label is `2026.09.28 2037`. App, notes, tests, service-worker
 cache and deployment must match. Publication verification is recorded in HANDOFF.md.
 
 For this release the user explicitly requested publication with non-browser

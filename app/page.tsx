@@ -236,9 +236,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.28 2032";
+const APP_VERSION = "2026.09.28 2037";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Settings now shares the blue accents, with orange highlights on open sections.",
+    "The splash card now reads Progress — How you’re doing.",
+  ] },
+  { version: "2026.09.28 2032", changes: [
     "Plan and History now echo the splash screen with deep blue accents and small orange details.",
   ] },
   { version: "2026.09.28 0727", changes: [
@@ -256,11 +260,7 @@ const RECENT_RELEASES = [
     "The Home buttons have a stronger glass finish, with blue navigation and a restrained orange accent.",
     "The T4L mark now reads clearly against the blue banner.",
   ] },
-  { version: "2026.09.26 1633", changes: [
-    "The textured background now carries through History, Progress, and Settings.",
-    "Home buttons now float above the texture with a soft glass finish.",
-    "What’s new now groups updates from the three latest releases.",
-  ] },
+
 
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -375,7 +375,7 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
   const releaseButtonRef = useRef<HTMLButtonElement>(null);
   const closeReleaseNotes = () => { setShowReleaseNotes(false); releaseButtonRef.current?.focus(); };
   const todayCue = todayActivity || todayPlan.guidance;
-  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Performance", "How you’re progressing"], ["more", "Settings", "Tune your app"]];
+  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Progress", "How you’re doing"], ["more", "Settings", "Tune your app"]];
   return <main className="splash-screen">
     <div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div>
     <div className="splash-menu" aria-label="App sections">

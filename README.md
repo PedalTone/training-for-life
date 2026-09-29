@@ -1,7 +1,7 @@
 # Training for Life
 
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
-Plan, History, Performance, and Settings. The app supports recurring schedules,
+Plan, History, Progress, and Settings. The app supports recurring schedules,
 one-day changes, mobility exercises, videos, photos, backup/restore, and optional
 AI-assisted features.
 
