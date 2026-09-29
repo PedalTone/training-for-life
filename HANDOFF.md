@@ -17,21 +17,19 @@ was changed.
 
 ## Current release
 
-Release `2026.09.28 2037` is published from commit `859627c`.
-GitHub Pages run `36504061000` deployed this commit. HTTPS verification
-confirmed the release label and byte-identical JS, CSS, worker, manifest and
-icons against the tested build. Settings now has blue card edges and navy headings/expand controls,
-with orange top edges on open sections. Splash now reads “Progress” with
-“How you’re doing” underneath. Internal `performance` routing is unchanged.
-No data, worker, or icon changes.
+Release `2026.09.28 2047` is prepared for publication; deployment verification
+is pending. History and Settings use 6px left-edge accents matching Plan;
+Settings open sections keep their orange accent on the left. Today’s Main
+workout, Add-ons, Log Workout, add-video and finish buttons have left accents.
+No workout data or behavior changes. The startup-cache repair is retained.
 
-Previous verified release: `2026.09.28 2032`, commit `da2c3ab`, successful
-GitHub Actions run `36503672545`.
+Previous verified release: `2026.09.28 2037`; cache repair commit `d2a7857`,
+GitHub Actions run `36504530490`. Phone update confirmation remains outstanding.
 
 ## Verification and session constraints
 
-- Both Pages and vinext builds pass. All 13 rendered-HTML tests and three focused
-  insight tests pass. `git diff --check` passes.
+- Both Pages and vinext builds pass. All 13 rendered-HTML tests, three focused
+  insight tests, and two service-worker tests pass. `git diff --check` passes.
 - TypeScript still has nine pre-existing diagnostics (exercise tuple inference,
   insight types, and Vite/Cloudflare environment declarations). Lint reports 1,832 errors and 10 warnings,
   including generated Pages output; do not describe either check as clean.
@@ -59,6 +57,7 @@ GitHub Actions run `36503672545`.
 - Current destinations: Home/splash, Today, Plan, History, Progress, Settings.
   Internally, `week` means Plan, `performance` means Progress, `more` means
   Settings. Old notes also use Week, Progress, Config, and More.
+- Use Plan’s left-edge accents as the template for Today, History and Settings.
 - Deep blue/navy is the main brand color across all tabs. Use muted orange as a
   small accent, especially the T4L swoosh. Preserve status meanings of green,
   yellow, and red. The splash must feel consistent with the rest of the app.

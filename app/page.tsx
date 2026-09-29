@@ -236,9 +236,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.28 2037";
+const APP_VERSION = "2026.09.28 2047";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "History and Settings now use Plan-style left-edge accents, with matching accents on Today’s main buttons.",
+  ] },
+  { version: "2026.09.28 2037", changes: [
     "Settings now shares the blue accents, with orange highlights on open sections.",
     "The splash card now reads Progress — How you’re doing.",
   ] },
@@ -255,11 +258,7 @@ const RECENT_RELEASES = [
   { version: "2026.09.27 1336", changes: [
     "What’s new now shows the five latest releases.",
   ] },
-  { version: "2026.09.26 1805", changes: [
-    "Home now shows today’s assigned workout and a quick training cue, including one-day changes.",
-    "The Home buttons have a stronger glass finish, with blue navigation and a restrained orange accent.",
-    "The T4L mark now reads clearly against the blue banner.",
-  ] },
+
 
 
 ];
