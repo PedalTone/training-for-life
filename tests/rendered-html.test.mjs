@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.09\.30 2100/);
+  assert.match(html, /2026\.09\.30 2136/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -65,7 +65,7 @@ test("What’s new groups exactly five dated releases", async () => {
   assert.match(releaseBlock, /2026\.09\.28 2051/);
   assert.match(releaseBlock, /2026\.09\.28 2047/);
   assert.match(releaseBlock, /2026\.09\.28 2037/);
-  assert.match(releaseBlock, /2026\.09\.28 2032/);
+  assert.match(releaseBlock, /2026\.09\.30 2100/);
   assert.match(page, /What’s new in the last five releases/);
   assert.match(page, /RECENT_RELEASES\.map\(\(release\) => <div className="splash-release-group"/);
   assert.match(css, /\.splash-release-notes \{ box-sizing: border-box; max-height:/);
@@ -82,7 +82,7 @@ test("Plan shortcut opens weekly mapping and leaves room above navigation", asyn
   assert.match(page, /const makePlanForNextWeek = \(\) => \{ setOpenScheduleOnSettings\(true\); navigate\("more"\); \}/);
   assert.match(page, /mapping\.open = true/);
   assert.match(page, /Weekly workout mapping/);
-  assert.match(css, /\.week-page \{ padding-bottom: calc\(116px \+ env\(safe-area-inset-bottom\)\)/);
+  assert.match(css, /\.week-page \{ padding-bottom: 12px;/);
 });
 
 test("new home-screen icon is referenced by both iPhone and PWA metadata", async () => {

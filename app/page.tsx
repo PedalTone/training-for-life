@@ -227,9 +227,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.30 2100";
+const APP_VERSION = "2026.09.30 2136";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Plan uses shorter day rows and less empty space to fit phone screens better.",
+    "Saved video actions now share a row: Delete and Add to today.",
+  ] },
+  { version: "2026.09.30 2100", changes: [
     "Bottom navigation stays in its own row while tab content scrolls.",
     "Video workout guides and guide generation have been removed; saved videos remain available.",
     "Future workout videos is easier to find with a red play icon.",
@@ -244,9 +248,7 @@ const RECENT_RELEASES = [
     "Settings now shares the blue accents, with orange highlights on open sections.",
     "The splash card now reads Progress — How you’re doing.",
   ] },
-  { version: "2026.09.28 2032", changes: [
-    "Plan and History now echo the splash screen with deep blue accents and small orange details.",
-  ] },
+
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -840,8 +842,11 @@ function VideoCard({ video, onDelete, onAddToday, categoryLabel, onCategoryChang
     {categoryLabel && <span className="video-category-badge">{categoryLabel}</span>}
     {onCategoryChange && <label className="video-category-control"><span>Category</span><select value={isVideoCategory(video.category) ? video.category : ""} onChange={(event) => onCategoryChange(event.target.value as VideoCategory | "")}><option value="">Uncategorized</option>{videoCategories.map((category) => <option value={category.key} key={category.key}>{category.icon} {category.label}</option>)}</select></label>}
     {playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`} title={video.label} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={play} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}
-    {onAddToday && <button className="video-add-today" onClick={onAddToday}>＋ Add to today’s workout</button>}
-    {onDelete && (confirmingDelete ? <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div> : <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete video</button>)}
+    {(onAddToday || onDelete) && <div className="video-actions">
+      {onDelete && !confirmingDelete && <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete</button>}
+      {onAddToday && <button className="video-add-today" onClick={onAddToday}>Add to today</button>}
+      {onDelete && confirmingDelete && <div className="video-delete-confirm"><span>Delete this video?</span><button onClick={() => setConfirmingDelete(false)}>Cancel</button><button className="danger" onClick={onDelete}>Delete</button></div>}
+    </div>}
   </article>;
 }
 

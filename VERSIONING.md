@@ -1,12 +1,10 @@
 # Training for Life release labels
 
-Public releases use the Eastern publication timestamp `YYYY.MM.DD HHmm`.
-See AGENTS.md for the full policy.
+Public releases use Eastern publication timestamps. See AGENTS.md.
 
-Release decision: **New public release** — `2026.09.30 2100` anchors bottom navigation,
-removes video workout guides and generation, and gives Future workout videos a
-red circular play icon.
+Release decision: **New public release** — `2026.09.30 2136` fits Plan more compactly
+on phones and places video Delete and Add to today actions on one row.
 
-The release label is `2026.09.30 2100`. App, notes, tests, service-worker cache and
-deployment must match. Unchanged icons retain their `2026.09.28 0727` asset names.
+App, notes, tests, service-worker cache and deployment use `2026.09.30 2136`.
+Unchanged icons retain their `2026.09.28 0727` asset names.
 Non-browser verification only under the user's session instruction.

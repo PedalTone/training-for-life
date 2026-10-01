@@ -801,7 +801,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .splash-release-header { position: sticky; top: -13px; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -13px -15px 4px; padding: 8px 9px 8px 15px; background: white; border-bottom: 1px solid var(--line); }
 .splash-release-header button { flex: 0 0 44px; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--brand-soft); color: var(--brand-deep); font: 700 26px/1 var(--sans); cursor: pointer; }
 .splash-release-header button:focus-visible, .week-next-plan-button:focus-visible { outline: 3px solid var(--brand-orange); outline-offset: 2px; }
-.week-page { padding-bottom: calc(116px + env(safe-area-inset-bottom)); }
+.week-page { padding-bottom: 12px; }
 .week-next-plan-button { width: 100%; min-height: 60px; margin-top: 18px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 12px; border: 0; border-radius: 18px; background: var(--brand-deep); color: white; box-shadow: 0 10px 24px rgba(8,29,73,.18); font: 800 17px/1.25 var(--sans); cursor: pointer; }
 .week-next-plan-button span { font-size: 29px; line-height: 1; }
 @media (max-width: 680px) { .week-next-plan-button { margin-top: 12px; min-height: 58px; } }
@@ -862,3 +862,19 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .app-shell:not(.splash-shell) > .bottom-nav { position: relative; left: auto; bottom: auto; transform: none; flex-shrink: 0; margin: 7px auto 0; }
 .more-page .future-video-card .setting-icon.youtube-play { border-radius: 50%; background: #d90000; color: white; box-shadow: none; }
 .youtube-play svg { width: 30px; height: 30px; }
+
+/* The navigation now has its own row, so Plan needs no extra footer spacer. */
+@media (max-width: 600px) {
+  .week-page { padding-top: 12px; }
+  .week-page .week-list { gap: 6px; }
+  .week-page .week-day-card { min-height: 76px; padding: 8px 10px; gap: 8px; grid-template-columns: 34px minmax(0, 1fr) auto; }
+  .week-page .week-day-card .day-icon { width: 32px; height: 32px; font-size: 20px; }
+  .week-page .week-day-card > span:nth-child(2) strong { margin-top: 2px; font-size: 16px; }
+  .week-page .week-day-card > span:nth-child(2) em { margin-top: 2px; }
+  .week-page .week-status { min-width: 74px; padding-inline: 6px; }
+  .week-page .week-next-plan-button { min-height: 48px; margin-top: 8px; padding: 9px 12px; font-size: 16px; }
+}
+.video-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.video-actions > .video-delete { width: auto; flex: 0 0 auto; min-height: 44px; margin: 0; padding: 0 13px; border: 0; border-radius: 10px; background: #a43d35; color: white; }
+.video-actions > .video-add-today { width: auto; flex: 1; min-width: 120px; min-height: 44px; margin: 0; padding: 0 12px; }
+.video-actions > .video-delete-confirm { flex-basis: 100%; margin-top: 0; }

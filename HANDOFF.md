@@ -17,23 +17,18 @@ was changed.
 
 ## Current release
 
-Release `2026.09.30 2100` is published from commit `6e81dca`.
-GitHub Pages run `36799076750` succeeded. HTTPS verification confirmed the
-release label and byte-identical JS, CSS, service worker, manifest and icons
-against the tested local build.
-- Entered tabs use a fixed app frame, an independently scrolling main area, and
-  a reserved navigation row. Tab changes reset the content scroller. History's
-  paging controls remain above navigation. Phone scroll behavior needs user
-  confirmation because browser/visual testing is prohibited this session.
-- Workout guides, retry/refresh controls, and generation calls are removed from
-  Today, future videos, and recent videos. Existing guide metadata is stripped
-  on load and restore; IndexedDB/localStorage records are cleaned without
-  changing workout details or video links/titles/thumbnails/categories.
-- Future workout videos now has a red circular icon with a white play triangle.
-- Legacy worker guide endpoint remains deployed but is no longer called by the
-  app. No worker/API deployment was required for frontend feature removal.
-- Startup cache repair remains in place. Previous release: `2026.09.28 2051`,
-  commit `6aa1992`, deployment run `36505117501`.
+Release `2026.09.30 2136` is prepared for publication; deployment checks pending.
+Plan removes the obsolete floating-navigation spacer and uses 76px minimum day
+rows, 6px gaps and a 48px planning shortcut on phones. Content can still scroll
+when larger text or unusually long labels need space. Video actions share a
+row with a compact red Delete button and a wider Add to today button. Deletion
+still requires confirmation. No data or playback behavior changed.
+
+Previous release `2026.09.30 2100`: commit `6e81dca`, run `36799076750`.
+Navigation uses a reserved row outside the content scroller; video guides and
+frontend generation calls are retired. Existing guide metadata is cleaned on
+load and restore while video details remain. Legacy worker guide endpoint is
+unused by the frontend. Future videos uses a red circular play icon.
 
 ## Verification and session constraints
 
