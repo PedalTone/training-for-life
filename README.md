@@ -33,7 +33,7 @@ build for server features. Node must be at least 22.13.0; CI uses Node 22.
 | `worker/index.ts` | API routes and server entry |
 | `worker/training-insights.ts` | Training assessment generation |
 | `worker/workout-screenshot.ts` | Screenshot import |
-| `worker/workout-guide.ts` | Video exercise guides |
+| `worker/workout-guide.ts` | Legacy API implementation; current frontend no longer calls it |
 | `public/` | Brand artwork, texture, exercise illustrations, icons, PWA files |
 | `.github/workflows/deploy-pages.yml` | Builds and publishes GitHub Pages |
 
@@ -78,7 +78,7 @@ include every test file. On a Node version supporting TypeScript stripping,
 additional focused tests can be run with:
 
 ```sh
-node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs tests/service-worker.test.mjs
+node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs tests/service-worker.test.mjs tests/video-cleanup.test.mjs
 ```
 
 `npm run lint` and `npx tsc --noEmit` are additional diagnostics. Earlier runs

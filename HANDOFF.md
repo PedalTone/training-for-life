@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated September 28, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated September 30, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -17,18 +17,25 @@ was changed.
 
 ## Current release
 
-Release `2026.09.28 2051` is prepared for publication; deployment checks pending.
-Tall portrait phones (up to 680px wide and at least 800px tall) get a flexible
-splash menu with 80px minimum buttons, a 128px Today button, wider gaps and
-safe-area-aware padding. Shorter screens keep their compact layout. No data
-or navigation behavior changes. Startup cache repair retained.
-
-Previous verified release: `2026.09.28 2047`, commit `966fa80`, run `36504813562`.
+Release `2026.09.30 2100` is prepared for publication; deployment checks pending.
+- Entered tabs use a fixed app frame, an independently scrolling main area, and
+  a reserved navigation row. Tab changes reset the content scroller. History's
+  paging controls remain above navigation. Phone scroll behavior needs user
+  confirmation because browser/visual testing is prohibited this session.
+- Workout guides, retry/refresh controls, and generation calls are removed from
+  Today, future videos, and recent videos. Existing guide metadata is stripped
+  on load and restore; IndexedDB/localStorage records are cleaned without
+  changing workout details or video links/titles/thumbnails/categories.
+- Future workout videos now has a red circular icon with a white play triangle.
+- Legacy worker guide endpoint remains deployed but is no longer called by the
+  app. No worker/API deployment was required for frontend feature removal.
+- Startup cache repair remains in place. Previous release: `2026.09.28 2051`,
+  commit `6aa1992`, deployment run `36505117501`.
 
 ## Verification and session constraints
 
 - Both Pages and vinext builds pass. All 13 rendered-HTML tests, three focused
-  insight tests, and two service-worker tests pass. `git diff --check` passes.
+  insight tests, two service-worker tests, and two video-cleanup tests pass. `git diff --check` passes.
 - TypeScript still has nine pre-existing diagnostics (exercise tuple inference,
   insight types, and Vite/Cloudflare environment declarations). Lint reports 1,832 errors and 10 warnings,
   including generated Pages output; do not describe either check as clean.
@@ -56,6 +63,7 @@ Previous verified release: `2026.09.28 2047`, commit `966fa80`, run `36504813562
 - Current destinations: Home/splash, Today, Plan, History, Progress, Settings.
   Internally, `week` means Plan, `performance` means Progress, `more` means
   Settings. Old notes also use Week, Progress, Config, and More.
+- Video workout guides are retired. Preserve video playback and saved video details.
 - Use Plan’s left-edge accents as the template for Today, History and Settings.
 - Deep blue/navy is the main brand color across all tabs. Use muted orange as a
   small accent, especially the T4L swoosh. Preserve status meanings of green,
