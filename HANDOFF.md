@@ -17,7 +17,11 @@ was changed.
 
 ## Current release
 
-Release `2026.09.30 2136` is prepared for publication; deployment checks pending.
+Release `2026.09.30 2136` is published from commit `2a869d4`.
+GitHub Pages run `36801916740` succeeded for that exact commit. HTTPS checks
+confirmed the live label, compact Plan styling and video actions. JS contents
+match the local build; CSS differs only by an unused generated `.fixed` utility.
+Service worker, manifest and icons match byte for byte.
 Plan removes the obsolete floating-navigation spacer and uses 76px minimum day
 rows, 6px gaps and a 48px planning shortcut on phones. Content can still scroll
 when larger text or unusually long labels need space. Video actions share a
