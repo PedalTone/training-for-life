@@ -17,7 +17,10 @@ was changed.
 
 ## Current release
 
-Release `2026.09.30 2100` is prepared for publication; deployment checks pending.
+Release `2026.09.30 2100` is published from commit `6e81dca`.
+GitHub Pages run `36799076750` succeeded. HTTPS verification confirmed the
+release label and byte-identical JS, CSS, service worker, manifest and icons
+against the tested local build.
 - Entered tabs use a fixed app frame, an independently scrolling main area, and
   a reserved navigation row. Tab changes reset the content scroller. History's
   paging controls remain above navigation. Phone scroll behavior needs user
