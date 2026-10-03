@@ -17,12 +17,14 @@ was changed.
 
 ## Current release
 
-Release candidate `2026.10.03 1500`: Plan's phone container fills the available
+Published release `2026.10.03 1500`: Plan's phone container fills the available
 content height, distributing spare space across seven equal grid rows. Existing
 minimum sizes retain scrolling for short screens and large text. Brighter blue
 splash glow with an orange highlight stays visible after its 4.8-second sweep.
 Reduce Motion retains the static glow. No storage or API changes.
-Both builds and all 20 tests pass; `git diff --check` passes. Publication pending.
+Both builds and all 20 tests pass; `git diff --check` passes. Commit `5ce85a0` deployed in successful Pages run `37146335462`.
+HTTPS verified the release, identical JS/service worker and CSS matching except
+unused generated container/grid utilities from build source scanning.
 User's iPhone screenshot informed spacing; updated layout is not visually verified.
 
 Previous published release `2026.10.03 1444`: commit `c134ebb`, Pages run
