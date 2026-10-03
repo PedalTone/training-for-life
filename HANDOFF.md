@@ -17,22 +17,27 @@ was changed.
 
 ## Current release
 
-Published release `2026.10.03 1444`: soft blue glow behind the splash brand,
-gentle button press feedback, and an SVG checkmark that draws after a successful
-Finish + Backup. The glow settles after 4.8 seconds; completion feedback is
-transient and never stored with workout data. Reduce Motion disables animation
-and press scaling. No dependencies or worker/API changes.
-Both builds and all 20 tests pass; `git diff --check` passes.
-Commit `c134ebb` published successfully in Pages run `37145406011`. HTTPS
-verification confirmed the release label, matching JavaScript and service worker,
-and matching CSS allowing only the unused generated `.fixed` utility difference.
-Visual behavior remains unverified under the user's non-browser restriction.
+Release candidate `2026.10.03 1500`: Plan's phone container fills the available
+content height, distributing spare space across seven equal grid rows. Existing
+minimum sizes retain scrolling for short screens and large text. Brighter blue
+splash glow with an orange highlight stays visible after its 4.8-second sweep.
+Reduce Motion retains the static glow. No storage or API changes.
+Both builds and all 20 tests pass; `git diff --check` passes. Publication pending.
+User's iPhone screenshot informed spacing; updated layout is not visually verified.
 
-Previous published release `2026.09.30 2136`: commit `2a869d4`, Pages run
-`36801916740`. Compact Plan phone rows and video actions sharing one row.
-Earlier `2026.09.30 2100`: navigation reserved outside the content scroller,
-video guides retired and old guide metadata cleaned without removing saved
-videos or workout history. Future videos has a red circular play icon.
+Previous published release `2026.10.03 1444`: commit `c134ebb`, Pages run
+`37145406011`. Splash glow, button feedback, and completion checkmark animation.
+Completion feedback is transient, triggered after successful Finish + Backup.
+Earlier releases: compact Plan and video action row (`2026.09.30 2136`),
+fixed navigation content scroller and removal of video guides (`2026.09.30 2100`).
+
+## Preview attempt
+
+User authorized a limited Sites visual inspection October 3. Local Vite served
+HTTP 200, but creating the in-app browser tab timed out after 32 seconds and
+reset browser control. Server was stopped; no visual inspection completed.
+Do not retry without evidence of recovery. Use supplied screenshots and
+non-browser checks for now; the failed attempt does not prove the app crashed.
 
 ## Verification and session constraints
 

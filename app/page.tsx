@@ -227,9 +227,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.03 1444";
+const APP_VERSION = "2026.10.03 1500";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Plan expands its day rows to use the available screen height on larger phones.",
+    "The splash glow is brighter, with a blue sweep and a warm orange highlight.",
+  ] },
+  { version: "2026.10.03 1444", changes: [
     "A soft blue glow welcomes you on Home, with gentle feedback when you tap buttons.",
     "Finishing and saving a workout draws a celebratory checkmark. Motion respects Reduce Motion.",
   ] },
@@ -244,9 +248,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.09.28 2051", changes: [
     "Splash buttons are larger and spread out to better use tall phone screens.",
-  ] },
-  { version: "2026.09.28 2047", changes: [
-    "History and Settings now use Plan-style left-edge accents, with matching accents on Today’s main buttons.",
   ] },
 
 ];
@@ -781,7 +782,7 @@ export default function Home() {
   const splashPlan = activeKey === dateKey(today) ? plan : historicalPlan(undefined, scheduleForDate(today, activeSchedule, scheduleHistory), today);
   if (!enteredApp) return <div className={`app-shell theme-${splashPlan.key} splash-shell`}><SplashScreen version={APP_VERSION} todayPlan={splashPlan} todayActivity={activeKey === dateKey(today) && session.date === activeKey ? session.activity : ""} onEnter={enterApp}/></div>;
   return <div className={`app-shell textured-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}`}>
-    <main ref={contentRef} style={showMobilityPicker || screenshotState === "review" ? { overflow: "hidden" } : undefined}>
+    <main ref={contentRef} className={tab === "week" ? "plan-content" : undefined} style={showMobilityPicker || screenshotState === "review" ? { overflow: "hidden" } : undefined}>
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
