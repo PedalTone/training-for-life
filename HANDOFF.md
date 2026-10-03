@@ -17,12 +17,15 @@ was changed.
 
 ## Current release
 
-Release candidate `2026.10.03 1444`: soft blue glow behind the splash brand,
+Published release `2026.10.03 1444`: soft blue glow behind the splash brand,
 gentle button press feedback, and an SVG checkmark that draws after a successful
 Finish + Backup. The glow settles after 4.8 seconds; completion feedback is
 transient and never stored with workout data. Reduce Motion disables animation
 and press scaling. No dependencies or worker/API changes.
-Both builds and all 20 tests pass; `git diff --check` passes. Publication pending.
+Both builds and all 20 tests pass; `git diff --check` passes.
+Commit `c134ebb` published successfully in Pages run `37145406011`. HTTPS
+verification confirmed the release label, matching JavaScript and service worker,
+and matching CSS allowing only the unused generated `.fixed` utility difference.
 Visual behavior remains unverified under the user's non-browser restriction.
 
 Previous published release `2026.09.30 2136`: commit `2a869d4`, Pages run
