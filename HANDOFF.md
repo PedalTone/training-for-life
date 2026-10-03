@@ -17,21 +17,16 @@ was changed.
 
 ## Current release
 
-Published release `2026.10.03 1500`: Plan's phone container fills the available
-content height, distributing spare space across seven equal grid rows. Existing
-minimum sizes retain scrolling for short screens and large text. Brighter blue
-splash glow with an orange highlight stays visible after its 4.8-second sweep.
-Reduce Motion retains the static glow. No storage or API changes.
-Both builds and all 20 tests pass; `git diff --check` passes. Commit `5ce85a0` deployed in successful Pages run `37146335462`.
-HTTPS verified the release, identical JS/service worker and CSS matching except
-unused generated container/grid utilities from build source scanning.
-User's iPhone screenshot informed spacing; updated layout is not visually verified.
+Candidate `2026.10.03 1507`: stronger blue/orange Home glow continuously sweeps
+back and forth (six seconds per direction). Splash unmounts when entering any
+tab, so the animation exists only on Home. Reduce Motion keeps a static glow.
+No layout, storage, or API changes. Verification and publication pending.
 
-Previous published release `2026.10.03 1444`: commit `c134ebb`, Pages run
-`37145406011`. Splash glow, button feedback, and completion checkmark animation.
+Previous published release `2026.10.03 1500`: commit `5ce85a0`, Pages run
+`37146335462`. Plan fills available phone height; brighter splash glow.
+User's iPhone screenshot informed spacing. User confirmed glow improved.
+Release `2026.10.03 1444` added button feedback and completion checkmark motion.
 Completion feedback is transient, triggered after successful Finish + Backup.
-Earlier releases: compact Plan and video action row (`2026.09.30 2136`),
-fixed navigation content scroller and removal of video guides (`2026.09.30 2100`).
 
 ## Preview attempt
 

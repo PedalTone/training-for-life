@@ -227,9 +227,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.03 1500";
+const APP_VERSION = "2026.10.03 1507";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "A stronger blue and orange glow keeps moving while Home is open, respecting Reduce Motion.",
+  ] },
+  { version: "2026.10.03 1500", changes: [
     "Plan expands its day rows to use the available screen height on larger phones.",
     "The splash glow is brighter, with a blue sweep and a warm orange highlight.",
   ] },
@@ -245,9 +248,6 @@ const RECENT_RELEASES = [
     "Bottom navigation stays in its own row while tab content scrolls.",
     "Video workout guides and guide generation have been removed; saved videos remain available.",
     "Future workout videos is easier to find with a red play icon.",
-  ] },
-  { version: "2026.09.28 2051", changes: [
-    "Splash buttons are larger and spread out to better use tall phone screens.",
   ] },
 
 ];
