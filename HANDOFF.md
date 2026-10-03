@@ -17,10 +17,12 @@ was changed.
 
 ## Current release
 
-Candidate `2026.10.03 1507`: stronger blue/orange Home glow continuously sweeps
+Published `2026.10.03 1507`: stronger blue/orange Home glow continuously sweeps
 back and forth (six seconds per direction). Splash unmounts when entering any
 tab, so the animation exists only on Home. Reduce Motion keeps a static glow.
-No layout, storage, or API changes. Verification and publication pending.
+No layout, storage, or API changes. Both builds and all 20 tests passed.
+Commit `f656825` deployed in Pages run `37146805222`; HTTPS verified the
+release, continuous animation CSS, JavaScript and service worker. No browser QA.
 
 Previous published release `2026.10.03 1500`: commit `5ce85a0`, Pages run
 `37146335462`. Plan fills available phone height; brighter splash glow.
