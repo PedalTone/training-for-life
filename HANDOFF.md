@@ -17,11 +17,13 @@ was changed.
 
 ## Current release
 
-Candidate `2026.10.03 1512`: removes the blue glow that washed out the Home
+Published `2026.10.03 1512`: removes the blue glow that washed out the Home
 title. An orange radial glow occupies only the bottom-right 42% width / 55%
 height of the brand panel, pulsing gently in place while Home is mounted.
 Reduce Motion shows a static glow. No layout, storage, or API changes.
-Verification and publication pending. Browser QA unavailable after timeout.
+Both builds and all 20 tests passed. Commit `46c731b` deployed in Pages run
+`37147093127`; HTTPS verified the release and matching app/service-worker assets.
+Browser QA remains unavailable after timeout.
 
 Previous release `2026.10.03 1507`: commit `f656825`, run `37146805222`.
 User liked the orange glow but found the blue sweep reduced title contrast.
