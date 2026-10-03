@@ -227,9 +227,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.09.30 2136";
+const APP_VERSION = "2026.10.03 1444";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "A soft blue glow welcomes you on Home, with gentle feedback when you tap buttons.",
+    "Finishing and saving a workout draws a celebratory checkmark. Motion respects Reduce Motion.",
+  ] },
+  { version: "2026.09.30 2136", changes: [
     "Plan uses shorter day rows and less empty space to fit phone screens better.",
     "Saved video actions now share a row: Delete and Add to today.",
   ] },
@@ -243,10 +247,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.09.28 2047", changes: [
     "History and Settings now use Plan-style left-edge accents, with matching accents on Today’s main buttons.",
-  ] },
-  { version: "2026.09.28 2037", changes: [
-    "Settings now shares the blue accents, with orange highlights on open sections.",
-    "The splash card now reads Progress — How you’re doing.",
   ] },
 
 ];
@@ -385,7 +385,7 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
   const todayCue = todayActivity || todayPlan.guidance;
   const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Progress", "How you’re doing"], ["more", "Settings", "Tune your app"]];
   return <main className="splash-screen">
-    <div className="splash-brand"><div className="splash-letterbox"><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div>
+    <div className="splash-brand"><div className="splash-letterbox"><span className="splash-welcome-glow" aria-hidden="true"/><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div>
     <div className="splash-menu" aria-label="App sections">
       <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><b aria-hidden="true">›</b></button>
       {destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}
@@ -428,6 +428,9 @@ export default function Home() {
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const [loaded, setLoaded] = useState(false);
+  // Ephemeral feedback: never replay celebrations for restored workout records.
+  const [celebratingDate, setCelebratingDate] = useState<string | null>(null);
+  useEffect(() => { setCelebratingDate(null); }, [activeKey, tab, enteredApp]);
   const [saveState, setSaveState] = useState("Loading your plan…");
   const [history, setHistory] = useState<Session[]>([]);
   const [showMobilityPicker, setShowMobilityPicker] = useState(false);
@@ -636,6 +639,7 @@ export default function Home() {
       await saveBackup(allSessions, libraryExercises, futureVideos, insightReports, fitnessGoals, scheduleKeys, customWorkouts);
       try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
       setSession(current); setHistory(allSessions);
+      setCelebratingDate(current.date);
       setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
       setFinishBackupState("✓ Day recorded + backup saved");
     } catch (error) { setFinishBackupState(error instanceof DOMException && error.name === "AbortError" ? "" : "Try Finish + Backup Again"); }
@@ -806,7 +810,7 @@ export default function Home() {
             <section className={`log-subsection injury-subsection ${injuryReported ? "active" : ""}`}><div className="log-subsection-heading"><span>⚑</span><div><b>Body check-in</b><small>{injuryReported ? "Noted for this workout" : "No concerns noted"}</small></div><button className="injury-toggle-inline" onClick={handleInjuryControl} aria-pressed={injuryReported}><i/></button></div>{injuryReported && <><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Body area to be mindful of" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Area to be mindful of (optional)"/><textarea aria-label="Body check-in note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add a note about what you noticed…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear body check-in</button></>}</section>
           </div>
         </details>
-        <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span>✓</span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div></section>
+        <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); setCelebratingDate(null); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div></section>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}

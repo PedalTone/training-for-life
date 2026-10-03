@@ -2,9 +2,9 @@
 
 Public releases use Eastern publication timestamps. See AGENTS.md.
 
-Release decision: **New public release** — `2026.09.30 2136` fits Plan more compactly
-on phones and places video Delete and Add to today actions on one row.
+Release decision: **New public release** — `2026.10.03 1444` adds a soft splash
+glow, a checkmark that draws after saving a completed workout, and gentle tap feedback.
 
-App, notes, tests, service-worker cache and deployment use `2026.09.30 2136`.
+App, notes, tests, service-worker cache and deployment use `2026.10.03 1444`.
 Unchanged icons retain their `2026.09.28 0727` asset names.
 Non-browser verification only under the user's session instruction.

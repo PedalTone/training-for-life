@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated September 30, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 3, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -17,22 +17,19 @@ was changed.
 
 ## Current release
 
-Release `2026.09.30 2136` is published from commit `2a869d4`.
-GitHub Pages run `36801916740` succeeded for that exact commit. HTTPS checks
-confirmed the live label, compact Plan styling and video actions. JS contents
-match the local build; CSS differs only by an unused generated `.fixed` utility.
-Service worker, manifest and icons match byte for byte.
-Plan removes the obsolete floating-navigation spacer and uses 76px minimum day
-rows, 6px gaps and a 48px planning shortcut on phones. Content can still scroll
-when larger text or unusually long labels need space. Video actions share a
-row with a compact red Delete button and a wider Add to today button. Deletion
-still requires confirmation. No data or playback behavior changed.
+Release candidate `2026.10.03 1444`: soft blue glow behind the splash brand,
+gentle button press feedback, and an SVG checkmark that draws after a successful
+Finish + Backup. The glow settles after 4.8 seconds; completion feedback is
+transient and never stored with workout data. Reduce Motion disables animation
+and press scaling. No dependencies or worker/API changes.
+Both builds and all 20 tests pass; `git diff --check` passes. Publication pending.
+Visual behavior remains unverified under the user's non-browser restriction.
 
-Previous release `2026.09.30 2100`: commit `6e81dca`, run `36799076750`.
-Navigation uses a reserved row outside the content scroller; video guides and
-frontend generation calls are retired. Existing guide metadata is cleaned on
-load and restore while video details remain. Legacy worker guide endpoint is
-unused by the frontend. Future videos uses a red circular play icon.
+Previous published release `2026.09.30 2136`: commit `2a869d4`, Pages run
+`36801916740`. Compact Plan phone rows and video actions sharing one row.
+Earlier `2026.09.30 2100`: navigation reserved outside the content scroller,
+video guides retired and old guide metadata cleaned without removing saved
+videos or workout history. Future videos has a red circular play icon.
 
 ## Verification and session constraints
 
