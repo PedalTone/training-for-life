@@ -880,19 +880,19 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .video-actions > .video-delete-confirm { flex-basis: 100%; margin-top: 0; }
 
 /* Decorative motion; transforms keep surrounding layout stable. */
-.splash-welcome-glow { position: absolute; inset: -30%; pointer-events: none; background: radial-gradient(ellipse at 28% 45%, rgba(100,205,255,1), transparent 65%), radial-gradient(ellipse at 85% 75%, rgba(255,164,75,.85), transparent 46%); opacity: .9; }
+.splash-welcome-glow { position: absolute; right: 0; bottom: 0; width: 42%; height: 55%; pointer-events: none; background: radial-gradient(ellipse at bottom right, rgba(255,151,55,.95), rgba(235,112,35,.5) 32%, transparent 72%); opacity: .8; transform-origin: bottom right; }
 .splash-letterbox-mark, .splash-letterbox-copy { position: relative; z-index: 1; }
 .completion-mark svg { width: 24px; height: 24px; overflow: visible; }
 .completion-mark path { stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: no-preference) {
-  .splash-welcome-glow { animation: welcome-glow 6s ease-in-out infinite alternate; }
+  .splash-welcome-glow { animation: welcome-glow 3s ease-in-out infinite alternate; }
   .app-shell button:not(:disabled) { transition: scale 120ms ease-out; }
   .app-shell button:not(:disabled):active { scale: .98; }
   .completion-mark.just-completed path { animation: completion-draw 650ms ease-out both; }
 }
 @keyframes welcome-glow {
-  from { transform: translateX(-18%); opacity: .8; }
-  to { transform: translateX(18%); opacity: 1; }
+  from { transform: scale(.85); opacity: .5; }
+  to { transform: scale(1); opacity: 1; }
 }
 @keyframes completion-draw {
   from { stroke-dashoffset: 1; }

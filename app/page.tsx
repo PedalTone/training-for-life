@@ -227,9 +227,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.03 1507";
+const APP_VERSION = "2026.10.03 1512";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Home now has an orange pulse in the bottom-right corner, keeping the title crisp on dark blue.",
+  ] },
+  { version: "2026.10.03 1507", changes: [
     "A stronger blue and orange glow keeps moving while Home is open, respecting Reduce Motion.",
   ] },
   { version: "2026.10.03 1500", changes: [
@@ -243,11 +246,6 @@ const RECENT_RELEASES = [
   { version: "2026.09.30 2136", changes: [
     "Plan uses shorter day rows and less empty space to fit phone screens better.",
     "Saved video actions now share a row: Delete and Add to today.",
-  ] },
-  { version: "2026.09.30 2100", changes: [
-    "Bottom navigation stays in its own row while tab content scrolls.",
-    "Video workout guides and guide generation have been removed; saved videos remain available.",
-    "Future workout videos is easier to find with a red play icon.",
   ] },
 
 ];

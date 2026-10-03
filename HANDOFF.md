@@ -17,17 +17,16 @@ was changed.
 
 ## Current release
 
-Published `2026.10.03 1507`: stronger blue/orange Home glow continuously sweeps
-back and forth (six seconds per direction). Splash unmounts when entering any
-tab, so the animation exists only on Home. Reduce Motion keeps a static glow.
-No layout, storage, or API changes. Both builds and all 20 tests passed.
-Commit `f656825` deployed in Pages run `37146805222`; HTTPS verified the
-release, continuous animation CSS, JavaScript and service worker. No browser QA.
+Candidate `2026.10.03 1512`: removes the blue glow that washed out the Home
+title. An orange radial glow occupies only the bottom-right 42% width / 55%
+height of the brand panel, pulsing gently in place while Home is mounted.
+Reduce Motion shows a static glow. No layout, storage, or API changes.
+Verification and publication pending. Browser QA unavailable after timeout.
 
-Previous published release `2026.10.03 1500`: commit `5ce85a0`, Pages run
-`37146335462`. Plan fills available phone height; brighter splash glow.
-User's iPhone screenshot informed spacing. User confirmed glow improved.
-Release `2026.10.03 1444` added button feedback and completion checkmark motion.
+Previous release `2026.10.03 1507`: commit `f656825`, run `37146805222`.
+User liked the orange glow but found the blue sweep reduced title contrast.
+Release `2026.10.03 1500` fills available phone height in Plan. Release
+`2026.10.03 1444` added button feedback and completion checkmark motion.
 Completion feedback is transient, triggered after successful Finish + Backup.
 
 ## Preview attempt
