@@ -230,9 +230,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.04 1558";
+const APP_VERSION = "2026.10.04 1602";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Nutrition now sits below the workout session and starts collapsed. Fasting controls have been removed.",
+    "Today focuses on the selected day, without the weekly icon strip.",
+  ] },
+  { version: "2026.10.04 1558", changes: [
     "Nutrition on Today: quick Yes/No food and 7:30 check-ins, optional notes and overnight fasting.",
     "Flexible weekends are built in. Check-ins save independently and are included in History and backups.",
   ] },
@@ -245,10 +249,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.03 1500", changes: [
     "Plan expands its day rows to use the available screen height on larger phones.",
     "The splash glow is brighter, with a blue sweep and a warm orange highlight.",
-  ] },
-  { version: "2026.10.03 1444", changes: [
-    "A soft blue glow welcomes you on Home, with gentle feedback when you tap buttons.",
-    "Finishing and saving a workout draws a celebratory checkmark. Motion respects Reduce Motion.",
   ] },
 
 ];
@@ -790,10 +790,8 @@ export default function Home() {
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div><small className="today-version">{APP_VERSION}</small></div>
           <div className="hero-main"><div><div className="hero-title-row"><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1></div><p>{plan.guidance}</p></div></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
-          <RhythmStrip focus={activeDate} today={today} sessions={history} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpen={openDate} showIcons/>
         </section>
 
-        <NutritionCard key={activeKey} date={activeKey}/>
         <section className="today-session-workspace"><div className="today-session-heading"><span className="kicker">TODAY’S SESSION</span><span>Choose the format, add supporting work, then log what matters.</span></div>
         <div className="control-row workout-mobility-row today-primary-actions">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
@@ -814,6 +812,7 @@ export default function Home() {
           </div>
         </details>
         <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); setCelebratingDate(null); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div></section>
+        <NutritionCard key={activeKey} date={activeKey}/>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}

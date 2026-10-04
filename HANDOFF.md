@@ -17,23 +17,14 @@ was changed.
 
 ## Current release
 
-Published `2026.10.04 1558`: compact Nutrition card on Today with Yes/No food
-and 7:30 p.m. cutoff checks, optional notes after No (keyboard dictation), and
-optional overnight fast Done recorded on the morning it ends. Tap again to
-clear an answer. Food scope: Sunday dinner through Friday lunch; Saturday is
-flexible. Cutoff: Sunday–Thursday nights. No calories, targets or nutrition scores.
-`app/nutrition.ts` owns schedule, validation, storage and restore merging;
-`app/nutrition-card.tsx` owns UI and collapsible History check-ins. Storage is
-`t4l:nutrition`, separate from workouts; saves immediately without Finish.
-Backups include nutrition; older backups preserve existing entries. Nutrition
-never changes workout status/streaks or goes to AI. Both builds and 25 tests passed, including five nutrition tests.
-Commit `a238415` published in successful Pages run `37230334637`. HTTPS
-verified live nutrition code/styles, release label and matching service worker.
-TypeScript still reports the same nine known diagnostics; none in nutrition modules.
-
-Previous `2026.10.03 1512`: orange corner pulse, commit `46c731b`, run
-`37147093127`. Keep dark title background; user disliked blue glow washing it out.
-Plan fills available phone height; completion checkmark and tap feedback remain.
+Candidate `2026.10.04 1602`: Nutrition is below the workout session, collapsed
+by default using native details/summary. Fasting controls and history display
+are removed. Legacy fast values remain in storage/backups for compatibility;
+fast-only dates no longer appear in Nutrition History.
+Food/cutoff Yes/No and notes remain, with Friday/Saturday flexibility. Separate
+`t4l:nutrition` storage, immediate saves and backup/restore support are unchanged.
+Today no longer repeats the weekly icon strip. Verification/publication pending. Previous release `2026.10.04 1558` introduced
+nutrition (commit `a238415`, Pages run `37230334637`).
 
 ## Preview attempt
 

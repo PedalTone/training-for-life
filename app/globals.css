@@ -936,3 +936,12 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .nutrition-history > div > button { display: block; width: 100%; text-align: left; margin: 6px 0; }
 .nutrition-history button strong, .nutrition-history button span { display: block; }
 .nutrition-history button span { margin-top: 5px; font-size: 13px; }
+
+.nutrition-checkin > summary { display: flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; list-style: none; }
+.nutrition-checkin > summary::-webkit-details-marker { display: none; }
+.nutrition-checkin > summary > span:first-child { color: var(--brand); font-size: 28px; }
+.nutrition-checkin > summary > span:nth-child(2) { flex: 1; min-width: 0; }
+.nutrition-checkin > summary strong { display: block; font-size: 19px; }
+.nutrition-checkin > summary small { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+.nutrition-checkin > summary i { font-style: normal; font-size: 22px; }
+.nutrition-checkin[open] > summary i { transform: rotate(45deg); }

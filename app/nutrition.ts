@@ -43,5 +43,5 @@ export function restoreNutrition(incoming: unknown) {
 export function nutritionSummary(date: string, day: NutritionDay) {
   const schedule = nutritionSchedule(date);
   const answer = (value: boolean | undefined) => value === undefined ? "—" : value ? "Yes" : "No";
-  return `Food: ${schedule.food ? answer(day.food) : "Flexible"} · 7:30: ${schedule.cutoff ? answer(day.cutoff) : "Flexible"}${day.fast ? " · Fast: Done" : ""}`;
+  return `Food: ${schedule.food ? answer(day.food) : "Flexible"} · 7:30: ${schedule.cutoff ? answer(day.cutoff) : "Flexible"}`;
 }

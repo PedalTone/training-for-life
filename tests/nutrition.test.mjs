@@ -10,7 +10,7 @@ test('nutrition schedule handles every weekday and split weekend meals', () => {
 test('unanswered, No and optional fast remain distinct through backup roundtrip', () => {
   const records={'2026-10-04':{food:false,foodNote:'Dinner with family',cutoff:true},'2026-10-05':{fast:true}};
   assert.deepEqual(validateNutrition(JSON.parse(JSON.stringify(records))),records);
-  assert.match(nutritionSummary('2026-10-05',records['2026-10-05']),/Food: — · 7:30: — · Fast: Done/);
+  assert.match(nutritionSummary('2026-10-05',records['2026-10-05']),/^Food: — · 7:30: —$/);
   assert.match(nutritionSummary('2026-10-10',{food:false,cutoff:false}),/Food: Flexible · 7:30: Flexible/);
 });
 test('restore merges dates and fields without losing unrelated records', () => {

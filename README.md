@@ -3,7 +3,7 @@
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
 one-day changes, mobility exercises, videos, photos, backup/restore, and optional
-AI-assisted features. Nutrition uses quick Yes/No check-ins and optional fasting,
+AI-assisted features. Nutrition starts collapsed below the workout session, with quick Yes/No check-ins,
 with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development
