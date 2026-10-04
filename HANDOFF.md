@@ -17,7 +17,7 @@ was changed.
 
 ## Current release
 
-Candidate `2026.10.04 1558`: compact Nutrition card on Today with Yes/No food
+Published `2026.10.04 1558`: compact Nutrition card on Today with Yes/No food
 and 7:30 p.m. cutoff checks, optional notes after No (keyboard dictation), and
 optional overnight fast Done recorded on the morning it ends. Tap again to
 clear an answer. Food scope: Sunday dinner through Friday lunch; Saturday is
@@ -26,7 +26,10 @@ flexible. Cutoff: Sunday–Thursday nights. No calories, targets or nutrition sc
 `app/nutrition-card.tsx` owns UI and collapsible History check-ins. Storage is
 `t4l:nutrition`, separate from workouts; saves immediately without Finish.
 Backups include nutrition; older backups preserve existing entries. Nutrition
-never changes workout status/streaks or goes to AI. Both builds and 25 tests passed, including five nutrition tests; publication pending.
+never changes workout status/streaks or goes to AI. Both builds and 25 tests passed, including five nutrition tests.
+Commit `a238415` published in successful Pages run `37230334637`. HTTPS
+verified live nutrition code/styles, release label and matching service worker.
+TypeScript still reports the same nine known diagnostics; none in nutrition modules.
 
 Previous `2026.10.03 1512`: orange corner pulse, commit `46c731b`, run
 `37147093127`. Keep dark title background; user disliked blue glow washing it out.
