@@ -909,3 +909,30 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .plan-content .week-list { flex: 1 0 auto; grid-auto-rows: 1fr; }
   .plan-content .week-next-plan-button { flex-shrink: 0; }
 }
+
+/* Nutrition stays separate from workout logging and uses the shared left accent. */
+.nutrition-card { margin: 16px 0; padding: 14px; border: 1px solid var(--line); border-left: 6px solid var(--brand); border-radius: 18px; background: white; color: var(--brand-deep); }
+.nutrition-card header { display: flex; align-items: center; gap: 10px; }
+.nutrition-card header > span { font-size: 28px; color: var(--brand); }
+.nutrition-card h2 { margin: 0; font-size: 19px; }
+.nutrition-card header p, .nutrition-help, .nutrition-save { margin: 5px 0; font-size: 13px; color: var(--muted); }
+.nutrition-rules { margin: 10px 0; font-size: 14px; }
+.nutrition-rules summary, .nutrition-history > summary { cursor: pointer; min-height: 44px; align-content: center; }
+.nutrition-rules p { line-height: 1.5; }
+.nutrition-question { border-top: 1px solid var(--line); }
+.nutrition-answer-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
+.nutrition-answer-row > div[role="group"] { display: flex; gap: 6px; flex-shrink: 0; }
+.nutrition-card button { min-height: 44px; min-width: 48px; padding: 8px 12px; border-radius: 10px; border: 1px solid #c9d9ef; background: var(--brand-soft); color: var(--brand-deep); font: inherit; cursor: pointer; }
+.nutrition-card button[aria-pressed="true"] { background: var(--brand-deep); color: white; border-color: var(--brand-deep); }
+.nutrition-card button:focus-visible, .nutrition-card summary:focus-visible { outline: 3px solid var(--brand-orange); outline-offset: 2px; }
+.nutrition-note { display: block; padding: 4px 0 10px; font-size: 14px; }
+.nutrition-note small, .nutrition-fast small { display: block; font-size: 12px; color: var(--muted); margin: 4px 0; }
+.nutrition-note textarea { display: block; width: 100%; margin-top: 6px; padding: 10px; font: inherit; font-size: 16px; border: 1px solid #b7c9df; border-radius: 10px; }
+.nutrition-fast { border-top: 1px solid var(--line); }
+.nutrition-fast > button { flex-shrink: 0; }
+.nutrition-history > summary { font-weight: 800; }
+.nutrition-history > summary small { margin-left: 8px; font-weight: 400; }
+.nutrition-history > div { max-height: 320px; overflow-y: auto; }
+.nutrition-history > div > button { display: block; width: 100%; text-align: left; margin: 6px 0; }
+.nutrition-history button strong, .nutrition-history button span { display: block; }
+.nutrition-history button span { margin-top: 5px; font-size: 13px; }

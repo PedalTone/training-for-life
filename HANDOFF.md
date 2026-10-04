@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated October 3, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 4, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -17,19 +17,20 @@ was changed.
 
 ## Current release
 
-Published `2026.10.03 1512`: removes the blue glow that washed out the Home
-title. An orange radial glow occupies only the bottom-right 42% width / 55%
-height of the brand panel, pulsing gently in place while Home is mounted.
-Reduce Motion shows a static glow. No layout, storage, or API changes.
-Both builds and all 20 tests passed. Commit `46c731b` deployed in Pages run
-`37147093127`; HTTPS verified the release and matching app/service-worker assets.
-Browser QA remains unavailable after timeout.
+Candidate `2026.10.04 1558`: compact Nutrition card on Today with Yes/No food
+and 7:30 p.m. cutoff checks, optional notes after No (keyboard dictation), and
+optional overnight fast Done recorded on the morning it ends. Tap again to
+clear an answer. Food scope: Sunday dinner through Friday lunch; Saturday is
+flexible. Cutoff: Sunday–Thursday nights. No calories, targets or nutrition scores.
+`app/nutrition.ts` owns schedule, validation, storage and restore merging;
+`app/nutrition-card.tsx` owns UI and collapsible History check-ins. Storage is
+`t4l:nutrition`, separate from workouts; saves immediately without Finish.
+Backups include nutrition; older backups preserve existing entries. Nutrition
+never changes workout status/streaks or goes to AI. Both builds and 25 tests passed, including five nutrition tests; publication pending.
 
-Previous release `2026.10.03 1507`: commit `f656825`, run `37146805222`.
-User liked the orange glow but found the blue sweep reduced title contrast.
-Release `2026.10.03 1500` fills available phone height in Plan. Release
-`2026.10.03 1444` added button feedback and completion checkmark motion.
-Completion feedback is transient, triggered after successful Finish + Backup.
+Previous `2026.10.03 1512`: orange corner pulse, commit `46c731b`, run
+`37147093127`. Keep dark title background; user disliked blue glow washing it out.
+Plan fills available phone height; completion checkmark and tap feedback remain.
 
 ## Preview attempt
 
@@ -42,7 +43,7 @@ non-browser checks for now; the failed attempt does not prove the app crashed.
 ## Verification and session constraints
 
 - Both Pages and vinext builds pass. All 13 rendered-HTML tests, three focused
-  insight tests, two service-worker tests, and two video-cleanup tests pass. `git diff --check` passes.
+  insight tests, two service-worker tests, and two video-cleanup tests and five nutrition tests pass. `git diff --check` passes.
 - TypeScript still has nine pre-existing diagnostics (exercise tuple inference,
   insight types, and Vite/Cloudflare environment declarations). Lint reports 1,832 errors and 10 warnings,
   including generated Pages output; do not describe either check as clean.

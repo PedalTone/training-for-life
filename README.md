@@ -3,7 +3,8 @@
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
 one-day changes, mobility exercises, videos, photos, backup/restore, and optional
-AI-assisted features.
+AI-assisted features. Nutrition uses quick Yes/No check-ins and optional fasting,
+with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development
 
@@ -42,7 +43,10 @@ Workout sessions are stored in browser IndexedDB (`training-for-life`, store
 reports and schedule snapshots use `t4l:` localStorage keys. Data is tied to the
 browser/origin; local preview data is separate from live iPhone data. Preserve
 storage names and migrations. Backup/restore exports/imports JSON. Do not erase
-storage to solve a deployment or cache issue.
+storage to solve a deployment or cache issue. Nutrition is saved separately in
+`t4l:nutrition`, keyed by calendar date, and included in backup exports. Restore
+merges nutrition dates; older backups leave existing check-ins untouched.
+Nutrition does not alter workout completion, streaks, or AI insight inputs.
 
 On GitHub Pages, the frontend calls the separate Sites service for worker APIs.
 The service uses server-side `OPENAI_API_KEY` and `INSIGHTS_ACCESS_CODE`; never
@@ -78,7 +82,7 @@ include every test file. On a Node version supporting TypeScript stripping,
 additional focused tests can be run with:
 
 ```sh
-node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs tests/service-worker.test.mjs tests/video-cleanup.test.mjs
+node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs tests/service-worker.test.mjs tests/video-cleanup.test.mjs tests/nutrition.test.mjs
 ```
 
 `npm run lint` and `npx tsc --noEmit` are additional diagnostics. Earlier runs
