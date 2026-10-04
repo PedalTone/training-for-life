@@ -17,13 +17,15 @@ was changed.
 
 ## Current release
 
-Candidate `2026.10.04 1602`: Nutrition is below the workout session, collapsed
+Published `2026.10.04 1602`: Nutrition is below the workout session, collapsed
 by default using native details/summary. Fasting controls and history display
 are removed. Legacy fast values remain in storage/backups for compatibility;
 fast-only dates no longer appear in Nutrition History.
 Food/cutoff Yes/No and notes remain, with Friday/Saturday flexibility. Separate
 `t4l:nutrition` storage, immediate saves and backup/restore support are unchanged.
-Today no longer repeats the weekly icon strip. Verification/publication pending. Previous release `2026.10.04 1558` introduced
+Today no longer repeats the weekly icon strip. Both builds and all 25 tests passed.
+Commit `5eea50e` deployed in Pages run `37230649386`; HTTPS confirmed the
+live release, app assets and service worker. No browser inspection. Previous release `2026.10.04 1558` introduced
 nutrition (commit `a238415`, Pages run `37230334637`).
 
 ## Preview attempt
