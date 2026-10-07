@@ -15,7 +15,15 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current release — iPhone optimization
+## Publication in progress — Plan fit and splash styling
+
+Release `2026.10.06 2217`: compact single-line Plan guidance and seven equal rows
+within available portrait phone height; navy/orange Today card, larger splash
+headings, gradient icons and subtle destination graphics. No storage logic changed.
+Published at user request using non-browser verification under the updated browser
+restriction. Physical iPhone layout confirmation belongs to user Safari/Chrome review.
+
+## Previous release — iPhone optimization
 
 Published `2026.10.06 2148`: full Plan guidance, larger navigation/Progress/Nutrition labels,
 44px workout fields and history arrows, top safe-area padding. History arrows scroll
@@ -46,10 +54,12 @@ nutrition (commit `a238415`, Pages run `37230334637`).
 User authorized a limited Sites visual inspection October 3. Local Vite served
 HTTP 200, but creating the in-app browser tab timed out after 32 seconds and
 reset browser control. Server was stopped; no visual inspection completed.
-The browser failure was subsequently isolated to Vite development servers
-with HMR enabled. Browser-based visual inspection is now permitted and expected.
-When using the Codex built-in browser with Vite, use `npm run dev:codex`, which
-runs the development server with HMR disabled.
+Subsequent testing showed Vite HMR was a reproducible crash trigger, but later
+native Codex Desktop crashes occurred even during ordinary development work, so
+HMR is not considered the sole cause. Routine Codex built-in-browser inspection
+is currently disabled. Use Safari or Chrome for normal visual inspection. If the
+user explicitly requests built-in-browser inspection, use `npm run dev:codex`,
+which runs Vite with HMR disabled.
 
 ## Verification and session constraints
 
@@ -60,9 +70,12 @@ runs the development server with HMR disabled.
   including generated Pages output; do not describe either check as clean.
 - The October 4 release was published using non-browser verification only,
   so visual behavior for that specific release was not verified at publication.
-  The previous browser restriction is no longer active. Browser, screenshots,
-  visualizations, and automated visual layout checks may be used normally.
-  For Vite browser inspection, use `npm run dev:codex` to keep HMR disabled.
+  Routine Codex built-in-browser inspection is currently disabled because of
+  repeated native Codex Desktop crashes. Continue builds, tests, linting and other
+  non-browser verification normally. The user will perform routine visual inspection
+  in Safari or Chrome and may provide screenshots or observations for follow-up.
+  If built-in-browser inspection is explicitly requested, use `npm run dev:codex`
+  to keep Vite HMR disabled.
 - No worker/API code changed; only GitHub Pages was deployed.
 - Leave generated untracked `tsconfig.tsbuildinfo` out of product commits.
 
@@ -72,9 +85,10 @@ runs the development server with HMR disabled.
 - User grants standing permission to publish requested app changes to GitHub.
 - User wants an early reminder to start a fresh chat using HANDOFF.md before
   conversation history becomes unwieldy. Keep this file concise and current.
-- Remaining maintenance: resolve TypeScript/lint diagnostics. Visual verification
-  is permitted again using the HMR-disabled Codex development server. Installed iPhone icon/cache behavior has
-  not been tested on a physical device.
+- Remaining maintenance: resolve TypeScript/lint diagnostics. Routine visual
+  verification should be performed by the user in Safari or Chrome; Codex should
+  not automatically invoke its built-in browser. Installed iPhone icon/cache behavior
+  has not been tested on a physical device.
 
 ## Product and design decisions to preserve
 

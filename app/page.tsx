@@ -230,9 +230,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.06 2148";
+const APP_VERSION = "2026.10.06 2217";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Plan uses compact, evenly sized day buttons to fit the week and next-week action on portrait phones.",
+    "Home has bolder splash buttons, with a blue-and-orange Today card, larger labels and subtle destination graphics.",
+  ] },
+  { version: "2026.10.06 2148", changes: [
     "iPhone readability improved: full workout guidance in Plan, clearer navigation and Progress labels, and larger history controls.",
     "Phone layouts respect the top safe area, with larger workout fields and clearer Nutrition text.",
   ] },
@@ -246,9 +250,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.03 1512", changes: [
     "Home now has an orange pulse in the bottom-right corner, keeping the title crisp on dark blue.",
-  ] },
-  { version: "2026.10.03 1507", changes: [
-    "A stronger blue and orange glow keeps moving while Home is open, respecting Reduce Motion.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -388,8 +389,8 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
   return <main className="splash-screen">
     <div className="splash-brand"><div className="splash-letterbox"><span className="splash-welcome-glow" aria-hidden="true"/><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div>
     <div className="splash-menu" aria-label="App sections">
-      <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><b aria-hidden="true">›</b></button>
-      {destinations.map(([tab, label, description]) => <button key={tab} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}
+      <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-card-art" aria-hidden="true"><SplashIcon name="today"/></span><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><b aria-hidden="true">›</b></button>
+      {destinations.map(([tab, label, description]) => <button key={tab} className={`splash-destination splash-destination-${tab}`} onClick={() => onEnter(tab)}><span className="splash-card-art" aria-hidden="true"><SplashIcon name={tab}/></span><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}
     </div>
     <div className="splash-release"><button ref={releaseButtonRef} className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last five releases"><div className="splash-release-header"><strong>What’s new</strong><button type="button" onClick={closeReleaseNotes} aria-label="Close What’s new"><span aria-hidden="true">×</span></button></div>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
   </main>;
