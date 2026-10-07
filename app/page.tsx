@@ -230,9 +230,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.06 2217";
+const APP_VERSION = "2026.10.06 2222";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Splash-button graphics are centered, clear of the navigation arrows.",
+    "Today keeps its highlight with a warm, light background distinct from the navy title banner.",
+  ] },
+  { version: "2026.10.06 2217", changes: [
     "Plan uses compact, evenly sized day buttons to fit the week and next-week action on portrait phones.",
     "Home has bolder splash buttons, with a blue-and-orange Today card, larger labels and subtle destination graphics.",
   ] },
@@ -247,9 +251,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.04 1558", changes: [
     "Nutrition on Today: quick Yes/No food and 7:30 check-ins, optional notes and overnight fasting.",
     "Flexible weekends are built in. Check-ins save independently and are included in History and backups.",
-  ] },
-  { version: "2026.10.03 1512", changes: [
-    "Home now has an orange pulse in the bottom-right corner, keeping the title crisp on dark blue.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {

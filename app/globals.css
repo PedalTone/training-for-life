@@ -972,20 +972,20 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 /* Give Home cards a distinct visual identity without adding extra controls. */
 .splash-screen .splash-menu button { border: 1px solid rgba(255,255,255,.96); background: linear-gradient(115deg, rgba(255,255,255,.96), rgba(229,239,253,.86)); box-shadow: 0 12px 26px rgba(8,29,73,.18), inset 0 1px 0 white; }
 .splash-screen .splash-menu button.splash-destination { border-left: 4px solid #315f9e; }
-.splash-screen .splash-menu button .splash-card-art { position: absolute; right: -14px; top: 50%; width: 112px; height: 112px; transform: translateY(-50%) rotate(-12deg); color: #174a91; opacity: .09; pointer-events: none; }
+.splash-screen .splash-menu button .splash-card-art { position: absolute; left: 50%; top: 50%; width: 112px; height: 112px; transform: translate(-50%, -50%) rotate(-12deg); color: #174a91; opacity: .09; pointer-events: none; }
 .splash-card-art svg { width: 100%; height: 100%; stroke-width: 1; }
 .splash-screen .splash-menu button > b { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #dce7f7; color: #174a91; font-size: 24px; line-height: 1; }
 .splash-screen .splash-menu button { grid-template-columns: 56px minmax(0,1fr) 28px; }
 .splash-screen .splash-menu button strong { font-size: 23px; letter-spacing: -.035em; }
 .splash-screen .splash-menu-icon { border: 1px solid #557fb8; background: linear-gradient(140deg,#315f9e,#081d49); box-shadow: 0 5px 12px rgba(8,29,73,.2), inset 0 1px 0 rgba(255,255,255,.28); }
-.splash-screen .splash-menu button.splash-today-button { background: radial-gradient(ellipse at 100% 100%,#9b481e 0,transparent 55%), linear-gradient(115deg,#081d49,#2054a0); border-color: #4569a0; }
+.splash-screen .splash-menu button.splash-today-button { background: radial-gradient(ellipse at 100% 100%,rgba(235,157,84,.3) 0,transparent 65%), linear-gradient(115deg,#fffaf2,#f8e8d4); border-color: #d9b690; }
 .splash-screen .splash-today-button::before { opacity: .16; }
-.splash-screen .splash-today-button .splash-card-art { width: 160px; height: 160px; color: white; opacity: .1; }
-.splash-screen .splash-today-button .splash-menu-icon { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.25); }
-.splash-screen .splash-today-copy > strong { color: white; font-size: 23px; }
-.splash-screen .splash-today-copy .splash-today-guidance { color: #edf3ff; font-size: 14px; line-height: 1.35; }
+.splash-screen .splash-today-button .splash-card-art { width: 160px; height: 160px; color: #a94712; opacity: .1; }
+.splash-screen .splash-today-button .splash-menu-icon { background: linear-gradient(140deg,#d56825,#a94712); border-color: #c47c48; }
+.splash-screen .splash-today-copy > strong { color: var(--brand-deep); font-size: 23px; }
+.splash-screen .splash-today-copy .splash-today-guidance { color: var(--muted); font-size: 14px; line-height: 1.35; }
 .splash-screen .splash-today-workout { background: #e6eefb; border-color: #cad9ef; }
-.splash-screen .splash-today-button > b { background: rgba(255,255,255,.16); color: white; }
+.splash-screen .splash-today-button > b { background: #f1d8bc; color: #914016; }
 .splash-screen .splash-destination-performance { border-left-color: #d56825; }
 .splash-screen .splash-destination-performance .splash-menu-icon { background: linear-gradient(140deg,#315f9e,#174a91); }
 @media (max-width:390px) {
