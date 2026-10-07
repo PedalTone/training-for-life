@@ -945,3 +945,19 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .nutrition-checkin > summary small { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
 .nutrition-checkin > summary i { font-style: normal; font-size: 22px; }
 .nutrition-checkin[open] > summary i { transform: rotate(45deg); }
+
+/* Phone readability and safe areas, including the iPhone 17 Pro Max. */
+@media (max-width: 700px) {
+  .app-shell:not(.splash-shell) { padding-top: env(safe-area-inset-top); }
+  .bottom-nav button small { font-size: 12px; }
+  .week-page .week-day-card > span:nth-child(2) em { white-space: normal; overflow: visible; text-overflow: clip; font-size: 14px; line-height: 1.35; }
+  .week-page .week-day-card { padding-block: 12px; }
+  .performance-overview-metrics span { font-size: 12px; letter-spacing: 0; }
+  .performance-overview-metrics small, .performance-overview-week .performance-foot { font-size: 13px; }
+  .history-page { padding-bottom: 24px; }
+  .history-page .history-bottom-nav { position: static; transform: none; margin: 18px auto 0; min-height: 54px; }
+  .history-page .history-bottom-nav button { height: 44px; }
+  .field-grid input { min-height: 44px; }
+  .nutrition-answer-row, .nutrition-note, .nutrition-rules { font-size: 16px; }
+  .nutrition-help, .nutrition-save, .nutrition-note small, .nutrition-checkin > summary small { font-size: 14px; }
+}

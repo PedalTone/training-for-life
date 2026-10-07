@@ -61,11 +61,11 @@ Install dependencies with `npm ci` when needed.
 For a preview matching the deployed static frontend:
 
 ```sh
-npx vite --config vite.github.config.ts --host 127.0.0.1 --port 5173
+npm run dev:codex
 ```
 
-Open `http://127.0.0.1:5173/training-for-life/app/`.
-This preview does not provide the worker API routes. For the vinext/server path,
+Open `http://127.0.0.1:5174/training-for-life/app/`.
+This preview disables HMR for the Codex built-in browser and does not provide the worker API routes. For the vinext/server path,
 use `npm run dev` and the URL printed by the command.
 
 Primary checks:

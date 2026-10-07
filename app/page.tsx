@@ -230,9 +230,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.04 1602";
+const APP_VERSION = "2026.10.06 2148";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "iPhone readability improved: full workout guidance in Plan, clearer navigation and Progress labels, and larger history controls.",
+    "Phone layouts respect the top safe area, with larger workout fields and clearer Nutrition text.",
+  ] },
+  { version: "2026.10.04 1602", changes: [
     "Nutrition now sits below the workout session and starts collapsed. Fasting controls have been removed.",
     "Today focuses on the selected day, without the weekly icon strip.",
   ] },
@@ -246,11 +250,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.03 1507", changes: [
     "A stronger blue and orange glow keeps moving while Home is open, respecting Reduce Motion.",
   ] },
-  { version: "2026.10.03 1500", changes: [
-    "Plan expands its day rows to use the available screen height on larger phones.",
-    "The splash glow is brighter, with a blue sweep and a warm orange highlight.",
-  ] },
-
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

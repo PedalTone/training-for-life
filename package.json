@@ -12,7 +12,8 @@
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "dev:codex": "vite --config vite.codex.config.ts --host 127.0.0.1 --port 5174"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated October 4, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 6, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -15,7 +15,17 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current release
+## iPhone optimization — publication pending
+
+Candidate `2026.10.06 2148`: full Plan guidance, larger navigation/Progress/Nutrition labels,
+44px workout fields and history arrows, top safe-area padding. History arrows scroll
+with the content to avoid covering dates when Safari reduces the available height.
+Inspected all six destinations at 440×956 and shorter 440×780 browser viewport;
+expanded workout data and Nutrition, checked Plan footer. Physical iPhone Safari/PWA,
+keyboard and actual safe-area behavior remain unverified. Both builds and all 25 tests passed; final History positioning and spacing were visually rechecked.
+Codex-safe preview configuration and README now disable HMR. No storage logic changed.
+
+## Previous release
 
 Published `2026.10.04 1602`: Nutrition is below the workout session, collapsed
 by default using native details/summary. Fasting controls and history display
@@ -33,8 +43,10 @@ nutrition (commit `a238415`, Pages run `37230334637`).
 User authorized a limited Sites visual inspection October 3. Local Vite served
 HTTP 200, but creating the in-app browser tab timed out after 32 seconds and
 reset browser control. Server was stopped; no visual inspection completed.
-Do not retry without evidence of recovery. Use supplied screenshots and
-non-browser checks for now; the failed attempt does not prove the app crashed.
+The browser failure was subsequently isolated to Vite development servers
+with HMR enabled. Browser-based visual inspection is now permitted and expected.
+When using the Codex built-in browser with Vite, use `npm run dev:codex`, which
+runs the development server with HMR disabled.
 
 ## Verification and session constraints
 
@@ -43,10 +55,11 @@ non-browser checks for now; the failed attempt does not prove the app crashed.
 - TypeScript still has nine pre-existing diagnostics (exercise tuple inference,
   insight types, and Vite/Cloudflare environment declarations). Lint reports 1,832 errors and 10 warnings,
   including generated Pages output; do not describe either check as clean.
-- User explicitly requested publication using non-browser verification only,
-  overriding the usual visual-release check for this release. No browser,
-  computer-use tools, screenshots, visualizations, or automated visual layout
-  checks may be used this session. Visual behavior remains unverified.
+- The October 4 release was published using non-browser verification only,
+  so visual behavior for that specific release was not verified at publication.
+  The previous browser restriction is no longer active. Browser, screenshots,
+  visualizations, and automated visual layout checks may be used normally.
+  For Vite browser inspection, use `npm run dev:codex` to keep HMR disabled.
 - No worker/API code changed; only GitHub Pages was deployed.
 - Leave generated untracked `tsconfig.tsbuildinfo` out of product commits.
 
@@ -56,8 +69,8 @@ non-browser checks for now; the failed attempt does not prove the app crashed.
 - User grants standing permission to publish requested app changes to GitHub.
 - User wants an early reminder to start a fresh chat using HANDOFF.md before
   conversation history becomes unwieldy. Keep this file concise and current.
-- Remaining maintenance: resolve TypeScript/lint diagnostics; visual verification
-  in a later session where permitted. Installed iPhone icon/cache behavior has
+- Remaining maintenance: resolve TypeScript/lint diagnostics. Visual verification
+  is permitted again using the HMR-disabled Codex development server. Installed iPhone icon/cache behavior has
   not been tested on a physical device.
 
 ## Product and design decisions to preserve
