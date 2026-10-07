@@ -15,11 +15,14 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current candidate — centered splash graphics
+## Current release — centered splash graphics
 
-Release `2026.10.06 2222`: centered destination graphics; Today uses a warm ivory/peach
+Published `2026.10.06 2222`: centered destination graphics; Today uses a warm ivory/peach
 highlight and orange icon, with dark readable labels, distinct from the navy banner.
 No storage or Plan layout changed. Non-browser verification follows user restriction.
+Both builds and 13 rendered-HTML tests pass. Commit `50545c1` deployed successfully
+in Pages run `37561595710`; live release, service worker and both assets verified
+against the local build. User visual review on Safari/Chrome remains the normal workflow.
 
 ## Previous release — Plan fit and splash styling
 
