@@ -31,3 +31,12 @@ test('offline navigation still returns the saved page', async () => {
   const navigate = harness(async () => { throw new Error('offline'); }, cached);
   assert.equal(await navigate(), cached);
 });
+test('current weather bypasses the service worker and its location URL cache', () => {
+  let handler;
+  vm.runInNewContext(source, {
+    self: { addEventListener: (name, callback) => { if(name === 'fetch') handler = callback; } }, URL,
+    fetch: () => { throw new Error('worker should not handle weather'); },
+    caches: { match: () => { throw new Error('worker should not cache weather'); } },
+  });
+  handler({request:{method:'GET',mode:'cors',url:'https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0'},respondWith:()=>{throw new Error('must fall through to browser network');}});
+});

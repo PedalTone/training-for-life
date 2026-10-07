@@ -6,6 +6,7 @@ import { isCompleteInsightReport } from "./insight-validation";
 
 import { NutritionCard, NutritionHistory } from "./nutrition-card";
 import { readNutrition, restoreNutrition, validateNutrition } from "./nutrition";
+import { useLocalWeather, WeatherGraphic } from "./local-weather";
 
 type Tab = "today" | "week" | "history" | "performance" | "more";
 type Effort = "" | "easy" | "moderate" | "hard";
@@ -230,9 +231,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.06 2222";
+const APP_VERSION = "2026.10.06 2229";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Splash graphics now have their own space between the text and arrow.",
+    "Enable local weather to match Today’s graphic to current conditions, using your location with permission.",
+  ] },
+  { version: "2026.10.06 2222", changes: [
     "Splash-button graphics are centered, clear of the navigation arrows.",
     "Today keeps its highlight with a warm, light background distinct from the navy title banner.",
   ] },
@@ -247,10 +252,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.04 1602", changes: [
     "Nutrition now sits below the workout session and starts collapsed. Fasting controls have been removed.",
     "Today focuses on the selected day, without the weekly icon strip.",
-  ] },
-  { version: "2026.10.04 1558", changes: [
-    "Nutrition on Today: quick Yes/No food and 7:30 check-ins, optional notes and overnight fasting.",
-    "Flexible weekends are built in. Check-ins save independently and are included in History and backups.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -386,13 +387,15 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
   const releaseButtonRef = useRef<HTMLButtonElement>(null);
   const closeReleaseNotes = () => { setShowReleaseNotes(false); releaseButtonRef.current?.focus(); };
   const todayCue = todayActivity || todayPlan.guidance;
+  const weather = useLocalWeather();
   const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Progress", "How you’re doing"], ["more", "Settings", "Tune your app"]];
   return <main className="splash-screen">
     <div className="splash-brand"><div className="splash-letterbox"><span className="splash-welcome-glow" aria-hidden="true"/><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div>
     <div className="splash-menu" aria-label="App sections">
-      <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-card-art" aria-hidden="true"><SplashIcon name="today"/></span><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><b aria-hidden="true">›</b></button>
-      {destinations.map(([tab, label, description]) => <button key={tab} className={`splash-destination splash-destination-${tab}`} onClick={() => onEnter(tab)}><span className="splash-card-art" aria-hidden="true"><SplashIcon name={tab}/></span><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><b aria-hidden="true">›</b></button>)}
+      <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><span className="splash-card-art" aria-hidden="true">{weather.kind ? <WeatherGraphic kind={weather.kind}/> : <SplashIcon name="today"/>}</span><b aria-hidden="true">›</b></button>
+      {destinations.map(([tab, label, description]) => <button key={tab} className={`splash-destination splash-destination-${tab}`} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><span className="splash-card-art" aria-hidden="true"><SplashIcon name={tab}/></span><b aria-hidden="true">›</b></button>)}
     </div>
+    <div className="splash-weather"><button type="button" onClick={weather.toggle}>{weather.enabled ? "Turn off local weather" : "Enable local weather"}</button>{weather.enabled ? <span role="status">{weather.status} · <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather by Open-Meteo</a></span> : <span>Uses your location with permission; shares an approximate area with Open-Meteo.</span>}</div>
     <div className="splash-release"><button ref={releaseButtonRef} className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last five releases"><div className="splash-release-header"><strong>What’s new</strong><button type="button" onClick={closeReleaseNotes} aria-label="Close What’s new"><span aria-hidden="true">×</span></button></div>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
   </main>;
 }

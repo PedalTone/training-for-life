@@ -3,7 +3,7 @@
 // GitHub Pages previously served a redirect at this origin. A new cache name
 // clears that obsolete shell for existing visitors now that Pages serves the
 // application directly.
-const CACHE = "training-4-life-2026.10.06-2222";
+const CACHE = "training-4-life-2026.10.06-2229";
 const ICONS = [
   "block-up-overs.png", "plank-to-rotation.png", "scapular-push-up.png", "overhead-press.png", "i-t-y.png", "face-pulls.png",
   "swimmers.png", "open-book.png", "banded-7s.png", "windmill.png", "kb-waiter.png", "crossovers.png", "push-ups.png",
@@ -14,6 +14,8 @@ self.addEventListener("install", (event) => event.waitUntil(caches.open(CACHE).t
 self.addEventListener("activate", (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  // Current weather must reach the network; do not cache location-bearing URLs.
+  if (new URL(event.request.url).hostname === "api.open-meteo.com") return;
   // Always let the browser check for a newer worker script. Returning a
   // cached service-worker.js can strand an installed home-screen app on an
   // older release indefinitely.

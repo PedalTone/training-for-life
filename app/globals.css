@@ -992,3 +992,19 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .splash-screen .splash-menu button { grid-template-columns: 50px minmax(0,1fr) 28px; }
   .splash-screen .splash-menu button strong { font-size: 21px; }
 }
+
+/* Reserve a graphic column between copy and the navigation arrow. */
+.splash-screen .splash-menu button { grid-template-columns: 44px minmax(0,1fr) 60px 28px; gap: 10px; }
+.splash-screen .splash-menu-icon { width: 44px; height: 44px; border-radius: 14px; }
+.splash-screen .splash-menu button .splash-card-art { position: relative; left: auto; top: auto; width: 60px; height: 72px; transform: rotate(-12deg); opacity: .28; }
+.splash-screen .splash-today-button .splash-card-art { width: 60px; height: 80px; opacity: .32; }
+@media (max-width:390px) {
+  .splash-screen .splash-menu button { grid-template-columns: 40px minmax(0,1fr) 44px 24px; gap: 8px; padding-inline: 10px; }
+  .splash-screen .splash-menu-icon { width: 40px; height: 40px; }
+  .splash-screen .splash-menu button .splash-card-art { width: 44px; height: 60px; }
+  .splash-screen .splash-menu button > b { width: 24px; height: 24px; }
+}
+
+.splash-weather { display: grid; gap: 5px; margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.4; text-align: center; flex-shrink: 0; }
+.splash-weather button { justify-self: center; min-height: 44px; padding: 0 14px; border: 1px solid #b7c9df; border-radius: 12px; background: rgba(255,255,255,.9); color: var(--brand-deep); font: inherit; font-size: 14px; font-weight: 750; cursor: pointer; }
+.splash-weather a { color: var(--brand-deep); }

@@ -15,7 +15,17 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current release — centered splash graphics
+## Current candidate — graphic spacing and optional weather
+
+Release `2026.10.06 2229`: dedicated graphic column between text and arrow.
+Optional Enable local weather asks device permission; rounded 0.1-degree coordinates
+are sent to Open-Meteo, never stored. Preference `t4l:local-weather-enabled` persists;
+conditions refresh every 30 minutes while Home is open. Failure keeps the decorative
+sun with an explicit unavailable message. Attribution and disable control included.
+No workout storage or Plan changes. Non-browser verification under user restriction;
+physical-device permission and appearance checks remain with user Safari/Chrome review.
+
+## Previous release — centered splash graphics
 
 Published `2026.10.06 2222`: centered destination graphics; Today uses a warm ivory/peach
 highlight and orange icon, with dark readable labels, distinct from the navy banner.

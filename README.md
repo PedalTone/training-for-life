@@ -113,3 +113,11 @@ assume a GitHub push updates the API service.
 Public release labels use `YYYY.MM.DD HHmm` in America/New_York. Documentation
 updates alone do not create a new public release. See HANDOFF.md for the current
 local candidate versus the last verified deployment.
+
+## Optional local weather
+
+Home’s Enable local weather control requests device location permission and sends
+coordinates rounded to 0.1 degrees to Open-Meteo for current model conditions. No
+coordinates are stored. The opt-in preference persists separately; turn it off on Home.
+Conditions refresh every 30 minutes while Home is open. Errors show an explicit
+unavailable message with a decorative sun. Weather does not change workout plans.
