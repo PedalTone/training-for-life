@@ -15,15 +15,18 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## iPhone optimization — publication pending
+## Current release — iPhone optimization
 
-Candidate `2026.10.06 2148`: full Plan guidance, larger navigation/Progress/Nutrition labels,
+Published `2026.10.06 2148`: full Plan guidance, larger navigation/Progress/Nutrition labels,
 44px workout fields and history arrows, top safe-area padding. History arrows scroll
 with the content to avoid covering dates when Safari reduces the available height.
 Inspected all six destinations at 440×956 and shorter 440×780 browser viewport;
 expanded workout data and Nutrition, checked Plan footer. Physical iPhone Safari/PWA,
 keyboard and actual safe-area behavior remain unverified. Both builds and all 25 tests passed; final History positioning and spacing were visually rechecked.
 Codex-safe preview configuration and README now disable HMR. No storage logic changed.
+Commit `956f14d` deployed successfully in Pages run `37558841648`. HTTPS confirmed
+the release, service worker and both assets exactly match the local build. Live
+phone-width navigation checked all six destinations without horizontal overflow.
 
 ## Previous release
 
