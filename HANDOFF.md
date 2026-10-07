@@ -15,13 +15,16 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Publication in progress — Plan fit and splash styling
+## Current release — Plan fit and splash styling
 
-Release `2026.10.06 2217`: compact single-line Plan guidance and seven equal rows
+Published `2026.10.06 2217`: compact single-line Plan guidance and seven equal rows
 within available portrait phone height; navy/orange Today card, larger splash
 headings, gradient icons and subtle destination graphics. No storage logic changed.
 Published at user request using non-browser verification under the updated browser
 restriction. Physical iPhone layout confirmation belongs to user Safari/Chrome review.
+Both builds and all 25 tests passed. Commit `ba4ddbf` deployed successfully in
+Pages run `37561243699`; HTTPS verified both assets against the local build,
+the exact live release and service-worker cache. No built-in-browser inspection.
 
 ## Previous release — iPhone optimization
 
