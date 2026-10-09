@@ -1008,3 +1008,9 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .splash-weather { display: grid; gap: 5px; margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.4; text-align: center; flex-shrink: 0; }
 .splash-weather button { justify-self: center; min-height: 44px; padding: 0 14px; border: 1px solid #b7c9df; border-radius: 12px; background: rgba(255,255,255,.9); color: var(--brand-deep); font: inherit; font-size: 14px; font-weight: 750; cursor: pointer; }
 .splash-weather a { color: var(--brand-deep); }
+
+.prior-note-copy { display: grid; gap: 8px; margin: 0 0 12px; min-width: 0; }
+.prior-note-copy p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.45; overflow-wrap: anywhere; }
+.prior-note-copy button { width: 100%; min-height: 46px; padding: 10px 14px; border: 0; border-radius: 11px; background: var(--brand); color: white; font: inherit; font-size: 16px; font-weight: 750; white-space: normal; }
+.prior-note-copy button:disabled { opacity: .6; }
+.prior-note-copy p[role="status"] { color: var(--ink); }

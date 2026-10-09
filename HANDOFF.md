@@ -15,7 +15,19 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — recent videos
+## Current change — copy prior workout notes
+
+Candidate `2026.10.09 1936`: Log Workout → Note shows the latest earlier matching
+workout with nonblank notes and its date. Copy fills empty notes; Append preserves
+existing text. Repeated copies do not duplicate the same text. Matching uses resolved
+historical workout key and theme, keeping Upper Body and Full-Body Strength distinct,
+respecting overrides, custom types and dated schedule snapshots. Uses normal note
+persistence and leaves source history untouched. Both builds, 13 rendered tests,
+19 focused tests (including three new note-copy tests), and diff check pass.
+Publication pending.
+Non-browser verification follows the user’s browser restriction.
+
+## Previous release — recent videos
 
 Published `2026.10.09 1928` adds Add to today to Settings → Recent videos.
 Reuses the existing saved-video flow and duplicate protection, copies only video

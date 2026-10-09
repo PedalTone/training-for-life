@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
+import { findPriorWorkoutNotes, appendPriorWorkoutNotes } from "./prior-workout-notes";
 import { isCompleteInsightReport } from "./insight-validation";
 
 import { NutritionCard, NutritionHistory } from "./nutrition-card";
@@ -231,9 +232,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.09 1928";
+const APP_VERSION = "2026.10.09 1936";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Copy notes from the most recent earlier workout of the same type; existing notes are kept and prior notes are appended.",
+  ] },
+  { version: "2026.10.09 1928", changes: [
     "Add recent videos to today’s workout directly from Settings, without removing them from past workouts.",
   ] },
   { version: "2026.10.06 2229", changes: [
@@ -247,10 +251,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.06 2217", changes: [
     "Plan uses compact, evenly sized day buttons to fit the week and next-week action on portrait phones.",
     "Home has bolder splash buttons, with a blue-and-orange Today card, larger labels and subtle destination graphics.",
-  ] },
-  { version: "2026.10.06 2148", changes: [
-    "iPhone readability improved: full workout guidance in Plan, clearer navigation and Progress labels, and larger history controls.",
-    "Phone layouts respect the top safe area, with larger workout fields and clearer Nutrition text.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -455,6 +455,8 @@ export default function Home() {
   const [screenshotPreview, setScreenshotPreview] = useState("");
   const [screenshotWorkout, setScreenshotWorkout] = useState<ScreenshotWorkout | null>(null);
   const [screenshotError, setScreenshotError] = useState("");
+  const [noteCopyNotice, setNoteCopyNotice] = useState("");
+  useEffect(() => setNoteCopyNotice(""), [activeKey, session.plannedKey, session.plannedTheme]);
   const [photoNotice, setPhotoNotice] = useState("");
   const [screenshotAccessCode, setScreenshotAccessCode] = useState("");
   const [hasScreenshotAccess, setHasScreenshotAccess] = useState(false);
@@ -470,6 +472,10 @@ export default function Home() {
   // user's saved mapping during startup; recorded history remains anchored to
   // its saved plannedKey/plannedTheme.
   const plan = session.date === activeKey && sessionIsBlank ? currentDayPlan : historicalPlan(session.date === activeKey ? session : undefined, scheduleForDate(activeDate, activeSchedule, scheduleHistory), activeDate);
+  const priorWorkoutNotes = findPriorWorkoutNotes(history.map((item) => {
+    const date = dateFromKey(item.date);
+    return { ...item, workoutType: historicalPlan(item, scheduleForDate(date, activeSchedule, scheduleHistory), date) };
+  }), activeKey, plan);
   const saveAiAccessCode = (value: string) => { const code = value.trim(); setScreenshotAccessCode(code); setHasScreenshotAccess(Boolean(code)); localStorage.setItem("t4l:insights-access", code); };
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); const savedCode = localStorage.getItem("t4l:insights-access") || ""; setScreenshotAccessCode(savedCode); setHasScreenshotAccess(Boolean(savedCode)); }, []);
@@ -574,6 +580,14 @@ export default function Home() {
     const choice = workoutOptions.find((option) => option.key === key);
     if (!choice) return;
     update({ planOverride: true, plannedKey: choice.key, plannedTheme: choice.label, status: session.status === "completed" ? "completed" : choice.key === "rest" ? "rest" : "partial" }, true);
+  };
+  const copyPriorNotes = () => {
+    if (!loaded || sessionRef.current.date !== activeKey || !priorWorkoutNotes) return;
+    const current = sessionRef.current.notes;
+    const next = appendPriorWorkoutNotes(current, priorWorkoutNotes.notes);
+    if (next === current) { setNoteCopyNotice("Those notes are already included."); return; }
+    update({ notes: next }, true);
+    setNoteCopyNotice(`${current.trim() ? "Appended" : "Copied"} notes from ${dateFromKey(priorWorkoutNotes.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}. You can edit them below.`);
   };
   const restoreWeeklyWorkoutType = () => update({ planOverride: false, plannedKey: undefined, plannedTheme: undefined, status: session.status === "completed" ? "completed" : currentDayPlan.key === "rest" ? "rest" : "partial" }, true);
   const toggleActivity = (activity: string) => {
@@ -807,7 +821,7 @@ export default function Home() {
         <details className="surface-card log-workout-card" open={openPanel === "log"} onToggle={(e) => togglePanel("log", e.currentTarget.open)}>
           <summary><span className="panel-icon">▤</span><span><b>Log Workout</b><small>{session.duration || session.notes || session.workoutPhoto || injuryReported ? "Workout data, notes, photo, or body check-in added" : "Workout data, notes, photo, and body check-in"}</small></span><i>＋</i></summary>
           <div className="log-workout-body">
-            <details className="log-subsection note-subsection" open={Boolean(session.notes)}><summary className="log-subsection-heading"><span>✎</span><div><b>Note</b><small>Dictate important details about your workout</small></div><i>＋</i></summary><textarea ref={noteTextarea} value={session.notes} onChange={(e) => update({ notes: e.target.value })} onInput={(e) => resizeNoteField(e.currentTarget)} placeholder="Add workout note…" rows={7} aria-label="Workout note"/></details>
+            <details className="log-subsection note-subsection" open={Boolean(session.notes)}><summary className="log-subsection-heading"><span>✎</span><div><b>Note</b><small>Dictate important details about your workout</small></div><i>＋</i></summary><div className="prior-note-copy">{priorWorkoutNotes ? <><p>Last {plan.theme} notes · {dateFromKey(priorWorkoutNotes.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p><button type="button" onClick={copyPriorNotes} disabled={!loaded}>{session.notes.trim() ? "Append prior workout notes" : "Copy prior workout notes"}</button></> : <p>No earlier {plan.theme} workout notes to copy yet.</p>}{noteCopyNotice && <p role="status">{noteCopyNotice}</p>}</div><textarea ref={noteTextarea} value={session.notes} onChange={(e) => update({ notes: e.target.value })} onInput={(e) => resizeNoteField(e.currentTarget)} placeholder="Add workout note…" rows={7} aria-label="Workout note"/></details>
             <section className="log-subsection photo-subsection"><div className="log-subsection-heading"><span>▧</span><div><b>Workout photo</b><small>{session.workoutPhoto ? "Saved with this workout" : "Add a small visual reminder"}</small></div></div><div className="workout-photo-body">{session.workoutPhoto ? <><img src={session.workoutPhoto} alt="Workout reference"/><div><button onClick={() => workoutPhotoInput.current?.click()}>Replace photo</button><button className="quiet-photo" onClick={() => { update({ workoutPhoto: undefined }); setPhotoNotice("Photo removed from this workout."); }}>Remove</button></div></> : <button className="workout-photo-add" onClick={() => workoutPhotoInput.current?.click()}>＋ Add workout photo</button>}<input ref={workoutPhotoInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void addWorkoutPhoto(file); event.currentTarget.value = ""; }}/>{photoNotice && <p className="photo-notice" role="status">{photoNotice}</p>}<small className="workout-photo-help">Compressed for quick recognition and included in your backups.</small></div></section>
             <section className={`log-subsection data-subsection ${importedScreenshotCount ? "has-imported-screenshots" : ""}`}><div className="log-subsection-heading"><span>▤</span><div><b>Workout data</b><small>Add up to six screenshots without overwriting earlier details</small></div></div><section className="screenshot-import"><div className="screenshot-import-title"><div><strong>{importedScreenshotCount ? "Screenshots added" : "Add a workout screenshot"}</strong><small>{importedScreenshotCount ? "Add another screenshot to keep its details alongside the earlier one." : "Paste or choose a screenshot to pull out its workout details."}</small></div><b className="screenshot-count" aria-label={`${importedScreenshotCount} of 6 screenshots added`}>{importedScreenshotCount} / 6 <span>screenshots</span></b></div>{!hasScreenshotAccess && <div className="screenshot-access-note"><span>AI access is managed in Settings.</span><button onClick={() => navigate("more")}>Open Settings</button></div>}<div className="screenshot-actions"><button onClick={() => void pasteScreenshot()} disabled={screenshotState === "reading" || importedScreenshotCount >= 6}>{importedScreenshotCount ? "Add another screenshot" : "Paste screenshot"}</button><button onClick={() => screenshotInput.current?.click()} disabled={screenshotState === "reading" || importedScreenshotCount >= 6}>{importedScreenshotCount ? "Add from Photos" : "Choose from Photos"}</button></div><input ref={screenshotInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void readScreenshot(file); event.currentTarget.value = ""; }}/>{screenshotState === "reading" && <p className="screenshot-status" role="status"><span/>Reading workout details…</p>}{screenshotError && <p className="screenshot-error" role="alert">{screenshotError}</p>}{Boolean(session.importedWorkouts?.length) && <div className="imported-workout-list" aria-label="Added workout screenshots">{session.importedWorkouts?.map((workout, index) => <div className="imported-workout-row" key={`${workout.date}-${workout.startTime}-${index}`}><div><b>Screenshot {index + 1}</b><span>{[workout.date, workout.startTime].filter(Boolean).join(" · ") || "Workout details added"}</span><div className="imported-workout-metrics">{[["Duration", workout.duration], ["Distance", workout.distance], ["Pace", workout.pace], ["Calories", workout.calories], ["Activity", workout.activity]].filter(([, value]) => value).map(([label, value]) => <span key={label}><b>{label}</b>{value}</span>)}</div></div><button className="text-button" onClick={() => removeImportedWorkout(index)}>Remove</button></div>)}</div>}</section><div className="field-grid"><label><span>Duration</span><div><input value={session.duration} onChange={(e) => update({ duration: e.target.value })} placeholder="—"/></div></label><label><span>Distance</span><div><input value={session.distance} onChange={(e) => update({ distance: e.target.value })} placeholder="—"/></div></label><label><span>Pace</span><div><input value={session.pace ?? ""} onChange={(e) => update({ pace: e.target.value })} placeholder="—"/></div></label><label><span>Calories</span><div><input inputMode="numeric" value={session.calories ?? ""} onChange={(e) => update({ calories: e.target.value })} placeholder="—"/></div></label><label><span>Start time</span><div><input value={session.startTime ?? ""} onChange={(e) => update({ startTime: e.target.value })} placeholder="—"/></div></label></div><div className="effort-row"><span>Perceived effort</span><div>{(["easy", "moderate", "hard"] as Effort[]).map((effort) => <button key={effort} className={session.effort === effort ? "selected" : ""} onClick={() => update({ effort: session.effort === effort ? "" : effort })}>{effort}</button>)}</div></div>{session.detailSource && <p className="detail-source">Imported from {session.detailSource} · You can edit any value.</p>}</section>
             <section className="log-subsection links-subsection"><div className="log-subsection-heading"><span>▶</span><div><b>YouTube links</b><small>{session.videos.length ? `${session.videos.length} saved` : "Add a workout video"}</small></div></div>{session.videos.length > 0 && <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div>}{session.videos.length > 0 && !showVideoForm ? <button className="add-video-toggle" onClick={() => setShowVideoForm(true)}>＋ Add Video</button> : <div className="inline-sheet"><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div>}</section>
