@@ -17,11 +17,14 @@ was changed.
 
 ## Current change — recent videos
 
-Release `2026.10.09 1928` adds Add to today to Settings → Recent videos.
+Published `2026.10.09 1928` adds Add to today to Settings → Recent videos.
 Reuses the existing saved-video flow and duplicate protection, copies only video
 fields, preserves the source workout, and shows success/failure feedback.
 Rapid repeated recent-video taps are serialized. Both builds, 13 rendered tests,
-16 focused tests and git diff --check pass. Publication pending.
+16 focused tests and git diff --check pass. A mocked execution of the actual
+add handler verified field preservation, source-history preservation and duplicates.
+Commit `9913e0e` deployed in successful Pages run `38004586139`; HTTPS verified
+the exact release, service worker and both assets against the local build.
 Non-browser verification follows the user’s browser restriction.
 
 ## Previous release — graphic spacing and optional weather
