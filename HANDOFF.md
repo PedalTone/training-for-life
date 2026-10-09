@@ -17,14 +17,15 @@ was changed.
 
 ## Current change — copy prior workout notes
 
-Candidate `2026.10.09 1936`: Log Workout → Note shows the latest earlier matching
+Published `2026.10.09 1936`: Log Workout → Note shows the latest earlier matching
 workout with nonblank notes and its date. Copy fills empty notes; Append preserves
 existing text. Repeated copies do not duplicate the same text. Matching uses resolved
 historical workout key and theme, keeping Upper Body and Full-Body Strength distinct,
 respecting overrides, custom types and dated schedule snapshots. Uses normal note
 persistence and leaves source history untouched. Both builds, 13 rendered tests,
 19 focused tests (including three new note-copy tests), and diff check pass.
-Publication pending.
+Commit `478447e` deployed in successful Pages run `38005281604`. HTTPS
+verified the release label, service worker and exact JS/CSS against the local build.
 Non-browser verification follows the user’s browser restriction.
 
 ## Previous release — recent videos
