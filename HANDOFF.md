@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated October 6, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 9, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -15,7 +15,16 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current release — graphic spacing and optional weather
+## Current change — recent videos
+
+Release `2026.10.09 1928` adds Add to today to Settings → Recent videos.
+Reuses the existing saved-video flow and duplicate protection, copies only video
+fields, preserves the source workout, and shows success/failure feedback.
+Rapid repeated recent-video taps are serialized. Both builds, 13 rendered tests,
+16 focused tests and git diff --check pass. Publication pending.
+Non-browser verification follows the user’s browser restriction.
+
+## Previous release — graphic spacing and optional weather
 
 Published `2026.10.06 2229`: dedicated graphic column between text and arrow.
 Optional Enable local weather asks device permission; rounded 0.1-degree coordinates
