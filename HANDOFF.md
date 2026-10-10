@@ -15,13 +15,14 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — categorized release notes (unpublished)
+## Current change — categorized release notes
 
-Candidate `2026.10.10 1855`: What’s New shows ten recent releases, each with a
+Published `2026.10.10 1855`: What’s New shows ten recent releases, each with a
 Major fix or Minor fix heading. Current ten are minor presentation/display fixes.
 Both builds and 13 rendered tests pass; diff clean. External Chrome iPhone
 17 Pro Max 440×956 inspected at top/bottom; ten headings, scrolling, close and
-no horizontal overflow verified. No storage or API changes. User explicitly approved publication; deployment verification pending. User now wants ten release groups.
+no horizontal overflow verified. No storage or API changes. Commit `d024908` deployed successfully in Pages run `38093227191`; live
+release, exact JS/CSS assets and service worker verified over HTTPS. User now wants ten release groups.
 
 ## Current change — shared tab headers
 
