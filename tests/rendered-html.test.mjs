@@ -23,13 +23,13 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.10\.10 1028/);
+  assert.match(html, /2026\.10\.10 1412/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
   assert.doesNotMatch(html, /Keep showing up/);
   assert.match(html, /Today/);
-  assert.match(html, /<strong>Progress<\/strong><small>See your training story<\/small>/);
+  assert.match(html, /<strong>Progress<\/strong><small>See your consistency and balance<\/small>/);
   assert.doesNotMatch(html, /Primary navigation/);
 });
 
@@ -62,7 +62,7 @@ test("What’s new groups exactly five dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 5);
-  assert.match(releaseBlock, /2026\.10\.10 0922/);
+  assert.match(releaseBlock, /2026\.10\.10 1028/);
   assert.match(releaseBlock, /2026\.10\.10 1023/);
   assert.match(releaseBlock, /2026\.10\.10 0956/);
   assert.match(releaseBlock, /2026\.10\.10 0938/);
@@ -78,7 +78,7 @@ test("Plan shortcut opens weekly mapping and leaves room above navigation", asyn
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /Make Plan for Next Week/);
+  assert.match(page, /Plan next week/);
   assert.match(page, /const makePlanForNextWeek = \(\) => \{ setOpenScheduleOnSettings\(true\); navigate\("more"\); \}/);
   assert.match(page, /mapping\.open = true/);
   assert.match(page, /Weekly workout mapping/);

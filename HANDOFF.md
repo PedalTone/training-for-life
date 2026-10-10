@@ -15,7 +15,23 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — landscape-first figure scale
+## Current change — cohesive training messaging
+
+Candidate `2026.10.10 1412`: all approved Designly strategy wording applied.
+Home uses Today’s workout/Your training and practical destination descriptions;
+signature Relentless forward progress kept only on Home. Today mantra removed.
+Plan uses Your week ahead, List/Landscape and Plan next week. Journal uses Workout
+journal. Progress uses Your progress/Your training balance and days completed
+(singular-aware), practical introduction and empty state. Weekly plan replaces
+cadence; Body notes replaces Notables; AI Summary replaces Executive summary;
+recovery uses same Finish Workout + Backup wording. Progress accessibility name
+matches label. No storage, calculations, artwork or routing changes.
+Both builds, 13 rendered and 6 journal/progress tests pass; diff clean. External
+Chrome traversed Home/all five tabs at phone/tablet/desktop sizes, verified new
+labels/accessibility and no overflow; Home/Plan/Progress screenshots inspected.
+Publication pending.
+
+## Previous release — landscape-first figure scale
 
 Published `2026.10.10 1028`: user-approved smaller lifter and jogger replace
 strength/aerobic art through shared scene helper. New v2 filenames avoid stale
