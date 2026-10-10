@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — landscape-first figure scale
 
-Candidate `2026.10.10 1028`: user-approved smaller lifter and jogger replace
+Published `2026.10.10 1028`: user-approved smaller lifter and jogger replace
 strength/aerobic art through shared scene helper. New v2 filenames avoid stale
 image caches; originals retained. Figures around half former height, landscapes
 lead, natural woman physique and text-free 2:1 framing preserved. No data changes.
@@ -26,7 +26,8 @@ verified both iPhone Today cards and phone/tablet/desktop Plan views, overrides
 and mapping. Built-in edit prompts: halve figure dimensions including held stone,
 keep full figures in landscape with original style/scenery/no lettering.
 New assets: public/strength-boulder-v2.png and public/aerobic-jogger-v2.png.
-Publication pending.
+Commit `26bfd5c` deployed in successful Pages run `38060046210`; HTTPS verified
+exact release, JS/CSS, worker and both smaller images.
 
 ## Previous release — strength and easy aerobic activity artwork
 
