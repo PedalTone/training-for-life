@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — approved splash
 
-Candidate `2026.10.10 0627`: implements approved mockup with original texture,
+Published `2026.10.10 0627`: implements approved mockup with original texture,
 navy logo header, ivory Today card with resolved-workout terrain, four original
 navigation icons and softly floating shadows on all five cards. Weather remains
 opt-in; compact live condition/off label and collapsed Local weather settings
@@ -27,7 +27,8 @@ Both builds, 13 rendered tests and diff check pass. External Chrome verified
 all five destinations and card shadows, Today-only terrain, four icons, day override
 updates, weather settings and release notes; desktop/tablet/phone screenshots
 inspected. Approved mockup sources remain untracked in mockups/ for reference.
-Publication pending.
+Commit `28701ee` deployed in successful Pages run `38045046854`; HTTPS
+verified exact release, JS/CSS and service worker.
 
 ## Previous release — Today cosmetic refresh
 
