@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated October 9, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 10, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -15,7 +15,21 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — Adventure Journal
+## Current change — journal search
+
+Candidate `2026.10.10 0534`: History has local search across workout titles,
+activities, notes, add-ons, video titles and body check-ins, plus collapsed
+historical workout-theme and inclusive date filters. Matching excerpts open the
+journal; Back preserves search/filters. Clear restores normal calendars and
+nutrition history. No new storage or backup schema; records unchanged.
+Both builds, 13 rendered tests and 30 focused tests pass. Three search tests
+cover matching, accents/multiple words, inclusive dates, distinct historical
+strength themes, future exclusion, excerpts and source immutability. External
+Chrome verified search/type/date filters, video-title matches, empty state,
+clear, journal Back and unchanged source. Desktop/tablet/phone screenshots
+visually inspected with no horizontal overflow. Publication pending.
+
+## Previous release — Adventure Journal
 
 Published `2026.10.09 2318`: Plan stops on/before today and all History day links
 open a scrollable journal, with Back/Edit, previous/next and date picker. Future

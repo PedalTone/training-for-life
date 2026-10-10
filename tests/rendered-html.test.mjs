@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.10\.09 2318/);
+  assert.match(html, /2026\.10\.10 0534/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -64,7 +64,7 @@ test("What’s new groups exactly five dated releases", async () => {
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 5);
   assert.match(releaseBlock, /2026\.10\.09 2158/);
   assert.match(releaseBlock, /2026\.10\.09 2059/);
-  assert.match(releaseBlock, /2026\.10\.09 1936/);
+  assert.match(releaseBlock, /2026\.10\.09 2318/);
   assert.match(releaseBlock, /2026\.10\.09 2202/);
   assert.match(page, /What’s new in the last five releases/);
   assert.match(page, /RECENT_RELEASES\.map\(\(release\) => <div className="splash-release-group"/);
