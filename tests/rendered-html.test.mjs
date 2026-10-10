@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.10\.10 1512/);
+  assert.match(html, /2026\.10\.10 1855/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -55,18 +55,19 @@ test("all entered tabs share the texture while Home buttons float", async () => 
   assert.match(page, /todayPlan\.theme/);
 });
 
-test("What’s new groups exactly five dated releases", async () => {
+test("What’s new groups exactly ten categorized dated releases", async () => {
   const [page, css] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
-  assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 5);
-  assert.match(releaseBlock, /2026\.10\.10 1028/);
+  assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 10);
+  assert.match(releaseBlock, /2026\.10\.10 0922/);
+  assert.equal((releaseBlock.match(/category: "(?:Major|Minor) fix"/g) ?? []).length, 10);
   assert.match(releaseBlock, /2026\.10\.10 1500/);
   assert.match(releaseBlock, /2026\.10\.10 1449/);
   assert.match(releaseBlock, /2026\.10\.10 1412/);
-  assert.match(page, /What’s new in the last five releases/);
+  assert.match(page, /What’s new in the last ten releases/);
   assert.match(page, /RECENT_RELEASES\.map\(\(release\) => <div className="splash-release-group"/);
   assert.match(css, /\.splash-release-notes \{ box-sizing: border-box; max-height:/);
   assert.match(page, /aria-label="Close What’s new"/);

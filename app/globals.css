@@ -1359,3 +1359,5 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .plan-view-heading { gap: 8px; margin-bottom: 12px; }
   .plan-view-switch { flex-shrink: 0; }
 }
+
+.splash-change-category { margin: 8px 0 0; color: var(--brand-deep); font: 700 16px/1.4 var(--sans); }

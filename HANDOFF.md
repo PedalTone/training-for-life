@@ -15,6 +15,14 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
+## Current change — categorized release notes (unpublished)
+
+Candidate `2026.10.10 1855`: What’s New shows ten recent releases, each with a
+Major fix or Minor fix heading. Current ten are minor presentation/display fixes.
+Both builds and 13 rendered tests pass; diff clean. External Chrome iPhone
+17 Pro Max 440×956 inspected at top/bottom; ten headings, scrolling, close and
+no horizontal overflow verified. No storage or API changes. User explicitly approved publication; deployment verification pending. User now wants ten release groups.
+
 ## Current change — shared tab headers
 
 Published `2026.10.10 1512`: all five entered tabs use matching page title
@@ -411,7 +419,8 @@ which runs Vite with HMR disabled.
 ## Continuing work
 
 - Preserve workout data and dated schedule history. Inspect Git state before editing.
-- User grants standing permission to publish requested app changes to GitHub.
+- User grants standing permission to publish whenever they request an app change,
+  reaffirmed October 10, 2026.
 - User wants an early reminder to start a fresh chat using HANDOFF.md before
   conversation history becomes unwieldy. Keep this file concise and current.
 - Remaining maintenance: resolve TypeScript/lint diagnostics. Routine visual
@@ -436,7 +445,7 @@ which runs Vite with HMR disabled.
 - Banner tagline is two lines: "Move well, daily." and "Relentless forward progress."
 - The Home Today button displays the resolved workout and a short cue, including
   one-day overrides and an activity when selected. Keep Home and Today in sync.
-- What's New groups the **five** most recent releases by dated label.
+- What's New groups the **ten** most recent releases with major/minor headings by dated label.
 - Provide generous touch targets, descriptive icons, full-width readable notes,
   and sensible collapsed sections. Inspect alignment and bottom-navigation
   clearance on actual rendered phone layouts.

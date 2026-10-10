@@ -31,3 +31,9 @@ The splash-screen “What’s new?” list must succinctly describe changes sinc
 previous public release. The release shown in the app, tests, release notes,
 service-worker cache identifier, and deployment must match. After publishing,
 verify the live app serves that exact release label.
+
+## Publication authorization
+
+The user grants standing permission to publish tested app changes whenever they
+ask for a change (reaffirmed October 10, 2026). Complete verification and publish
+requested changes without asking again.

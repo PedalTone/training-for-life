@@ -16,7 +16,7 @@ Run this checklist before every patch and release. The goal is to verify the com
 
 ## 3. Product journey
 
-- [ ] Home: Today shows the resolved workout; all five destinations work; What’s New displays five release groups and its close button works.
+- [ ] Home: Today shows the resolved workout; all five destinations work; What’s New displays ten categorized release groups and its close button works.
 
 - [ ] Today: the correct date and workout type appear; controls are readable; Finish + Backup has a clear saved/completed state; reopening the day preserves data.
 - [ ] Plan: dates are chronological, today is obvious, schedule icons match the active mapping, and the compact intro does not crowd the calendar.

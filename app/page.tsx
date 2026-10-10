@@ -240,13 +240,18 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 1512";
+const APP_VERSION = "2026.10.10 1855";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, changes: ["Every tab now shares the same title font, size and position, with a clear Today’s workout heading."] },
-  { version: "2026.10.10 1500", changes: ["History and Settings share warm ivory, navy and orange throughout day tiles, icons and expanded controls."] },
-  { version: "2026.10.10 1449", changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
-  { version: "2026.10.10 1412", changes: ["Clearer, consistent wording across Home, Plan, Today, your workout journal and Progress. Landscape views keep the artwork while labels focus on your training."] },
-  { version: "2026.10.10 1028", changes: ["Strength and easy aerobic now use smaller figures, giving their mountain and riverside landscapes more breathing room."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["What’s New now labels each change as a major or minor fix and shows the ten most recent releases."] },
+  { version: "2026.10.10 1512", category: "Minor fix", changes: ["Every tab shares the same title font, size and position, with a clear Today’s workout heading."] },
+  { version: "2026.10.10 1500", category: "Minor fix", changes: ["History and Settings share warm ivory, navy and orange throughout day tiles, icons and expanded controls."] },
+  { version: "2026.10.10 1449", category: "Minor fix", changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
+  { version: "2026.10.10 1412", category: "Minor fix", changes: ["Clearer, consistent wording across Home, Plan, Today, your workout journal and Progress."] },
+  { version: "2026.10.10 1028", category: "Minor fix", changes: ["Smaller strength and easy aerobic figures give their landscapes more breathing room."] },
+  { version: "2026.10.10 1023", category: "Minor fix", changes: ["New strength and easy aerobic artwork appears consistently throughout your training views."] },
+  { version: "2026.10.10 0956", category: "Minor fix", changes: ["Today’s workout title and landscape share a balanced header, including longer workout names."] },
+  { version: "2026.10.10 0938", category: "Minor fix", changes: ["Endurance has new winding-trail artwork. Future strength workouts use the clearer Full-body strength name; historical labels stay intact."] },
+  { version: "2026.10.10 0922", category: "Minor fix", changes: ["Saved GPS totals return after reload with a Record another run or ride action. Today’s landscape uses a wider view."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -411,7 +416,7 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
     <div className="home-section-heading"><span>YOUR TRAINING</span></div>
     <nav className="home-destinations" aria-label="App sections">{destinations.map(([tab,label,description]) => <button key={tab} className={`home-destination splash-destination-${tab}`} onClick={()=>onEnter(tab)}><span><strong>{label}</strong><small>{description}</small></span><span className="home-nav-art" aria-hidden="true"><SplashIcon name={tab}/></span><span className="home-arrow" aria-hidden="true">›</span></button>)}</nav>
     <details className="home-weather-settings"><summary>Local weather settings</summary><div className="splash-weather"><button type="button" onClick={weather.toggle}>{weather.enabled ? "Turn off local weather" : "Enable local weather"}</button>{weather.enabled ? <span role="status">{weather.status} · <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather by Open-Meteo</a></span> : <span>Uses your location with permission; shares an approximate area with Open-Meteo.</span>}</div></details>
-    <div className="splash-release"><button ref={releaseButtonRef} className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last five releases"><div className="splash-release-header"><strong>What’s new</strong><button type="button" onClick={closeReleaseNotes} aria-label="Close What’s new"><span aria-hidden="true">×</span></button></div>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
+    <div className="splash-release"><button ref={releaseButtonRef} className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last ten releases"><div className="splash-release-header"><strong>What’s new</strong><button type="button" onClick={closeReleaseNotes} aria-label="Close What’s new"><span aria-hidden="true">×</span></button></div>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><h4 className="splash-change-category">{release.category}</h4><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
   </main>;
 }
 
