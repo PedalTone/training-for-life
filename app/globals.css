@@ -1366,3 +1366,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .more-page .settings-card > summary .setting-icon:not(.youtube-play), .more-page > section.settings-card .setting-icon.data { background: transparent; box-shadow: none; border: 0; color: #315f9e; }
 .more-page .setting-icon:not(.youtube-play) svg { width: 36px; height: 36px; stroke-width: 1.5; }
 .more-page .settings-card.library-manager > summary .setting-icon:not(.youtube-play) { color: #b94b17; }
+
+/* A quiet ivory band separates each day without increasing the week height. */
+.adventure-stop:not(:first-child) .adventure-scenery { top: 3px; }
+.adventure-stop:not(:last-child) .adventure-scenery { bottom: 3px; }

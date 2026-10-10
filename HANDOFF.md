@@ -15,6 +15,15 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
+## Current change — separated Plan pictures
+
+Candidate `2026.10.10 1954`: six-pixel ivory horizontal gaps separate Plan
+landscape pictures, preserving the overall week height, artwork and date/status
+labels. Both builds and 13 rendered tests pass; diff clean. External Chrome
+440×956 iPhone inspected; all six gaps measure 6px, seven days/action fit without
+scrolling or horizontal overflow, and List still shows seven days. No data or
+API changes. Publication pending.
+
 ## Current change — Settings illustrations and swipe navigation
 
 Published `2026.10.10 1949`: Settings uses Home-style line SVGs, blue with an

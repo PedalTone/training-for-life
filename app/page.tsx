@@ -241,9 +241,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 1949";
+const APP_VERSION = "2026.10.10 1954";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Swipe left for the next tab and right for the previous tab, in bottom-menu order. Settings illustrations now match Home; Future workout videos keeps its red YouTube icon."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Narrow ivory gaps separate the Plan landscape pictures, making each day easier to distinguish."] },
+  { version: "2026.10.10 1949", category: "Major fix", changes: ["Swipe left for the next tab and right for the previous tab, in bottom-menu order. Settings illustrations now match Home; Future workout videos keeps its red YouTube icon."] },
   { version: "2026.10.10 1855", category: "Minor fix", changes: ["What’s New now labels each change as a major or minor fix and shows the ten most recent releases."] },
   { version: "2026.10.10 1512", category: "Minor fix", changes: ["Every tab shares the same title font, size and position, with a clear Today’s workout heading."] },
   { version: "2026.10.10 1500", category: "Minor fix", changes: ["History and Settings share warm ivory, navy and orange throughout day tiles, icons and expanded controls."] },
@@ -252,7 +253,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 1028", category: "Minor fix", changes: ["Smaller strength and easy aerobic figures give their landscapes more breathing room."] },
   { version: "2026.10.10 1023", category: "Minor fix", changes: ["New strength and easy aerobic artwork appears consistently throughout your training views."] },
   { version: "2026.10.10 0956", category: "Minor fix", changes: ["Today’s workout title and landscape share a balanced header, including longer workout names."] },
-  { version: "2026.10.10 0938", category: "Minor fix", changes: ["Endurance has new winding-trail artwork. Future strength workouts use the clearer Full-body strength name; historical labels stay intact."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
