@@ -233,9 +233,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.09 2158";
+const APP_VERSION = "2026.10.09 2202";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Bottom navigation now uses a warm background, recognizable icons and orange highlighting with an underline for the active tab.",
+  ] },
+  { version: "2026.10.09 2158", changes: [
     "Plan now has an illustrated Adventure view: scenes follow your workout choices, with Today and completion markers. List view remains available.",
   ] },
   { version: "2026.10.09 2059", changes: [
@@ -246,10 +249,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.09 1928", changes: [
     "Add recent videos to today’s workout directly from Settings, without removing them from past workouts.",
-  ] },
-  { version: "2026.10.06 2229", changes: [
-    "Splash graphics now have their own space between the text and arrow.",
-    "Enable local weather to match Today’s graphic to current conditions, using your location with permission.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -366,8 +365,15 @@ function MovementMark({ exerciseId, name, graphicData }: { exerciseId?: string; 
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase() || "MOVE";
   return <span className="movement-fallback" aria-hidden="true"><b>{initials}</b><i>↗</i></span>;
 }
-function NavIcon({ name }: { name: Tab }) {
-  return <span aria-hidden="true">{name === "today" ? "●" : name === "week" ? "◫" : name === "history" ? "◷" : name === "performance" ? "✦" : "•••"}</span>;
+function NavIcon({ name }: { name: Tab | "home" }) {
+  return <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {name === "home" ? <><path d="m3 10 9-7 9 7v10H15v-6H9v6H3Z" fill="currentColor" strokeWidth="1"/></>
+    : name === "today" ? <><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/><rect x="8" y="13" width="3" height="3" rx=".5" fill="currentColor" stroke="none"/></>
+    : name === "week" ? <><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Z" fill="currentColor" fillOpacity=".15"/><path d="M9 3v16m6-14v16"/></>
+    : name === "history" ? <><path d="M3 10a9 9 0 1 1 2.5 8M3 4v6h6"/><path d="M12 7v5l3 2"/></>
+    : name === "performance" ? <><rect x="3" y="13" width="4" height="8" rx="1" fill="currentColor" stroke="none"/><rect x="10" y="8" width="4" height="13" rx="1" fill="currentColor" stroke="none"/><rect x="17" y="3" width="4" height="18" rx="1" fill="currentColor" stroke="none"/></>
+    : <><path d="m9 3-.6 2.3-2 .9-2.2-.7-2 3.5 1.7 1.6v2.4L2.2 15l2 3.5 2.2-.7 2 .9L9 21h6l.6-2.3 2-.9 2.2.7 2-3.5-1.7-1.7v-2.2l1.7-1.6-2-3.5-2.2.7-2-.9L15 3Z" fill="currentColor" fillOpacity=".15"/><circle cx="12" cy="12" r="3"/></>}
+  </svg>;
 }
 
 function SplashIcon({ name }: { name: Tab }) {
@@ -849,7 +855,7 @@ export default function Home() {
       {tab === "performance" && <PerformanceView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onAddToToday={addVideoToToday}/>}
     </main>
-    <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setActiveDate(today); setEnteredApp(false); scrollToTop(); }}><span aria-hidden="true">⌂</span><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Performance" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
+    <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setActiveDate(today); setEnteredApp(false); scrollToTop(); }}><NavIcon name="home"/><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Performance" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
 }
 

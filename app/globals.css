@@ -1058,3 +1058,12 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .plan-content .adventure-stop { min-height: 70px; padding-block: 6px; }
   .plan-content .week-list { min-height: 448px; }
 }
+
+/* Expedition-journal navigation: warm surface, orange selection and clear icons. */
+.bottom-nav { background: rgba(255,250,240,.97); border-color: #e2d9c9; border-radius: 18px; }
+.bottom-nav button, .bottom-nav .home-nav { position: relative; color: #62717e; padding: 5px 2px 9px; gap: 5px; }
+.bottom-nav .nav-icon { width: 25px; height: 25px; flex-shrink: 0; }
+.bottom-nav button.active { background: transparent; color: #b94b17; }
+.bottom-nav button.active::after { content: ""; position: absolute; width: 25px; height: 3px; border-radius: 3px; bottom: 2px; background: #ee6b25; }
+.bottom-nav button:focus-visible { outline: 2px solid #b94b17; outline-offset: -2px; }
+.progress-shell > .bottom-nav { background: rgba(255,250,240,.97); }

@@ -15,7 +15,17 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — adventure Plan
+## Current change — warm orange navigation
+
+Candidate `2026.10.09 2202`: bottom menu matches mockup’s warm ivory surface,
+orange active icon/label and underline, with readable SVG home/calendar/map/
+history/chart/settings icons. Active destination exposes aria-current=page.
+Six destinations and touch target sizes preserved. Both builds, 13 rendered
+tests, 24 focused tests and diff check pass. External headless Chrome verified
+all six destinations, orange active state, and inspected desktop/tablet/phone
+views. No built-in browser used. Publication pending.
+
+## Previous release — adventure Plan
 
 Published `2026.10.09 2158`: Plan defaults to Adventure with persistent List switch.
 Six reusable painted terrain tiles; the resolved historical/one-day workout key
