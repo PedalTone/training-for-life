@@ -1014,3 +1014,13 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .prior-note-copy button { width: 100%; min-height: 46px; padding: 10px 14px; border: 0; border-radius: 11px; background: var(--brand); color: white; font: inherit; font-size: 16px; font-weight: 750; white-space: normal; }
 .prior-note-copy button:disabled { opacity: .6; }
 .prior-note-copy p[role="status"] { color: var(--ink); }
+
+.repeat-workout { margin: 0 0 12px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.repeat-workout summary { min-height: 46px; display: flex; align-items: center; gap: 10px; padding: 8px 4px; cursor: pointer; list-style: none; color: var(--ink); font-size: 16px; }
+.repeat-workout summary::-webkit-details-marker { display: none; }
+.repeat-workout summary > span:last-child { margin-left: auto; color: var(--muted); }
+.repeat-workout > div { display: grid; gap: 10px; padding: 0 4px 14px; }
+.repeat-workout p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.45; overflow-wrap: anywhere; }
+.repeat-workout button { min-height: 46px; padding: 10px 14px; border: 0; border-radius: 11px; background: var(--brand); color: white; font: inherit; font-weight: 750; }
+.repeat-workout button:disabled { opacity: .6; }
+.repeat-workout p[role="status"] { color: var(--ink); }

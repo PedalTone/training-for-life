@@ -15,7 +15,20 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — copy prior workout notes
+## Current change — repeat prior workout
+
+Candidate `2026.10.09 2059`: one collapsed Repeat a prior workout row between
+setup and log, shown only when an earlier matching workout has reusable setup.
+Uses historical key/theme matching. Reuses format, add-ons, videos and notes;
+merges current setup without duplicates. Never copies results, completion, injury,
+photos or screenshots, and preserves existing current entries. Copy uses normal
+persistence. Three new tests cover source selection, field boundaries, source
+immutability and repeated application. Both builds, 13 rendered tests, 22 focused
+tests and git diff --check pass. Publication pending.
+Non-browser verification follows the user’s browser restriction; visual review
+remains with Safari/Chrome.
+
+## Previous release — copy prior workout notes
 
 Published `2026.10.09 1936`: Log Workout → Note shows the latest earlier matching
 workout with nonblank notes and its date. Copy fills empty notes; Append preserves

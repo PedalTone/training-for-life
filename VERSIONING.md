@@ -2,8 +2,8 @@
 
 Public releases use Eastern publication timestamps. See AGENTS.md.
 
-Release decision: **New public release** — `2026.10.09 1936` lets workout notes be copied from the most recent earlier workout of the same type, preserving existing notes.
+Release decision: **New public release** — `2026.10.09 2059` adds a compact, collapsed Repeat a prior workout control that reuses matching workout setup without copying results.
 
-App, notes, tests, service-worker cache and deployment use `2026.10.09 1936`.
+App, notes, tests, service-worker cache and deployment use `2026.10.09 2059`.
 Unchanged icons retain their `2026.09.28 0727` asset names.
 Non-browser verification follows the user's built-in-browser restriction.

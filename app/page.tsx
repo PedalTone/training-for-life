@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
-import { findPriorWorkoutNotes, appendPriorWorkoutNotes } from "./prior-workout-notes";
+import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
 import { isCompleteInsightReport } from "./insight-validation";
 
 import { NutritionCard, NutritionHistory } from "./nutrition-card";
@@ -232,9 +232,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.09 1936";
+const APP_VERSION = "2026.10.09 2059";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Repeat a prior matching workout from a compact, collapsed control: reuse format, add-ons, videos and notes while leaving past results in history.",
+  ] },
+  { version: "2026.10.09 1936", changes: [
     "Copy notes from the most recent earlier workout of the same type; existing notes are kept and prior notes are appended.",
   ] },
   { version: "2026.10.09 1928", changes: [
@@ -247,10 +250,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.06 2222", changes: [
     "Splash-button graphics are centered, clear of the navigation arrows.",
     "Today keeps its highlight with a warm, light background distinct from the navy title banner.",
-  ] },
-  { version: "2026.10.06 2217", changes: [
-    "Plan uses compact, evenly sized day buttons to fit the week and next-week action on portrait phones.",
-    "Home has bolder splash buttons, with a blue-and-orange Today card, larger labels and subtle destination graphics.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -455,6 +454,8 @@ export default function Home() {
   const [screenshotPreview, setScreenshotPreview] = useState("");
   const [screenshotWorkout, setScreenshotWorkout] = useState<ScreenshotWorkout | null>(null);
   const [screenshotError, setScreenshotError] = useState("");
+  const [repeatNotice, setRepeatNotice] = useState("");
+  useEffect(() => setRepeatNotice(""), [activeKey, session.plannedKey, session.plannedTheme]);
   const [noteCopyNotice, setNoteCopyNotice] = useState("");
   useEffect(() => setNoteCopyNotice(""), [activeKey, session.plannedKey, session.plannedTheme]);
   const [photoNotice, setPhotoNotice] = useState("");
@@ -472,10 +473,12 @@ export default function Home() {
   // user's saved mapping during startup; recorded history remains anchored to
   // its saved plannedKey/plannedTheme.
   const plan = session.date === activeKey && sessionIsBlank ? currentDayPlan : historicalPlan(session.date === activeKey ? session : undefined, scheduleForDate(activeDate, activeSchedule, scheduleHistory), activeDate);
-  const priorWorkoutNotes = findPriorWorkoutNotes(history.map((item) => {
+  const typedHistory = history.map((item) => {
     const date = dateFromKey(item.date);
     return { ...item, workoutType: historicalPlan(item, scheduleForDate(date, activeSchedule, scheduleHistory), date) };
-  }), activeKey, plan);
+  });
+  const priorWorkoutNotes = findPriorWorkoutNotes(typedHistory, activeKey, plan);
+  const repeatSource = findRepeatWorkout(typedHistory, activeKey, plan);
   const saveAiAccessCode = (value: string) => { const code = value.trim(); setScreenshotAccessCode(code); setHasScreenshotAccess(Boolean(code)); localStorage.setItem("t4l:insights-access", code); };
 
   useEffect(() => { const realToday = easternToday(); setToday(realToday); setActiveDate(realToday); const savedCode = localStorage.getItem("t4l:insights-access") || ""; setScreenshotAccessCode(savedCode); setHasScreenshotAccess(Boolean(savedCode)); }, []);
@@ -580,6 +583,11 @@ export default function Home() {
     const choice = workoutOptions.find((option) => option.key === key);
     if (!choice) return;
     update({ planOverride: true, plannedKey: choice.key, plannedTheme: choice.label, status: session.status === "completed" ? "completed" : choice.key === "rest" ? "rest" : "partial" }, true);
+  };
+  const repeatPriorWorkout = () => {
+    if (!loaded || sessionRef.current.date !== activeKey || !repeatSource) return;
+    update(repeatWorkoutSetup(sessionRef.current, repeatSource), true);
+    setRepeatNotice("Workout setup added. Check your exercises and notes, then log today’s results.");
   };
   const copyPriorNotes = () => {
     if (!loaded || sessionRef.current.date !== activeKey || !priorWorkoutNotes) return;
@@ -818,6 +826,7 @@ export default function Home() {
           <button className={`mobility-loader ${showMobilityPicker ? "active" : ""}`} onClick={openMobilityPicker} aria-expanded={showMobilityPicker}><span>↗</span><b>Add-ons</b><small>{session.mobilityExercises.length ? `${session.mobilityExercises.length} selected · ${session.completedExercises.filter((name) => session.mobilityExercises.includes(name)).length} completed` : "Choose supporting work"}</small></button>
         </div>
 
+        {repeatSource && <details className="repeat-workout" key={`${activeKey}-${plan.key}-${plan.theme}`}><summary><span aria-hidden="true">↻</span><b>Repeat a prior workout</b><span aria-hidden="true">＋</span></summary><div><p>{plan.theme} · {dateFromKey(repeatSource.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p><p>Reuse the format, add-ons, videos and notes. Your current entries stay; past results and checkmarks stay in history.</p><button type="button" onClick={repeatPriorWorkout} disabled={!loaded}>Use this workout setup</button>{repeatNotice && <p role="status">{repeatNotice}</p>}</div></details>}
         <details className="surface-card log-workout-card" open={openPanel === "log"} onToggle={(e) => togglePanel("log", e.currentTarget.open)}>
           <summary><span className="panel-icon">▤</span><span><b>Log Workout</b><small>{session.duration || session.notes || session.workoutPhoto || injuryReported ? "Workout data, notes, photo, or body check-in added" : "Workout data, notes, photo, and body check-in"}</small></span><i>＋</i></summary>
           <div className="log-workout-body">
