@@ -240,18 +240,16 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0938";
+const APP_VERSION = "2026.10.10 0956";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, changes: ["Endurance now features the approved long winding trail with a runner and cyclist. Strength workouts are consistently labeled Full-body strength."] },
+  { version: APP_VERSION, changes: ["Today’s landscape is centered in the space beside the workout title for a more balanced header."] },
+  { version: "2026.10.10 0938", changes: ["Endurance now features the approved long winding trail with a runner and cyclist. Strength workouts are consistently labeled Full-body strength."] },
   { version: "2026.10.10 0922", changes: ["Saved GPS workouts now clearly show finished totals, with a separate option to record another activity. Today’s landscape uses a wider view to match Plan."] },
   { version: "2026.10.10 0819", changes: [
     "Track a run or ride with iPhone GPS: live time, distance and speed, pause/resume, and totals saved to your workout journal and backups. Keep the app visible while tracking.",
   ] },
   { version: "2026.10.10 0627", changes: [
     "Home now uses the approved journal design: original background, a landscape for Today, familiar navigation icons and softly floating cards.",
-  ] },
-  { version: "2026.10.10 0608", changes: [
-    "Today now matches Plan and Progress with workout landscape artwork, warm ivory cards, navy headings and clearer logging labels.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {

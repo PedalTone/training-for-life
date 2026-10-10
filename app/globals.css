@@ -1160,9 +1160,9 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .today-page .today-version { color: #cdd6dc; font-size: 11px; flex-shrink: 0; }
 .today-page .today-hero .hero-main { padding: 18px 0 14px; min-height: 0; gap: 16px; }
 .today-page .hero-main > div:first-child { max-width: none; }
-.today-page .hero-title-row { display: grid; grid-template-columns: minmax(0,1fr) 220px; gap: 22px; align-items: center; }
+.today-page .hero-title-row { display: grid; grid-template-columns: fit-content(50%) minmax(0,1fr); gap: 22px; align-items: center; }
 .today-page .today-hero .hero-main h1 { font: 38px/1.1 Georgia,serif; letter-spacing: -.025em; color: #fffaf2; }
-.today-page .today-terrain { height: 110px; border-radius: 14px; background-size: 200% 300%; box-shadow: 0 4px 18px #0002; border: 1px solid #fff4; }
+.today-page .today-terrain { justify-self: center; width: 220px; max-width: 100%; aspect-ratio: 2 / 1; height: auto; border-radius: 14px; background-size: 200% 300%; box-shadow: 0 4px 18px #0002; border: 1px solid #fff4; }
 .today-page .today-hero .hero-main p { font-size: 17px; line-height: 1.5; color: #e3e8eb; max-width: 700px; }
 .today-page .today-hero .theme-mantra { font-size: 11px; color: #f2ba86; margin: 0; letter-spacing: .08em; }
 .today-page .theme-mantra span { color: #f2ba86; background: #ffffff12; }
@@ -1190,8 +1190,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .today-page .nutrition-card h2 { font: bold 20px Georgia,serif; color: #203449; }
 @media(max-width:680px) {
  .today-page .today-hero { padding: 18px; }
- .today-page .hero-title-row { grid-template-columns: minmax(0,1fr) 150px; gap: 14px; }
- .today-page .today-terrain { height: 75px; border-radius: 12px; }
+ .today-page .hero-title-row { grid-template-columns: fit-content(50%) minmax(0,1fr); gap: 14px; }
+ .today-page .today-terrain { width: 150px; height: auto; border-radius: 12px; }
  .today-page .today-hero .hero-main h1 { font-size: 29px; }
  .today-page .today-hero .hero-main p { font-size: 16px; }
  .today-page .compact-panel:not([open]) summary { min-height: 128px; padding: 14px 12px; }

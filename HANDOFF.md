@@ -15,7 +15,16 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — Endurance artwork and full-body strength naming
+## Current change — balanced Today header
+
+Candidate `2026.10.10 0956`: Today title takes its natural width (up to half
+of the row), with artwork centered in the remaining space. Existing 2:1 image
+size retained where space allows; narrower rows shrink proportionally. No data
+or tracking changes. Both builds, 13 rendered tests and diff check pass.
+External Chrome phone/tablet/desktop views and longer full-body title inspected;
+expanded logging and workout-driven scene changes verified. Publication pending.
+
+## Previous release — Endurance artwork and full-body strength naming
 
 Published `2026.10.10 0938`: approved runner/cyclist winding trail saved as
 public/endurance-trail.png and used for Endurance across Home, Today, Plan,
