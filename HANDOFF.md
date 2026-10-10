@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — Today cosmetic refresh
 
-Candidate `2026.10.10 0608`: Today matches Plan/Progress with navy hero, serif
+Published `2026.10.10 0608`: Today matches Plan/Progress with navy hero, serif
 workout title and live terrain thumbnail; warm ivory cards, orange accents,
 clearer labels, balanced desktop action row and harmonized expanded controls.
 Designly composition and visual QA applied. Same reusable terrain atlas; artwork
@@ -26,7 +26,8 @@ schema changed. Both builds and 13 rendered tests pass, plus diff check.
 External Chrome verified desktop/tablet/phone layouts, strength/recovery artwork
 changes, main-workout controls and editable notes/body check-in. Rendered expanded
 setup/logging and recovery views inspected. No built-in browser used.
-Publication pending.
+Commit `7729852` deployed in successful Pages run `38044089049`; HTTPS
+verified exact release, JS/CSS and service worker.
 
 ## Previous release — on-device Progress
 
