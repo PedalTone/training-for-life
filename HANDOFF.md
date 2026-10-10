@@ -15,7 +15,24 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — journal search
+## Current change — on-device Progress
+
+Candidate `2026.10.10 0554`: replaces the old overview with illustrated training
+balance in 4/12-week windows, latest matching completed workout pairs, and familiar
+library add-ons last completed at least 14 days ago. Add to today preserves existing
+setup/results and avoids duplicates; selected add-ons never count as completed.
+Historical workout themes and activities keep comparisons separate. Completed
+workout/recovery counts and supporting-work days are explicit; no API calls for
+these features. Optional existing AI review remains collapsed below. Same Plan
+terrain atlas, navy/ivory/orange, Designly composition and visual QA applied.
+No storage or backup schema changes. Period choice survives journal navigation.
+Both builds, 13 rendered tests and 33 focused tests pass, plus diff check.
+External Chrome verified 4/12-week counts, comparison journals, duplicate-safe
+add-on copy and persisted selection; historical fixtures unchanged. Rendered
+phone/tablet/desktop, comparisons and revisit sections visually inspected.
+Publication pending.
+
+## Previous release — journal search
 
 Published `2026.10.10 0534`: History has local search across workout titles,
 activities, notes, add-ons, video titles and body check-ins, plus collapsed

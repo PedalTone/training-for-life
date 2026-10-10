@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
+import { LocalProgressView } from "./local-progress-view";
 import { HistorySearchPanel } from "./history-search-panel";
 import { emptyHistoryFilters, type HistoryFilters } from "./history-search";
 import { DailyJournal } from "./daily-journal";
@@ -236,9 +237,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0534";
+const APP_VERSION = "2026.10.10 0554";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Progress now works on your device: illustrated training balance, similar-workout comparisons and add-ons to revisit, with 4- and 12-week views.",
+  ] },
+  { version: "2026.10.10 0534", changes: [
     "Search your journal by notes, add-ons, videos and body check-ins; filter by workout type or dates and open matching days.",
   ] },
   { version: "2026.10.09 2318", changes: [
@@ -249,9 +253,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.09 2158", changes: [
     "Plan now has an illustrated Adventure view: scenes follow your workout choices, with Today and completion markers. List view remains available.",
-  ] },
-  { version: "2026.10.09 2059", changes: [
-    "Repeat a prior matching workout from a compact, collapsed control: reuse format, add-ons, videos and notes while leaving past results in history.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -444,6 +445,7 @@ export default function Home() {
     });
   };
   const basePlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
+  const [progressWeeks, setProgressWeeks] = useState(4);
   const [historyFilters, setHistoryFilters] = useState<HistoryFilters>(emptyHistoryFilters);
   const [journalDate, setJournalDate] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("today");
@@ -738,6 +740,18 @@ export default function Home() {
     setHistory((items) => [next, ...items.filter((item) => item.id !== todayKey)].sort((a, b) => b.date.localeCompare(a.date)));
     return `Added “${video.label}” to today’s workout.`;
   };
+  const addExerciseToToday = async (name: string) => {
+    const todayKey = dateKey(today);
+    let saved: Session | undefined;
+    try { saved = await getSession(todayKey); } catch { const fallback = localStorage.getItem(`t4l:${todayKey}`); saved = fallback ? JSON.parse(fallback) : undefined; }
+    const current = sessionRef.current.id === todayKey ? sessionRef.current : saved ? normalizeSession(saved) : emptySession(todayKey, activeSchedule[today.getDay()].key === "rest", activeSchedule[today.getDay()]);
+    if (current.mobilityExercises.includes(name)) return `${name} is already in today’s add-ons.`;
+    const next = { ...current, mobilityExercises: [...current.mobilityExercises, name], updatedAt: new Date().toISOString() };
+    try { await saveSession(next); } catch { localStorage.setItem(`t4l:${todayKey}`, JSON.stringify(next)); }
+    if (sessionRef.current.id === todayKey) { sessionRef.current = next; setSession(next); }
+    setHistory(items => [next, ...items.filter(item => item.id !== todayKey)].sort((a,b) => b.date.localeCompare(a.date)));
+    return `Added ${name} to today’s add-ons.`;
+  };
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
   // The open Today session is the freshest source for its date. Include it in
@@ -870,7 +884,7 @@ export default function Home() {
 
       {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openPlanDate} onMakeNextWeekPlan={makePlanForNextWeek}/>}
       {tab === "history" && <HistoryView filters={historyFilters} onFilters={setHistoryFilters} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openJournal}/>}
-      {tab === "performance" && <PerformanceView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
+      {tab === "performance" && <PerformanceView weeks={progressWeeks} setWeeks={setProgressWeeks} library={libraryExercises.map(e => e.name)} onAddExercise={addExerciseToToday} onOpenJournal={openJournal} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onAddToToday={addVideoToToday}/>}
       </>}
     </main>
@@ -1031,21 +1045,13 @@ const insightDirectionMeta: Record<InsightDirection, { icon: string; label: stri
   decrease: { icon: "↘", label: "Ease back" }, no_signal: { icon: "·", label: "No clear signal" },
 };
 
-function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insightReports, setInsightReports, fitnessGoals, accessCode, onOpenSettings }: { now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; accessCode: string; onOpenSettings: () => void }) {
+function PerformanceView({ weeks, setWeeks, library, onAddExercise, onOpenJournal, now, sessions, activeSchedule, scheduleHistory, insightReports, setInsightReports, fitnessGoals, accessCode, onOpenSettings }: { weeks:number; setWeeks:(weeks:number)=>void; library: string[]; onAddExercise: (name:string)=>Promise<string>; onOpenJournal: (date:Date)=>void; now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; insightReports: TrainingInsightReport[]; setInsightReports: React.Dispatch<React.SetStateAction<TrainingInsightReport[]>>; fitnessGoals: FitnessGoals; accessCode: string; onOpenSettings: () => void }) {
   const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(30);
   const [insightsOpen, setInsightsOpen] = useState(false);
   const [insightState, setInsightState] = useState<"idle" | "analyzing">("idle");
   const [insightError, setInsightError] = useState("");
   const insightAccessCode = accessCode;
-  const map = new Map(sessions.map((item) => [item.date, item]));
-  const last30 = sessions.filter((item) => { const age = (now.getTime() - dateFromKey(item.date).getTime()) / 86400000; return age >= 0 && age <= 30; });
-  const sessionState = (item: Session) => stateFor(item, item.plannedKey || activeSchedule[dateFromKey(item.date).getDay()].key, dateFromKey(item.date), now);
-  const adherence = last30.length ? Math.round(last30.filter((item) => ["completed", "modified", "protected"].includes(sessionState(item))).length / last30.length * 100) : 0;
-  const currentStreak = calculateStreak(sessions, now, activeSchedule, scheduleHistory);
-  const consistentWeeks = Array.from({ length: 8 }, (_, w) => { const start = new Date(now); start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - w * 7); return Array.from({ length: 6 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return map.get(dateKey(d)); }).filter((s) => s?.status === "completed" || hasReportedInjury(s) || s?.injury.impact === "modified").length >= 5; }).filter(Boolean).length;
-  const week = weekDates(now);
-  const weekRecorded = week.filter((date) => { const saved = map.get(dateKey(date)); return Boolean(saved && ["completed", "modified", "protected", "partial"].includes(stateFor(saved, activeSchedule[date.getDay()].key, date, now))); }).length;
-  const injuryDays = sessions.filter(hasReportedInjury).length;
+  const sessionState = (item: Session) => stateFor(item, historicalPlan(item, scheduleForDate(dateFromKey(item.date), activeSchedule, scheduleHistory), dateFromKey(item.date)).key, dateFromKey(item.date), now);
   const insightSessions = sessions.filter((saved) => {
     const age = (now.getTime() - dateFromKey(saved.date).getTime()) / 86400000;
     const hasData = ["completed", "modified", "protected", "partial"].includes(sessionState(saved));
@@ -1063,8 +1069,7 @@ function PerformanceView({ now, sessions, activeSchedule, scheduleHistory, insig
     finally { setInsightState("idle"); }
   }
   return <div className="subpage performance-page">
-    <section className="page-intro"><span className="kicker">RELENTLESS FORWARD PROGRESS</span><h1>Your progress,<br/>interpreted.</h1><p>Performance brings your patterns, consistency, and AI assessment together in one place.</p></section>
-    <section className="performance-overview"><header className="performance-overview-hero"><div><span className="kicker">30-DAY RHYTHM</span><strong>{adherence}%</strong></div><span className="performance-arrow">↗</span></header><div className="performance-overview-metrics"><div><span>Current rhythm</span><strong>{currentStreak}<small> {currentStreak === 1 ? "day" : "days"}</small></strong></div><div><span>Consistent weeks</span><strong>{consistentWeeks}<small> of 8</small></strong></div><div><span>Recorded</span><strong>{sessions.length}<small> {sessions.length === 1 ? "day" : "days"}</small></strong></div></div><div className="performance-overview-week"><div className="card-heading"><div><span className="kicker">THIS WEEK</span><h2>Plan vs. record</h2></div><strong>{weekRecorded} / {week.length}</strong></div><div className="performance-bar"><i style={{ width: `${Math.round(weekRecorded / Math.max(1, week.length) * 100)}%` }}/></div><div className="performance-foot"><span>{injuryDays} body {injuryDays === 1 ? "consideration" : "considerations"}</span><span>{last30.filter((item) => sessionState(item) === "completed").length} completed / 30 days</span></div></div></section>
+    <LocalProgressView weeks={weeks} setWeeks={setWeeks} entries={sessions.map(session => { const plan = historicalPlan(session, scheduleForDate(dateFromKey(session.date), activeSchedule, scheduleHistory), dateFromKey(session.date)); return {session, key:plan.key, theme:plan.theme}; })} today={dateKey(now)} library={library} onAdd={onAddExercise} onOpen={date=>onOpenJournal(dateFromKey(date))}/>
     <details className="ai-insights-card performance-insights" open={insightsOpen} onToggle={(event) => setInsightsOpen(event.currentTarget.open)}><summary className="ai-insights-heading"><span className="ai-orb" aria-hidden="true">✦</span><div><span className="kicker">TRAINING INSIGHTS</span><h2>Your history, interpreted</h2><p>AI reviews completed workouts, details, notes, mobility work, effort, and body check-ins against your goals.</p></div><i aria-hidden="true">＋</i></summary>
       <div className="insight-period" aria-label="Insight review period">{([[30, "30 days"], [90, "90 days"], [0, "All history"]] as const).map(([period, label]) => <button key={period} className={insightPeriod === period ? "active" : ""} aria-pressed={insightPeriod === period} onClick={() => { setInsightPeriod(period); setInsightError(""); }}>{label}</button>)}</div>
       {!insightAccessCode && <div className="insight-access"><div><strong>AI access is managed in Settings</strong><small>Keep your personal access code in one place for screenshot import and AI insights.</small></div><button onClick={onOpenSettings}>Open Settings</button></div>}
