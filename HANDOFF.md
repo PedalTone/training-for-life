@@ -17,14 +17,15 @@ was changed.
 
 ## Current change — repeat prior workout
 
-Candidate `2026.10.09 2059`: one collapsed Repeat a prior workout row between
+Published `2026.10.09 2059`: one collapsed Repeat a prior workout row between
 setup and log, shown only when an earlier matching workout has reusable setup.
 Uses historical key/theme matching. Reuses format, add-ons, videos and notes;
 merges current setup without duplicates. Never copies results, completion, injury,
 photos or screenshots, and preserves existing current entries. Copy uses normal
 persistence. Three new tests cover source selection, field boundaries, source
 immutability and repeated application. Both builds, 13 rendered tests, 22 focused
-tests and git diff --check pass. Publication pending.
+tests and git diff --check pass. Commit `7ddcd16` deployed successfully in
+Pages run `38011435325`; HTTPS verified the exact release, worker and app assets.
 Non-browser verification follows the user’s browser restriction; visual review
 remains with Safari/Chrome.
 
