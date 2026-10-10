@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
+import { adventureSceneFor } from "./adventure-scenes";
 import { isCompleteInsightReport } from "./insight-validation";
 
 import { NutritionCard, NutritionHistory } from "./nutrition-card";
@@ -232,9 +233,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.09 2059";
+const APP_VERSION = "2026.10.09 2158";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Plan now has an illustrated Adventure view: scenes follow your workout choices, with Today and completion markers. List view remains available.",
+  ] },
+  { version: "2026.10.09 2059", changes: [
     "Repeat a prior matching workout from a compact, collapsed control: reuse format, add-ons, videos and notes while leaving past results in history.",
   ] },
   { version: "2026.10.09 1936", changes: [
@@ -246,10 +250,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.06 2229", changes: [
     "Splash graphics now have their own space between the text and arrow.",
     "Enable local weather to match Today’s graphic to current conditions, using your location with permission.",
-  ] },
-  { version: "2026.10.06 2222", changes: [
-    "Splash-button graphics are centered, clear of the navigation arrows.",
-    "Today keeps its highlight with a warm, light background distinct from the navy title banner.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -918,10 +918,23 @@ function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session
 }
 
 function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate, onMakeNextWeekPlan }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void; onMakeNextWeekPlan: () => void }) {
+  const [view, setView] = useState<"adventure" | "list">(() => {
+    try { return localStorage.getItem("t4l:plan-view") === "list" ? "list" : "adventure"; } catch { return "adventure"; }
+  });
+  const changeView = (next: "adventure" | "list") => {
+    setView(next);
+    try { localStorage.setItem("t4l:plan-view", next); } catch { /* View remains usable without storage. */ }
+  };
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
-  return <div className="subpage week-page">
-    <section className="week-list">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, today); const isToday = dateKey(date) === dateKey(today); return <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>; })}</section>
+  const entries = days.map((date) => {
+    const saved = map.get(dateKey(date));
+    const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date);
+    return { date, saved, plan, state: stateFor(saved, plan.key, date, today), isToday: dateKey(date) === dateKey(today), scene: adventureSceneFor(plan.key) };
+  });
+  return <div className={`subpage week-page ${view === "adventure" ? "adventure-page" : ""}`}>
+    <header className="plan-view-heading"><div><h2>{view === "adventure" ? "Your weekly adventure" : "Your weekly plan"}</h2><p>{days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {days[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p></div><div className="plan-view-switch" role="group" aria-label="Plan view"><button type="button" aria-pressed={view === "list"} onClick={() => changeView("list")}>List</button><button type="button" aria-pressed={view === "adventure"} onClick={() => changeView("adventure")}>Adventure</button></div></header>
+    {view === "adventure" ? <section className="adventure-map" aria-label="Weekly adventure destinations">{entries.map(({ date, plan, state, isToday, scene }, index) => <button type="button" key={dateKey(date)} className={`adventure-stop ${isToday ? "today" : ""} ${state === "completed" ? "completed" : ""}`} data-workout-type={plan.key} data-scene={scene.name} aria-current={isToday ? "date" : undefined} aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}: ${plan.theme}. ${scene.name}. ${stateLabel(state)}${isToday ? ". Today" : ""}`} onClick={() => onOpenDate(date)}><span className="adventure-scenery" aria-hidden="true" style={{ backgroundPosition: scene.position, backgroundImage: `url(${import.meta.env.BASE_URL}adventure-terrain.png)` }}/><span className="adventure-node" aria-hidden="true">{state === "completed" ? "✓" : index + 1}</span><span className="adventure-copy"><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{stateLabel(state)}</em></span></button>)}</section> : <section className="week-list">{entries.map(({ date, saved, plan, state, isToday }) => <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>)}</section>}
     <button className="week-next-plan-button" type="button" onClick={onMakeNextWeekPlan}>Make Plan for Next Week <span aria-hidden="true">›</span></button>
   </div>;
 }

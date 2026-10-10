@@ -15,7 +15,22 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — repeat prior workout
+## Current change — adventure Plan
+
+Candidate `2026.10.09 2158`: Plan defaults to Adventure with persistent List switch.
+Six reusable painted terrain tiles; the resolved historical/one-day workout key
+selects terrain, including mountain for both strength themes, forest for endurance,
+beach for recovery; custom types use meadow. Dates, Today and completion markers
+are live code. Terrain sheet is precached for offline use; no image-generation API.
+External headless Chrome checked desktop/tablet/iPhone layouts and verified a
+strength-to-recovery override immediately changes Plan to beach. No built-in browser.
+Both builds, 13 rendered tests, 24 focused tests and diff check pass.
+Desktop, tablet and phone screenshots visually inspected; phone fits all seven
+stops plus next-week action. List/Adventure switching verified. Publication pending. Artwork generated using built-in imagegen;
+prompt: six equal 2×3 expedition-journal terrain tiles, mountain/downhill/river/
+meadow/forest/beach, no text, consistent warm palette. Asset: public/adventure-terrain.png.
+
+## Previous release — repeat prior workout
 
 Published `2026.10.09 2059`: one collapsed Repeat a prior workout row between
 setup and log, shown only when an earlier matching workout has reusable setup.

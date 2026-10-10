@@ -2,8 +2,8 @@
 
 Public releases use Eastern publication timestamps. See AGENTS.md.
 
-Release decision: **New public release** — `2026.10.09 2059` adds a compact, collapsed Repeat a prior workout control that reuses matching workout setup without copying results.
+Release decision: **New public release** — `2026.10.09 2158` adds an illustrated Adventure view in Plan whose terrain follows each day’s workout, including one-day changes.
 
-App, notes, tests, service-worker cache and deployment use `2026.10.09 2059`.
+App, notes, tests, service-worker cache and deployment use `2026.10.09 2158`.
 Unchanged icons retain their `2026.09.28 0727` asset names.
 Non-browser verification follows the user's built-in-browser restriction.
