@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — journal search
 
-Candidate `2026.10.10 0534`: History has local search across workout titles,
+Published `2026.10.10 0534`: History has local search across workout titles,
 activities, notes, add-ons, video titles and body check-ins, plus collapsed
 historical workout-theme and inclusive date filters. Matching excerpts open the
 journal; Back preserves search/filters. Clear restores normal calendars and
@@ -27,7 +27,9 @@ cover matching, accents/multiple words, inclusive dates, distinct historical
 strength themes, future exclusion, excerpts and source immutability. External
 Chrome verified search/type/date filters, video-title matches, empty state,
 clear, journal Back and unchanged source. Desktop/tablet/phone screenshots
-visually inspected with no horizontal overflow. Publication pending.
+visually inspected with no horizontal overflow. Commit `c2f133f` deployed in
+successful Pages run `38042000678`; HTTPS verified exact release, JS/CSS and
+service worker.
 
 ## Previous release — Adventure Journal
 
