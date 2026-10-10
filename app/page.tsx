@@ -240,13 +240,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 1500";
+const APP_VERSION = "2026.10.10 1512";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, changes: ["History and Settings now share the warm ivory, navy and orange palette throughout day tiles, icons and expanded controls."] },
+  { version: APP_VERSION, changes: ["Every tab now shares the same title font, size and position, with a clear Today’s workout heading."] },
+  { version: "2026.10.10 1500", changes: ["History and Settings share warm ivory, navy and orange throughout day tiles, icons and expanded controls."] },
   { version: "2026.10.10 1449", changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
   { version: "2026.10.10 1412", changes: ["Clearer, consistent wording across Home, Plan, Today, your workout journal and Progress. Landscape views keep the artwork while labels focus on your training."] },
   { version: "2026.10.10 1028", changes: ["Strength and easy aerobic now use smaller figures, giving their mountain and riverside landscapes more breathing room."] },
-  { version: "2026.10.10 1023", changes: ["New strength and easy aerobic artwork: a woman lifting a boulder and a man jogging beside the river, with clear iPhone framing and no lettering in the pictures."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -857,11 +857,11 @@ export default function Home() {
   return <div className={`app-shell textured-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}`}>
     <main ref={contentRef} className={tab === "week" && !journalDate ? "plan-content" : undefined} style={showMobilityPicker || screenshotState === "review" ? { overflow: "hidden" } : undefined}>
       {journalDate ? <DailyJournal key={journalDate} date={journalDate} today={dateKey(today)} session={viewHistory.find(item => item.date === journalDate)} plan={historicalPlan(viewHistory.find(item => item.date === journalDate), scheduleForDate(dateFromKey(journalDate), activeSchedule, scheduleHistory), dateFromKey(journalDate))} onDate={date => { setJournalDate(date); scrollToTop(); }} onBack={() => { setJournalDate(null); scrollToTop(); }} onEdit={() => openDate(dateFromKey(journalDate))} onAddVideo={addVideoToToday}/> : <>
-      {tab === "today" && <div className="today-page">
+      {tab === "today" && <div className="today-page"><header className="training-page-heading"><h1>Today’s workout</h1></header>
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div><small className="today-version">{APP_VERSION}</small></div>
-          <div className="hero-main"><div className="hero-title-row"><h1>{plan.theme}</h1><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/></div><p>{plan.guidance}</p></div>
+          <div className="hero-main"><div className="hero-title-row"><h2>{plan.theme}</h2><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/></div><p>{plan.guidance}</p></div>
 
         </section>
 
