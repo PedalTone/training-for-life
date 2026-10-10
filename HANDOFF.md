@@ -17,12 +17,14 @@ was changed.
 
 ## Current change — balanced Today header
 
-Candidate `2026.10.10 0956`: Today title takes its natural width (up to half
+Published `2026.10.10 0956`: Today title takes its natural width (up to half
 of the row), with artwork centered in the remaining space. Existing 2:1 image
 size retained where space allows; narrower rows shrink proportionally. No data
 or tracking changes. Both builds, 13 rendered tests and diff check pass.
 External Chrome phone/tablet/desktop views and longer full-body title inspected;
-expanded logging and workout-driven scene changes verified. Publication pending.
+expanded logging and workout-driven scene changes verified. Commit `11049b9`
+deployed in successful Pages run `38057753845`; HTTPS verified exact release,
+JS/CSS assets and service worker.
 
 ## Previous release — Endurance artwork and full-body strength naming
 
