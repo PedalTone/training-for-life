@@ -17,14 +17,16 @@ was changed.
 
 ## Current change — Settings illustrations and swipe navigation
 
-Candidate `2026.10.10 1949`: Settings uses Home-style line SVGs, blue with an
+Published `2026.10.10 1949`: Settings uses Home-style line SVGs, blue with an
 orange exercise-library accent; Future workout videos keeps its red YouTube icon.
 Left/right touch swipes follow Home/Today/Plan/History/Progress/Settings, stop at
 ends and preserve existing tap navigation. Guards exclude fields, horizontal
 scrollers, videos, dialogs, journal and screen edges; vertical/slow/short gestures
-and scrolling do not navigate. No storage or API changes. Publication pending.
-Both builds, 13 rendered and two gesture unit tests passed before final labeling;
-external Chrome iPhone 440×956 inspected icons and navigation/guard behavior.
+and scrolling do not navigate. No storage or API changes. Commit `9940614` deployed successfully in Pages run
+`38096363559`; live exact release, JS/CSS and service worker verified over HTTPS.
+Both builds, 13 rendered and two gesture unit tests pass;
+external Chrome iPhone 440×956 inspected icons and navigation/guard behavior,
+including a native Chrome touch swipe.
 Physical iPhone gesture feel remains for user confirmation.
 
 ## Current change — categorized release notes
