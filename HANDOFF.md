@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — cohesive training messaging
 
-Candidate `2026.10.10 1412`: all approved Designly strategy wording applied.
+Published `2026.10.10 1412`: all approved Designly strategy wording applied.
 Home uses Today’s workout/Your training and practical destination descriptions;
 signature Relentless forward progress kept only on Home. Today mantra removed.
 Plan uses Your week ahead, List/Landscape and Plan next week. Journal uses Workout
@@ -29,7 +29,8 @@ matches label. No storage, calculations, artwork or routing changes.
 Both builds, 13 rendered and 6 journal/progress tests pass; diff clean. External
 Chrome traversed Home/all five tabs at phone/tablet/desktop sizes, verified new
 labels/accessibility and no overflow; Home/Plan/Progress screenshots inspected.
-Publication pending.
+Commit `3594316` deployed in successful Pages run `38075144519`; HTTPS
+verified exact release, JS/CSS assets and worker.
 
 ## Previous release — landscape-first figure scale
 
