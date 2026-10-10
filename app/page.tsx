@@ -9,7 +9,7 @@ import { LocalProgressView } from "./local-progress-view";
 import { HistorySearchPanel } from "./history-search-panel";
 import { emptyHistoryFilters, type HistoryFilters } from "./history-search";
 import { DailyJournal } from "./daily-journal";
-import { adventureSceneFor } from "./adventure-scenes";
+import { adventureSceneFor, adventureBackgroundFor } from "./adventure-scenes";
 import { isCompleteInsightReport } from "./insight-validation";
 
 import { NutritionCard, NutritionHistory } from "./nutrition-card";
@@ -23,7 +23,7 @@ type Injury = { reported?: boolean; impact: "" | "modified" | "stopped" | "preve
 const videoCategories = [
   { key: "mobility", label: "Mobility", icon: "↗" },
   { key: "aerobic", label: "Easy aerobic", icon: "≈" },
-  { key: "strength", label: "Strength", icon: "🏋️" },
+  { key: "strength", label: "Full-body strength", icon: "🏋️" },
   { key: "speed", label: "Speed / intensity", icon: "⚡" },
   { key: "endurance", label: "Endurance", icon: "∞" },
 ] as const;
@@ -63,9 +63,9 @@ const schedule: WorkoutPlan[] = [
   { short: "Sun", label: "S", theme: "Recovery", key: "rest", icon: "☾", guidance: "Recovery is training, too. Easy walking and gentle mobility are welcome.", activities: ["Recovery", "Easy walk", "Gentle mobility", "Bike"] },
   { short: "Mon", label: "M", theme: "Mobility", key: "mobility", icon: "↗", guidance: "Move well and address what needs attention. Add a ride only if it serves you.", activities: ["Mobility", "Peloton HIIT", "Easy ride", "Bike", "Other"] },
   { short: "Tue", label: "T", theme: "Easy Aerobic", key: "aerobic", icon: "≈", guidance: "30–45 minutes at a conversational, Zone 2 effort.", activities: ["Walk", "Easy run", "Peloton", "Bike", "Other"] },
-  { short: "Wed", label: "W", theme: "Full-Body Strength", key: "strength", icon: "🏋️", guidance: "20–30 minutes of controlled, full-body strength work.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Bike", "Other"] },
+  { short: "Wed", label: "W", theme: "Full-body strength", key: "strength", icon: "🏋️", guidance: "20–30 minutes of controlled, full-body strength work.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Bike", "Other"] },
   { short: "Thu", label: "T", theme: "Speed / Intensity", key: "speed", icon: "⚡", guidance: "Intervals, tempo, hills, Peloton HIIT or other speed work.", activities: ["Track intervals", "Tempo run", "Hill repeats", "Peloton HIIT", "Bike", "Other"] },
-  { short: "Fri", label: "F", theme: "Upper Body Strength", key: "strength", icon: "🏋️", guidance: "20–30 minutes of controlled upper-body strength work after Thursday’s leg-heavy effort.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Bike", "Other"] },
+  { short: "Fri", label: "F", theme: "Full-body strength", key: "strength", icon: "🏋️", guidance: "20–30 minutes of controlled, full-body strength work.", activities: ["Kettlebell", "Dumbbells", "Bodyweight", "Gym", "Bike", "Other"] },
   { short: "Sat", label: "S", theme: "Endurance", key: "endurance", icon: "∞", guidance: "60+ minutes of steady aerobic work. Choose the activity that fits today.", activities: ["Run", "Bike", "Peloton", "Hike / hike-run", "Swim", "Other"] },
 ] ;
 type Schedule = WorkoutPlan[];
@@ -78,7 +78,7 @@ function resizeNoteField(element: HTMLTextAreaElement | null) {
 }
 const scheduleTypeOptions = [
   { key: "rest", label: "Recovery" }, { key: "mobility", label: "Mobility" },
-  { key: "aerobic", label: "Easy Aerobic" }, { key: "strength", label: "Strength" },
+  { key: "aerobic", label: "Easy Aerobic" }, { key: "strength", label: "Full-body strength" },
   { key: "speed", label: "Speed / Intensity" }, { key: "endurance", label: "Endurance" },
 ];
 function customWorkoutPlan(key: string): WorkoutPlan | undefined {
@@ -116,7 +116,7 @@ function historicalPlan(saved: Session | undefined, activeSchedule: Schedule, da
   const savedType = saved?.plannedKey ? planForKey(saved.plannedKey) : undefined;
   if (!saved?.plannedKey && !saved?.plannedTheme) return current;
   const resolved = savedType ? { ...savedType, short: current.short, label: current.label } : current;
-  return { ...resolved, key: saved?.plannedKey || resolved.key, theme: saved?.plannedTheme || resolved.theme };
+  return { ...resolved, key: saved?.plannedKey || resolved.key, theme: resolved.key === "strength" && (saved?.date || dateKey(date || easternToday())) >= dateKey(easternToday()) ? "Full-body strength" : saved?.plannedTheme || resolved.theme };
 }
 
 const exerciseGroups = [
@@ -240,9 +240,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0922";
+const APP_VERSION = "2026.10.10 0938";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, changes: ["Saved GPS workouts now clearly show finished totals, with a separate option to record another activity. Today’s landscape uses a wider view to match Plan."] },
+  { version: APP_VERSION, changes: ["Endurance now features the approved long winding trail with a runner and cyclist. Strength workouts are consistently labeled Full-body strength."] },
+  { version: "2026.10.10 0922", changes: ["Saved GPS workouts now clearly show finished totals, with a separate option to record another activity. Today’s landscape uses a wider view to match Plan."] },
   { version: "2026.10.10 0819", changes: [
     "Track a run or ride with iPhone GPS: live time, distance and speed, pause/resume, and totals saved to your workout journal and backups. Keep the app visible while tracking.",
   ] },
@@ -251,9 +252,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.10 0608", changes: [
     "Today now matches Plan and Progress with workout landscape artwork, warm ivory cards, navy headings and clearer logging labels.",
-  ] },
-  { version: "2026.10.10 0554", changes: [
-    "Progress now works on your device: illustrated training balance, similar-workout comparisons and add-ons to revisit, with 4- and 12-week views.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -413,7 +411,7 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
     <div className="home-section-heading"><span>YOUR NEXT STEP</span><time>{new Date().toLocaleDateString("en-US", { weekday:"long", month:"short", day:"numeric" })}</time></div>
     <button className="home-today splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}>
       <span className="home-today-top"><strong>Today</strong><span className="home-weather" aria-label={weather.enabled ? weather.status : "Local weather is off"}>{weather.kind ? <WeatherGraphic kind={weather.kind}/> : <SplashIcon name="today"/>}<span>{weather.kind ? weather.status : weather.enabled ? "Weather unavailable" : "Weather off"}</span></span></span>
-      <span className="home-today-body"><span><b>{todayPlan.theme}</b><small>{todayCue}</small></span><span className="home-terrain" aria-hidden="true" data-workout-type={todayPlan.key} style={{ backgroundImage:"url(./adventure-terrain.png)", backgroundPosition:adventureSceneFor(todayPlan.key).position }}/></span>
+      <span className="home-today-body"><span><b>{todayPlan.theme}</b><small>{todayCue}</small></span><span className="home-terrain" aria-hidden="true" data-workout-type={todayPlan.key} style={adventureBackgroundFor(todayPlan.key)}/></span>
       <span className="home-today-footer"><span>Open today’s workout</span><span aria-hidden="true">→</span></span>
     </button>
     <div className="home-section-heading"><span>EXPLORE YOUR TRAINING</span></div>
@@ -869,7 +867,7 @@ export default function Home() {
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div><small className="today-version">{APP_VERSION}</small></div>
-          <div className="hero-main"><div className="hero-title-row"><h1>{plan.theme}</h1><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={{ backgroundImage: "url(./adventure-terrain.png)", backgroundPosition: adventureSceneFor(plan.key).position }}/></div><p>{plan.guidance}</p></div>
+          <div className="hero-main"><div className="hero-title-row"><h1>{plan.theme}</h1><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/></div><p>{plan.guidance}</p></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
         </section>
 
@@ -992,7 +990,7 @@ function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate
   });
   return <div className={`subpage week-page ${view === "adventure" ? "adventure-page" : ""}`}>
     <header className="plan-view-heading"><div><h2>{view === "adventure" ? "Your weekly adventure" : "Your weekly plan"}</h2><p>{days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {days[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p></div><div className="plan-view-switch" role="group" aria-label="Plan view"><button type="button" aria-pressed={view === "list"} onClick={() => changeView("list")}>List</button><button type="button" aria-pressed={view === "adventure"} onClick={() => changeView("adventure")}>Adventure</button></div></header>
-    {view === "adventure" ? <section className="adventure-map" aria-label="Weekly adventure destinations">{entries.map(({ date, plan, state, isToday, scene }, index) => <button type="button" key={dateKey(date)} className={`adventure-stop ${isToday ? "today" : ""} ${state === "completed" ? "completed" : ""}`} data-workout-type={plan.key} data-scene={scene.name} aria-current={isToday ? "date" : undefined} aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}: ${plan.theme}. ${scene.name}. ${stateLabel(state)}${isToday ? ". Today" : ""}`} onClick={() => onOpenDate(date)}><span className="adventure-scenery" aria-hidden="true" style={{ backgroundPosition: scene.position, backgroundImage: `url(${import.meta.env.BASE_URL}adventure-terrain.png)` }}/><span className="adventure-node" aria-hidden="true">{state === "completed" ? "✓" : index + 1}</span><span className="adventure-copy"><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{stateLabel(state)}</em></span></button>)}</section> : <section className="week-list">{entries.map(({ date, saved, plan, state, isToday }) => <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>)}</section>}
+    {view === "adventure" ? <section className="adventure-map" aria-label="Weekly adventure destinations">{entries.map(({ date, plan, state, isToday, scene }, index) => <button type="button" key={dateKey(date)} className={`adventure-stop ${isToday ? "today" : ""} ${state === "completed" ? "completed" : ""}`} data-workout-type={plan.key} data-scene={scene.name} aria-current={isToday ? "date" : undefined} aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}: ${plan.theme}. ${scene.name}. ${stateLabel(state)}${isToday ? ". Today" : ""}`} onClick={() => onOpenDate(date)}><span className="adventure-scenery" aria-hidden="true" style={adventureBackgroundFor(plan.key)}/><span className="adventure-node" aria-hidden="true">{state === "completed" ? "✓" : index + 1}</span><span className="adventure-copy"><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{stateLabel(state)}</em></span></button>)}</section> : <section className="week-list">{entries.map(({ date, saved, plan, state, isToday }) => <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>)}</section>}
     <button className="week-next-plan-button" type="button" onClick={onMakeNextWeekPlan}>Make Plan for Next Week <span aria-hidden="true">›</span></button>
   </div>;
 }
@@ -1023,7 +1021,7 @@ function HistoryView({ filters, onFilters, now, sessions, activeSchedule, schedu
 const performanceAreas = [
   { key: "mobility", label: "Mobility", icon: "↗", terms: ["mobility", "stretch", "flexibility"] },
   { key: "aerobic", label: "Easy aerobic", icon: "≈", terms: ["aerobic", "zone 2", "easy", "cardio"] },
-  { key: "strength", label: "Strength", icon: "🏋️", terms: ["strength", "kettlebell", "weight", "lift"] },
+  { key: "strength", label: "Full-body strength", icon: "🏋️", terms: ["strength", "kettlebell", "weight", "lift"] },
   { key: "speed", label: "Speed", icon: "⚡", terms: ["speed", "interval", "tempo", "intensity"] },
   { key: "endurance", label: "Endurance", icon: "∞", terms: ["endurance", "long", "distance"] },
   { key: "rest", label: "Recovery", icon: "☾", terms: ["rest", "recovery", "recover"] },
