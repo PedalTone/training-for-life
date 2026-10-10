@@ -15,7 +15,18 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — typography and hierarchy
+## Current change — complete History/Settings palette
+
+Candidate `2026.10.10 1500`: Designly brand audit found remaining hardcoded
+blue tiles, pastel Settings icons and open-panel controls. Scoped warm ivory,
+navy and burnt-orange tokens now cover weekly/month History, Settings icons,
+expanded forms, actions, video filters and backup controls. YouTube logo and
+semantic completion/error colors retained. No storage or behavior changes.
+Both builds and 13 rendered tests pass; diff clean. External Chrome iPhone 17
+Pro Max (440 × 956) weekly/month History and closed/open Settings checked;
+screenshots inspected, icon specificity corrected, no horizontal overflow.
+
+## Previous release — typography and hierarchy
 
 Published `2026.10.10 1449`: approved Designly second pass applied. Shared serif
 page titles, system sans card/section headings and GPS units; clear Settings and

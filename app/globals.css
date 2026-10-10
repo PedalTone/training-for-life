@@ -1304,3 +1304,41 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .more-page .setting-icon { background: #f3e7d6; color: #974016; }
 .more-page .settings-card .setting-icon { box-shadow: inset 0 0 0 1px #d9d1c5; }
 @media(max-width:680px) { .training-page-heading h1 { font-size: 29px; } .plan-view-heading h1 { font-size: 25px; } }
+
+/* Complete the warm palette inside History and Settings, including open panels. */
+.history-page, .more-page {
+  --surface: #fffaf2;
+  --surface-2: #f3ecdf;
+  --ink: #203449;
+  --muted: #596875;
+  --line: #d9d1c5;
+  --accent: #b94b17;
+  --accent-deep: #974016;
+  --accent-soft: #f1e4d3;
+  --brand: #203449;
+  --brand-deep: #203449;
+  --brand-soft: #f1e4d3;
+  --brand-orange: #b94b17;
+}
+.history-page .scan-heading { border-bottom-color: #e3d8c8; }
+.history-page .scan-heading span, .history-page .scan-heading b { color: #203449; }
+.history-page .scan-days button, .history-page .calendar-grid > button { background: #f3ecdf; }
+.history-page .history-bottom-nav { background: #203449; border-color: #203449; }
+.history-page .history-bottom-nav button { background: #32495c; }
+.history-page .history-bottom-nav button:disabled { background: #203449; color: #c0c7ca; }
+.history-page .history-bottom-nav .history-nav-divider { background: #657582; }
+.history-page .filter.active { background: #f1e4d3; border-color: #b94b17; color: #974016; }
+.more-page .settings-card > summary .setting-icon:not(.youtube-play), .more-page > section.settings-card .setting-icon.data { background: #f1e4d3; color: #974016; }
+.more-page .future-video-card .setting-icon.youtube-play { background: #d90000; color: #fff; box-shadow: none; }
+.more-page > details.settings-card[open] { border-left-color: #b94b17; }
+.more-page > details.settings-card[open] > summary > i { background: #f1e4d3; color: #974016; }
+.more-page .wide-action, .more-page .future-video-filters button { background: #fffaf2; color: #203449; border-color: #d9d1c5; }
+.more-page .wide-action.primary, .more-page .video-add-today,
+.more-page .future-video-form button, .more-page .exercise-title-row button,
+.more-page .add-library-exercise button, .more-page .ai-access-actions button { background: #203449; color: #fffaf2; border-color: #203449; }
+.more-page .ai-access-actions button.quiet, .more-page .future-video-filters button.active,
+.more-page .video-category-badge { background: #f1e4d3; color: #974016; border-color: #d9d1c5; }
+.more-page .exercise-reference-controls label, .more-page .new-reference-photo { background: #f3ecdf; color: #974016; border-color: #bba994; }
+.more-page :is(input,textarea,select):focus, .history-page :is(input,textarea,select):focus { outline-color: #b94b1740; border-color: #b94b17; }
+.more-page .privacy-card { background: #203449; }
+.more-page .privacy-card > span { color: #f3b477; }

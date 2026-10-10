@@ -1,5 +1,5 @@
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.10 1449` applies approved typography, simpler subheaders and warm History/Settings surfaces.
+Release decision: **New public release** — `2026.10.10 1500` completes the warm History/Settings palette inside day tiles, icons, expanded panels and controls.
 
-App, notes, tests, worker and deployment use `2026.10.10 1449`.
+App, notes, tests, worker and deployment use `2026.10.10 1500`.

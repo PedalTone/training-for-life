@@ -240,13 +240,13 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 1449";
+const APP_VERSION = "2026.10.10 1500";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
+  { version: APP_VERSION, changes: ["History and Settings now share the warm ivory, navy and orange palette throughout day tiles, icons and expanded controls."] },
+  { version: "2026.10.10 1449", changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
   { version: "2026.10.10 1412", changes: ["Clearer, consistent wording across Home, Plan, Today, your workout journal and Progress. Landscape views keep the artwork while labels focus on your training."] },
   { version: "2026.10.10 1028", changes: ["Strength and easy aerobic now use smaller figures, giving their mountain and riverside landscapes more breathing room."] },
   { version: "2026.10.10 1023", changes: ["New strength and easy aerobic artwork: a woman lifting a boulder and a man jogging beside the river, with clear iPhone framing and no lettering in the pictures."] },
-  { version: "2026.10.10 0956", changes: ["Today’s landscape is centered in the space beside the workout title for a more balanced header."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
