@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — complete History/Settings palette
 
-Candidate `2026.10.10 1500`: Designly brand audit found remaining hardcoded
+Published `2026.10.10 1500`: Designly brand audit found remaining hardcoded
 blue tiles, pastel Settings icons and open-panel controls. Scoped warm ivory,
 navy and burnt-orange tokens now cover weekly/month History, Settings icons,
 expanded forms, actions, video filters and backup controls. YouTube logo and
@@ -25,6 +25,8 @@ semantic completion/error colors retained. No storage or behavior changes.
 Both builds and 13 rendered tests pass; diff clean. External Chrome iPhone 17
 Pro Max (440 × 956) weekly/month History and closed/open Settings checked;
 screenshots inspected, icon specificity corrected, no horizontal overflow.
+Commit `64c3f92` deployed in Pages run `38078157661`; live exact release,
+JS/CSS assets and service worker verified over HTTPS.
 
 ## Previous release — typography and hierarchy
 
