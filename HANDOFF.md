@@ -15,7 +15,20 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — on-device Progress
+## Current change — Today cosmetic refresh
+
+Candidate `2026.10.10 0608`: Today matches Plan/Progress with navy hero, serif
+workout title and live terrain thumbnail; warm ivory cards, orange accents,
+clearer labels, balanced desktop action row and harmonized expanded controls.
+Designly composition and visual QA applied. Same reusable terrain atlas; artwork
+follows resolved day workout immediately. No logging handlers, storage or backup
+schema changed. Both builds and 13 rendered tests pass, plus diff check.
+External Chrome verified desktop/tablet/phone layouts, strength/recovery artwork
+changes, main-workout controls and editable notes/body check-in. Rendered expanded
+setup/logging and recovery views inspected. No built-in browser used.
+Publication pending.
+
+## Previous release — on-device Progress
 
 Published `2026.10.10 0554`: replaces the old overview with illustrated training
 balance in 4/12-week windows, latest matching completed workout pairs, and familiar

@@ -1150,3 +1150,72 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .progress-revisit > div { display: grid; }
 .progress-revisit > button { padding: 10px 12px; background: #203449; color: white; border-radius: 10px; flex-shrink: 0; }
 @media(max-width:600px) { .progress-intro h1 { font-size: 32px; } .progress-balance header { padding: 22px 18px; } .progress-balance-rows { padding: 8px 16px; } .progress-balance-row { grid-template-columns: 66px minmax(0,1fr); gap: 12px; } .progress-balance footer { padding: 16px; } .progress-compare-grid { gap: 8px; } .progress-compare-grid > div { padding: 12px; } .progress-revisit { flex-wrap: wrap; } }
+
+/* Today follows the expedition journal palette used by Plan and Progress. */
+.today-page { max-width: 940px; margin-inline: auto; color: #203449; }
+.today-page .today-hero { background: #203449; padding: 24px; border-radius: 20px; box-shadow: 0 8px 28px #20344912; }
+.today-page .today-hero::after { display: none; }
+.today-page .hero-topline { gap: 12px; }
+.today-page .hero-topline > div:first-child { flex-wrap: wrap; gap: 4px 10px; color: #f2ba86; font-size: 13px; }
+.today-page .today-version { color: #cdd6dc; font-size: 11px; flex-shrink: 0; }
+.today-page .today-hero .hero-main { padding: 18px 0 14px; min-height: 0; gap: 16px; }
+.today-page .hero-main > div:first-child { max-width: none; }
+.today-page .hero-title-row { display: grid; grid-template-columns: minmax(0,1fr) 124px; gap: 22px; align-items: center; }
+.today-page .today-hero .hero-main h1 { font: 38px/1.1 Georgia,serif; letter-spacing: -.025em; color: #fffaf2; }
+.today-page .today-terrain { height: 110px; border-radius: 14px; background-size: 200% 300%; box-shadow: 0 4px 18px #0002; border: 1px solid #fff4; }
+.today-page .today-hero .hero-main p { font-size: 17px; line-height: 1.5; color: #e3e8eb; max-width: 700px; }
+.today-page .today-hero .theme-mantra { font-size: 11px; color: #f2ba86; margin: 0; letter-spacing: .08em; }
+.today-page .theme-mantra span { color: #f2ba86; background: #ffffff12; }
+.today-page .today-session-workspace { background: transparent; border: 0; padding: 0; margin-top: 18px; }
+.today-page .today-session-heading { display: block; padding: 0 4px 8px; }
+.today-page .today-session-heading .kicker { color: #203449; font-size: 12px; }
+.today-page .today-session-heading > span:last-child { display: block; font-size: 15px; color: #596875; margin-top: 4px; line-height: 1.45; }
+.today-page .surface-card, .today-page .mobility-loader, .today-page .repeat-workout, .today-page .nutrition-card { background: #fffaf2; border-color: #d9d1c5; box-shadow: 0 5px 18px #20344908; border-radius: 16px; color: #203449; }
+.today-page .activity-card, .today-page .mobility-loader, .today-page .log-workout-card { border-left: 4px solid #203449; }
+.today-page .activity-card[open], .today-page .log-workout-card[open], .today-page .mobility-loader.active { border-left-color: #b94b17; }
+.today-page .panel-icon, .today-page .mobility-loader > span { background: #f1e4d3; color: #974016; border: 1px solid #e5d2ba; }
+.today-page .compact-panel summary b, .today-page .mobility-loader b, .today-page .log-workout-card > summary b { font-size: 18px; color: #203449; }
+.today-page .compact-panel summary small, .today-page .mobility-loader small, .today-page .log-workout-card > summary small { font-size: 15px; line-height: 1.4; color: #596875; white-space: normal; }
+.today-page .compact-panel summary > i, .today-page .log-workout-card > summary > i { background: #f1e4d3; color: #974016; }
+.today-page .log-subsection { background: #fffaf2; border-color: #e1d8cc; }
+.today-page .log-subsection-heading b, .today-page .notes-heading b { color: #203449; font-size: 18px; }
+.today-page .log-subsection-heading small, .today-page .workout-photo-help, .today-page .nutrition-help { font-size: 15px; line-height: 1.45; color: #596875; }
+.today-page .log-subsection-heading > span { background: #f1e4d3; color: #974016; }
+.today-page input, .today-page textarea, .today-page select { background: #fff; border-color: #c6c9cb; color: #203449; font-size: 16px; }
+.today-page textarea { line-height: 1.5; }
+.today-page .field-grid label > span, .today-page .effort-row > span { font-size: 15px; color: #596875; }
+.today-page .sheet-options button { background: #fff; border-color: #d9d1c5; color: #203449; }
+.today-page .sheet-options button.selected, .today-page .effort-row button.selected { background: #203449; border-color: #203449; color: #fffaf2; }
+.today-page .finish-actions .finish-button { background: #203449; color: #fffaf2; border-left: 4px solid #b94b17; border-radius: 14px; box-shadow: 0 6px 18px #20344916; font-size: 17px; }
+.today-page .nutrition-card h2 { font: bold 20px Georgia,serif; color: #203449; }
+@media(max-width:680px) {
+ .today-page .today-hero { padding: 18px; }
+ .today-page .hero-title-row { grid-template-columns: minmax(0,1fr) 94px; gap: 14px; }
+ .today-page .today-terrain { height: 94px; border-radius: 12px; }
+ .today-page .today-hero .hero-main h1 { font-size: 29px; }
+ .today-page .today-hero .hero-main p { font-size: 16px; }
+ .today-page .compact-panel:not([open]) summary { min-height: 128px; padding: 14px 12px; }
+ .today-page .compact-panel:not([open]) summary b { font-size: 17px; }
+ .today-page .compact-panel:not([open]) summary small { font-size: 14px; line-height: 1.4; }
+ .today-page .mobility-loader { min-height: 128px; padding: 14px 12px; }
+ .today-page .mobility-loader b { font-size: 17px; }
+ .today-page .mobility-loader small { font-size: 14px; line-height: 1.4; }
+ .today-page .log-workout-card > summary { min-height: 88px; padding: 14px; }
+ .today-page .log-workout-card > summary small { font-size: 14px; line-height: 1.4; }
+}
+.today-page .today-primary-actions { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.today-page .log-workout-body { background: #f7f1e7; }
+.today-page .finish-actions .finish-button { border: 1px solid #203449; border-left: 4px solid #b94b17; }
+.today-page .screenshot-import { background: #f7f1e7; border-color: #e1d8cc; }
+.today-page .log-subsection-heading::after { background: #f1e4d3; color: #974016; }
+.today-page .screenshot-count { background: #f1e4d3; color: #203449; }
+.today-page .workout-photo-add, .today-page .workout-photo-body button { background: #f7f1e7; border-color: #d9d1c5; color: #203449; }
+.today-page .day-workout-override, .today-page .activity-grid button { background: #f7f1e7; border-color: #d9d1c5; color: #203449; }
+.today-page .activity-grid button.selected { background: #203449; border-color: #203449; color: #fffaf2; }
+.today-page .activity-grid button > span { background: #f1e4d3; }
+.today-page .day-workout-override button { background: #f1e4d3; color: #974016; min-height: 44px; }
+.today-page .screenshot-access-note { background: #fffaf2; border-color: #e1d8cc; }
+.today-page .screenshot-access-note button { background: #f1e4d3; color: #203449; min-height: 44px; }
+.today-page .screenshot-actions button { background: #fffaf2; color: #203449; border-color: #d9d1c5; }
+.today-page .screenshot-actions button:first-child { background: #203449; color: #fffaf2; border-color: #203449; }
+.today-page .finish-actions .finish-button.error { background: #9b382c; border-color: #9b382c; color: white; }

@@ -237,9 +237,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0554";
+const APP_VERSION = "2026.10.10 0608";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Today now matches Plan and Progress with workout landscape artwork, warm ivory cards, navy headings and clearer logging labels.",
+  ] },
+  { version: "2026.10.10 0554", changes: [
     "Progress now works on your device: illustrated training balance, similar-workout comparisons and add-ons to revisit, with 4- and 12-week views.",
   ] },
   { version: "2026.10.10 0534", changes: [
@@ -250,9 +253,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.09 2202", changes: [
     "Bottom navigation now uses a warm background, recognizable icons and orange highlighting with an underline for the active tab.",
-  ] },
-  { version: "2026.10.09 2158", changes: [
-    "Plan now has an illustrated Adventure view: scenes follow your workout choices, with Today and completion markers. List view remains available.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -851,7 +851,7 @@ export default function Home() {
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
           <div className="hero-topline"><div><span>{activeDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}</span><time>{activeDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</time></div><small className="today-version">{APP_VERSION}</small></div>
-          <div className="hero-main"><div><div className="hero-title-row"><span className="category-icon" aria-hidden="true">{plan.icon}</span><h1>{plan.theme}</h1></div><p>{plan.guidance}</p></div></div>
+          <div className="hero-main"><div className="hero-title-row"><h1>{plan.theme}</h1><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={{ backgroundImage: "url(./adventure-terrain.png)", backgroundPosition: adventureSceneFor(plan.key).position }}/></div><p>{plan.guidance}</p></div>
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
         </section>
 
