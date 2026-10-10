@@ -17,13 +17,14 @@ was changed.
 
 ## Current change — warm orange navigation
 
-Candidate `2026.10.09 2202`: bottom menu matches mockup’s warm ivory surface,
+Published `2026.10.09 2202`: bottom menu matches mockup’s warm ivory surface,
 orange active icon/label and underline, with readable SVG home/calendar/map/
 history/chart/settings icons. Active destination exposes aria-current=page.
 Six destinations and touch target sizes preserved. Both builds, 13 rendered
 tests, 24 focused tests and diff check pass. External headless Chrome verified
 all six destinations, orange active state, and inspected desktop/tablet/phone
-views. No built-in browser used. Publication pending.
+views. No built-in browser used. Commit `b8dc3e4` deployed in successful
+Pages run `38015581830`; HTTPS verified exact release, JS/CSS and service worker.
 
 ## Previous release — adventure Plan
 
