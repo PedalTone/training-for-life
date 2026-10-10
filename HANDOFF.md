@@ -17,14 +17,15 @@ was changed.
 
 ## Current change — saved GPS controls and wide Today landscape
 
-Candidate `2026.10.10 0922`: saved GPS totals show “Workout saved · GPS totals”
+Published `2026.10.10 0922`: saved GPS totals show “Workout saved · GPS totals”
 and a quiet “Record another run or ride” action instead of Start GPS. Latest saved
 record restores with its activity/totals after reload and stays tied to its date.
 Today’s resolved workout terrain now uses a 2:1 horizontal view matching Plan.
 No GPS calculations, workout data or backup formats changed. Both builds and
 22 tests passed; external Chrome simulated save/reload/restart and checked
 phone/tablet/desktop layouts, journal and workout-driven landscape changes.
-Publication pending.
+Commit `db695a9` deployed in successful Pages run `38055637160`; HTTPS
+verified exact release, JS/CSS assets and service worker.
 
 ## Previous release — foreground GPS workout tracking
 
