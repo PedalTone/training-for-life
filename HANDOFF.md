@@ -34,8 +34,10 @@ Both builds, 13 rendered and 39 focused tests pass, plus diff check. Six GPS tes
 cover calculations, signal filtering, stationary fixes, manual-field preservation,
 accumulation and JSON backup fields. External Chrome simulated tracking, hidden
 pause, reload/resume, no pause bridging, finish guard, saving, journal and denial;
-phone/tablet/desktop views visually inspected. Physical iPhone GPS accuracy,
-permission prompts and wake-lock behavior remain unverified. Existing unrelated
+phone/tablet/desktop views visually inspected. User field-tested iPhone on a bike
+ride and reported speed and distance broadly consistent with another rider's
+measurements; accuracy judged sufficient (informal comparison, not calibration).
+Permission prompts and wake-lock behavior remain unverified. Existing unrelated
 TypeScript diagnostics remain; no GPS-module diagnostics. Commit `1d3c2e1`
 deployed in successful Pages run `38051608683`; HTTPS verified exact release,
 JS/CSS assets and service worker.
