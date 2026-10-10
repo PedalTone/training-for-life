@@ -1275,7 +1275,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-metrics > div { background: #203449; color: #fffaf2; padding: 16px 12px; border-radius: 12px; min-width: 0; }
 .gps-metrics dt { font-size: 14px; color: #dae2e7; }
 .gps-metrics dd { font: 28px Georgia,serif; margin: 8px 0 0; }
-.gps-metrics dd small { font: 14px -apple-system,sans-serif; }
+.gps-metrics dd small { font: 14px var(--sans); }
 .gps-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .gps-actions button { min-height: 46px; padding: 10px 14px; border: 1px solid #203449; border-radius: 10px; background: #203449; color: #fffaf2; font-size: 16px; }
 .gps-actions button:last-child:not(:first-child) { background: #fffaf2; color: #974016; border-color: #c98a64; }
@@ -1283,3 +1283,24 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-caption { color: #596875; font-size: 14px; }
 
 .gps-actions button.gps-record-another { background: transparent; color: #203449; border: 1px solid #20344940; box-shadow: none; }
+
+/* Shared editorial headings and warm utility cards. */
+:root { --heading-font: Georgia, serif; }
+.training-page-heading { margin: 8px 0 20px; }
+.more-page > .training-page-heading { order: -2; }
+.training-page-heading h1, .plan-view-heading h1 { font: 32px/1.15 var(--heading-font); color: #203449; margin: 0; letter-spacing: -.025em; }
+.plan-view-heading h1 { font-size: 28px; }
+.progress-intro h1 { font-family: var(--heading-font); }
+.journal-section h2 { font: 700 20px/1.3 var(--sans); color: #203449; }
+.history-page .week-scan, .history-page .month-card, .history-page .flagged-list,
+.history-page .journal-search, .history-page .nutrition-card, .more-page > .settings-card { background: #fffaf2; border-color: #d9d1c5; border-left-color: #203449; color: #203449; }
+.more-page > .settings-card > summary strong, .more-page > .settings-card > summary h2,
+.more-page .settings-title h2, .history-page .scan-heading, .history-page .month-title h2,
+.history-page .month-title .kicker, .history-page .flagged-list h2, .settings-category-label { color: #203449; }
+.more-page > details.settings-card > summary > i { background: #203449; }
+.history-page .segmented { background: #ede8dc; }
+.history-page .segmented button.active { background: #203449; color: #fffaf2; }
+.history-page .filter { background: #fffaf2; color: #203449; border-color: #d9d1c5; }
+.more-page .setting-icon { background: #f3e7d6; color: #974016; }
+.more-page .settings-card .setting-icon { box-shadow: inset 0 0 0 1px #d9d1c5; }
+@media(max-width:680px) { .training-page-heading h1 { font-size: 29px; } .plan-view-heading h1 { font-size: 25px; } }
