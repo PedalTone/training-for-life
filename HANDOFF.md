@@ -17,13 +17,15 @@ was changed.
 
 ## Current change — typography and hierarchy
 
-Candidate `2026.10.10 1449`: approved Designly second pass applied. Shared serif
+Published `2026.10.10 1449`: approved Designly second pass applied. Shared serif
 page titles, system sans card/section headings and GPS units; clear Settings and
 Workout history headings; removed redundant Today/Progress copy; warm ivory
 History/Settings cards with navy headings. Settings title precedes About.
 Both builds and 13 rendered tests pass; diff clean. External Chrome checked all
 tabs at phone/tablet/desktop sizes without horizontal overflow; screenshots
 inspected and Settings ordering corrected. No workout storage changes.
+Commit `62248e9` deployed in successful Pages run `38077616783`; live HTTPS
+verified exact release, JS/CSS and service worker.
 User now requests only iPhone 17 Pro Max (440 × 956) layout checks going forward.
 
 ## Previous release — cohesive training messaging
