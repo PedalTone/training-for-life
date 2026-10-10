@@ -15,7 +15,18 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — foreground GPS workout tracking
+## Current change — saved GPS controls and wide Today landscape
+
+Candidate `2026.10.10 0922`: saved GPS totals show “Workout saved · GPS totals”
+and a quiet “Record another run or ride” action instead of Start GPS. Latest saved
+record restores with its activity/totals after reload and stays tied to its date.
+Today’s resolved workout terrain now uses a 2:1 horizontal view matching Plan.
+No GPS calculations, workout data or backup formats changed. Both builds and
+22 tests passed; external Chrome simulated save/reload/restart and checked
+phone/tablet/desktop layouts, journal and workout-driven landscape changes.
+Publication pending.
+
+## Previous release — foreground GPS workout tracking
 
 Published `2026.10.10 0819`: Today has collapsed Run/Bike GPS tracking with
 elapsed time, distance, current and average speed, mi/km units, pause/resume,

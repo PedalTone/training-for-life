@@ -240,9 +240,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0819";
+const APP_VERSION = "2026.10.10 0922";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, changes: [
+  { version: APP_VERSION, changes: ["Saved GPS workouts now clearly show finished totals, with a separate option to record another activity. Today’s landscape uses a wider view to match Plan."] },
+  { version: "2026.10.10 0819", changes: [
     "Track a run or ride with iPhone GPS: live time, distance and speed, pause/resume, and totals saved to your workout journal and backups. Keep the app visible while tracking.",
   ] },
   { version: "2026.10.10 0627", changes: [
@@ -253,9 +254,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.10 0554", changes: [
     "Progress now works on your device: illustrated training balance, similar-workout comparisons and add-ons to revisit, with 4- and 12-week views.",
-  ] },
-  { version: "2026.10.10 0534", changes: [
-    "Search your journal by notes, add-ons, videos and body check-ins; filter by workout type or dates and open matching days.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -875,7 +873,7 @@ export default function Home() {
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
         </section>
 
-        <GpsTracker tracker={gps} date={activeKey}/>
+        <GpsTracker tracker={gps} date={activeKey} savedWorkout={session.gpsWorkouts?.at(-1)}/>
         <section className="today-session-workspace"><div className="today-session-heading"><span className="kicker">TODAY’S SESSION</span><span>Choose the format, add supporting work, then log what matters.</span></div>
         <div className="control-row workout-mobility-row today-primary-actions">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
