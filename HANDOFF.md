@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — foreground GPS workout tracking
 
-Candidate `2026.10.10 0819`: Today has collapsed Run/Bike GPS tracking with
+Published `2026.10.10 0819`: Today has collapsed Run/Bike GPS tracking with
 elapsed time, distance, current and average speed, mi/km units, pause/resume,
 stop/save and paused-draft discard. High-accuracy watchPosition starts on user
 request. Screen Wake Lock requested where available. Hidden pages auto-pause;
@@ -36,7 +36,9 @@ accumulation and JSON backup fields. External Chrome simulated tracking, hidden
 pause, reload/resume, no pause bridging, finish guard, saving, journal and denial;
 phone/tablet/desktop views visually inspected. Physical iPhone GPS accuracy,
 permission prompts and wake-lock behavior remain unverified. Existing unrelated
-TypeScript diagnostics remain; no GPS-module diagnostics. Publication pending.
+TypeScript diagnostics remain; no GPS-module diagnostics. Commit `1d3c2e1`
+deployed in successful Pages run `38051608683`; HTTPS verified exact release,
+JS/CSS assets and service worker.
 
 ## Previous release — approved splash
 
