@@ -15,7 +15,23 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — balanced Today header
+## Current change — strength and easy aerobic activity artwork
+
+Candidate `2026.10.10 1023`: built-in image generation finalized approved
+strength-boulder.png (woman with natural athletic arms lifting in alpine clearing)
+and aerobic-jogger.png (man jogging beside river), both text-free 2:1 assets.
+Shared scene helper uses them across Home, Today, Plan, Progress and journal;
+Recovery/Endurance/other atlas scenes preserved. No data or workout changes.
+Both builds, 13 rendered and 4 scene tests pass; diff clean. External Chrome
+verified both scene types, mapping/override behavior and phone/tablet/desktop
+Today/Plan views; full figures remain visible in small iPhone cards.
+Source images: exec-6439d1bb-e397-43c9-8685-d13ab9540ccc.png and
+exec-23134ceb-7251-40d1-b844-c9820e5a9d97.png in this thread's generated_images.
+Final prompt intent: approved scenes; soften woman's arm/shoulder bulk to everyday
+fit proportions; preserve people/scenery/style; remove all labels; single 2:1
+landscapes with full figures and ivory edges. Publication pending.
+
+## Previous release — balanced Today header
 
 Published `2026.10.10 0956`: Today title takes its natural width (up to half
 of the row), with artwork centered in the remaining space. Existing 2:1 image
