@@ -15,7 +15,30 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — approved splash
+## Current change — foreground GPS workout tracking
+
+Candidate `2026.10.10 0819`: Today has collapsed Run/Bike GPS tracking with
+elapsed time, distance, current and average speed, mi/km units, pause/resume,
+stop/save and paused-draft discard. High-accuracy watchPosition starts on user
+request. Screen Wake Lock requested where available. Hidden pages auto-pause;
+foreground web tracking only, not lock-screen/background recording. Weak fixes,
+jitter, implausible jumps, stale points and >30-second gaps filtered. No bridging
+pauses/gaps. Average includes active stops. Totals-only draft recovers paused.
+Coordinates remain transient; never uploaded/stored. GPS summary records in dated
+session (gpsWorkouts) carry start/end, active seconds, meters, maximum speed, gaps;
+normal backup/restore preserves them. Journal displays each recording. Empty main
+totals filled; successive GPS-owned totals accumulate; manual data/setup preserved.
+Finish+Backup guarded until same-day draft saved/discarded; tracking survives tab
+navigation and always saves to its original date. No API worker changed.
+Both builds, 13 rendered and 39 focused tests pass, plus diff check. Six GPS tests
+cover calculations, signal filtering, stationary fixes, manual-field preservation,
+accumulation and JSON backup fields. External Chrome simulated tracking, hidden
+pause, reload/resume, no pause bridging, finish guard, saving, journal and denial;
+phone/tablet/desktop views visually inspected. Physical iPhone GPS accuracy,
+permission prompts and wake-lock behavior remain unverified. Existing unrelated
+TypeScript diagnostics remain; no GPS-module diagnostics. Publication pending.
+
+## Previous release — approved splash
 
 Published `2026.10.10 0627`: implements approved mockup with original texture,
 navy logo header, ivory Today card with resolved-workout terrain, four original

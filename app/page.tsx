@@ -3,6 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
+import { GpsTracker, useGpsTracker } from "./gps-tracker";
+import { gpsTime, type GpsWorkout } from "./gps-math";
 import { LocalProgressView } from "./local-progress-view";
 import { HistorySearchPanel } from "./history-search-panel";
 import { emptyHistoryFilters, type HistoryFilters } from "./history-search";
@@ -35,6 +37,7 @@ export type Session = {
   pace?: string; calories?: string; startTime?: string; detailSource?: string;
   notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[]; workoutPhoto?: string;
   importedWorkouts?: ScreenshotWorkout[];
+  gpsWorkouts?: GpsWorkout[];
   updatedAt: string; completedAt?: string;
 };
 type LibraryExercise = { id: string; name: string; equipment: string; referencePhotoData?: string; graphicDescription?: string; graphicData?: string; graphicReviewStatus?: "pending" | "reviewed" };
@@ -237,9 +240,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0627";
+const APP_VERSION = "2026.10.10 0819";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Track a run or ride with iPhone GPS: live time, distance and speed, pause/resume, and totals saved to your workout journal and backups. Keep the app visible while tracking.",
+  ] },
+  { version: "2026.10.10 0627", changes: [
     "Home now uses the approved journal design: original background, a landscape for Today, familiar navigation icons and softly floating cards.",
   ] },
   { version: "2026.10.10 0608", changes: [
@@ -250,9 +256,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.10 0534", changes: [
     "Search your journal by notes, add-ons, videos and body check-ins; filter by workout type or dates and open matching days.",
-  ] },
-  { version: "2026.10.09 2318", changes: [
-    "Open days from Plan or History as a scrollable Adventure Journal, with photos, notes, add-ons, nutrition and embedded videos you can add to today.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -279,7 +282,7 @@ const getSession = async (id: string) => {
   if (!saved) return fallback;
   const indexedTime = Date.parse(saved.updatedAt || "") || 0;
   const fallbackTime = Date.parse(fallback.updatedAt || "") || 0;
-  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
+  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || []), ...(item.gpsWorkouts || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
   return fallbackTime > indexedTime || (fallbackTime === indexedTime && richness(fallback) > richness(saved)) ? fallback : saved;
 };
 const getAllSessions = () => withStore<Session[]>("readwrite", (store) => {
@@ -310,7 +313,7 @@ async function loadAllSessions() {
   // and use the richer record when timestamps are missing or identical. This
   // prevents an empty/rest placeholder in IndexedDB from masking a populated
   // workout saved in the legacy localStorage fallback.
-  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
+  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || []), ...(item.gpsWorkouts || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
   const merged = new Map<string, Session>();
   for (const item of [...indexed, ...legacy].map(normalizeSession)) {
     const existing = merged.get(item.id);
@@ -756,6 +759,19 @@ export default function Home() {
     setHistory(items => [next, ...items.filter(item => item.id !== todayKey)].sort((a,b) => b.date.localeCompare(a.date)));
     return `Added ${name} to today’s add-ons.`;
   };
+  const gps = useGpsTracker(async (date, workout) => {
+    let saved: Session | undefined;
+    try { saved = await getSession(date); } catch { const raw = localStorage.getItem(`t4l:${date}`); saved = raw ? JSON.parse(raw) : undefined; }
+    const dayPlan = scheduleForDate(dateFromKey(date), activeSchedule, scheduleHistory)[dateFromKey(date).getDay()];
+    const current = sessionRef.current.id === date ? sessionRef.current : saved ? normalizeSession(saved) : emptySession(date, dayPlan.key === "rest", dayPlan);
+    const workouts = [...(current.gpsWorkouts || []), workout];
+    const meters = workouts.reduce((sum,item)=>sum+item.meters,0);
+    const seconds = workouts.reduce((sum,item)=>sum+item.seconds,0);
+    const next = { ...current, gpsWorkouts:workouts, activity:current.activity || workout.activity, activities:current.activities?.length ? current.activities : [workout.activity], duration:!current.duration || ((current.gpsWorkouts?.length || 0)>0 && current.duration===gpsTime((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.seconds,0))) ? gpsTime(seconds) : current.duration, distance:!current.distance || ((current.gpsWorkouts?.length || 0)>0 && current.distance===`${((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.meters,0)/1609.344).toFixed(2)} mi`) ? `${(meters/1609.344).toFixed(2)} mi` : current.distance, startTime:current.startTime || new Date(workout.startedAt).toLocaleTimeString("en-US", {hour:"2-digit",minute:"2-digit",hour12:false}), updatedAt:new Date().toISOString() };
+    try { await saveSession(next); } catch { localStorage.setItem(`t4l:${date}`,JSON.stringify(next)); }
+    if(sessionRef.current.id===date){ sessionRef.current=next;setSession(next); }
+    setHistory(items=>[next,...items.filter(item=>item.id!==date)].sort((a,b)=>b.date.localeCompare(a.date)));
+  });
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
   // The open Today session is the freshest source for its date. Include it in
@@ -859,6 +875,7 @@ export default function Home() {
           <div className="theme-mantra"><span>→</span> Relentless Forward Progress</div>
         </section>
 
+        <GpsTracker tracker={gps} date={activeKey}/>
         <section className="today-session-workspace"><div className="today-session-heading"><span className="kicker">TODAY’S SESSION</span><span>Choose the format, add supporting work, then log what matters.</span></div>
         <div className="control-row workout-mobility-row today-primary-actions">
           <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
@@ -879,7 +896,7 @@ export default function Home() {
             <section className={`log-subsection injury-subsection ${injuryReported ? "active" : ""}`}><div className="log-subsection-heading"><span>⚑</span><div><b>Body check-in</b><small>{injuryReported ? "Noted for this workout" : "No concerns noted"}</small></div><button className="injury-toggle-inline" onClick={handleInjuryControl} aria-pressed={injuryReported}><i/></button></div>{injuryReported && <><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Body area to be mindful of" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Area to be mindful of (optional)"/><textarea aria-label="Body check-in note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add a note about what you noticed…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear body check-in</button></>}</section>
           </div>
         </details>
-        <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); setCelebratingDate(null); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div></section>
+        <div className={`finish-zone primary-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); setCelebratingDate(null); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button disabled={Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (plan.key === "rest" ? "Honor Recovery + Backup" : "Finish Workout + Backup")}<span>→</span></button></div>}</div></section>
         <NutritionCard key={activeKey} date={activeKey}/>
       </div>}
 

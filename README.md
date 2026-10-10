@@ -121,3 +121,19 @@ coordinates rounded to 0.1 degrees to Open-Meteo for current model conditions. N
 coordinates are stored. The opt-in preference persists separately; turn it off on Home.
 Conditions refresh every 30 minutes while Home is open. Errors show an explicit
 unavailable message with a decorative sun. Weather does not change workout plans.
+
+## iPhone GPS workouts
+
+Today → Track a run or ride uses foreground browser geolocation with explicit
+permission. Select Run/Bike and miles/kilometers, then Start GPS. Pause/Resume
+excludes paused time and never joins missing route segments. Stop + save totals
+adds a GPS summary to the dated session; Finish + Backup then backs it up normally.
+Existing manual details remain; blank totals are filled and GPS-owned totals can
+accumulate multiple recordings. Journal shows each recording’s time, distance,
+average/maximum speed, start/end and detected gaps. No GPS coordinates are uploaded
+or persisted. A local totals-only draft recovers paused after reload.
+
+Keep the app visible: hidden pages automatically pause. Screen Wake Lock is
+requested where available, but lock-screen/background recording is not supported
+by this web app. GPS accuracy and iPhone screen-awake behavior need physical-device
+verification. Average speed includes stops while recording and excludes pauses.

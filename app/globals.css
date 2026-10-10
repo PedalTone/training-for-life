@@ -1261,3 +1261,23 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .approved-splash .splash-version-bottom small::before { content: '·'; color: #596875; margin-right: 12px; }
 @media(max-width:380px) { .app-shell .approved-splash { padding-inline: 14px; } .approved-splash .home-brand { padding: 16px; gap: 12px; } .approved-splash .home-brand h1 { font-size: 25px; } .home-today-body { grid-template-columns: minmax(0,1fr) 94px; gap: 12px; } .home-today-body b { font-size: 26px; } .home-section-heading { flex-wrap: wrap; } }
 .approved-splash .home-destinations button { border: 1px solid #e1d8cc; }
+.gps-card { margin-top: 16px; background: #fffaf2; color: #203449; border: 1px solid #d9d1c5; border-radius: 16px; }
+.gps-card summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px; cursor: pointer; }
+.gps-card summary > span:first-child { display: grid; gap: 5px; }
+.gps-card summary b { font-size: 18px; }
+.gps-card summary small { font-size: 15px; color: #596875; }
+.gps-card summary > span:last-child { font-size: 30px; color: #b94b17; }
+.gps-body { padding: 0 18px 18px; font-size: 16px; line-height: 1.5; }
+.gps-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gps-options label { display: grid; gap: 5px; }
+.gps-options select { min-height: 46px; padding: 8px; border: 1px solid #c6c9cb; border-radius: 10px; width: 100%; }
+.gps-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gps-metrics > div { background: #203449; color: #fffaf2; padding: 16px 12px; border-radius: 12px; min-width: 0; }
+.gps-metrics dt { font-size: 14px; color: #dae2e7; }
+.gps-metrics dd { font: 28px Georgia,serif; margin: 8px 0 0; }
+.gps-metrics dd small { font: 14px -apple-system,sans-serif; }
+.gps-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.gps-actions button { min-height: 46px; padding: 10px 14px; border: 1px solid #203449; border-radius: 10px; background: #203449; color: #fffaf2; font-size: 16px; }
+.gps-actions button:last-child:not(:first-child) { background: #fffaf2; color: #974016; border-color: #c98a64; }
+.gps-actions button:disabled, .finish-button:disabled { opacity: .55; cursor: default; }
+.gps-caption { color: #596875; font-size: 14px; }

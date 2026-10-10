@@ -2,7 +2,7 @@
 
 Public releases use Eastern publication timestamps. See AGENTS.md.
 
-Release decision: **New public release** — `2026.10.10 0627` publishes the approved splash design with original background, Today terrain, familiar navigation icons and floating-card shadows.
+Release decision: **New public release** — `2026.10.10 0819` adds foreground iPhone GPS workout tracking, pause/resume and saved run/ride totals in the journal and backups.
 
-App, notes, tests, service-worker cache and deployment use `2026.10.10 0627`.
+App, notes, tests, service-worker cache and deployment use `2026.10.10 0819`.
 Unchanged icons retain their `2026.09.28 0727` asset names.
