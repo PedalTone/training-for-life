@@ -237,9 +237,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 0608";
+const APP_VERSION = "2026.10.10 0627";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Home now uses the approved journal design: original background, a landscape for Today, familiar navigation icons and softly floating cards.",
+  ] },
+  { version: "2026.10.10 0608", changes: [
     "Today now matches Plan and Progress with workout landscape artwork, warm ivory cards, navy headings and clearer logging labels.",
   ] },
   { version: "2026.10.10 0554", changes: [
@@ -250,9 +253,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.09 2318", changes: [
     "Open days from Plan or History as a scrollable Adventure Journal, with photos, notes, add-ons, nutrition and embedded videos you can add to today.",
-  ] },
-  { version: "2026.10.09 2202", changes: [
-    "Bottom navigation now uses a warm background, recognizable icons and orange highlighting with an underline for the active tab.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -406,14 +406,18 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
   const closeReleaseNotes = () => { setShowReleaseNotes(false); releaseButtonRef.current?.focus(); };
   const todayCue = todayActivity || todayPlan.guidance;
   const weather = useLocalWeather();
-  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "What’s ahead"], ["history", "History", "What happened"], ["performance", "Progress", "How you’re doing"], ["more", "Settings", "Tune your app"]];
-  return <main className="splash-screen">
-    <div className="splash-brand"><div className="splash-letterbox"><span className="splash-welcome-glow" aria-hidden="true"/><img className="splash-letterbox-mark" src="./t4l-monochrome.png" alt=""/><span className="splash-letterbox-copy"><span className="kicker">TRAINING FOR LIFE</span><strong>Training for Life</strong><small><span>Move well, daily.</span><span>Relentless forward progress.</span></small></span></div></div>
-    <div className="splash-menu" aria-label="App sections">
-      <button className="splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}><span className="splash-menu-icon today"><SplashIcon name="today"/></span><span className="splash-today-copy"><strong>Today</strong><span className="splash-today-workout"><span className="splash-today-workout-icon" aria-hidden="true">{todayPlan.icon}</span><span className="splash-today-workout-name">{todayPlan.theme}</span></span><small className="splash-today-guidance">{todayCue}</small></span><span className="splash-card-art" aria-hidden="true">{weather.kind ? <WeatherGraphic kind={weather.kind}/> : <SplashIcon name="today"/>}</span><b aria-hidden="true">›</b></button>
-      {destinations.map(([tab, label, description]) => <button key={tab} className={`splash-destination splash-destination-${tab}`} onClick={() => onEnter(tab)}><span className={`splash-menu-icon ${tab}`}><SplashIcon name={tab}/></span><span><strong>{label}</strong><small>{description}</small></span><span className="splash-card-art" aria-hidden="true"><SplashIcon name={tab}/></span><b aria-hidden="true">›</b></button>)}
-    </div>
-    <div className="splash-weather"><button type="button" onClick={weather.toggle}>{weather.enabled ? "Turn off local weather" : "Enable local weather"}</button>{weather.enabled ? <span role="status">{weather.status} · <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather by Open-Meteo</a></span> : <span>Uses your location with permission; shares an approximate area with Open-Meteo.</span>}</div>
+  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "Your week, as an adventure"], ["history", "History", "Revisit your daily journal"], ["performance", "Progress", "See your training story"], ["more", "Settings", "Make it your own"]];
+  return <main className="splash-screen approved-splash">
+    <div className="home-brand splash-letterbox"><img src="./t4l-monochrome.png" alt="T4L"/><div><h1>Training for Life</h1><p><span>Move well, daily.</span><span>Relentless forward progress.</span></p></div></div>
+    <div className="home-section-heading"><span>YOUR NEXT STEP</span><time>{new Date().toLocaleDateString("en-US", { weekday:"long", month:"short", day:"numeric" })}</time></div>
+    <button className="home-today splash-today-button" onClick={() => onEnter("today")} aria-label={`Today’s workout: ${todayPlan.theme}. ${todayCue} Open Today`}>
+      <span className="home-today-top"><strong>Today</strong><span className="home-weather" aria-label={weather.enabled ? weather.status : "Local weather is off"}>{weather.kind ? <WeatherGraphic kind={weather.kind}/> : <SplashIcon name="today"/>}<span>{weather.kind ? weather.status : weather.enabled ? "Weather unavailable" : "Weather off"}</span></span></span>
+      <span className="home-today-body"><span><b>{todayPlan.theme}</b><small>{todayCue}</small></span><span className="home-terrain" aria-hidden="true" data-workout-type={todayPlan.key} style={{ backgroundImage:"url(./adventure-terrain.png)", backgroundPosition:adventureSceneFor(todayPlan.key).position }}/></span>
+      <span className="home-today-footer"><span>Open today’s workout</span><span aria-hidden="true">→</span></span>
+    </button>
+    <div className="home-section-heading"><span>EXPLORE YOUR TRAINING</span></div>
+    <nav className="home-destinations" aria-label="App sections">{destinations.map(([tab,label,description]) => <button key={tab} className={`home-destination splash-destination-${tab}`} onClick={()=>onEnter(tab)}><span><strong>{label}</strong><small>{description}</small></span><span className="home-nav-art" aria-hidden="true"><SplashIcon name={tab}/></span><span className="home-arrow" aria-hidden="true">›</span></button>)}</nav>
+    <details className="home-weather-settings"><summary>Local weather settings</summary><div className="splash-weather"><button type="button" onClick={weather.toggle}>{weather.enabled ? "Turn off local weather" : "Enable local weather"}</button>{weather.enabled ? <span role="status">{weather.status} · <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather by Open-Meteo</a></span> : <span>Uses your location with permission; shares an approximate area with Open-Meteo.</span>}</div></details>
     <div className="splash-release"><button ref={releaseButtonRef} className="splash-version splash-version-bottom" type="button" aria-expanded={showReleaseNotes} aria-controls="splash-release-notes" onClick={() => setShowReleaseNotes((shown) => !shown)}><span>{version}</span><small>What’s new?</small></button>{showReleaseNotes && <section id="splash-release-notes" className="splash-release-notes" aria-label="What’s new in the last five releases"><div className="splash-release-header"><strong>What’s new</strong><button type="button" onClick={closeReleaseNotes} aria-label="Close What’s new"><span aria-hidden="true">×</span></button></div>{RECENT_RELEASES.map((release) => <div className="splash-release-group" key={release.version}><h3>{release.version}</h3><ul>{release.changes.map((change) => <li key={change}><span aria-hidden="true">✓</span><span>{change}</span></li>)}</ul></div>)}</section>}</div>
   </main>;
 }

@@ -15,7 +15,21 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — Today cosmetic refresh
+## Current change — approved splash
+
+Candidate `2026.10.10 0627`: implements approved mockup with original texture,
+navy logo header, ivory Today card with resolved-workout terrain, four original
+navigation icons and softly floating shadows on all five cards. Weather remains
+opt-in; compact live condition/off label and collapsed Local weather settings
+retain permission disclosure, attribution and disable. Date/workout are live.
+What's new keeps five groups. No workout storage or backup changes.
+Both builds, 13 rendered tests and diff check pass. External Chrome verified
+all five destinations and card shadows, Today-only terrain, four icons, day override
+updates, weather settings and release notes; desktop/tablet/phone screenshots
+inspected. Approved mockup sources remain untracked in mockups/ for reference.
+Publication pending.
+
+## Previous release — Today cosmetic refresh
 
 Published `2026.10.10 0608`: Today matches Plan/Progress with navy hero, serif
 workout title and live terrain thumbnail; warm ivory cards, orange accents,
