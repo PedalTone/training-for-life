@@ -2,7 +2,7 @@
 
 Public releases use Eastern publication timestamps. See AGENTS.md.
 
-Release decision: **New public release** — `2026.10.10 1023` gives strength and easy aerobic their approved activity illustrations, without embedded labels and with a natural athletic build for the woman lifting.
+Release decision: **New public release** — `2026.10.10 1028` makes the strength lifter and aerobic jogger substantially smaller so the landscape leads each scene.
 
-App, notes, tests, service-worker cache and deployment use `2026.10.10 1023`.
+App, notes, tests, service-worker cache and deployment use `2026.10.10 1028`.
 Unchanged icons retain their `2026.09.28 0727` asset names.

@@ -15,7 +15,20 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — strength and easy aerobic activity artwork
+## Current change — landscape-first figure scale
+
+Candidate `2026.10.10 1028`: user-approved smaller lifter and jogger replace
+strength/aerobic art through shared scene helper. New v2 filenames avoid stale
+image caches; originals retained. Figures around half former height, landscapes
+lead, natural woman physique and text-free 2:1 framing preserved. No data changes.
+Both builds, 13 rendered and 4 scene tests pass; diff clean. External Chrome
+verified both iPhone Today cards and phone/tablet/desktop Plan views, overrides
+and mapping. Built-in edit prompts: halve figure dimensions including held stone,
+keep full figures in landscape with original style/scenery/no lettering.
+New assets: public/strength-boulder-v2.png and public/aerobic-jogger-v2.png.
+Publication pending.
+
+## Previous release — strength and easy aerobic activity artwork
 
 Published `2026.10.10 1023`: built-in image generation finalized approved
 strength-boulder.png (woman with natural athletic arms lifting in alpine clearing)
