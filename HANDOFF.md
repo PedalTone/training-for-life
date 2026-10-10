@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — on-device Progress
 
-Candidate `2026.10.10 0554`: replaces the old overview with illustrated training
+Published `2026.10.10 0554`: replaces the old overview with illustrated training
 balance in 4/12-week windows, latest matching completed workout pairs, and familiar
 library add-ons last completed at least 14 days ago. Add to today preserves existing
 setup/results and avoids duplicates; selected add-ons never count as completed.
@@ -30,7 +30,8 @@ Both builds, 13 rendered tests and 33 focused tests pass, plus diff check.
 External Chrome verified 4/12-week counts, comparison journals, duplicate-safe
 add-on copy and persisted selection; historical fixtures unchanged. Rendered
 phone/tablet/desktop, comparisons and revisit sections visually inspected.
-Publication pending.
+Commit `0bad84f` deployed in successful Pages run `38043216302`; HTTPS
+verified exact release, JS/CSS and service worker.
 
 ## Previous release — journal search
 
