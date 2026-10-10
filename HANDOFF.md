@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — strength and easy aerobic activity artwork
 
-Candidate `2026.10.10 1023`: built-in image generation finalized approved
+Published `2026.10.10 1023`: built-in image generation finalized approved
 strength-boulder.png (woman with natural athletic arms lifting in alpine clearing)
 and aerobic-jogger.png (man jogging beside river), both text-free 2:1 assets.
 Shared scene helper uses them across Home, Today, Plan, Progress and journal;
@@ -29,7 +29,9 @@ Source images: exec-6439d1bb-e397-43c9-8685-d13ab9540ccc.png and
 exec-23134ceb-7251-40d1-b844-c9820e5a9d97.png in this thread's generated_images.
 Final prompt intent: approved scenes; soften woman's arm/shoulder bulk to everyday
 fit proportions; preserve people/scenery/style; remove all labels; single 2:1
-landscapes with full figures and ivory edges. Publication pending.
+landscapes with full figures and ivory edges. Commit `c633932` deployed in
+successful Pages run `38059551645`; HTTPS verified exact release, JS/CSS, worker
+and both new images.
 
 ## Previous release — balanced Today header
 
