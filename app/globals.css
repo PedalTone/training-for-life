@@ -1361,3 +1361,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 }
 
 .splash-change-category { margin: 8px 0 0; color: var(--brand-deep); font: 700 16px/1.4 var(--sans); }
+
+/* Match the Home line illustrations while preserving the YouTube accent. */
+.more-page .settings-card > summary .setting-icon:not(.youtube-play), .more-page > section.settings-card .setting-icon.data { background: transparent; box-shadow: none; border: 0; color: #315f9e; }
+.more-page .setting-icon:not(.youtube-play) svg { width: 36px; height: 36px; stroke-width: 1.5; }
+.more-page .settings-card.library-manager > summary .setting-icon:not(.youtube-play) { color: #b94b17; }

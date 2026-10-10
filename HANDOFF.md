@@ -15,6 +15,18 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
+## Current change — Settings illustrations and swipe navigation
+
+Candidate `2026.10.10 1949`: Settings uses Home-style line SVGs, blue with an
+orange exercise-library accent; Future workout videos keeps its red YouTube icon.
+Left/right touch swipes follow Home/Today/Plan/History/Progress/Settings, stop at
+ends and preserve existing tap navigation. Guards exclude fields, horizontal
+scrollers, videos, dialogs, journal and screen edges; vertical/slow/short gestures
+and scrolling do not navigate. No storage or API changes. Publication pending.
+Both builds, 13 rendered and two gesture unit tests passed before final labeling;
+external Chrome iPhone 440×956 inspected icons and navigation/guard behavior.
+Physical iPhone gesture feel remains for user confirmation.
+
 ## Current change — categorized release notes
 
 Published `2026.10.10 1855`: What’s New shows ten recent releases, each with a

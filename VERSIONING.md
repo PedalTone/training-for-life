@@ -1,5 +1,5 @@
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.10 1855` labels each What’s New change as a major or minor fix and shows the ten most recent releases.
+Release decision: **New public release** — `2026.10.10 1949` adds swipe navigation and matches Settings illustrations to Home while preserving the red YouTube icon.
 
-App, notes, tests, worker and deployment use `2026.10.10 1855`.
+App, notes, tests, worker and deployment use `2026.10.10 1949`.
