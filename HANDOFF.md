@@ -17,12 +17,13 @@ was changed.
 
 ## Current change — separated Plan pictures
 
-Candidate `2026.10.10 1954`: six-pixel ivory horizontal gaps separate Plan
+Published `2026.10.10 1954`: six-pixel ivory horizontal gaps separate Plan
 landscape pictures, preserving the overall week height, artwork and date/status
 labels. Both builds and 13 rendered tests pass; diff clean. External Chrome
 440×956 iPhone inspected; all six gaps measure 6px, seven days/action fit without
 scrolling or horizontal overflow, and List still shows seven days. No data or
-API changes. Publication pending.
+API changes. Commit `c5588b6` deployed in successful Pages run `38096653932`;
+live release, exact JS/CSS assets and service worker verified over HTTPS.
 
 ## Current change — Settings illustrations and swipe navigation
 
