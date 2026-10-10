@@ -1,0 +1,42 @@
+"use client";
+import { useState } from 'react';
+import type { Session, Video } from './page';
+import { adventureSceneFor } from './adventure-scenes';
+import { readNutrition } from './nutrition';
+
+function dayDate(date: string) { return new Date(`${date}T12:00:00`); }
+function shiftDay(date: string, amount: number) { const day = dayDate(date); day.setDate(day.getDate() + amount); return `${day.getFullYear()}-${String(day.getMonth()+1).padStart(2,'0')}-${String(day.getDate()).padStart(2,'0')}`; }
+function videoId(video: Video) {
+  if (video.videoId && /^[\w-]{11}$/.test(video.videoId)) return video.videoId;
+  try { const url = new URL(video.url); const host = url.hostname.replace(/^www\./,''); const id = host === 'youtu.be' ? url.pathname.slice(1).split('/')[0] : ['youtube.com','m.youtube.com'].includes(host) ? url.searchParams.get('v') || url.pathname.match(/^\/(?:embed|shorts)\/([\w-]+)/)?.[1] : ''; return id && /^[\w-]{11}$/.test(id) ? id : null; } catch { return null; }
+}
+export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdit, onAddVideo }: { date: string; today: string; session?: Session; plan: {key:string;theme:string}; onDate: (date:string)=>void; onBack:()=>void; onEdit:()=>void; onAddVideo:(video:Video)=>Promise<string> }) {
+  const [videoNotice,setVideoNotice] = useState('');
+  const [adding,setAdding] = useState(false);
+  let nutrition; let nutritionError = false;
+  try { nutrition = readNutrition()[date]; } catch { nutritionError = true; }
+  const metrics = session ? [['Activities',session.activity],['Duration',session.duration],['Distance',session.distance],['Pace',session.pace],['Calories',session.calories],['Start time',session.startTime],['Effort',session.effort]].filter(([,value])=>value) : [];
+  const exercises = [...new Set([...(session?.mobilityExercises || []), ...(session?.completedExercises || [])])];
+  const hasNutrition = nutrition && Object.values(nutrition).some(value=>value !== undefined && value !== '');
+  const hasRecorded = Boolean(session && (session.status === 'completed' || session.completedAt || metrics.length || session.notes || session.workoutPhoto || exercises.length || session.videos.length || session.importedWorkouts?.length || session.injury?.reported || session.injury?.note || session.injury?.bodyArea || session.injury?.impact) || hasNutrition);
+  const scene = adventureSceneFor(plan.key);
+  async function addVideo(video: Video) { if(adding)return; setAdding(true);setVideoNotice('Adding video…');try {setVideoNotice(await onAddVideo(video));}catch{setVideoNotice('Could not save this video. Please try again.');}finally{setAdding(false);} }
+  return <article className="daily-journal">
+    <div className="journal-top"><button type="button" onClick={onBack}>‹ Back</button><button type="button" onClick={onEdit}>Edit workout</button></div>
+    <nav className="journal-day-nav" aria-label="Journal dates"><button type="button" onClick={()=>onDate(shiftDay(date,-1))}>‹ Previous day</button><label><span>Date</span><input type="date" value={date} max={today} onChange={e=>{if(e.target.value && e.target.value<=today)onDate(e.target.value)}}/></label><button type="button" disabled={date>=today} onClick={()=>onDate(shiftDay(date,1))}>Next day ›</button></nav>
+    <header className="journal-heading"><span className="kicker">ADVENTURE JOURNAL</span><h1>{plan.theme}</h1><time dateTime={date}>{dayDate(date).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</time></header>
+    <div className="journal-landscape" aria-hidden="true" style={{backgroundPosition:scene.position,backgroundImage:`url(${import.meta.env.BASE_URL}adventure-terrain.png)`}}/>
+    {session && <p className="journal-status">{(session.status==='completed' || session.completedAt) ? '✓ Workout complete' : session.status==='rest' ? 'Recovery day' : hasRecorded ? 'Workout in progress' : 'Nothing logged yet'}{session.completedAt && <small>Finished {new Date(session.completedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</small>}</p>}
+    {!hasRecorded && <p className="journal-empty">Nothing recorded for this day yet. Your photos, notes and workout details will appear here when you log them.</p>}
+    {session?.workoutPhoto && <figure className="journal-photo"><img src={session.workoutPhoto} alt={`Workout photo from ${date}`}/></figure>}
+    {(metrics.length>0 || session?.detailSource) && <section className="journal-section"><h2>Workout details</h2><dl className="journal-metrics">{metrics.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>{session?.detailSource && <p className="journal-subtle">Recorded from {session.detailSource}</p>}</section>}
+    {session?.notes?.trim() && <section className="journal-section"><h2>Your notes</h2><p className="journal-notes">{session.notes}</p></section>}
+    {exercises.length>0 && <section className="journal-section"><h2>Add-ons</h2><ul className="journal-exercises">{exercises.map(name=><li key={name}><span aria-hidden="true">{session?.completedExercises.includes(name)?'✓':'○'}</span><strong>{name}</strong><small>{session?.completedExercises.includes(name)?'Completed':'Selected'}</small></li>)}</ul></section>}
+    {!!session?.videos.length && <section className="journal-section"><h2>Workout videos</h2><div className="journal-videos">{session.videos.map((video,index)=>{const id=videoId(video);return <div className="journal-video" key={`${video.url}-${index}`}><h3>{video.label}</h3>{video.category && <p className="journal-subtle">{({mobility:"Mobility",aerobic:"Easy aerobic",strength:"Strength",speed:"Speed / intensity",endurance:"Endurance"})[video.category]}</p>}{id ? <iframe loading="lazy" src={`https://www.youtube-nocookie.com/embed/${id}`} title={video.label} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/> : <p>Embedded playback is unavailable for this link.</p>}<div className="journal-video-actions"><a href={/^https?:\/\//i.test(video.url)?video.url:undefined} target="_blank" rel="noreferrer">Open video ↗</a><button type="button" disabled={adding} onClick={()=>void addVideo(video)}>Add to today’s workout</button></div></div>})}</div>{videoNotice && <p role="status">{videoNotice}</p>}</section>}
+    {!!session?.importedWorkouts?.length && <section className="journal-section"><h2>Imported workout details</h2>{session.importedWorkouts.map((workout,index)=><details className="journal-import" key={index}><summary>Workout {index+1} · {workout.activity || workout.source || 'Imported details'}</summary><dl className="journal-metrics">{[['Activity',workout.activity],['Date',workout.date],['Start time',workout.startTime],['Duration',workout.duration],['Distance',workout.distance],['Pace',workout.pace],['Calories',workout.calories],['Source',workout.source],['Confidence',workout.confidence]].filter(([,value])=>value).map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>{workout.warnings?.map((warning,i)=><p key={i}>{warning}</p>)}</details>)}</section>}
+    {session?.injury && (session.injury.reported || session.injury.note || session.injury.bodyArea || session.injury.impact) && <section className="journal-section"><h2>Body check-in</h2>{session.injury.reported && <p>Concern recorded for this workout.</p>}{session.injury.bodyArea && <p><b>Area:</b> {session.injury.bodyArea}</p>}{session.injury.impact && <p><b>Impact:</b> {({modified:'Modified workout',stopped:'Stopped early',prevented:'Couldn’t start'})[session.injury.impact]}</p>}{session.injury.note && <p className="journal-notes">{session.injury.note}</p>}</section>}
+    {hasNutrition && <section className="journal-section"><h2>Nutrition</h2>{nutrition?.food !== undefined && <p>Followed food plan: <b>{nutrition.food?'Yes':'No'}</b></p>}{nutrition?.foodNote && <p className="journal-notes">{nutrition.foodNote}</p>}{nutrition?.cutoff !== undefined && <p>Finished eating by 7:30 p.m.: <b>{nutrition.cutoff?'Yes':'No'}</b></p>}{nutrition?.cutoffNote && <p className="journal-notes">{nutrition.cutoffNote}</p>}{nutrition?.fast !== undefined && <p>Fasting check-in (legacy): <b>{nutrition.fast?'Yes':'No'}</b></p>}</section>}
+    {nutritionError && <p role="status">Nutrition records could not be read. Your saved data is unchanged.</p>}
+
+  </article>;
+}

@@ -15,7 +15,25 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — warm orange navigation
+## Current change — Adventure Journal
+
+Candidate `2026.10.09 2318`: Plan stops on/before today and all History day links
+open a scrollable journal, with Back/Edit, previous/next and date picker. Future
+Plan stops still open the editor. Displays recorded metrics, notes, photos, selected
+and completed add-ons, imported details/warnings, body check-in and nutrition
+(including legacy fasting answers), plus embedded YouTube players and duplicate-safe
+Add to today. Empty sections hidden. Directly reads existing records, so original
+backup/restore schema is unchanged; no separate journal data. Read-only viewing
+does not load/write historical records through the editor. Fixed getSession to
+honor richer/newer localStorage fallback records, matching history merge behavior.
+Three tests cover complete daily data, immutability, empty days, invalid
+video links and richer/newer fallback record loading. External Chrome verified contents, dates, edit and video copying.
+Both builds, 13 rendered tests and 27 focused tests pass, plus diff check.
+Desktop/tablet/phone journal views and lower video section inspected in external
+Chrome. Source unchanged after viewing and copying videos; editing loads the same
+record. Publication pending.
+
+## Previous release — warm orange navigation
 
 Published `2026.10.09 2202`: bottom menu matches mockup’s warm ivory surface,
 orange active icon/label and underline, with readable SVG home/calendar/map/

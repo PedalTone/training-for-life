@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
+import { DailyJournal } from "./daily-journal";
 import { adventureSceneFor } from "./adventure-scenes";
 import { isCompleteInsightReport } from "./insight-validation";
 
@@ -22,10 +23,10 @@ const videoCategories = [
   { key: "endurance", label: "Endurance", icon: "∞" },
 ] as const;
 type VideoCategory = (typeof videoCategories)[number]["key"];
-type Video = { url: string; label: string; videoId?: string; thumbnailData?: string; category?: VideoCategory };
+export type Video = { url: string; label: string; videoId?: string; thumbnailData?: string; category?: VideoCategory };
 function isVideoCategory(value: unknown): value is VideoCategory { return videoCategories.some((category) => category.key === value); }
 function videoCategoryLabel(category?: VideoCategory) { return videoCategories.find((item) => item.key === category)?.label || "Uncategorized"; }
-type Session = {
+export type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
   plannedKey?: string; plannedTheme?: string; planOverride?: boolean;
   pace?: string; calories?: string; startTime?: string; detailSource?: string;
@@ -233,9 +234,12 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.09 2202";
+const APP_VERSION = "2026.10.09 2318";
 const RECENT_RELEASES = [
   { version: APP_VERSION, changes: [
+    "Open days from Plan or History as a scrollable Adventure Journal, with photos, notes, add-ons, nutrition and embedded videos you can add to today.",
+  ] },
+  { version: "2026.10.09 2202", changes: [
     "Bottom navigation now uses a warm background, recognizable icons and orange highlighting with an underline for the active tab.",
   ] },
   { version: "2026.10.09 2158", changes: [
@@ -246,9 +250,6 @@ const RECENT_RELEASES = [
   ] },
   { version: "2026.10.09 1936", changes: [
     "Copy notes from the most recent earlier workout of the same type; existing notes are kept and prior notes are appended.",
-  ] },
-  { version: "2026.10.09 1928", changes: [
-    "Add recent videos to today’s workout directly from Settings, without removing them from past workouts.",
   ] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -267,7 +268,17 @@ function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) 
   });
 }
 const saveSession = (session: Session) => withStore("readwrite", (store) => store.put(session));
-const getSession = (id: string) => withStore<Session | undefined>("readonly", (store) => store.get(id));
+const getSession = async (id: string) => {
+  const saved = await withStore<Session | undefined>("readonly", (store) => store.get(id));
+  let fallback: Session | undefined;
+  try { const raw = localStorage.getItem(`t4l:${id}`); if (raw) fallback = JSON.parse(raw); } catch { /* Keep the indexed record if fallback storage cannot be read. */ }
+  if (!fallback?.date || fallback.date !== id) return saved;
+  if (!saved) return fallback;
+  const indexedTime = Date.parse(saved.updatedAt || "") || 0;
+  const fallbackTime = Date.parse(fallback.updatedAt || "") || 0;
+  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
+  return fallbackTime > indexedTime || (fallbackTime === indexedTime && richness(fallback) > richness(saved)) ? fallback : saved;
+};
 const getAllSessions = () => withStore<Session[]>("readwrite", (store) => {
   const cursor = store.openCursor();
   cursor.onsuccess = () => {
@@ -431,6 +442,7 @@ export default function Home() {
     });
   };
   const basePlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
+  const [journalDate, setJournalDate] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("today");
   const [openScheduleOnSettings, setOpenScheduleOnSettings] = useState(false);
   const [enteredApp, setEnteredApp] = useState(() => { try { return sessionStorage.getItem("t4l:entered-app") === "1"; } catch { return false; } });
@@ -647,7 +659,7 @@ export default function Home() {
   };
   const contentRef = useRef<HTMLElement>(null);
   const scrollToTop = () => contentRef.current?.scrollTo({ top: 0, behavior: "instant" });
-  const navigate = (next: Tab) => { setTab(next); scrollToTop(); };
+  const navigate = (next: Tab) => { setJournalDate(null); setTab(next); scrollToTop(); };
   const makePlanForNextWeek = () => { setOpenScheduleOnSettings(true); navigate("more"); };
   useEffect(() => {
     if (tab !== "more" || !openScheduleOnSettings) return;
@@ -659,7 +671,9 @@ export default function Home() {
     setOpenScheduleOnSettings(false);
   }, [tab, openScheduleOnSettings]);
   const enterApp = (next: Tab) => { try { sessionStorage.setItem("t4l:entered-app", "1"); } catch { /* Continue without a session preference. */ } setTab(next); setEnteredApp(true); scrollToTop(); };
-  const openDate = (date: Date) => { setActiveDate(date); setTab("today"); scrollToTop(); };
+  const openJournal = (date: Date) => { setJournalDate(dateKey(date)); scrollToTop(); };
+  const openPlanDate = (date: Date) => { if (dateKey(date) <= dateKey(today)) openJournal(date); else openDate(date); };
+  const openDate = (date: Date) => { setJournalDate(null); setActiveDate(date); setTab("today"); scrollToTop(); };
   const finishAndBackup = async () => {
     setFinishBackupState("Choose backup location…");
     const now = new Date().toISOString();
@@ -814,7 +828,8 @@ export default function Home() {
   const splashPlan = activeKey === dateKey(today) ? plan : historicalPlan(undefined, scheduleForDate(today, activeSchedule, scheduleHistory), today);
   if (!enteredApp) return <div className={`app-shell theme-${splashPlan.key} splash-shell`}><SplashScreen version={APP_VERSION} todayPlan={splashPlan} todayActivity={activeKey === dateKey(today) && session.date === activeKey ? session.activity : ""} onEnter={enterApp}/></div>;
   return <div className={`app-shell textured-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}`}>
-    <main ref={contentRef} className={tab === "week" ? "plan-content" : undefined} style={showMobilityPicker || screenshotState === "review" ? { overflow: "hidden" } : undefined}>
+    <main ref={contentRef} className={tab === "week" && !journalDate ? "plan-content" : undefined} style={showMobilityPicker || screenshotState === "review" ? { overflow: "hidden" } : undefined}>
+      {journalDate ? <DailyJournal key={journalDate} date={journalDate} today={dateKey(today)} session={viewHistory.find(item => item.date === journalDate)} plan={historicalPlan(viewHistory.find(item => item.date === journalDate), scheduleForDate(dateFromKey(journalDate), activeSchedule, scheduleHistory), dateFromKey(journalDate))} onDate={date => { setJournalDate(date); scrollToTop(); }} onBack={() => { setJournalDate(null); scrollToTop(); }} onEdit={() => openDate(dateFromKey(journalDate))} onAddVideo={addVideoToToday}/> : <>
       {tab === "today" && <div className="today-page">
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
@@ -850,12 +865,13 @@ export default function Home() {
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
       {screenshotState === "review" && screenshotWorkout && <ScreenshotReview workout={screenshotWorkout} setWorkout={setScreenshotWorkout} preview={screenshotPreview} activeDate={activeKey} hasExisting={Boolean(session.duration || session.distance || session.pace || session.calories || session.startTime)} onApply={applyScreenshot} onClose={closeScreenshot}/>}
 
-      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate} onMakeNextWeekPlan={makePlanForNextWeek}/>}
-      {tab === "history" && <HistoryView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openDate}/>}
+      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openPlanDate} onMakeNextWeekPlan={makePlanForNextWeek}/>}
+      {tab === "history" && <HistoryView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openJournal}/>}
       {tab === "performance" && <PerformanceView now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} accessCode={screenshotAccessCode} onOpenSettings={() => navigate("more")}/>}
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onAddToToday={addVideoToToday}/>}
+      </>}
     </main>
-    <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setActiveDate(today); setEnteredApp(false); scrollToTop(); }}><NavIcon name="home"/><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Performance" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
+    <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setJournalDate(null); setActiveDate(today); setEnteredApp(false); scrollToTop(); }}><NavIcon name="home"/><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Performance" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
 }
 
