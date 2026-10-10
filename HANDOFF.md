@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — adventure Plan
 
-Candidate `2026.10.09 2158`: Plan defaults to Adventure with persistent List switch.
+Published `2026.10.09 2158`: Plan defaults to Adventure with persistent List switch.
 Six reusable painted terrain tiles; the resolved historical/one-day workout key
 selects terrain, including mountain for both strength themes, forest for endurance,
 beach for recovery; custom types use meadow. Dates, Today and completion markers
@@ -26,7 +26,9 @@ External headless Chrome checked desktop/tablet/iPhone layouts and verified a
 strength-to-recovery override immediately changes Plan to beach. No built-in browser.
 Both builds, 13 rendered tests, 24 focused tests and diff check pass.
 Desktop, tablet and phone screenshots visually inspected; phone fits all seven
-stops plus next-week action. List/Adventure switching verified. Publication pending. Artwork generated using built-in imagegen;
+stops plus next-week action. List/Adventure switching verified. Commit `b071fef`
+deployed in successful Pages run `38015267779`; HTTPS verified release, worker,
+exact JS/CSS and terrain artwork. Artwork generated using built-in imagegen;
 prompt: six equal 2×3 expedition-journal terrain tiles, mountain/downhill/river/
 meadow/forest/beach, no text, consistent warm palette. Asset: public/adventure-terrain.png.
 
