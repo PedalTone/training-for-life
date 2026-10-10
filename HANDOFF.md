@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — Adventure Journal
 
-Candidate `2026.10.09 2318`: Plan stops on/before today and all History day links
+Published `2026.10.09 2318`: Plan stops on/before today and all History day links
 open a scrollable journal, with Back/Edit, previous/next and date picker. Future
 Plan stops still open the editor. Displays recorded metrics, notes, photos, selected
 and completed add-ons, imported details/warnings, body check-in and nutrition
@@ -31,7 +31,10 @@ video links and richer/newer fallback record loading. External Chrome verified c
 Both builds, 13 rendered tests and 27 focused tests pass, plus diff check.
 Desktop/tablet/phone journal views and lower video section inspected in external
 Chrome. Source unchanged after viewing and copying videos; editing loads the same
-record. Publication pending.
+record. Commit `bf4f474` deployed in successful Pages run `38020228294`;
+HTTPS verified the exact release, JS/CSS and service worker. Embedded frame rendering
+tested with external video requests blocked in the fixture; real YouTube playback
+is subject to the video’s embed permission, with Open video fallback available.
 
 ## Previous release — warm orange navigation
 
