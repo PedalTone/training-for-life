@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — Endurance artwork and full-body strength naming
 
-Candidate `2026.10.10 0938`: approved runner/cyclist winding trail saved as
+Published `2026.10.10 0938`: approved runner/cyclist winding trail saved as
 public/endurance-trail.png and used for Endurance across Home, Today, Plan,
 Progress and journal. Shared background helper preserves other atlas scenes.
 Strength choices/categories/balance labels now say Full-body strength; Wednesday
@@ -25,7 +25,8 @@ and Friday defaults both use full-body guidance. Current/future saved strength
 plans display the canonical name; prior recorded themes and storage keys retained.
 Both builds, 13 rendered and 12 focused tests pass; diff clean. External Chrome
 verified mapping labels, both strength days, workout-driven image changes and
-phone/tablet/desktop Today/Plan layouts. Publication pending.
+phone/tablet/desktop Today/Plan layouts. Commit `8e0a422` deployed in successful
+Pages run `38056683275`; HTTPS verified release, exact JS/CSS, artwork and worker.
 
 ## Previous release — saved GPS controls and wide Today landscape
 
