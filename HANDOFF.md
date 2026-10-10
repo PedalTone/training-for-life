@@ -17,7 +17,7 @@ was changed.
 
 ## Current change — shared tab headers
 
-Candidate `2026.10.10 1512`: all five entered tabs use matching page title
+Published `2026.10.10 1512`: all five entered tabs use matching page title
 font, size and top/left alignment. Today gains Today’s workout page heading;
 workout type remains within its hero as a section heading. Home stays unique.
 Shared page width/padding and title rules replace tab-specific differences.
@@ -25,6 +25,8 @@ Both builds and 13 rendered tests pass; diff clean. External Chrome measured
 all five titles at x14/y24, Georgia 29px/33.35px on iPhone 17 Pro Max 440×956.
 Screenshots inspected; Plan week/action fits without scrolling; no overflow.
 No storage or workout behavior changes.
+Commit `eda9d4c` deployed in successful Pages run `38078935200`; live exact
+release, JS/CSS assets and service worker verified over HTTPS.
 
 ## Previous release — complete History/Settings palette
 
