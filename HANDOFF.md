@@ -28,7 +28,9 @@ Both builds, 13 rendered tests and four artwork tests pass. External headless
 Chrome at 440×956 verified all four surfaces; inspected screenshots and corrected
 the Strength figure size to preserve its head and feet in the shallow weekly
 cards. All six 6px picture gaps remain, with no horizontal overflow. No workout
-storage or API changes. Publication verification pending.
+storage or API changes. Commit `c872594` deployed successfully in Pages run
+`38106925211`; HTTPS checks verified release `2026.10.10 2258`, exact live JS/CSS,
+worker, icons, and both indoor illustrations against the local build.
 
 ## Current change — saved GPS route maps
 
