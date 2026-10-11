@@ -56,3 +56,14 @@ test('Today keeps completion independent of body flags, including legacy complet
  assert.equal(resolve({...source,status:'partial',completedAt:'2026-10-11T12:00:00Z',injury:{reported:true}}),true);
  assert.equal(resolve({...source,status:'partial',completedAt:undefined,injury:{reported:true}}),false);
 });
+
+test('workout summary lists explicit add-ons and excludes display-only examples',()=>{
+ globalThis.localStorage={getItem:()=> '{}'};
+ const blank={...source,mobilityExercises:[],completedExercises:[]};
+ const empty=renderToStaticMarkup(React.createElement(DailyJournal,{...props,session:blank}));
+ assert.ok(!empty.includes('<h2>Add-ons</h2>'));
+ const chosen=renderToStaticMarkup(React.createElement(DailyJournal,{...props,session:{...blank,mobilityExercises:['Face Pulls']}}));
+ assert.ok(chosen.includes('Face Pulls'));
+ assert.ok(chosen.includes('Selected'));
+ assert.ok(!chosen.includes('Dead Hang'));
+});

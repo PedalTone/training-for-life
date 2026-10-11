@@ -2,6 +2,19 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
+## Current change — explicit add-on selection
+
+Release `2026.10.11 1706` keeps Face Pulls and Dead Hang as display-only examples
+on Today. Checkboxes now explicitly select/remove an exercise; a separate
+Mark done button records completion. Viewing Details never selects an example.
+Examples stay out of session data, counts, summaries and backups until chosen.
+Existing saved choices/completions remain; unchecking removes that choice and
+its completion mark. Picker and Repeat still count as explicit setup choices.
+Both builds, 13 rendered tests and 14 focused tests pass. External Chrome checked
+empty examples, Details without selection, select/complete/remove, counts,
+downloaded backups and reload; phone/tablet/desktop layouts inspected without
+horizontal overflow. Publication pending.
+
 ## Current change — tabbed Today workspace
 
 Release `2026.10.11 1600` implements the approved Workout / Log / Check-ins

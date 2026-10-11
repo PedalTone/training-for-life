@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
+import { addonChoices, toggleAddonSelection } from "./addon-selection";
 import { GpsTracker, useGpsTracker } from "./gps-tracker";
 import { gpsTime, type GpsWorkout } from "./gps-math";
 import { LocalProgressView } from "./local-progress-view";
@@ -241,9 +242,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 1600";
+const APP_VERSION = "2026.10.11 1706";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Today now has Workout, Log and Check-ins tabs, a larger workout picture, Repeat prior workout first and a cleaner run/bike tracker above Add-ons. Exercise graphics are available in Details; finish and backup stay within reach."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
+  { version: "2026.10.11 1600", category: "Major fix", changes: ["Today now has Workout, Log and Check-ins tabs, a larger workout picture, Repeat prior workout first and a cleaner run/bike tracker above Add-ons. Exercise graphics are available in Details; finish and backup stay within reach."] },
   { version: "2026.10.11 1324", category: "Minor fix", changes: ["Strength features a kettlebell and Mobility a rear-view stretch. Easy Aerobic includes a woman jogging. The Home workout picture now matches Today’s wide proportions."] },
   { version: "2026.10.10 2258", category: "Minor fix", changes: ["Strength and Mobility now use indoor workout illustrations with the same warm colors and painted feel as the landscapes."] },
   { version: "2026.10.10 2045", category: "Major fix", changes: ["Run and bike recordings now save route maps with city/state labels inside the picture. Pauses and GPS gaps stay separate; routes are included in backups."] },
@@ -252,7 +254,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 2005", category: "Minor fix", changes: ["History Nutrition check-ins now appear at the bottom, below the calendar and its navigation arrows."] },
   { version: "2026.10.10 1954", category: "Minor fix", changes: ["Narrow ivory gaps separate the Plan landscape pictures, making each day easier to distinguish."] },
   { version: "2026.10.10 1949", category: "Major fix", changes: ["Swipe left for the next tab and right for the previous tab, in bottom-menu order. Settings illustrations now match Home; Future workout videos keeps its red YouTube icon."] },
-  { version: "2026.10.10 1855", category: "Minor fix", changes: ["What’s New now labels each change as a major or minor fix and shows the ten most recent releases."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -654,6 +655,7 @@ export default function Home() {
     update({ mobilityExercises: ordered, completedExercises: session.completedExercises.filter((name) => ordered.includes(name)) });
     setShowMobilityPicker(false);
   };
+  const selectAddon = (name: string) => update(toggleAddonSelection(sessionRef.current, name));
   const toggleExercise = (name: string) => update({ completedExercises: session.completedExercises.includes(name) ? session.completedExercises.filter((item) => item !== name) : [...session.completedExercises, name] });
   const renameLibraryExercise = (id: string, previousName: string, requestedName: string) => {
     const name = requestedName.trim().replace(/\s+/g, " ");
@@ -922,7 +924,18 @@ export default function Home() {
           </details>
         <GpsTracker tracker={gps} date={activeKey} savedWorkout={session.gpsWorkouts?.at(-1)}/>
         <section className="today-addons"><div className="today-section-title"><h3>Add-ons</h3><button onClick={openMobilityPicker}>＋ Add / edit</button></div>
-        {session.mobilityExercises.length ? session.mobilityExercises.map(name => { const exercise = libraryExercises.find(item => item.name === name); const checked = session.completedExercises.includes(name); return <div className="today-addon-row" key={name}><label><input type="checkbox" checked={checked} onChange={() => toggleExercise(name)}/><span>{name}</span></label><details><summary>Details</summary><div className="today-addon-detail"><MovementMark exerciseId={exercise?.id} name={name} graphicData={exercise?.graphicData}/><p>{exercise?.equipment || "Supporting exercise"}</p><a href={`https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`} target="_blank" rel="noreferrer">Start timer</a></div></details></div>; }) : <p className="today-muted">Choose supporting exercises for this workout.</p>}
+        <p className="today-addon-count">{session.mobilityExercises.length} selected · {session.completedExercises.filter(name => session.mobilityExercises.includes(name)).length} completed</p>
+        {addonChoices(session.mobilityExercises, libraryExercises.map(item => item.name)).map(name => {
+          const exercise = libraryExercises.find(item => item.name === name);
+          const selected = session.mobilityExercises.includes(name);
+          const done = session.completedExercises.includes(name);
+          return <div className={`today-addon-row${selected ? " selected" : " suggested"}`} key={name}>
+            <label><input type="checkbox" aria-label={`Select ${name}`} disabled={!loaded} checked={selected} onChange={() => selectAddon(name)}/><span>{name}{!selected && <small>Example · select to add</small>}</span></label>
+            {selected && <button className="today-addon-done" disabled={!loaded} aria-label={`${done ? "Unmark" : "Mark"} ${name} completed`} aria-pressed={done} onClick={() => toggleExercise(name)}>{done ? "✓ Done" : "Mark done"}</button>}
+            <details><summary>Details</summary><div className="today-addon-detail"><MovementMark exerciseId={exercise?.id} name={name} graphicData={exercise?.graphicData}/><p>{exercise?.equipment || "Supporting exercise"}</p><a href={`https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`} target="_blank" rel="noreferrer">Start timer</a></div></details>
+          </div>;
+        })}
+
         </section>
             <section className="today-videos"><h3>Workout videos</h3>{session.videos.length > 0 && <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} onDelete={() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div>}{!showVideoForm ? <button className="add-video-toggle" onClick={() => setShowVideoForm(true)}>＋ Add Video</button> : <div className="inline-sheet"><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</div>}</section>
 
