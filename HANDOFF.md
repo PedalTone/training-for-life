@@ -2,7 +2,23 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — simpler social image sharing
+## Current change — street maps in shared Route images
+
+Release `2026.10.11 1913` uses OpenStreetMap tiles in the exported Route image,
+with overlaid separate GPS segments, start/finish markers and visible attribution.
+City/state labels default on and can be edited temporarily, including crossings;
+full route remains the default. Only visible preview tiles load, with browser HTTP
+cache and bounded in-memory reuse. Photo/Card remain unchanged. A missing map
+blocks export and offers Retry preview; routes are never silently exported without
+the requested map. No stored workouts/backups change. Both builds, 13 rendered and nine sharing/map
+tests pass. External Chrome checked map PNGs in all three sizes, edited crossing
+labels, optional privacy, share/download fallbacks and phone/tablet/desktop layouts
+using mocked tiles; one real OpenStreetMap viewport exported successfully with
+CORS and was visually inspected. Map failure disables sharing; retry recovers.
+Nine preexisting type errors remain, no new diagnostics; changed-module lint has
+zero errors and one existing image advisory. Publication verification pending.
+
+## Previous change — simpler social image sharing
 
 Release `2026.10.11 1903` replaces separate Share/Download buttons with one
 Share Image action. Unsupported or failed native sharing downloads the image;

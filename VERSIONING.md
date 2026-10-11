@@ -1,12 +1,14 @@
+New public release — 2026.10.11 1913: Route share images include street maps, start/finish markers and city/state labels by default, with editable crossing labels and map-loading retry.
+
 New public release — 2026.10.11 1903: One Share Image action, Instagram/TikTok format labels and full routes by default; endpoint hiding is optional.
 
 New public release — 2026.10.11 1853: Share workout images with Photo, Route and Workout Card templates, selectable recorded metrics, three export sizes and endpoint privacy.
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 1903` simplifies image sharing and shows full routes by default.
+Release decision: **New public release** — `2026.10.11 1913` includes street maps in Route sharing.
 
-App, notes, tests, worker and deployment use `2026.10.11 1903`.
+App, notes, tests, worker and deployment use `2026.10.11 1913`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

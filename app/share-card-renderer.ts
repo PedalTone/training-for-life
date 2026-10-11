@@ -1,10 +1,11 @@
+import { drawShareRouteMap } from './share-route-map';
 import { adventureBackgroundFor } from './adventure-scenes';
-import { shareFormats, shareRouteSegments, projectShareRoute, type ShareCardData, type ShareCardFormat, type ShareCardTemplate } from './share-card-data';
-export type ShareCardOptions = { template:ShareCardTemplate; format:ShareCardFormat; metricIds:string[]; background:'artwork'|'navy'|'photo'; photo?:string; hideRouteEnds:boolean; showLocation:boolean };
+import { shareFormats, shareRouteSegments, type ShareCardData, type ShareCardFormat, type ShareCardTemplate } from './share-card-data';
+export type ShareCardOptions = { template:ShareCardTemplate; format:ShareCardFormat; metricIds:string[]; background:'artwork'|'navy'|'photo'; photo?:string; hideRouteEnds:boolean; showLocation:boolean; locationLabel?:string };
 async function loadImage(src:string) { const image=new Image();image.src=src;await image.decode();return image; }
 function cover(ctx:CanvasRenderingContext2D,image:HTMLImageElement|HTMLCanvasElement,x:number,y:number,w:number,h:number) {const scale=Math.max(w/image.width,h/image.height);ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.drawImage(image,x+(w-image.width*scale)/2,y+(h-image.height*scale)/2,image.width*scale,image.height*scale);ctx.restore();}
 function fitText(ctx:CanvasRenderingContext2D,text:string,maxWidth:number,size:number,min:number,font='system-ui',weight='700') { while(size>min){ctx.font=`${weight} ${size}px ${font}`;if(ctx.measureText(text).width<=maxWidth)break;size-=2;}ctx.font=`${weight} ${size}px ${font}`;let result=text;if(ctx.measureText(result).width>maxWidth){while(result.length && ctx.measureText(result+'…').width>maxWidth)result=result.slice(0,-1);result+='…';}return result; }
-function lines(ctx:CanvasRenderingContext2D,text:string,maxWidth:number,count:number) {const words=text.split(/\s+/);const output:string[]=[];let current='';for(const word of words){const next=current?current+' '+word:word;if(current&&ctx.measureText(next).width>maxWidth){output.push(current);current=word;if(output.length===count-1)break;}else current=next;}if(output.length<count){const consumed=output.join(' ').split(/\s+/).filter(Boolean).length;output.push(words.slice(consumed).join(' '));}return output.slice(0,count).map(line=>fitText(ctx,line,maxWidth,64,40,'Georgia'));}
+function lines(ctx:CanvasRenderingContext2D,text:string,maxWidth:number,count:number,size=64,font='Georgia',min=40) {const words=text.split(/\s+/);const output:string[]=[];let current='';for(const word of words){const next=current?current+' '+word:word;if(current&&ctx.measureText(next).width>maxWidth){output.push(current);current=word;if(output.length===count-1)break;}else current=next;}if(output.length<count){const consumed=output.join(' ').split(/\s+/).filter(Boolean).length;output.push(words.slice(consumed).join(' '));}return output.slice(0,count).map(line=>fitText(ctx,line,maxWidth,size,min,font));}
 export async function renderShareCard(data:ShareCardData,options:ShareCardOptions):Promise<Blob> {
   const {width:w,height:h}=shareFormats[options.format];const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Image rendering is unavailable.');
   const selectedCount=options.metricIds.filter(id=>data.metrics.some(m=>m.id===id)).length;
@@ -26,12 +27,17 @@ export async function renderShareCard(data:ShareCardData,options:ShareCardOption
   ctx.font='400 30px system-ui';const date=/^\d{4}-\d{2}-\d{2}$/.test(data.date)?new Date(data.date+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):data.date;ctx.fillText(date,pad,titleY+titleLines.length*72+12);
   const metricHeight=metrics.length>2?250:130;const startY=Math.max(options.template==='card'?titleY+titleLines.length*72+90:0,h-pad-80-metricHeight);const cols=metrics.length===1?1:2;const cellW=(w-pad*2)/cols;
   if(options.template==='route') {
-    const segments=projectShareRoute(shareRouteSegments(data.route,options.hideRouteEnds));const points=segments.flat();const top=titleY+titleLines.length*72+84;const bottom=startY-45;const boxHeight=Math.max(160,bottom-top);
-    if(points.length){const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);const scale=Math.min((w-pad*2-40)/Math.max(maxX-minX,1e-9),(boxHeight-40)/Math.max(maxY-minY,1e-9));ctx.strokeStyle='#f2ab68';ctx.lineWidth=12;ctx.lineCap='round';ctx.lineJoin='round';for(const segment of segments){ctx.beginPath();segment.forEach(([x,y],i)=>{const px=w/2+(x-(minX+maxX)/2)*scale,py=top+boxHeight/2+(y-(minY+maxY)/2)*scale;if(i)ctx.lineTo(px,py);else ctx.moveTo(px,py);});ctx.stroke();}}
-    else {ctx.font='400 30px system-ui';ctx.fillText('Route hidden for privacy',pad,top+boxHeight/2);}
+    const segments=shareRouteSegments(data.route,options.hideRouteEnds);const top=titleY+titleLines.length*72+84;
+    const location=options.locationLabel??data.route?.locationLabel;
+    ctx.font='500 30px system-ui';const locationLines=options.showLocation?lines(ctx,location||'City / state not recorded',w-pad*2,3,30,'system-ui',26):[];const labelLines=locationLines.length;
+    const labelHeight=labelLines?labelLines*36+20:0;const bottom=startY-45-labelHeight;
+    const boxHeight=Math.max(160,bottom-top);
+    if(!await drawShareRouteMap(ctx,segments,pad,top,w-pad*2,boxHeight)){ctx.fillStyle='#fffaf1';ctx.font='400 30px system-ui';ctx.fillText('Route hidden for privacy',pad,top+boxHeight/2);}
+    if(options.showLocation){ctx.fillStyle='#fffaf1';ctx.font='500 30px system-ui';locationLines.forEach((line,i)=>{ctx.fillText(fitText(ctx,line,w-pad*2,30,26,'system-ui','500'),pad,top+boxHeight+14+i*36);});}
+
   }
   metrics.forEach((m,i)=>{const x=pad+(i%cols)*cellW,y=startY+Math.floor(i/cols)*125;ctx.fillStyle=dark?'#fffaf1':'#203449';ctx.fillText(fitText(ctx,m.value,cellW-24,metrics.length===1?100:72,30),x,y);ctx.fillStyle=dark?'#efd7b9':'#62717c';ctx.font='400 32px system-ui';ctx.fillText(m.label,x,y+82);});
-  if(options.template==='route'&&options.showLocation&&data.route?.locationLabel){ctx.fillStyle='#efd7b9';ctx.fillText(fitText(ctx,data.route.locationLabel,w-pad*2,27,23,'system-ui','400'),pad,h-pad-42);}
+
   ctx.fillStyle=dark?'#fffaf1':'#62717c';ctx.font='600 25px system-ui';ctx.fillText('TRAINING FOR LIFE',pad,h-pad);ctx.fillStyle='#c05319';ctx.fillRect(w-pad-110,h-pad+8,110,5);
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Could not generate an image.')),'image/png'));
 }
