@@ -17,11 +17,13 @@ was changed.
 
 ## Current change — History Nutrition placement
 
-Candidate `2026.10.10 2005`: Nutrition check-ins follows the calendar and arrows
+Published `2026.10.10 2005`: Nutrition check-ins follows the calendar and arrows
 in Weekly Details and Month. JSX and flex order agree; arrows remain in normal
 content flow. External Chrome iPhone 440×956 inspected both views; geometry,
 arrow navigation, check-in expand/collapse and no horizontal overflow verified.
-No storage, Nutrition behavior or API changes. Publication pending.
+Both builds and 13 rendered tests pass; diff clean. No storage, Nutrition
+behavior or API changes. Commit `08d609a` deployed in successful Pages run
+`38097318244`; live exact release, JS/CSS and service worker verified over HTTPS.
 
 ## Current change — separated Plan pictures
 
