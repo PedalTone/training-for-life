@@ -22,7 +22,11 @@ Phone 320/440, tablet 768 and desktop 1280 layouts inspected. Physical iPhone
 share destinations remain device-dependent and were not physically tested.
 Full lint/type checks retain existing repository errors; changed sharing modules
 have zero lint errors (one image advisory) and no new TypeScript diagnostics.
-Publication pending verification.
+Commit `4f3d055` published successfully in Pages run `38182215885`. Live
+release `2026.10.11 1853`, JS/CSS, worker and artwork exactly match the tested
+build. External Chrome repeated all five workout cases and three export sizes
+on the live app, including native activation, cancellation/error, unsupported
+file-sharing download fallback, journal entry and unchanged stored records.
 
 ## Previous change — featured-day Plan and expanded artwork
 
