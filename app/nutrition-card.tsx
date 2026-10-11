@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { NUTRITION_KEY, nutritionSchedule, nutritionSummary, readNutrition } from "./nutrition";
 import type { NutritionDay, NutritionRecords } from "./nutrition";
 
-export function NutritionCard({ date }: { date: string }) {
+export function NutritionCard({ date, expanded = false }: { date: string; expanded?: boolean }) {
   const [day, setDay] = useState<NutritionDay>({});
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState("");
@@ -28,14 +28,15 @@ export function NutritionCard({ date }: { date: string }) {
       {applies && day[field] === false && <label className="nutrition-note">What happened? <small>Optional · use your keyboard’s microphone to dictate.</small><textarea rows={2} value={day[note] || ""} onChange={event => save({ [note]: event.target.value })} placeholder="A quick note, if useful" aria-label={`${label}: optional note`}/></label>}
     </div>;
   }
-  return <details className="nutrition-card nutrition-checkin" aria-label="Nutrition check-in">
-    <summary><span aria-hidden="true">◒</span><span><strong>Nutrition</strong><small>{schedule.scope}</small></span><i aria-hidden="true">＋</i></summary>
+  const Container = expanded ? "section" : "details";
+  return <Container className={`nutrition-card nutrition-checkin${expanded ? " nutrition-embedded" : ""}`} aria-label="Nutrition check-in">
+    {expanded ? <header><strong>Nutrition</strong><small>{schedule.scope}</small></header> : <summary><span aria-hidden="true">◒</span><span><strong>Nutrition</strong><small>{schedule.scope}</small></span><i aria-hidden="true">＋</i></summary>}
     <details className="nutrition-rules"><summary>My food plan</summary><p>High protein, whole foods: meat, fruit, vegetables and nuts. Skip bread and desserts. Flexible from Friday dinner through Sunday lunch.</p></details>
     {question("food", "Followed my food plan", schedule.food)}
     {question("cutoff", "Finished eating by 7:30 p.m.", schedule.cutoff)}
     <p className="nutrition-help">Tap a selected answer to undo.</p>
     <p className="nutrition-save" role="status">{notice || "Saves automatically · no workout completion needed"}</p>
-  </details>;
+  </Container>;
 }
 
 export function NutritionHistory({ onOpenDate }: { onOpenDate: (date: Date) => void }) {

@@ -3,7 +3,7 @@
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
 one-day changes, mobility exercises, videos, photos, backup/restore, and optional
-AI-assisted features. Nutrition starts collapsed below the workout session, with quick Yes/No check-ins,
+AI-assisted features. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
 with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development
@@ -124,7 +124,7 @@ unavailable message with a decorative sun. Weather does not change workout plans
 
 ## iPhone GPS workouts
 
-Today → Track a run or ride uses foreground browser geolocation with explicit
+Today → Workout → Track my run / bike uses foreground browser geolocation with explicit
 permission. Select Run/Bike and miles/kilometers, then Start GPS. Pause/Resume
 excludes paused time and never joins missing route segments. Stop + save route
 adds a GPS summary and segmented route map to the dated session; Finish + Backup then backs it up normally.

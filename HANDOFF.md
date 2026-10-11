@@ -2,6 +2,26 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
+## Current change — tabbed Today workspace
+
+Release `2026.10.11 1600` implements the approved Workout / Log / Check-ins
+layout with full-width 2:1 artwork. Repeat prior workout is first; the clean
+run/bike tracker is above Add-ons. Selected add-ons use checkboxes; Details
+reveals the existing graphic/equipment/timer. Videos remain in Workout. Log
+keeps metrics, notes, prior-note copying, photos and screenshot import; optional
+items expand. Body and existing Nutrition Yes/No questions are in Check-ins.
+Finish/Backup stays above navigation while scrolling. Hidden panels stay mounted,
+and active GPS has an Open tracker shortcut on the other two panels.
+A finished workout with a body flag now retains its finished state in Today;
+calendar flags and stored statuses are preserved. No storage/API/schema changes.
+
+External Chrome tested setup, add-ons, graphics/timer disclosure, photo, metrics,
+notes, body/Nutrition, simulated GPS pause/save/map, finish guard, downloaded JSON
+backup and reload persistence. Inspected phone, tablet and desktop layouts;
+no horizontal overflow. Both builds, 13 rendered tests and 31 focused regression
+tests pass. TypeScript retains the nine pre-existing diagnostics; no new diagnostics
+in the changed layout or tracker. Publication pending.
+
 ## Latest update-delivery repair
 
 Phone reported `2032` after `2037` deployed. Live HTTP headers show a 600-second

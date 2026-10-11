@@ -43,3 +43,16 @@ test('editor loader uses richer or newer fallback records without masking newer 
  const newer={...source,notes:'Newer edit',updatedAt:'2026-10-09T12:00:00Z'};
  assert.deepEqual(await make(newer)(source.id),newer);
 });
+
+test('Today keeps completion independent of body flags, including legacy completed timestamps',async()=>{
+ const {readFile}=await import('node:fs/promises');const ts=require('typescript');
+ const page=await readFile('app/page.tsx','utf8');
+ const resolver=page.slice(page.indexOf('function resolveSessionStatus('),page.indexOf('function stateFor('));
+ const expression=page.match(/const activeFinished = ([^;]+);/)[1];
+ const js=ts.transpile(resolver,{target:ts.ScriptTarget.ES2022});
+ const evaluate=new Function('session','plan','activeDate','today','dateKey',js+`;return ${expression};`);
+ const resolve=s=>evaluate(s,{key:'strength'},new Date('2026-10-11T12:00:00'),new Date('2026-10-11T12:00:00'),d=>d.toISOString().slice(0,10));
+ assert.equal(resolve({...source,status:'completed',injury:{reported:true}}),true);
+ assert.equal(resolve({...source,status:'partial',completedAt:'2026-10-11T12:00:00Z',injury:{reported:true}}),true);
+ assert.equal(resolve({...source,status:'partial',completedAt:undefined,injury:{reported:true}}),false);
+});
