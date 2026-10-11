@@ -21,7 +21,11 @@ and restore, unchanged recorded metrics, legacy reports/goals and no API calls.
 Phone/tablet/desktop title, screenshot and Settings/About layouts inspected.
 Eight existing TypeScript diagnostics remain; changed modules lint with zero
 errors and two image advisories. Saved legacy report direction "stay" safely
-uses the existing keep label. Publication verification pending.
+uses the existing keep label. Commit `d51ca48` published successfully in Pages run `38184377812`. Live
+release `2026.10.11 1927`, JS/CSS, worker and artwork match the tested build.
+External Chrome repeated custom share-title export, local screenshot saving,
+view/remove/reload/backup/restore, preserved metrics and legacy data, clean
+Settings/About and absence of API requests on the live app.
 
 ## Previous change — street maps in shared Route images
 
