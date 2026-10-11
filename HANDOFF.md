@@ -23,7 +23,10 @@ tests pass. TypeScript retains the nine pre-existing diagnostics; no new diagnos
 in the changed layout or tracker. Commit `6b4dd73` deployed successfully in Pages
 run `38170590511`. Live HTTPS verified release `2026.10.11 1600`, exact JS/CSS,
 worker, icons and artwork against the tested build. External Chrome verified the
-three live Today panels, tracker controls and all six destinations. Physical iPhone
+three live Today panels, tracker controls and all six destinations. A final map
+safeguard retains the last valid width while a Today panel is hidden, avoiding
+nonfinite SVG coordinates; both builds and full Chrome flow pass with NaN/Infinity
+console checks. The same release label is retained for this refinement. Physical iPhone
 GPS/background limitations remain as documented; tracking behavior is unchanged.
 
 ## Latest update-delivery repair

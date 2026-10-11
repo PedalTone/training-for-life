@@ -4,7 +4,7 @@ import {cleanRoute,mercator,type GpsRoute} from './gps-route';
 export function GpsRouteMap({route,onLabel}:{route?:GpsRoute;onLabel?:(label:string)=>void}) {
  const host=useRef<HTMLDivElement>(null);const [width,setWidth]=useState(360);const [zoomOffset,setZoomOffset]=useState(0);const [failed,setFailed]=useState(false);const [editing,setEditing]=useState(false);const [label,setLabel]=useState(route?.locationLabel||'');
  useEffect(()=>{setLabel(route?.locationLabel||'');},[route?.locationLabel]);
- useEffect(()=>{if(!host.current)return;const observer=new ResizeObserver(([entry])=>setWidth(entry.contentRect.width));observer.observe(host.current);return()=>observer.disconnect();},[Boolean(route?.segments?.length)]);
+ useEffect(()=>{if(!host.current)return;const observer=new ResizeObserver(([entry])=>{if(entry.contentRect.width>0)setWidth(Math.max(80,entry.contentRect.width));});observer.observe(host.current);return()=>observer.disconnect();},[Boolean(route?.segments?.length)]);
  const clean=cleanRoute(route);const segments=clean?.segments||[];const points=segments.flat();
  if(!points.length)return <p className="gps-caption">Route unavailable for this workout. New GPS recordings save their route.</p>;
  const origin=mercator(points[0])[0];const project=(point:[number,number])=>{const [x,y]=mercator(point);return [x-Math.round(x-origin),y];};
