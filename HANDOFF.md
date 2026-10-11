@@ -13,7 +13,11 @@ its completion mark. Picker and Repeat still count as explicit setup choices.
 Both builds, 13 rendered tests and 14 focused tests pass. External Chrome checked
 empty examples, Details without selection, select/complete/remove, counts,
 downloaded backups and reload; phone/tablet/desktop layouts inspected without
-horizontal overflow. Publication pending.
+horizontal overflow. Commit `1e02f6f` published successfully in Pages run
+`38175152170`. Live release `2026.10.11 1706`, JS/CSS, service worker, icons and
+artwork match the tested build. External Chrome verified all destinations and
+confirmed a Sunday selection does not carry into a newly opened Monday: both
+examples remain unchecked with zero selected.
 
 ## Current change — tabbed Today workspace
 
