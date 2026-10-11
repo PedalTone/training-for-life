@@ -17,12 +17,14 @@ was changed.
 
 ## Current change — accurate month legend colors
 
-Candidate `2026.10.10 2010`: removes the CSS-generated Skipped legend label;
+Published `2026.10.10 2010`: removes the CSS-generated Skipped legend label;
 month legend uses green check/red flag, and separate symbol spans keep completed
 body-note days green checked with red flags. Stored statuses and history remain
 unchanged. Both builds and 13 rendered tests pass; diff clean. External Chrome
 iPhone 440×956 inspected; 30 completed fixture days retain checks, seven body
-notes show red flags, no overflow. No storage or API changes. Publication pending.
+notes show red flags, no overflow. No storage or API changes. Commit `30e3303`
+deployed in successful Pages run `38097565142`; live exact release, JS/CSS and
+service worker verified over HTTPS.
 
 ## Current change — History Nutrition placement
 
