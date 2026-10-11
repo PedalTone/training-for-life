@@ -18,6 +18,6 @@ test('a changed workout key immediately selects different artwork; custom types 
   assert.equal(adventureSceneFor('custom:Yoga').name,'Indoor mobility studio');
 });
 
-test('endurance and mobility select their standalone artwork',()=>{assert.match(adventureBackgroundFor('endurance').backgroundImage,/endurance-trail/);assert.equal(adventureBackgroundFor('endurance').backgroundSize,'cover');assert.match(adventureBackgroundFor('mobility').backgroundImage,/mobility-indoor/);});
+test('endurance and mobility select their standalone artwork',()=>{assert.match(adventureBackgroundFor('endurance').backgroundImage,/endurance-trail/);assert.equal(adventureBackgroundFor('endurance').backgroundSize,'cover');assert.match(adventureBackgroundFor('mobility').backgroundImage,/mobility-rear-view/);});
 
-test('strength and aerobic use their approved text-free standalone assets',()=>{assert.match(adventureBackgroundFor('strength').backgroundImage,/strength-indoor/);assert.match(adventureBackgroundFor('aerobic').backgroundImage,/aerobic-jogger/);});
+test('strength and aerobic use their approved text-free standalone assets',()=>{assert.match(adventureBackgroundFor('strength').backgroundImage,/strength-kettlebell/);assert.match(adventureBackgroundFor('aerobic').backgroundImage,/aerobic-woman/);});

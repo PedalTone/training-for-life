@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated October 10, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Latest update-delivery repair
 
@@ -14,6 +14,24 @@ Repair commit `d2a7857` deployed successfully in run `36504530490`. HTTPS
 verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
+
+## Current change — kettlebell artwork and matching Home image proportions
+
+Release `2026.10.11 1324` applies the approved rear-view Strength and Mobility
+examples. Strength holds one correctly shaped kettlebell; Mobility stretches
+beside a kettlebell. Easy Aerobic features a woman jogging to balance the set.
+Shared selection covers Home/splash, Today, Plan and the journal. The Home image
+now uses a 2:1 aspect ratio and responsive width matching Today (150px on the
+440px phone layout, capped at 150px to preserve title/description space). New images are precached; older
+images remain. Prompts are in `docs/kettlebell-artwork-prompts.md`.
+
+External Chrome at 440×956 checked all three categories on Home, Today and the
+journal plus the weekly Plan; inspected images and confirmed matching Home/Today
+widths, full figure visibility, six 6px gaps and no horizontal overflow.
+Both build paths, 13 rendered-release tests and four artwork tests pass. Also
+checked small-phone, tablet and desktop Home layouts; capped the image width to
+keep descriptions comfortable on the centered Home card. Publication verification
+pending. No workout storage/API changes.
 
 ## Current change — indoor Strength and Mobility artwork
 

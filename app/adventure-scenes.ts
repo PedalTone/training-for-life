@@ -12,7 +12,7 @@ export function adventureSceneFor(key: string) {
 
 export function adventureBackgroundFor(key: string) {
   const scene = adventureSceneFor(key);
-  const assets: Record<string,string> = { endurance: 'endurance-trail.png', strength: 'strength-indoor-2026.10.10.png', mobility: 'mobility-indoor-2026.10.10.png', aerobic: 'aerobic-jogger-v2.png' };
+  const assets: Record<string,string> = { endurance: 'endurance-trail.png', strength: 'strength-kettlebell-2026.10.11.png', mobility: 'mobility-rear-view-2026.10.11.png', aerobic: 'aerobic-woman-2026.10.11.png' };
   return assets[key]
     ? { backgroundImage: `url(./${assets[key]})`, backgroundPosition: 'center', backgroundSize: 'cover' }
     : { backgroundImage: 'url(./adventure-terrain.png)', backgroundPosition: scene.position, backgroundSize: '200% 300%' };
