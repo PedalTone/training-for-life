@@ -1,4 +1,5 @@
 "use client";
+import { ScreenshotAttachments } from './screenshot-attachments';
 import { useState } from 'react';
 import type { Session, Video } from './page';
 import { GpsRouteMap } from './gps-route-map';
@@ -20,7 +21,7 @@ export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdi
   const metrics = session ? [['Activities',session.activity],['Duration',session.duration],['Distance',session.distance],['Pace',session.pace],['Calories',session.calories],['Start time',session.startTime],['Effort',session.effort]].filter(([,value])=>value) : [];
   const exercises = [...new Set([...(session?.mobilityExercises || []), ...(session?.completedExercises || [])])];
   const hasNutrition = nutrition && Object.values(nutrition).some(value=>value !== undefined && value !== '');
-  const hasRecorded = Boolean(session && (session.status === 'completed' || session.completedAt || metrics.length || session.notes || session.workoutPhoto || exercises.length || session.videos.length || session.importedWorkouts?.length || session.injury?.reported || session.injury?.note || session.injury?.bodyArea || session.injury?.impact) || hasNutrition);
+  const hasRecorded = Boolean(session && (session.status === 'completed' || session.completedAt || metrics.length || session.notes || session.workoutPhoto || session.workoutScreenshots?.length || exercises.length || session.videos.length || session.importedWorkouts?.length || session.injury?.reported || session.injury?.note || session.injury?.bodyArea || session.injury?.impact) || hasNutrition);
   async function addVideo(video: Video) { if(adding)return; setAdding(true);setVideoNotice('Adding video…');try {setVideoNotice(await onAddVideo(video));}catch{setVideoNotice('Could not save this video. Please try again.');}finally{setAdding(false);} }
   return <article className="daily-journal">
     <div className="journal-top"><button type="button" onClick={onBack}>‹ Back</button><button type="button" onClick={onEdit}>Edit workout</button></div>
@@ -30,6 +31,7 @@ export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdi
     {session && <p className="journal-status">{(session.status==='completed' || session.completedAt) ? '✓ Workout complete' : session.status==='rest' ? 'Recovery day' : hasRecorded ? 'Workout in progress' : 'Nothing logged yet'}{session.completedAt && <small>Finished {new Date(session.completedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</small>}</p>}
     {session && hasRecorded && onShare && <button type="button" className="workout-share-action" onClick={onShare}>Share workout ↗</button>}
     {!hasRecorded && <p className="journal-empty">Nothing recorded for this day yet. Your photos, notes and workout details will appear here when you log them.</p>}
+    <ScreenshotAttachments key={date} screenshots={session?.workoutScreenshots}/>
     {session?.workoutPhoto && <figure className="journal-photo"><img src={session.workoutPhoto} alt={`Workout photo from ${date}`}/></figure>}
     {(metrics.length>0 || session?.detailSource) && <section className="journal-section"><h2>Workout details</h2><dl className="journal-metrics">{metrics.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>{session?.detailSource && <p className="journal-subtle">Recorded from {session.detailSource}</p>}</section>}
     {!!session?.gpsWorkouts?.length && <section className="journal-section"><h2>GPS workouts</h2>{session.gpsWorkouts.map(workout => { const totals=gpsUnits(workout.meters,workout.seconds,'mi');return <div key={workout.id}><h3>{workout.activity}</h3><dl className="journal-metrics"><div><dt>Elapsed time</dt><dd>{gpsTime(workout.seconds)}</dd></div><div><dt>Distance</dt><dd>{totals.distance} mi</dd></div><div><dt>Average speed</dt><dd>{totals.average} mph</dd></div><div><dt>Maximum speed</dt><dd>{(workout.maxSpeed*3600/1609.344).toFixed(1)} mph</dd></div><div><dt>Started</dt><dd>{new Date(workout.startedAt).toLocaleTimeString()}</dd></div><div><dt>Ended</dt><dd>{new Date(workout.endedAt).toLocaleTimeString()}</dd></div></dl><GpsRouteMap route={workout.route} onLabel={onRouteLabel?label=>onRouteLabel(workout.id,label):undefined}/>{workout.gaps>0&&<p>{workout.gaps} GPS gaps; distance may be incomplete.</p>}</div>;})}</section>}

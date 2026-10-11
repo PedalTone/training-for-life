@@ -67,3 +67,8 @@ test('workout summary lists explicit add-ons and excludes display-only examples'
  assert.ok(chosen.includes('Selected'));
  assert.ok(!chosen.includes('Dead Hang'));
 });
+
+test('journal retains locally attached screenshots without extraction or changing metrics',()=>{
+ const session={...source,workoutScreenshots:[{id:'local-image',imageData:'data:image/jpeg;base64,abc'}]};const before=structuredClone(session);globalThis.localStorage={getItem:()=>null};
+ const html=renderToStaticMarkup(React.createElement(DailyJournal,{...props,session}));assert.ok(html.includes('View screenshot 1'));assert.ok(html.includes('data:image/jpeg;base64,abc'));assert.ok(html.includes('28 min'));assert.ok(!html.includes('Choose screenshot'));assert.deepEqual(session,before);
+});

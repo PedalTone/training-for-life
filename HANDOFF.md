@@ -2,7 +2,28 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — street maps in shared Route images
+## Current change — custom share titles and local screenshots
+
+Release `2026.10.11 1927` adds a share-only Title field with live/exported text
+and original-title fallback when blank. AI access/goals Settings and API-backed
+screenshot extraction/insight generation controls/callers are removed per user
+approval. Existing extracted screenshot details and saved reports remain readable;
+legacy goals/reports and server APIs remain preserved for compatibility/backups.
+ScreenshotAttachments saves up to six compressed local images per workout in new
+optional workoutScreenshots; Choose/Paste/View/Remove work without extraction.
+Journal and backups include these images. Saved metrics and workout title do not
+change. Settings About and restore copy describe current tracking/maps/videos,
+sharing, local storage, backups and screenshot behavior. Initialization guards
+prevent stored settings/libraries/reports/goals being overwritten before loading.
+Both builds, 13 rendered and 15 focused tests pass. External Chrome verifies
+custom title/export/fallback, local screenshot upload/view/remove/reload, backup
+and restore, unchanged recorded metrics, legacy reports/goals and no API calls.
+Phone/tablet/desktop title, screenshot and Settings/About layouts inspected.
+Eight existing TypeScript diagnostics remain; changed modules lint with zero
+errors and two image advisories. Saved legacy report direction "stay" safely
+uses the existing keep label. Publication verification pending.
+
+## Previous change — street maps in shared Route images
 
 Release `2026.10.11 1913` uses OpenStreetMap tiles in the exported Route image,
 with overlaid separate GPS segments, start/finish markers and visible attribution.

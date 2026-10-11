@@ -2,8 +2,7 @@
 
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
-one-day changes, mobility exercises, videos, photos, backup/restore, and optional
-AI-assisted features. Plan uses a seven-day selector, one featured workout picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today, Plan and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
+one-day changes, mobility exercises, videos, photos, backup/restore, local screenshot attachments, GPS route maps and social share images. Plan uses a seven-day selector, one featured workout picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today, Plan and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
 with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development
@@ -24,16 +23,16 @@ build for server features. Node must be at least 22.13.0; CI uses Node 22.
 
 | File | Responsibility |
 | --- | --- |
-| `app/page.tsx` | Main client UI, state, scheduling, persistence, backups, API calls |
+| `app/page.tsx` | Main client UI, state, scheduling, persistence and backups |
 | `app/globals.css` | Responsive styles and design system |
-| `app/insight-validation.ts` | Guards against incomplete insight responses |
+| `app/screenshot-attachments.tsx` | Local screenshot images, viewing and removal |
 | `src/main.tsx`, `index.html` | GitHub Pages entry and service-worker registration |
 | `vite.github.config.ts` | Static build, base `/training-for-life/app/` |
 | `scripts/write-github-pages-root.mjs` | Redirect from repository root to `/app/` |
 | `app/layout.tsx`, `vite.config.ts` | vinext layout, metadata and server build |
 | `worker/index.ts` | API routes and server entry |
-| `worker/training-insights.ts` | Training assessment generation |
-| `worker/workout-screenshot.ts` | Screenshot import |
+| `worker/training-insights.ts` | Retired frontend API; kept for compatibility |
+| `worker/workout-screenshot.ts` | Retired frontend API; kept for compatibility |
 | `worker/workout-guide.ts` | Legacy API implementation; current frontend no longer calls it |
 | `public/` | Brand artwork, texture, exercise illustrations, icons, PWA files |
 | `.github/workflows/deploy-pages.yml` | Builds and publishes GitHub Pages |
@@ -46,9 +45,9 @@ storage names and migrations. Backup/restore exports/imports JSON. Do not erase
 storage to solve a deployment or cache issue. Nutrition is saved separately in
 `t4l:nutrition`, keyed by calendar date, and included in backup exports. Restore
 merges nutrition dates; older backups leave existing check-ins untouched.
-Nutrition does not alter workout completion, streaks, or AI insight inputs.
+Nutrition does not alter workout completion or streaks.
 
-On GitHub Pages, the frontend calls the separate Sites service for worker APIs.
+The public frontend no longer calls the separate Sites service for AI extraction or training assessment. Saved legacy reports, extracted screenshot details and goals are retained in storage and backups. Local screenshot attachments are compressed images, up to six per workout, included in History and backups; they never update metrics automatically.
 The service uses server-side `OPENAI_API_KEY` and `INSIGHTS_ACCESS_CODE`; never
 put their values in documentation or client code. Existing credential setup is
 separate from this chat migration. Inspect applicable API/hosting instructions
@@ -147,3 +146,5 @@ verification. Average speed includes stops while recording and excludes pauses.
 ## Share workout images
 
 Open a completed Today workout or a recorded workout in History and choose Share workout. Photo, Route and Workout Card templates use only recorded metrics. Export Story (1080×1920), Portrait (1080×1350) or Square (1080×1080) PNGs with one Share Image button: native file sharing when available, automatic image download otherwise. Format choices identify Instagram and TikTok’s shared 1080×1920 vertical size. Photos chosen in the composer are temporary; workout records remain unchanged. Route images include OpenStreetMap street tiles, start/finish markers and attribution, show the full route by default, with optional hiding of 200 meters around each segment endpoint, and include the saved city/state label by default (editable in the composer for crossings). Notes, injury/body check-ins and nutrition are excluded. Rendering happens locally; Route preview requests the visible map tiles from OpenStreetMap using normal browser caching. The composer makes no geocoding requests and offers retry if map loading fails.
+
+Share titles can be edited in the composer; they affect only the exported image, with the recorded title used if left blank. Settings no longer shows AI access or assessment goals. About describes current tracking, sharing, screenshot, map/video, storage and backup behavior.
