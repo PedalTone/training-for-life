@@ -17,3 +17,10 @@ export function gpsStep(previous:GpsPoint|null,point:GpsPoint,activity:'Run'|'Bi
 }
 export function gpsUnits(meters:number,seconds:number,unit:'mi'|'km') {const scale=unit==='mi'?1609.344:1000;return {distance:(meters/scale).toFixed(2),average:seconds>0?(meters/seconds*3600/scale).toFixed(1):'0.0'};}
 export function gpsTime(seconds:number) {const s=Math.floor(Math.max(0,seconds));return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor(s%3600/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;}
+
+// Pace is rounded to whole seconds; no movement has no finite pace.
+export function gpsPace(speed:number|null,unit:'mi'|'km'='mi') {
+ if(speed===null || !Number.isFinite(speed) || speed<=0)return '—';
+ const seconds=Math.round((unit==='mi'?1609.344:1000)/speed);
+ return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
+}

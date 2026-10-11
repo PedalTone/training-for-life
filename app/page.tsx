@@ -218,9 +218,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 1936";
+const APP_VERSION = "2026.10.11 1943";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Running now shows minutes-per-mile pace for current and average tracking, saved journals and share images. Biking keeps miles per hour. Kilometer tracking uses minutes per kilometer for runs."] },
+  { version: "2026.10.11 1936", category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
   { version: "2026.10.11 1927", category: "Minor fix", changes: ["Edit the title on share images without changing the saved workout. Save screenshots as local attachments without AI extraction. Removed AI access, assessment goals and generation controls; About now describes current tracking, sharing and backups. Saved legacy details and reports remain available."] },
   { version: "2026.10.11 1913", category: "Minor fix", changes: ["Route sharing now includes the street map, start/finish markers and city/state label inside the image. Full routes remain the default. You can edit labels for city/state crossings; failed map loading can be retried."] },
   { version: "2026.10.11 1903", category: "Minor fix", changes: ["Image sharing now uses one Share Image button, with automatic saving when sharing is unavailable. Formats are labeled for Instagram and TikTok. Route shows the full recorded route by default; hiding start/end areas is optional."] },
@@ -229,7 +230,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 1706", category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
   { version: "2026.10.11 1600", category: "Major fix", changes: ["Today now has Workout, Log and Check-ins tabs, a larger workout picture, Repeat prior workout first and a cleaner run/bike tracker above Add-ons. Exercise graphics are available in Details; finish and backup stay within reach."] },
   { version: "2026.10.11 1324", category: "Minor fix", changes: ["Strength features a kettlebell and Mobility a rear-view stretch. Easy Aerobic includes a woman jogging. The Home workout picture now matches Today’s wide proportions."] },
-  { version: "2026.10.10 2258", category: "Minor fix", changes: ["Strength and Mobility now use indoor workout illustrations with the same warm colors and painted feel as the landscapes."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

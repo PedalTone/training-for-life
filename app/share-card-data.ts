@@ -1,6 +1,6 @@
 import type { Session } from './page';
 import { cleanRoute, mercator, type GpsRoute, type RouteCoordinate } from './gps-route';
-import { gpsTime } from './gps-math';
+import { gpsTime, gpsPace } from './gps-math';
 export type ShareMetric = { id: string; label: string; value: string };
 export type ShareCardData = { date: string; title: string; workoutKey: string; metrics: ShareMetric[]; photo?: string; route?: GpsRoute };
 export type ShareCardTemplate = 'card' | 'photo' | 'route';
@@ -13,9 +13,12 @@ export function toShareCardData(session: Session, plan: {key:string;theme:string
   const add = (id:string,label:string,value?:string) => { if(value?.trim() && !['—','-'].includes(value.trim()))metrics.push({id,label,value:value.trim()}); };
   add('distance','Distance',session.distance || (meters>0 ? `${(meters/1609.344).toFixed(2)} mi` : undefined));
   add('duration','Duration',session.duration || (seconds>0 ? gpsTime(seconds) : undefined));
-  add('pace','Pace',session.pace);
+  const runs=gps.filter(w=>w.activity==='Run'), bikes=gps.filter(w=>w.activity==='Bike');
+  const runMeters=runs.reduce((n,w)=>n+w.meters,0),runSeconds=runs.reduce((n,w)=>n+w.seconds,0);
+  add('pace',runs.length?'Average pace':'Pace',runMeters>0&&runSeconds>0?`${gpsPace(runMeters/runSeconds)} min/mi`:session.pace);
   add('calories','Calories',session.calories);
-  if(gps.length && meters>0 && seconds>0)add('speed','Average speed',`${(meters/seconds*3600/1609.344).toFixed(1)} mph`);
+  const bikeMeters=bikes.reduce((n,w)=>n+w.meters,0),bikeSeconds=bikes.reduce((n,w)=>n+w.seconds,0);
+  if(bikeMeters>0&&bikeSeconds>0)add('speed',runs.length?'Average bike speed':'Average speed',`${(bikeMeters/bikeSeconds*3600/1609.344).toFixed(1)} mph`);
   const exercises = new Set(session.completedExercises || []);
   if(exercises.size)add('exercises','Exercises completed',String(exercises.size));
   const routes = gps.map(w=>cleanRoute(w.route)).filter((r):r is GpsRoute=>Boolean(r));

@@ -2,7 +2,18 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — stable share editing and Story composition
+## Current change — running pace and cycling speed
+
+Release `2026.10.11 1943` uses current/average min/mi for Run (min/km
+when kilometers chosen), mph/km/h for Bike. Journals show average/fastest
+running pace. Sharing derives run pace and bike speed separately, including
+mixed-activity days; stored GPS meters/seconds remain unchanged.
+Pages build and 13 rendered tests pass; 13 GPS/share tests pass. External Chrome
+checked saved Run/Bike metrics in miles/kilometers, share metrics and Story exports;
+phone/tablet/desktop screenshots inspected. Typecheck retains 8 existing errors.
+Publication pending.
+
+## Previous change — stable share editing and Story composition
 
 Release `2026.10.11 1936` keeps the previous preview visible while rendering its
 replacement, with a fixed aspect-ratio frame, debounce and proper blob cleanup.

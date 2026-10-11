@@ -8,7 +8,7 @@ const base={date:'2026-10-11',activity:'',duration:'',distance:'',notes:'PRIVATE
 const run={activity:'Run',meters:5000,seconds:1800,route:{segments:[Array.from({length:30},(_,i)=>[-74+i*.001,40.7])],locationLabel:'New York, NY'}};
 test('GPS run derives only supported totals and respects saved metrics',()=>{
  const source={...base,activity:'Run',gpsWorkouts:[run],pace:'6:00 / km',calories:'350'};const before=structuredClone(source);const data=toShareCardData(source,{key:'endurance',theme:'Endurance'});
- assert.deepEqual(data.metrics.map(m=>m.id),['distance','duration','pace','calories','speed']);assert.equal(data.metrics[0].value,'3.11 mi');assert.equal(data.metrics[1].value,'00:30:00');assert.equal(data.metrics.at(-1).value,'6.2 mph');assert.deepEqual(source,before);assert.ok(!JSON.stringify(data).includes('PRIVATE'));
+ assert.deepEqual(data.metrics.map(m=>m.id),['distance','duration','pace','calories']);assert.equal(data.metrics[0].value,'3.11 mi');assert.equal(data.metrics[1].value,'00:30:00');assert.equal(data.metrics.find(m=>m.id==='pace').value,'9:39 min/mi');assert.deepEqual(source,before);assert.ok(!JSON.stringify(data).includes('PRIVATE'));
  assert.equal(toShareCardData({...source,distance:'5 km',duration:'30 min'}, {key:'endurance',theme:'Endurance'}).metrics[0].value,'5 km');
 });
 test('walking/hiking GPS and multiple recordings preserve separate route segments',()=>{
@@ -32,3 +32,12 @@ test('projection handles date-line crossings and ignores invalid GPS coordinates
  const segments=shareRouteSegments({segments:[[[179.9,0],[-179.9,0],[NaN,30]]]},false);const projected=projectShareRoute(segments);assert.ok(Math.abs(projected[0][1][0]-projected[0][0][0])<.01);assert.equal(projected[0].length,2);
 });
 test('export dimensions are exact for all three formats',()=>{assert.deepEqual(Object.values(shareFormats).map(f=>[f.width,f.height]),[[1080,1920],[1080,1350],[1080,1080]]);});
+
+test('bikes use mph and mixed workouts calculate each activity separately',()=>{
+ const bike={...run,activity:'Bike',meters:16093.44,seconds:3600};
+ const onlyBike=toShareCardData({...base,gpsWorkouts:[bike]}, {key:'endurance',theme:'Endurance'});
+ assert.equal(onlyBike.metrics.find(m=>m.id==='speed').value,'10.0 mph');
+ const mixed=toShareCardData({...base,gpsWorkouts:[run,bike]}, {key:'endurance',theme:'Endurance'});
+ assert.equal(mixed.metrics.find(m=>m.id==='pace').value,'9:39 min/mi');
+ assert.equal(mixed.metrics.find(m=>m.id==='speed').value,'10.0 mph');
+});
