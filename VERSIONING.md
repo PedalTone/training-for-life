@@ -1,3 +1,5 @@
+New public release — 2026.10.11 1936: Stable title editing while previews update; Story cards use larger artwork and group the title/date/metrics to remove the empty middle.
+
 New public release — 2026.10.11 1927: Editable share titles, local screenshot attachments without extraction, retired AI access/assessment controls and refreshed About information.
 
 New public release — 2026.10.11 1913: Route share images include street maps, start/finish markers and city/state labels by default, with editable crossing labels and map-loading retry.
@@ -8,9 +10,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 1927` adds custom share titles and local screenshots while removing obsolete AI controls.
+Release decision: **New public release** — `2026.10.11 1936` fixes jumping share titles and rebalances Story cards.
 
-App, notes, tests, worker and deployment use `2026.10.11 1927`.
+App, notes, tests, worker and deployment use `2026.10.11 1936`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

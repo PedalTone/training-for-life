@@ -9,7 +9,8 @@ function lines(ctx:CanvasRenderingContext2D,text:string,maxWidth:number,count:nu
 export async function renderShareCard(data:ShareCardData,options:ShareCardOptions):Promise<Blob> {
   const {width:w,height:h}=shareFormats[options.format];const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Image rendering is unavailable.');
   const selectedCount=options.metricIds.filter(id=>data.metrics.some(m=>m.id===id)).length;
-  const artHeight=selectedCount?Math.min(w/2,h*.32):h*.6;
+  const isStory=options.format==='story';
+  const artHeight=isStory&&options.template==='card'?h*(selectedCount?.56:.65):selectedCount?Math.min(w/2,h*.32):h*.6;
   const pad=84;const dark=options.template!=='card';const metrics=options.metricIds.map(id=>data.metrics.find(m=>m.id===id)).filter((m):m is NonNullable<typeof m>=>Boolean(m)).slice(0,4);
   ctx.fillStyle=dark?'#203449':'#fffaf1';ctx.fillRect(0,0,w,h);
   const photo=options.photo || data.photo;
@@ -25,7 +26,7 @@ export async function renderShareCard(data:ShareCardData,options:ShareCardOption
   const titleY=options.template==='card'?artHeight+45:pad;
   ctx.font='700 64px Georgia';const titleLines=lines(ctx,options.title?.trim()||data.title,w-pad*2,2);titleLines.forEach((line,i)=>{ctx.font='700 64px Georgia';ctx.fillText(fitText(ctx,line,w-pad*2,64,40,'Georgia'),pad,titleY+i*72);});
   ctx.font='400 30px system-ui';const date=/^\d{4}-\d{2}-\d{2}$/.test(data.date)?new Date(data.date+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):data.date;ctx.fillText(date,pad,titleY+titleLines.length*72+12);
-  const metricHeight=metrics.length>2?250:130;const startY=Math.max(options.template==='card'?titleY+titleLines.length*72+90:0,h-pad-80-metricHeight);const cols=metrics.length===1?1:2;const cellW=(w-pad*2)/cols;
+  const metricHeight=metrics.length>2?250:130;const startY=isStory&&options.template==='card'?titleY+titleLines.length*72+110:Math.max(options.template==='card'?titleY+titleLines.length*72+90:0,h-pad-80-metricHeight);const cols=metrics.length===1?1:2;const cellW=(w-pad*2)/cols;
   if(options.template==='route') {
     const segments=shareRouteSegments(data.route,options.hideRouteEnds);const top=titleY+titleLines.length*72+84;
     const location=options.locationLabel??data.route?.locationLabel;

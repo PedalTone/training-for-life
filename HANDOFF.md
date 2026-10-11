@@ -2,7 +2,23 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — custom share titles and local screenshots
+## Current change — stable share editing and Story composition
+
+Release `2026.10.11 1936` keeps the previous preview visible while rendering its
+replacement, with a fixed aspect-ratio frame, debounce and proper blob cleanup.
+Only the newest generated file can be shared; stale generations are cancelled.
+This removes loading-placeholder collapse that shifted the mobile title field.
+Story cards use a larger portrait crop (56% height with stats, 65% without), with
+title/date/stats grouped beneath the artwork instead of an empty middle.
+Portrait/Square composition and saved workout/storage data are unchanged.
+Verification: Pages build and 13 rendered tests pass; 15 focused journal/share
+tests pass. External Chrome verified typing stability at phone and reduced
+keyboard-sized heights, all image formats, five workout fixtures and screenshot
+backup/restore. Desktop/tablet/phone previews inspected. Physical iPhone keyboard
+not tested. Typecheck retains 8 pre-existing diagnostics; sharing lint has no
+errors (one image advisory). Publication pending.
+
+## Previous change — custom share titles and local screenshots
 
 Release `2026.10.11 1927` adds a share-only Title field with live/exported text
 and original-title fallback when blank. AI access/goals Settings and API-backed
