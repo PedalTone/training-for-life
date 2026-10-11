@@ -2,6 +2,28 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
+## Current change — featured-day Plan and expanded artwork
+
+Release `2026.10.11 1815` implements approved Option 1: seven preview buttons,
+one 2:1 featured illustration, dated workout details/Open workout and a compact
+text-only weekly overview. Overview choices reveal the feature; Plan next week
+continues to open Settings mapping. Today's selection is initial; previewing
+never changes saved workout data. Existing historical resolution is retained.
+Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are built-in choices
+without changing anyone's schedule automatically. Shared image selection covers
+Home/splash, Today, Plan and journal, including matching legacy custom names.
+Speed is explicitly track running, per the user's correction. Seven new JPEG
+assets are precached; prompt specifications are in
+`docs/featured-plan-artwork-prompts.md`. Existing artwork remains.
+A startup guard prevents initial default schedule persistence before stored
+mapping loads; external Chrome confirms saved choices survive reload.
+Both builds, 13 rendered and 23 focused tests passed. External Chrome checked
+seven-day selection/overview, correct dated journal, all six new artworks,
+Settings mapping and reload; phone (320/440), tablet (768) and desktop (1280)
+layouts were visually inspected without horizontal overflow. Nine existing
+TypeScript diagnostics remain; no new diagnostics from this change.
+Publication verification pending.
+
 ## Current change — explicit add-on selection
 
 Release `2026.10.11 1706` keeps Face Pulls and Dead Hang as display-only examples

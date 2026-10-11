@@ -3,7 +3,7 @@
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
 one-day changes, mobility exercises, videos, photos, backup/restore, and optional
-AI-assisted features. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
+AI-assisted features. Plan uses a seven-day selector, one featured workout picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today, Plan and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
 with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development

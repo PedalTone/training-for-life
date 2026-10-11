@@ -83,6 +83,14 @@ const scheduleTypeOptions = [
   { key: "aerobic", label: "Easy Aerobic" }, { key: "strength", label: "Full-body strength" },
   { key: "speed", label: "Speed / Intensity" }, { key: "endurance", label: "Endurance" },
 ];
+const additionalWorkoutPlans: WorkoutPlan[] = [
+  { key: "yoga", theme: "Yoga", icon: "↗", guidance: "A yoga practice at your own pace.", activities: ["Yoga", "Other"] },
+  { key: "pilates", theme: "Pilates", icon: "↗", guidance: "Controlled movement and core work.", activities: ["Mat Pilates", "Reformer Pilates", "Other"] },
+  { key: "swimming", theme: "Swimming", icon: "≈", guidance: "Choose the swim that fits today.", activities: ["Pool swim", "Open-water swim", "Other"] },
+  { key: "pickleball", theme: "Pickleball", icon: "✦", guidance: "Court time, practice or a game.", activities: ["Singles", "Doubles", "Practice", "Other"] },
+  { key: "tennis", theme: "Tennis", icon: "✦", guidance: "Court time, practice or a match.", activities: ["Singles", "Doubles", "Practice", "Other"] },
+  { key: "basketball", theme: "Basketball", icon: "✦", guidance: "Practice, shooting or a game.", activities: ["Game", "Shooting", "Practice", "Other"] },
+].map(plan => ({ ...plan, short: "", label: "" }));
 function customWorkoutPlan(key: string): WorkoutPlan | undefined {
   if (!key.startsWith("custom:")) return undefined;
   try {
@@ -91,9 +99,9 @@ function customWorkoutPlan(key: string): WorkoutPlan | undefined {
     return { short: "", label: "", theme, key, icon: "✦", guidance: "A custom workout in your weekly plan.", activities: ["Other"] };
   } catch { return undefined; }
 }
-function planForKey(key: string): WorkoutPlan | undefined { return schedule.find((plan) => plan.key === key) || customWorkoutPlan(key); }
+function planForKey(key: string): WorkoutPlan | undefined { return schedule.find((plan) => plan.key === key) || additionalWorkoutPlans.find((plan) => plan.key === key) || customWorkoutPlan(key); }
 function workoutTypeOptions(customWorkouts: CustomWorkout[]) {
-  return [...scheduleTypeOptions, ...customWorkouts.map(({ key, label }) => ({ key, label }))];
+  return [...scheduleTypeOptions, ...additionalWorkoutPlans.map(({ key, theme }) => ({ key, label: theme })), ...customWorkouts.map(({ key, label }) => ({ key, label }))];
 }
 function scheduleForKeys(keys: string[]): Schedule {
   return schedule.map((fallback, index) => {
@@ -242,9 +250,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 1706";
+const APP_VERSION = "2026.10.11 1815";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Plan now features one selected day, a larger picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are ready to choose with matching artwork on Home and Today. Speed now shows running on the track."] },
+  { version: "2026.10.11 1706", category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
   { version: "2026.10.11 1600", category: "Major fix", changes: ["Today now has Workout, Log and Check-ins tabs, a larger workout picture, Repeat prior workout first and a cleaner run/bike tracker above Add-ons. Exercise graphics are available in Details; finish and backup stay within reach."] },
   { version: "2026.10.11 1324", category: "Minor fix", changes: ["Strength features a kettlebell and Mobility a rear-view stretch. Easy Aerobic includes a woman jogging. The Home workout picture now matches Today’s wide proportions."] },
   { version: "2026.10.10 2258", category: "Minor fix", changes: ["Strength and Mobility now use indoor workout illustrations with the same warm colors and painted feel as the landscapes."] },
@@ -253,7 +262,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 2010", category: "Minor fix", changes: ["The History month legend uses a green completion check and red body-note flag. Removed the misleading automatic Skipped legend label."] },
   { version: "2026.10.10 2005", category: "Minor fix", changes: ["History Nutrition check-ins now appear at the bottom, below the calendar and its navigation arrows."] },
   { version: "2026.10.10 1954", category: "Minor fix", changes: ["Narrow ivory gaps separate the Plan landscape pictures, making each day easier to distinguish."] },
-  { version: "2026.10.10 1949", category: "Major fix", changes: ["Swipe left for the next tab and right for the previous tab, in bottom-menu order. Settings illustrations now match Home; Future workout videos keeps its red YouTube icon."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -422,7 +430,7 @@ function SplashScreen({ version, todayPlan, todayActivity, onEnter }: { version:
   const closeReleaseNotes = () => { setShowReleaseNotes(false); releaseButtonRef.current?.focus(); };
   const todayCue = todayActivity || todayPlan.guidance;
   const weather = useLocalWeather();
-  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "See your week ahead"], ["history", "History", "Revisit your workouts and notes"], ["performance", "Progress", "See your consistency and balance"], ["more", "Settings", "Make it your own"]];
+  const destinations: Array<[Tab, string, string]> = [["week", "Plan", "Preview your week’s workouts"], ["history", "History", "Revisit your workouts and notes"], ["performance", "Progress", "See your consistency and balance"], ["more", "Settings", "Make it your own"]];
   return <main className="splash-screen approved-splash">
     <div className="home-brand splash-letterbox"><img src="./t4l-monochrome.png" alt="T4L"/><div><h1>Training for Life</h1><p><span>Move well, daily.</span><span>Relentless forward progress.</span></p></div></div>
     <div className="home-section-heading"><span>TODAY’S WORKOUT</span><time>{new Date().toLocaleDateString("en-US", { weekday:"long", month:"short", day:"numeric" })}</time></div>
@@ -450,6 +458,7 @@ export default function Home() {
   const [activeDate, setActiveDate] = useState(() => new Date(2026, 7, 20, 12));
   const activeKey = dateKey(activeDate);
   const [scheduleKeys, setScheduleKeys] = useState<string[]>(defaultScheduleKeys);
+  const [scheduleLoaded, setScheduleLoaded] = useState(false);
   const [customWorkouts, setCustomWorkouts] = useState<CustomWorkout[]>([]);
   const [scheduleHistory, setScheduleHistory] = useState<ScheduleSnapshot[]>([]);
   const activeSchedule = scheduleForKeys(scheduleKeys);
@@ -554,6 +563,7 @@ export default function Home() {
     const savedScheduleHistory = localStorage.getItem("t4l:schedule-history");
     if (savedScheduleHistory) { try { const parsed = JSON.parse(savedScheduleHistory); if (Array.isArray(parsed)) setScheduleHistory(parsed.filter((item) => item?.effectiveDate && Array.isArray(item.keys) && item.keys.length === 7).map((item) => ({ effectiveDate: String(item.effectiveDate), keys: item.keys.map(String) }))); } catch { /* Use the current schedule. */ } }
     else setScheduleHistory([{ effectiveDate: dateKey(easternToday()), keys: loadedScheduleKeys }]);
+    setScheduleLoaded(true);
   }, []);
   useEffect(() => {
     if (!loaded) return;
@@ -588,7 +598,7 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("t4l:insight-reports", JSON.stringify(insightReports)); }, [insightReports]);
   useEffect(() => { localStorage.setItem("t4l:fitness-goals", JSON.stringify(fitnessGoals)); }, [fitnessGoals]);
   useEffect(() => { localStorage.setItem("t4l:custom-workouts", JSON.stringify(customWorkouts)); }, [customWorkouts]);
-  useEffect(() => { localStorage.setItem("t4l:schedule", JSON.stringify(scheduleKeys)); }, [scheduleKeys]);
+  useEffect(() => { if (scheduleLoaded) localStorage.setItem("t4l:schedule", JSON.stringify(scheduleKeys)); }, [scheduleKeys, scheduleLoaded]);
   useEffect(() => { if (scheduleHistory.length) localStorage.setItem("t4l:schedule-history", JSON.stringify(scheduleHistory)); }, [scheduleHistory]);
   useEffect(() => {
     const effectiveDate = dateKey(easternToday());
@@ -1038,13 +1048,10 @@ function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session
 }
 
 function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate, onMakeNextWeekPlan }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void; onMakeNextWeekPlan: () => void }) {
-  const [view, setView] = useState<"adventure" | "list">(() => {
-    try { return localStorage.getItem("t4l:plan-view") === "list" ? "list" : "adventure"; } catch { return "adventure"; }
-  });
-  const changeView = (next: "adventure" | "list") => {
-    setView(next);
-    try { localStorage.setItem("t4l:plan-view", next); } catch { /* View remains usable without storage. */ }
-  };
+  const todayKey = dateKey(today);
+  const [selectedDate, setSelectedDate] = useState(() => todayKey);
+  const featuredRef = useRef<HTMLElement>(null);
+  useEffect(() => { setSelectedDate(todayKey); }, [todayKey]);
   const map = new Map(sessions.map((item) => [item.date, item]));
   const days = weekDates(today);
   const entries = days.map((date) => {
@@ -1052,11 +1059,18 @@ function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate
     const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date);
     return { date, saved, plan, state: stateFor(saved, plan.key, date, today), isToday: dateKey(date) === dateKey(today), scene: adventureSceneFor(plan.key) };
   });
-  return <div className={`subpage week-page ${view === "adventure" ? "adventure-page" : ""}`}>
-    <header className="plan-view-heading"><div><h1>Your week ahead</h1><p>{days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {days[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p></div><div className="plan-view-switch" role="group" aria-label="Plan view"><button type="button" aria-pressed={view === "list"} onClick={() => changeView("list")}>List</button><button type="button" aria-pressed={view === "adventure"} onClick={() => changeView("adventure")}>Landscape</button></div></header>
-    {view === "adventure" ? <section className="adventure-map" aria-label="Weekly workout landscapes">{entries.map(({ date, plan, state, isToday, scene }, index) => <button type="button" key={dateKey(date)} className={`adventure-stop ${isToday ? "today" : ""} ${state === "completed" ? "completed" : ""}`} data-workout-type={plan.key} data-scene={scene.name} aria-current={isToday ? "date" : undefined} aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}: ${plan.theme}. ${scene.name}. ${stateLabel(state)}${isToday ? ". Today" : ""}`} onClick={() => onOpenDate(date)}><span className="adventure-scenery" aria-hidden="true" style={adventureBackgroundFor(plan.key)}/><span className="adventure-node" aria-hidden="true">{state === "completed" ? "✓" : index + 1}</span><span className="adventure-copy"><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{stateLabel(state)}</em></span></button>)}</section> : <section className="week-list">{entries.map(({ date, saved, plan, state, isToday }) => <button key={dateKey(date)} className={`week-day-card ${plan.key} ${isToday ? "today" : ""}`} onClick={() => onOpenDate(date)} aria-current={isToday ? "date" : undefined}><span className="day-icon">{plan.icon}</span><span><small>{plan.short.toUpperCase()} · {date.getDate()}{isToday ? " · TODAY" : ""}</small><strong>{plan.theme}</strong><em>{saved?.activity || plan.guidance}</em></span><i className={`week-status ${state}`}>{stateLabel(state)}</i></button>)}</section>}
+  const featured = entries.find(entry => dateKey(entry.date) === selectedDate) || entries.find(entry => entry.isToday) || entries[0];
+  return <div className="subpage week-page featured-week-page">
+    <header className="plan-view-heading"><div><h1>Your week ahead</h1><p>{days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {days[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p></div></header>
+    <nav className="plan-day-strip" aria-label="Choose a day to preview">{entries.map(({ date, plan, state, isToday }) => <button type="button" key={dateKey(date)} aria-pressed={dateKey(date) === dateKey(featured.date)} aria-current={isToday ? "date" : undefined} aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}: ${plan.theme}. ${stateLabel(state)}${isToday ? ". Today" : ""}`} onClick={() => setSelectedDate(dateKey(date))}><span>{plan.short}</span><b>{date.getDate()}</b><i className={state} aria-hidden="true">{state === "completed" ? "✓" : state === "skipped" ? "−" : "○"}</i></button>)}</nav>
+    <section ref={featuredRef} className="plan-featured surface-card" aria-label="Selected day workout">
+      <div className="plan-featured-art" role="img" aria-label={featured.scene.name} data-workout-type={featured.plan.key} style={adventureBackgroundFor(featured.plan.key)}/>
+      <div className="plan-featured-copy"><p className="plan-featured-date">{featured.date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}{featured.isToday ? " · Today" : ""}</p><h2>{featured.plan.theme}</h2><p className="plan-featured-status">{featured.saved?.activity || featured.plan.guidance}</p><span className={`plan-state ${featured.state}`}>{featured.state === "completed" ? "✓ " : ""}{stateLabel(featured.state)}</span><button type="button" className="plan-open-workout" onClick={() => onOpenDate(featured.date)}>Open workout <span aria-hidden="true">→</span></button></div>
+    </section>
+    <section className="plan-week-overview" aria-labelledby="plan-overview-heading"><h2 id="plan-overview-heading">Your week</h2>{entries.map(({ date, plan, state, isToday }) => <button type="button" key={dateKey(date)} aria-pressed={dateKey(date) === dateKey(featured.date)} aria-label={`Preview ${plan.short} ${date.getDate()}: ${plan.theme}. ${stateLabel(state)}`} onClick={() => { setSelectedDate(dateKey(date)); featuredRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}><span className="plan-overview-day">{plan.short}<small>{date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</small></span><strong>{plan.theme}{isToday && <small>Today</small>}</strong><span className={`plan-state ${state}`}><i aria-hidden="true">{state === "completed" ? "✓" : state === "skipped" ? "−" : "○"}</i><span>{stateLabel(state)}</span></span></button>)}</section>
     <button className="week-next-plan-button" type="button" onClick={onMakeNextWeekPlan}>Plan next week <span aria-hidden="true">›</span></button>
   </div>;
+
 }
 
 function HistoryView({ filters, onFilters, now, sessions, activeSchedule, scheduleHistory, onOpenDate }: { filters: HistoryFilters; onFilters: (filters: HistoryFilters) => void; now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void }) {
