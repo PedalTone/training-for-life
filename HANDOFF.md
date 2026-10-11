@@ -30,7 +30,9 @@ tests, real Photon city/state response, and external headless Chrome at 440×956
 recording, pause and gap separation, saved labels, reload and journal maps.
 Inspected Today and journal screenshots; no horizontal overflow. Physical iPhone
 GPS accuracy and background behavior still require device testing; tracking
-continues to pause when the app is hidden. Publication verification pending.
+continues to pause when the app is hidden. Commit `6055d50` deployed successfully
+in GitHub Pages run `38099551872`. Live JS/CSS, worker and icons match the local
+build; release `2026.10.10 2045` verified. Photon browser CORS headers verified.
 
 ## Current change — accurate month legend colors
 
