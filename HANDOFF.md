@@ -15,20 +15,22 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
-## Current change — selected home-screen icon
+## Current change — saved GPS route maps
 
-Published `2026.10.10 2019`: user selected the first navy/ivory/orange flexing
-outline design (no added hair) via attached reference. Source is the original
-high-resolution built-in imagegen output, public/home-icon-selected-source.png.
-Home banner logo remains unchanged. New icon asset names referenced by static
-HTML, vinext metadata, manifest and worker shell; prior published icons retained.
-Sips resizes 180/192/512px, full bleed, no alpha; 60px and full-size inspected.
-Prompt: navy background, warm ivory softer gender-neutral flexing outline,
-legible upright T4L lettering and restrained burnt-orange swoosh. User chose
-this first design over the round-head and hair experiments. Both builds and
-13 tests pass; diff clean. Commit `c6cc4a1` deployed successfully in Pages run
-`38098093227`; live release, exact JS/CSS, worker and all three icons verified.
-Installed physical iPhone icon refresh not verified. No workout data/API changes.
+Release `2026.10.10 2045` adds local GPS route coordinates, separate pause/gap
+segments, OpenStreetMap basemaps with attribution, zoom/fit controls, and city/state
+labels inside the image. Today and the journal allow editing labels to cover
+missed cities, states and return crossings. Photon names up to eight sampled
+points on save; both external services have graceful unavailable fallbacks.
+Coordinates remain excluded from AI requests and are included in existing backups.
+Old totals-only workouts remain unchanged. Map/place URLs bypass worker caching.
+
+Verified both build paths, rendered-release checks, GPS/save/journal/worker/swipe
+tests, real Photon city/state response, and external headless Chrome at 440×956:
+recording, pause and gap separation, saved labels, reload and journal maps.
+Inspected Today and journal screenshots; no horizontal overflow. Physical iPhone
+GPS accuracy and background behavior still require device testing; tracking
+continues to pause when the app is hidden. Publication verification pending.
 
 ## Current change — accurate month legend colors
 

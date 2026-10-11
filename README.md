@@ -126,12 +126,18 @@ unavailable message with a decorative sun. Weather does not change workout plans
 
 Today → Track a run or ride uses foreground browser geolocation with explicit
 permission. Select Run/Bike and miles/kilometers, then Start GPS. Pause/Resume
-excludes paused time and never joins missing route segments. Stop + save totals
-adds a GPS summary to the dated session; Finish + Backup then backs it up normally.
+excludes paused time and never joins missing route segments. Stop + save route
+adds a GPS summary and segmented route map to the dated session; Finish + Backup then backs it up normally.
 Existing manual details remain; blank totals are filled and GPS-owned totals can
 accumulate multiple recordings. Journal shows each recording’s time, distance,
-average/maximum speed, start/end and detected gaps. No GPS coordinates are uploaded
-or persisted. A local totals-only draft recovers paused after reload.
+average/maximum speed, start/end and detected gaps. GPS coordinates are stored locally, included in backups, and excluded from AI requests. A local route draft recovers paused after reload.
+
+Maps use OpenStreetMap tiles with visible attribution and normal browser caching.
+Photon reverse geocoding names up to eight sampled route points once when saving;
+place names are cached locally. Both services receive location information and
+may be unavailable. City/state labels appear inside each map and can be edited
+in Today or the journal to include missed crossings. Old totals-only recordings
+remain intact and cannot gain a route retroactively.
 
 Keep the app visible: hidden pages automatically pause. Screen Wake Lock is
 requested where available, but lock-screen/background recording is not supported

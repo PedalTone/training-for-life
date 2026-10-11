@@ -40,3 +40,7 @@ test('current weather bypasses the service worker and its location URL cache', (
   });
   handler({request:{method:'GET',mode:'cors',url:'https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0'},respondWith:()=>{throw new Error('must fall through to browser network');}});
 });
+test('map and place requests bypass worker caching of location URLs', () => {
+ let handler;vm.runInNewContext(source,{self:{addEventListener:(name,callback)=>{if(name==='fetch')handler=callback;}},URL,fetch:()=>{throw new Error('must use browser HTTP caching');},caches:{match:()=>{throw new Error('must not cache location URLs');}}});
+ for(const url of ['https://tile.openstreetmap.org/14/4825/6150.png','https://photon.komoot.io/reverse?lon=-73&lat=40'])handler({request:{method:'GET',mode:'cors',url},respondWith:()=>{throw new Error('must fall through');}});
+});
