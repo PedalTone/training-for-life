@@ -22,7 +22,12 @@ seven-day selection/overview, correct dated journal, all six new artworks,
 Settings mapping and reload; phone (320/440), tablet (768) and desktop (1280)
 layouts were visually inspected without horizontal overflow. Nine existing
 TypeScript diagnostics remain; no new diagnostics from this change.
-Publication verification pending.
+Commit `49e87ce` published successfully in Pages run `38180170383`. Live
+release `2026.10.11 1815`, JS/CSS, worker, all icons and all new/existing
+artwork match the tested build. External Chrome verified live seven-day Plan
+selection/track art, Today panels, unselected add-on examples and all six
+destinations. Downloaded backup retained the selected new schedule keys and
+Tennis workout type; Home artwork was inspected at phone/tablet/desktop sizes.
 
 ## Current change — explicit add-on selection
 
