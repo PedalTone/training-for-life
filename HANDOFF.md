@@ -16,7 +16,11 @@ labels, optional privacy, share/download fallbacks and phone/tablet/desktop layo
 using mocked tiles; one real OpenStreetMap viewport exported successfully with
 CORS and was visually inspected. Map failure disables sharing; retry recovers.
 Nine preexisting type errors remain, no new diagnostics; changed-module lint has
-zero errors and one existing image advisory. Publication verification pending.
+zero errors and one existing image advisory. Commit `2f29be3` published successfully in Pages run `38183476571`. Live
+release `2026.10.11 1913`, JS/CSS, worker and assets exactly match the tested
+build. External Chrome repeated all five workout fixtures, route map exports
+(all formats), default location visibility, edited crossing labels and native
+share/download fallbacks on the live app using mocked provider tiles.
 
 ## Previous change — simpler social image sharing
 
