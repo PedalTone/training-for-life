@@ -1370,3 +1370,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 /* A quiet ivory band separates each day without increasing the week height. */
 .adventure-stop:not(:first-child) .adventure-scenery { top: 3px; }
 .adventure-stop:not(:last-child) .adventure-scenery { bottom: 3px; }
+
+/* Calendar navigation precedes Nutrition check-ins in the content flow. */
+.history-page .history-bottom-nav { position: static; transform: none; margin: 18px auto 0; }
+.history-page > .history-bottom-nav { order: 4; }
+.history-page > .nutrition-history { order: 5; }
