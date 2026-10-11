@@ -11,7 +11,9 @@ mixed-activity days; stored GPS meters/seconds remain unchanged.
 Pages build and 13 rendered tests pass; 13 GPS/share tests pass. External Chrome
 checked saved Run/Bike metrics in miles/kilometers, share metrics and Story exports;
 phone/tablet/desktop screenshots inspected. Typecheck retains 8 existing errors.
-Publication pending.
+Published product `7ea88c8` through successful Pages run `38185510414`.
+Live release 1943 and JS/CSS/worker/art assets match the local build. Live external
+Chrome Run/Bike mile/km tracking and Story sharing export checks pass.
 
 ## Previous change — stable share editing and Story composition
 
