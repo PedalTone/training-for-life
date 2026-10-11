@@ -16,7 +16,10 @@ tests pass. External Chrome verified typing stability at phone and reduced
 keyboard-sized heights, all image formats, five workout fixtures and screenshot
 backup/restore. Desktop/tablet/phone previews inspected. Physical iPhone keyboard
 not tested. Typecheck retains 8 pre-existing diagnostics; sharing lint has no
-errors (one image advisory). Publication pending.
+errors (one image advisory). Published product commit `177be04` through successful
+Pages run `38184962768`. Live release `2026.10.11 1936`, JS/CSS, service worker,
+icons and artwork match the local build. Live external-Chrome typing/Story export
+and screenshot compatibility checks pass.
 
 ## Previous change — custom share titles and local screenshots
 
