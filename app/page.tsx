@@ -252,9 +252,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 1853";
+const APP_VERSION = "2026.10.11 1903";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Share a completed workout as a Photo, Route or Workout Card image. Choose your recorded metrics and Story, Portrait or Square size; share or download the preview. Route start/end areas are hidden by default, and private notes and check-ins stay out."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Image sharing now uses one Share Image button, with automatic saving when sharing is unavailable. Formats are labeled for Instagram and TikTok. Route shows the full recorded route by default; hiding start/end areas is optional."] },
+  { version: "2026.10.11 1853", category: "Major fix", changes: ["Share a completed workout as a Photo, Route or Workout Card image. Choose your recorded metrics and Story, Portrait or Square size; share or download the preview. Route start/end areas are hidden by default, and private notes and check-ins stay out."] },
   { version: "2026.10.11 1815", category: "Major fix", changes: ["Plan now features one selected day, a larger picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are ready to choose with matching artwork on Home and Today. Speed now shows running on the track."] },
   { version: "2026.10.11 1706", category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
   { version: "2026.10.11 1600", category: "Major fix", changes: ["Today now has Workout, Log and Check-ins tabs, a larger workout picture, Repeat prior workout first and a cleaner run/bike tracker above Add-ons. Exercise graphics are available in Details; finish and backup stay within reach."] },
@@ -263,7 +264,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 2045", category: "Major fix", changes: ["Run and bike recordings now save route maps with city/state labels inside the picture. Pauses and GPS gaps stay separate; routes are included in backups."] },
   { version: "2026.10.10 2019", category: "Minor fix", changes: ["A new navy, ivory and orange home-screen icon keeps the flexing pose with a softer human outline."] },
   { version: "2026.10.10 2010", category: "Minor fix", changes: ["The History month legend uses a green completion check and red body-note flag. Removed the misleading automatic Skipped legend label."] },
-  { version: "2026.10.10 2005", category: "Minor fix", changes: ["History Nutrition check-ins now appear at the bottom, below the calendar and its navigation arrows."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

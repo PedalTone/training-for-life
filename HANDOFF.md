@@ -2,7 +2,21 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — workout image sharing
+## Current change — simpler social image sharing
+
+Release `2026.10.11 1903` replaces separate Share/Download buttons with one
+Share Image action. Unsupported or failed native sharing downloads the image;
+cancellation leaves the image ready without downloading. Format labels identify
+Instagram and TikTok (shared vertical 1080×1920), plus Instagram portrait/square.
+Full routes now show by default; optional endpoint hiding remains available.
+No storage or backup changes. Both builds, 13 rendered and seven sharing-data
+tests pass; changed composer lint has zero errors (one existing image advisory).
+External Chrome confirms one action, explicit format labels, full-route default,
+optional hiding, native activation/cancel/error fallback and automatic download
+across all five workout fixtures and three sizes. Phone/tablet/desktop inspected.
+Publication verification pending.
+
+## Previous change — workout image sharing
 
 Release `2026.10.11 1853` adds Share workout to completed Today sessions and
 recorded journal details. Isolated adapter, canvas renderer and composer offer
