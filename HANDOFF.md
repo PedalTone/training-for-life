@@ -20,7 +20,11 @@ notes, body/Nutrition, simulated GPS pause/save/map, finish guard, downloaded JS
 backup and reload persistence. Inspected phone, tablet and desktop layouts;
 no horizontal overflow. Both builds, 13 rendered tests and 31 focused regression
 tests pass. TypeScript retains the nine pre-existing diagnostics; no new diagnostics
-in the changed layout or tracker. Publication pending.
+in the changed layout or tracker. Commit `6b4dd73` deployed successfully in Pages
+run `38170590511`. Live HTTPS verified release `2026.10.11 1600`, exact JS/CSS,
+worker, icons and artwork against the tested build. External Chrome verified the
+three live Today panels, tracker controls and all six destinations. Physical iPhone
+GPS/background limitations remain as documented; tracking behavior is unchanged.
 
 ## Latest update-delivery repair
 
