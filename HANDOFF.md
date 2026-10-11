@@ -14,7 +14,11 @@ tests pass; changed composer lint has zero errors (one existing image advisory).
 External Chrome confirms one action, explicit format labels, full-route default,
 optional hiding, native activation/cancel/error fallback and automatic download
 across all five workout fixtures and three sizes. Phone/tablet/desktop inspected.
-Publication verification pending.
+Commit `30a9605` published successfully in Pages run `38182887421`. Live
+release `2026.10.11 1903`, JS/CSS, worker and assets match the tested build.
+External Chrome repeated all five workout cases and all export sizes live,
+including one Share Image action, Instagram/TikTok labels, full-route default,
+native sharing and automatic saving fallbacks.
 
 ## Previous change — workout image sharing
 
