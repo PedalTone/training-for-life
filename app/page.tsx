@@ -241,9 +241,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 2010";
+const APP_VERSION = "2026.10.10 2019";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["The History month legend uses a green completion check and red body-note flag. Removed the misleading automatic Skipped legend label."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["A new navy, ivory and orange home-screen icon keeps the flexing pose with a softer human outline."] },
+  { version: "2026.10.10 2010", category: "Minor fix", changes: ["The History month legend uses a green completion check and red body-note flag. Removed the misleading automatic Skipped legend label."] },
   { version: "2026.10.10 2005", category: "Minor fix", changes: ["History Nutrition check-ins now appear at the bottom, below the calendar and its navigation arrows."] },
   { version: "2026.10.10 1954", category: "Minor fix", changes: ["Narrow ivory gaps separate the Plan landscape pictures, making each day easier to distinguish."] },
   { version: "2026.10.10 1949", category: "Major fix", changes: ["Swipe left for the next tab and right for the previous tab, in bottom-menu order. Settings illustrations now match Home; Future workout videos keeps its red YouTube icon."] },
@@ -252,7 +253,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 1500", category: "Minor fix", changes: ["History and Settings share warm ivory, navy and orange throughout day tiles, icons and expanded controls."] },
   { version: "2026.10.10 1449", category: "Minor fix", changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
   { version: "2026.10.10 1412", category: "Minor fix", changes: ["Clearer, consistent wording across Home, Plan, Today, your workout journal and Progress."] },
-  { version: "2026.10.10 1028", category: "Minor fix", changes: ["Smaller strength and easy aerobic figures give their landscapes more breathing room."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

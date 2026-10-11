@@ -15,6 +15,19 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
+## Current change — selected home-screen icon
+
+Candidate `2026.10.10 2019`: user selected the first navy/ivory/orange flexing
+outline design (no added hair) via attached reference. Source is the original
+high-resolution built-in imagegen output, public/home-icon-selected-source.png.
+Home banner logo remains unchanged. New icon asset names referenced by static
+HTML, vinext metadata, manifest and worker shell; prior published icons retained.
+Sips resizes 180/192/512px, full bleed, no alpha; 60px and full-size inspected.
+Prompt: navy background, warm ivory softer gender-neutral flexing outline,
+legible upright T4L lettering and restrained burnt-orange swoosh. User chose
+this first design over the round-head and hair experiments. Publication pending.
+Installed physical iPhone icon refresh not verified. No workout data/API changes.
+
 ## Current change — accurate month legend colors
 
 Published `2026.10.10 2010`: removes the CSS-generated Skipped legend label;

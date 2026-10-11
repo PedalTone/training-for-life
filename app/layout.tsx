@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Training 4 Life — Move well. Stay ready.",
   description: "A private, offline-first weekly fitness tracker for broad, lifelong readiness.",
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/favicon.svg", apple: "/apple-touch-icon-2026.09.28-0727.png" },
+  icons: { icon: "/favicon.svg", apple: "/apple-touch-icon-2026.10.10-inclusive.png" },
   openGraph: { title: "Training 4 Life", description: "Move well. Stay ready.", images: ["/og.png"] },
   twitter: { card: "summary_large_image", title: "Training 4 Life", description: "Move well. Stay ready.", images: ["/og.png"] },
 };

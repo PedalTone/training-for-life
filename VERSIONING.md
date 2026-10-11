@@ -1,5 +1,5 @@
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.10 2010` corrects the History month legend and separates green completion checks from red body-note flags.
+Release decision: **New public release** — `2026.10.10 2019` introduces the selected navy, ivory and orange home-screen icon with a softer flexing outline.
 
-App, notes, tests, worker and deployment use `2026.10.10 2010`.
+App, notes, tests, worker and deployment use `2026.10.10 2019`.

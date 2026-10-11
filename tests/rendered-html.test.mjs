@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.10\.10 2010/);
+  assert.match(html, /2026\.10\.10 2019/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -62,7 +62,7 @@ test("What’s new groups exactly ten categorized dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 10);
-  assert.match(releaseBlock, /2026\.10\.10 1028/);
+  assert.match(releaseBlock, /2026\.10\.10 1412/);
   assert.equal((releaseBlock.match(/category: "(?:Major|Minor) fix"/g) ?? []).length, 10);
   assert.match(releaseBlock, /2026\.10\.10 1500/);
   assert.match(releaseBlock, /2026\.10\.10 1449/);
@@ -93,11 +93,11 @@ test("new home-screen icon is referenced by both iPhone and PWA metadata", async
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../public/service-worker.js", import.meta.url), "utf8"),
   ]);
-  assert.match(manifest, /icon-192-2026\.09\.28-0727\.png/);
-  assert.match(manifest, /icon-512-2026\.09\.28-0727\.png/);
-  assert.match(html, /apple-touch-icon-2026\.09\.28-0727\.png/);
-  assert.match(layout, /apple-touch-icon-2026\.09\.28-0727\.png/);
-  assert.match(worker, /apple-touch-icon-2026\.09\.28-0727\.png/);
+  assert.match(manifest, /icon-192-2026\.10\.10-inclusive\.png/);
+  assert.match(manifest, /icon-512-2026\.10\.10-inclusive\.png/);
+  assert.match(html, /apple-touch-icon-2026\.10\.10-inclusive\.png/);
+  assert.match(layout, /apple-touch-icon-2026\.10\.10-inclusive\.png/);
+  assert.match(worker, /apple-touch-icon-2026\.10\.10-inclusive\.png/);
 });
 
 test("Progress recommendations show their full text in auto-sizing cards", async () => {
