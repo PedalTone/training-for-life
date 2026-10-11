@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
 import { addonChoices, toggleAddonSelection } from "./addon-selection";
@@ -9,6 +9,8 @@ import { gpsTime, type GpsWorkout } from "./gps-math";
 import { LocalProgressView } from "./local-progress-view";
 import { HistorySearchPanel } from "./history-search-panel";
 import { emptyHistoryFilters, type HistoryFilters } from "./history-search";
+import { ShareComposer } from "./share-composer";
+import { toShareCardData, type ShareCardData } from "./share-card-data";
 import { DailyJournal } from "./daily-journal";
 import { adventureSceneFor, adventureBackgroundFor } from "./adventure-scenes";
 import { isCompleteInsightReport } from "./insight-validation";
@@ -250,9 +252,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 1815";
+const APP_VERSION = "2026.10.11 1853";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Plan now features one selected day, a larger picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are ready to choose with matching artwork on Home and Today. Speed now shows running on the track."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Share a completed workout as a Photo, Route or Workout Card image. Choose your recorded metrics and Story, Portrait or Square size; share or download the preview. Route start/end areas are hidden by default, and private notes and check-ins stay out."] },
+  { version: "2026.10.11 1815", category: "Major fix", changes: ["Plan now features one selected day, a larger picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are ready to choose with matching artwork on Home and Today. Speed now shows running on the track."] },
   { version: "2026.10.11 1706", category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
   { version: "2026.10.11 1600", category: "Major fix", changes: ["Today now has Workout, Log and Check-ins tabs, a larger workout picture, Repeat prior workout first and a cleaner run/bike tracker above Add-ons. Exercise graphics are available in Details; finish and backup stay within reach."] },
   { version: "2026.10.11 1324", category: "Minor fix", changes: ["Strength features a kettlebell and Mobility a rear-view stretch. Easy Aerobic includes a woman jogging. The Home workout picture now matches Today’s wide proportions."] },
@@ -261,7 +264,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 2019", category: "Minor fix", changes: ["A new navy, ivory and orange home-screen icon keeps the flexing pose with a softer human outline."] },
   { version: "2026.10.10 2010", category: "Minor fix", changes: ["The History month legend uses a green completion check and red body-note flag. Removed the misleading automatic Skipped legend label."] },
   { version: "2026.10.10 2005", category: "Minor fix", changes: ["History Nutrition check-ins now appear at the bottom, below the calendar and its navigation arrows."] },
-  { version: "2026.10.10 1954", category: "Minor fix", changes: ["Narrow ivory gaps separate the Plan landscape pictures, making each day easier to distinguish."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -476,6 +478,8 @@ export default function Home() {
   const basePlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
   const [progressWeeks, setProgressWeeks] = useState(4);
   const [historyFilters, setHistoryFilters] = useState<HistoryFilters>(emptyHistoryFilters);
+  const [shareData, setShareData] = useState<ShareCardData | null>(null);
+  const closeShare = useCallback(() => setShareData(null), []);
   const [journalDate, setJournalDate] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("today");
   const [openScheduleOnSettings, setOpenScheduleOnSettings] = useState(false);
@@ -917,7 +921,7 @@ export default function Home() {
   if (!enteredApp) return <div className={`app-shell theme-${splashPlan.key} splash-shell`}><SplashScreen version={APP_VERSION} todayPlan={splashPlan} todayActivity={activeKey === dateKey(today) && session.date === activeKey ? session.activity : ""} onEnter={enterApp}/></div>;
   return <div className={`app-shell textured-shell theme-${plan.key}${tab === "performance" ? " progress-shell" : ""}`}>
     <main ref={contentRef} className={tab === "week" && !journalDate ? "plan-content" : undefined} style={showMobilityPicker || screenshotState === "review" ? { overflow: "hidden" } : undefined}>
-      {journalDate ? <DailyJournal key={journalDate} date={journalDate} today={dateKey(today)} session={viewHistory.find(item => item.date === journalDate)} plan={historicalPlan(viewHistory.find(item => item.date === journalDate), scheduleForDate(dateFromKey(journalDate), activeSchedule, scheduleHistory), dateFromKey(journalDate))} onDate={date => { setJournalDate(date); scrollToTop(); }} onBack={() => { setJournalDate(null); scrollToTop(); }} onEdit={() => openDate(dateFromKey(journalDate))} onAddVideo={addVideoToToday} onRouteLabel={(id,label)=>{const current=viewHistory.find(item=>item.date===journalDate);const workout=current?.gpsWorkouts?.find(item=>item.id===id);if(workout?.route)void gps.updateSavedLabel(journalDate,workout,label);}}/> : <>
+      {journalDate ? <DailyJournal key={journalDate} date={journalDate} today={dateKey(today)} session={viewHistory.find(item => item.date === journalDate)} plan={historicalPlan(viewHistory.find(item => item.date === journalDate), scheduleForDate(dateFromKey(journalDate), activeSchedule, scheduleHistory), dateFromKey(journalDate))} onDate={date => { setJournalDate(date); scrollToTop(); }} onBack={() => { setJournalDate(null); scrollToTop(); }} onEdit={() => openDate(dateFromKey(journalDate))} onAddVideo={addVideoToToday} onShare={() => { const record = viewHistory.find(item => item.date === journalDate); if (record) setShareData(toShareCardData(record, historicalPlan(record, scheduleForDate(dateFromKey(journalDate), activeSchedule, scheduleHistory), dateFromKey(journalDate)))); }} onRouteLabel={(id,label)=>{const current=viewHistory.find(item=>item.date===journalDate);const workout=current?.gpsWorkouts?.find(item=>item.id===id);if(workout?.route)void gps.updateSavedLabel(journalDate,workout,label);}}/> : <>
       {tab === "today" && <div className="today-page today-tabs-page"><header className="training-page-heading"><h1>Today’s workout</h1></header>
         {!activeIsToday && <div className="editing-banner"><span>Viewing {activeDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span><button onClick={() => setActiveDate(today)}>Return to today</button></div>}
         <section className={`today-hero ${plan.key}`}>
@@ -967,7 +971,7 @@ export default function Home() {
 
         <NutritionCard key={activeKey} date={activeKey} expanded/>
         </section>
-<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}><p className="today-save-state" role="status">{saveState}</p>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); setCelebratingDate(null); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button disabled={Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || "Finish Workout + Backup"}<span>→</span></button></div>}</div>
+<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}><p className="today-save-state" role="status">{saveState}</p>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={() => { setSession((current) => ({ ...current, status: "partial", completedAt: undefined })); setFinishBackupState(""); setCelebratingDate(null); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button></div> : <div className="finish-actions"><button disabled={Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || "Finish Workout + Backup"}<span>→</span></button></div>}{activeFinished && <button type="button" className="workout-share-action" onClick={() => setShareData(toShareCardData(session, plan))}>Share workout ↗</button>}</div>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
@@ -979,6 +983,7 @@ export default function Home() {
       {tab === "more" && <MoreView libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeysWithHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} aiAccessCode={screenshotAccessCode} onSaveAiAccessCode={saveAiAccessCode} onDeleteVideo={deleteVideo} onAddToToday={addVideoToToday}/>}
       </>}
     </main>
+    {shareData && <ShareComposer data={shareData} onClose={closeShare}/>}
     <nav className="bottom-nav" aria-label="Primary navigation"><button className="home-nav" onClick={() => { try { sessionStorage.removeItem("t4l:entered-app"); } catch { /* Continue without a session preference. */ } setJournalDate(null); setActiveDate(today); setEnteredApp(false); scrollToTop(); }}><NavIcon name="home"/><small>Home</small></button>{(["today", "week", "history", "performance", "more"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => { if (item === "today") setActiveDate(today); navigate(item); }} aria-label={item === "performance" ? "Progress" : undefined}><NavIcon name={item}/><small>{item === "more" ? "Settings" : item === "week" ? "Plan" : item === "performance" ? "Progress" : item[0].toUpperCase() + item.slice(1)}</small></button>)}</nav>
   </div>;
 }

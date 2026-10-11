@@ -1,8 +1,10 @@
+New public release — 2026.10.11 1853: Share workout images with Photo, Route and Workout Card templates, selectable recorded metrics, three export sizes and endpoint privacy.
+
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 1815` introduces the featured-day weekly Plan and matching artwork for six additional activities and track running.
+Release decision: **New public release** — `2026.10.11 1853` introduces local workout image sharing.
 
-App, notes, tests, worker and deployment use `2026.10.11 1815`.
+App, notes, tests, worker and deployment use `2026.10.11 1853`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

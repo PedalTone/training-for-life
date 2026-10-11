@@ -2,7 +2,29 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — featured-day Plan and expanded artwork
+## Current change — workout image sharing
+
+Release `2026.10.11 1853` adds Share workout to completed Today sessions and
+recorded journal details. Isolated adapter, canvas renderer and composer offer
+Photo, Route and Workout Card; actual selectable metrics (maximum four),
+Story 1080×1920, Portrait 1080×1350 and Square 1080×1080 PNGs. Preview is the
+exported file; it is prepared before the share click to preserve native user
+activation. Native file sharing has cancellation/error/download fallbacks.
+Existing or temporary photos work; temporary photos do not change records.
+Routes keep gaps separate, hide 200m around each segment endpoint by default,
+and show existing city/state only if selected. No notes, body or nutrition,
+raw coordinates or photo metadata go into PNGs; rendering makes no map/API calls.
+No storage/backup schemas changed. Builds and 13 rendered + 12 focused tests
+pass. External Chrome verifies run/hike/strength/no-photo/missing-metrics/long
+strings, three exact PNG sizes, recorded journal entry, metric limits, route
+privacy/location options, native activation/cancel/error and immutable records.
+Phone 320/440, tablet 768 and desktop 1280 layouts inspected. Physical iPhone
+share destinations remain device-dependent and were not physically tested.
+Full lint/type checks retain existing repository errors; changed sharing modules
+have zero lint errors (one image advisory) and no new TypeScript diagnostics.
+Publication pending verification.
+
+## Previous change — featured-day Plan and expanded artwork
 
 Release `2026.10.11 1815` implements approved Option 1: seven preview buttons,
 one 2:1 featured illustration, dated workout details/Open workout and a compact

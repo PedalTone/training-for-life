@@ -143,3 +143,7 @@ Keep the app visible: hidden pages automatically pause. Screen Wake Lock is
 requested where available, but lock-screen/background recording is not supported
 by this web app. GPS accuracy and iPhone screen-awake behavior need physical-device
 verification. Average speed includes stops while recording and excludes pauses.
+
+## Share workout images
+
+Open a completed Today workout or a recorded workout in History and choose Share workout. Photo, Route and Workout Card templates use only recorded metrics. Export Story (1080×1920), Portrait (1080×1350) or Square (1080×1080) PNGs through native file sharing when available or Download image. Photos chosen in the composer are temporary; workout records remain unchanged. Route images use a standalone route shape, default to hiding 200 meters around each segment endpoint, and omit city/state unless selected. Notes, injury/body check-ins and nutrition are excluded. Rendering happens locally without map or geocoding requests.

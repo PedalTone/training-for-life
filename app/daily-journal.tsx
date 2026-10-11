@@ -12,7 +12,7 @@ function videoId(video: Video) {
   if (video.videoId && /^[\w-]{11}$/.test(video.videoId)) return video.videoId;
   try { const url = new URL(video.url); const host = url.hostname.replace(/^www\./,''); const id = host === 'youtu.be' ? url.pathname.slice(1).split('/')[0] : ['youtube.com','m.youtube.com'].includes(host) ? url.searchParams.get('v') || url.pathname.match(/^\/(?:embed|shorts)\/([\w-]+)/)?.[1] : ''; return id && /^[\w-]{11}$/.test(id) ? id : null; } catch { return null; }
 }
-export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdit, onAddVideo, onRouteLabel }: { date: string; today: string; session?: Session; plan: {key:string;theme:string}; onDate: (date:string)=>void; onBack:()=>void; onEdit:()=>void; onRouteLabel?:(workoutId:string,label:string)=>void; onAddVideo:(video:Video)=>Promise<string> }) {
+export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdit, onAddVideo, onRouteLabel, onShare }: { date: string; today: string; session?: Session; plan: {key:string;theme:string}; onDate: (date:string)=>void; onBack:()=>void; onEdit:()=>void; onRouteLabel?:(workoutId:string,label:string)=>void; onShare?:()=>void; onAddVideo:(video:Video)=>Promise<string> }) {
   const [videoNotice,setVideoNotice] = useState('');
   const [adding,setAdding] = useState(false);
   let nutrition; let nutritionError = false;
@@ -28,6 +28,7 @@ export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdi
     <header className="journal-heading"><span className="kicker">WORKOUT JOURNAL</span><h1>{plan.theme}</h1><time dateTime={date}>{dayDate(date).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</time></header>
     <div className="journal-landscape" aria-hidden="true" style={adventureBackgroundFor(plan.key)}/>
     {session && <p className="journal-status">{(session.status==='completed' || session.completedAt) ? '✓ Workout complete' : session.status==='rest' ? 'Recovery day' : hasRecorded ? 'Workout in progress' : 'Nothing logged yet'}{session.completedAt && <small>Finished {new Date(session.completedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</small>}</p>}
+    {session && hasRecorded && onShare && <button type="button" className="workout-share-action" onClick={onShare}>Share workout ↗</button>}
     {!hasRecorded && <p className="journal-empty">Nothing recorded for this day yet. Your photos, notes and workout details will appear here when you log them.</p>}
     {session?.workoutPhoto && <figure className="journal-photo"><img src={session.workoutPhoto} alt={`Workout photo from ${date}`}/></figure>}
     {(metrics.length>0 || session?.detailSource) && <section className="journal-section"><h2>Workout details</h2><dl className="journal-metrics">{metrics.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>{session?.detailSource && <p className="journal-subtle">Recorded from {session.detailSource}</p>}</section>}
