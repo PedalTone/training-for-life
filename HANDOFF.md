@@ -30,8 +30,10 @@ journal plus the weekly Plan; inspected images and confirmed matching Home/Today
 widths, full figure visibility, six 6px gaps and no horizontal overflow.
 Both build paths, 13 rendered-release tests and four artwork tests pass. Also
 checked small-phone, tablet and desktop Home layouts; capped the image width to
-keep descriptions comfortable on the centered Home card. Publication verification
-pending. No workout storage/API changes.
+keep descriptions comfortable on the centered Home card. Commit `eff1fd6`
+deployed successfully in Pages run `38159760758`. HTTPS verification confirmed
+release `2026.10.11 1324`, exact JS/CSS, worker, icons and all three updated art
+files match the local build. No workout storage/API changes.
 
 ## Current change — indoor Strength and Mobility artwork
 
