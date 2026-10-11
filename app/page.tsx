@@ -241,9 +241,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.10 2045";
+const APP_VERSION = "2026.10.10 2258";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Run and bike recordings now save route maps with city/state labels inside the picture. Pauses and GPS gaps stay separate; routes are included in backups."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Strength and Mobility now use indoor workout illustrations with the same warm colors and painted feel as the landscapes."] },
+  { version: "2026.10.10 2045", category: "Major fix", changes: ["Run and bike recordings now save route maps with city/state labels inside the picture. Pauses and GPS gaps stay separate; routes are included in backups."] },
   { version: "2026.10.10 2019", category: "Minor fix", changes: ["A new navy, ivory and orange home-screen icon keeps the flexing pose with a softer human outline."] },
   { version: "2026.10.10 2010", category: "Minor fix", changes: ["The History month legend uses a green completion check and red body-note flag. Removed the misleading automatic Skipped legend label."] },
   { version: "2026.10.10 2005", category: "Minor fix", changes: ["History Nutrition check-ins now appear at the bottom, below the calendar and its navigation arrows."] },
@@ -252,7 +253,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.10 1855", category: "Minor fix", changes: ["What’s New now labels each change as a major or minor fix and shows the ten most recent releases."] },
   { version: "2026.10.10 1512", category: "Minor fix", changes: ["Every tab shares the same title font, size and position, with a clear Today’s workout heading."] },
   { version: "2026.10.10 1500", category: "Minor fix", changes: ["History and Settings share warm ivory, navy and orange throughout day tiles, icons and expanded controls."] },
-  { version: "2026.10.10 1449", category: "Minor fix", changes: ["Consistent headings and fonts, fewer repetitive subheaders, and warmer History and Settings cards match the rest of the app."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

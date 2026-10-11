@@ -15,6 +15,21 @@ verification confirmed the repaired worker and all checked assets match the
 local build. Phone-side confirmation remains outstanding. No workout storage
 was changed.
 
+## Current change — indoor Strength and Mobility artwork
+
+Release `2026.10.10 2258` uses two new indoor watercolor illustrations, keeping
+ivory paper texture, blues, sage greens and orange accents consistent with the
+landscapes. Strength shows dumbbells and a bench; Mobility shows a seated side
+stretch. Shared artwork selection updates Home, Today, Plan and the journal.
+Old art files remain. New assets are precached for offline use. Generation
+prompts and asset paths are recorded in `docs/indoor-artwork-prompts.md`.
+
+Both builds, 13 rendered tests and four artwork tests pass. External headless
+Chrome at 440×956 verified all four surfaces; inspected screenshots and corrected
+the Strength figure size to preserve its head and feet in the shallow weekly
+cards. All six 6px picture gaps remain, with no horizontal overflow. No workout
+storage or API changes. Publication verification pending.
+
 ## Current change — saved GPS route maps
 
 Release `2026.10.10 2045` adds local GPS route coordinates, separate pause/gap
