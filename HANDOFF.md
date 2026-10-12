@@ -13,7 +13,9 @@ builds, 13 rendered checks and 5 photo/save regression checks pass. External
 Chrome checks multi-file upload, removal and reload; simulated app hiding pauses
 and single-touch Resume triggers no discard dialog. GPS regression checks pass.
 Phone/tablet/desktop galleries inspected. Physical iPhone field confirmation
-remains. Publication/live verification pending.
+remains. Published product `45a68ae` via successful Pages run `38316103790`.
+Live release 1819 and exact JS/CSS/worker/icons/art verified. Multi-photo, reload,
+automatic visibility pause/single-tap resume and GPS checks pass on public app.
 
 ## Previous change — saved recording evidence
 
