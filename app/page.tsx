@@ -218,9 +218,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.12 0907";
+const APP_VERSION = "2026.10.12 0922";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Start the timer immediately, stop and save while GPS is connecting, and keep the last known pace or speed through GPS gaps. Record another workout opens a fresh recording ready for Start. Larger timer controls respond without waiting for map place names."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["The tracker lists every saved recording with a green check, start time, distance and duration. Earlier intervals remain visible while preparing or recording the next workout."] },
+  { version: "2026.10.12 0907", category: "Minor fix", changes: ["Start the timer immediately, stop and save while GPS is connecting, and keep the last known pace or speed through GPS gaps. Record another workout opens a fresh recording ready for Start. Larger timer controls respond without waiting for map place names."] },
   { version: "2026.10.11 2203", category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
   { version: "2026.10.11 2149", category: "Minor fix", changes: ["Custom sharing text no longer has a blue background. Only the text and a subtle readability shadow appear in the shared image; the drag outline is an editing guide."] },
   { version: "2026.10.11 2142", category: "Major fix", changes: ["Add a custom text box to share images, choose Modern, Classic or Typewriter font and adjust its size. Drag it on the preview or full-size view to position it. The text is included in the shared image without changing your saved workout."] },
@@ -229,7 +230,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 2005", category: "Minor fix", changes: ["Average running pace now reads together as Avg Pace: 15:32 min/mile in tracking, saved workout details and share images."] },
   { version: "2026.10.11 1943", category: "Minor fix", changes: ["Running now shows minutes-per-mile pace for current and average tracking, saved journals and share images. Biking keeps miles per hour. Kilometer tracking uses minutes per kilometer for runs."] },
   { version: "2026.10.11 1936", category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
-  { version: "2026.10.11 1927", category: "Minor fix", changes: ["Edit the title on share images without changing the saved workout. Save screenshots as local attachments without AI extraction. Removed AI access, assessment goals and generation controls; About now describes current tracking, sharing and backups. Saved legacy details and reports remain available."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -861,7 +861,7 @@ export default function Home() {
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
             <div className="panel-body"><div className="day-workout-override"><label><span>Workout for this day</span><select value={plan.key} onChange={(event) => setDayWorkoutType(event.target.value)}>{workoutOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><div><small>{session.planOverride ? "One-day change · weekly plan stays the same" : "Following your weekly plan"}</small>{session.planOverride && <button onClick={restoreWeeklyWorkoutType}>Use weekly plan</button>}</div></div><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></div>
           </details>
-        <GpsTracker tracker={gps} date={activeKey} savedWorkout={session.gpsWorkouts?.at(-1)}/>
+        <GpsTracker tracker={gps} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
         <section className="today-addons"><div className="today-section-title"><h3>Add-ons</h3><button onClick={openMobilityPicker}>＋ Add / edit</button></div>
         <p className="today-addon-count">{session.mobilityExercises.length} selected · {session.completedExercises.filter(name => session.mobilityExercises.includes(name)).length} completed</p>
         {addonChoices(session.mobilityExercises, libraryExercises.map(item => item.name)).map(name => {

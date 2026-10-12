@@ -2,7 +2,17 @@
 
 Updated October 12, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — responsive run/bike recording
+## Current change — saved recording evidence
+
+Release `2026.10.12 0922` adds a tracker list of all recordings for the selected
+day, with green saved checks, interval number/activity, start time, distance and
+duration. The list remains visible during a fresh or active recording and reloads
+from the existing session data. No storage/schema changes. Production/Pages builds and 13 rendered checks pass.
+External Chrome touch/GPS tests verify two intervals remain visible through
+next-recording preparation, active tracking and reload; phone/tablet/desktop
+screenshots inspected. Publication verification pending.
+
+## Previous change — responsive run/bike recording
 
 Release `2026.10.12 0907`: timer starts before GPS acquisition; Stop saves
 immediately before background place lookup. Record another prepares a zeroed

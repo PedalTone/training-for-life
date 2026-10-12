@@ -1608,3 +1608,17 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 
 .today-tabs-page .gps-actions button { min-height:60px; touch-action:manipulation; cursor:pointer; font-weight:650; }
 .today-tabs-page .gps-actions button:active { transform:scale(.98); filter:brightness(.9); }
+
+.gps-recordings { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border, #ded4c5); }
+.gps-recordings h3 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 18px; }
+.gps-recordings h3 span { background: #e4ecdf; color: #386047; border-radius: 999px; padding: 3px 9px; font-size: 14px; }
+.gps-recordings > p { font-size: 14px; margin: 8px 0 12px; }
+.gps-recordings ol { list-style: none; padding: 0; margin: 0; }
+.gps-recordings li { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #e8e0d5; }
+.gps-recordings li:last-child { border-bottom: 0; }
+.gps-recordings li div { flex: 1; min-width: 0; }
+.gps-recordings strong, .gps-recordings small { display: block; }
+.gps-recordings strong { font-size: 16px; }
+.gps-recordings small { font-size: 14px; margin-top: 4px; color: #596a76; }
+.gps-saved-check { color: #386047; background: #e4ecdf; border-radius: 50%; width: 28px; height: 28px; display: grid; place-items: center; flex-shrink: 0; }
+.gps-saved-label { color: #386047; font-size: 14px; }
