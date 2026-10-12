@@ -13,7 +13,10 @@ Pages build, 13 rendered tests and 9 share-data tests pass. External Chrome chec
 five fixtures across three PNG sizes (route tiles mocked), Run/Bike units, natural
 phone title typing, unchanged storage and photo/route availability. Phone/tablet/
 desktop screenshots and exported long-text/Story/Photo cards visually inspected.
-Typecheck retains 8 prior diagnostics with no sharing errors. Publication pending.
+Typecheck retains 8 prior diagnostics with no sharing errors. Published product
+`85ea299` through successful Pages run `38189779829`. Live release 2053, JS/CSS,
+worker and art/icon assets match local build. Live external Chrome phone typing,
+responsive composer, Run/Bike pace/speed and Story export checks pass.
 
 ## Previous change — inline average pace
 
