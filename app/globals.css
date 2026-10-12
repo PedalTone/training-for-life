@@ -1605,3 +1605,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .share-text-handle span { position:absolute; bottom:0; right:0; padding:3px 6px; background:#203449; color:#fffaf1; font-size:12px; }
 .share-controls textarea { display:block; width:100%; min-height:90px; margin:8px 0 12px; padding:10px; border:1px solid #d8cdbd; border-radius:10px; background:white; color:#203449; font:inherit; font-size:16px; }
 .share-text-settings { display:grid; gap:12px; margin-bottom:12px; }.share-text-settings input { display:block; width:100%; min-height:36px; accent-color:#bc4c12; }
+
+.today-tabs-page .gps-actions button { min-height:60px; touch-action:manipulation; cursor:pointer; font-weight:650; }
+.today-tabs-page .gps-actions button:active { transform:scale(.98); filter:brightness(.9); }

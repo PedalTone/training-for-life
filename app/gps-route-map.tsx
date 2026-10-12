@@ -1,7 +1,7 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
+import {memo,useEffect,useRef,useState} from 'react';
 import {cleanRoute,mercator,type GpsRoute} from './gps-route';
-export function GpsRouteMap({route,onLabel}:{route?:GpsRoute;onLabel?:(label:string)=>void}) {
+function RouteMap({route,onLabel}:{route?:GpsRoute;onLabel?:(label:string)=>void}) {
  const host=useRef<HTMLDivElement>(null);const [width,setWidth]=useState(360);const [zoomOffset,setZoomOffset]=useState(0);const [failed,setFailed]=useState(false);const [editing,setEditing]=useState(false);const [label,setLabel]=useState(route?.locationLabel||'');
  useEffect(()=>{setLabel(route?.locationLabel||'');},[route?.locationLabel]);
  useEffect(()=>{if(!host.current)return;const observer=new ResizeObserver(([entry])=>{if(entry.contentRect.width>0)setWidth(Math.max(80,entry.contentRect.width));});observer.observe(host.current);return()=>observer.disconnect();},[Boolean(route?.segments?.length)]);
@@ -22,3 +22,5 @@ export function GpsRouteMap({route,onLabel}:{route?:GpsRoute;onLabel?:(label:str
  {onLabel&&<><button className="gps-place-edit" onClick={()=>setEditing(!editing)}>Edit city / state label</button>{editing&&<div className="gps-place-editor"><label>Places along this route<input value={label} maxLength={400} placeholder="City, State → City, State" onChange={e=>setLabel(e.target.value)}/></label><p>Include every city and state you want shown, including crossings and the return trip. Automatic names use sampled GPS points.</p><button onClick={()=>{onLabel(label.trim());setEditing(false);}}>Save map label</button></div>}</>}
  </div>;
 }
+
+export const GpsRouteMap=memo(RouteMap);

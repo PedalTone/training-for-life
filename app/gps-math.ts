@@ -12,7 +12,7 @@ export function gpsStep(previous:GpsPoint|null,point:GpsPoint,activity:'Run'|'Bi
  const meters=gpsDistance(previous,point);const ceiling=activity==='Run'?20:55;
  if(meters/seconds>ceiling)return {accepted:false,meters:0,speed:null,gap:false};
  const moving=meters>=Math.max(3,Math.min(previous.accuracy,point.accuracy)*.3);
- const speed=moving ? (Number.isFinite(point.speed)&&point.speed!==null&&point.speed>=0&&point.speed<=ceiling?point.speed:meters/seconds):0;
+ const speed=moving ? (Number.isFinite(point.speed)&&point.speed!==null&&point.speed>0&&point.speed<=ceiling?point.speed:meters/seconds):0;
  return {accepted:true,meters:moving?meters:0,speed,gap:false};
 }
 export function gpsUnits(meters:number,seconds:number,unit:'mi'|'km') {const scale=unit==='mi'?1609.344:1000;return {distance:(meters/scale).toFixed(2),average:seconds>0?(meters/seconds*3600/scale).toFixed(1):'0.0'};}

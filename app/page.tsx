@@ -218,9 +218,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 2203";
+const APP_VERSION = "2026.10.12 0907";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Start the timer immediately, stop and save while GPS is connecting, and keep the last known pace or speed through GPS gaps. Record another workout opens a fresh recording ready for Start. Larger timer controls respond without waiting for map place names."] },
+  { version: "2026.10.11 2203", category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
   { version: "2026.10.11 2149", category: "Minor fix", changes: ["Custom sharing text no longer has a blue background. Only the text and a subtle readability shadow appear in the shared image; the drag outline is an editing guide."] },
   { version: "2026.10.11 2142", category: "Major fix", changes: ["Add a custom text box to share images, choose Modern, Classic or Typewriter font and adjust its size. Drag it on the preview or full-size view to position it. The text is included in the shared image without changing your saved workout."] },
   { version: "2026.10.11 2129", category: "Minor fix", changes: ["Sharing has a larger phone preview and a full-size preview you can open before posting. Back to editing preserves your title, format and metric choices."] },
@@ -229,7 +230,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 1943", category: "Minor fix", changes: ["Running now shows minutes-per-mile pace for current and average tracking, saved journals and share images. Biking keeps miles per hour. Kilometer tracking uses minutes per kilometer for runs."] },
   { version: "2026.10.11 1936", category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
   { version: "2026.10.11 1927", category: "Minor fix", changes: ["Edit the title on share images without changing the saved workout. Save screenshots as local attachments without AI extraction. Removed AI access, assessment goals and generation controls; About now describes current tracking, sharing and backups. Saved legacy details and reports remain available."] },
-  { version: "2026.10.11 1913", category: "Minor fix", changes: ["Route sharing now includes the street map, start/finish markers and city/state label inside the image. Full routes remain the default. You can edit labels for city/state crossings; failed map loading can be retried."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -676,7 +676,7 @@ export default function Home() {
       start = null;
       const target = event.target instanceof Element ? event.target : null;
       if (event.touches.length !== 1 || journalDate || showMobilityPicker ||
-          !target?.closest(".app-shell") || target.closest('input, textarea, select, a, iframe, video, [contenteditable], [role="dialog"], .bottom-nav, .splash-release-notes, .gps-route-map')) return;
+          !target?.closest(".app-shell") || target.closest('button, input, textarea, select, a, iframe, video, [contenteditable], [role="dialog"], .bottom-nav, .splash-release-notes, .gps-route-map')) return;
       const touch = event.touches[0];
       if (touch.clientX < 24 || touch.clientX > window.innerWidth - 24) return;
       for (let node: Element | null = target; node; node = node.parentElement) {
@@ -794,7 +794,8 @@ export default function Home() {
     try { saved = await getSession(date); } catch { const raw = localStorage.getItem(`t4l:${date}`); saved = raw ? JSON.parse(raw) : undefined; }
     const dayPlan = scheduleForDate(dateFromKey(date), activeSchedule, scheduleHistory)[dateFromKey(date).getDay()];
     const current = sessionRef.current.id === date ? sessionRef.current : saved ? normalizeSession(saved) : emptySession(date, dayPlan.key === "rest", dayPlan);
-    const workouts = [...(current.gpsWorkouts || []).filter(item => item.id !== workout.id), workout];
+    const existing = current.gpsWorkouts || [];
+    const workouts = existing.some(item => item.id === workout.id) ? existing.map(item => item.id === workout.id ? workout : item) : [...existing, workout];
     const meters = workouts.reduce((sum,item)=>sum+item.meters,0);
     const seconds = workouts.reduce((sum,item)=>sum+item.seconds,0);
     const next = { ...current, gpsWorkouts:workouts, activity:current.activity || workout.activity, activities:current.activities?.length ? current.activities : [workout.activity], duration:!current.duration || ((current.gpsWorkouts?.length || 0)>0 && current.duration===gpsTime((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.seconds,0))) ? gpsTime(seconds) : current.duration, distance:!current.distance || ((current.gpsWorkouts?.length || 0)>0 && current.distance===`${((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.meters,0)/1609.344).toFixed(2)} mi`) ? `${(meters/1609.344).toFixed(2)} mi` : current.distance, startTime:current.startTime || new Date(workout.startedAt).toLocaleTimeString("en-US", {hour:"2-digit",minute:"2-digit",hour12:false}), updatedAt:new Date().toISOString() };

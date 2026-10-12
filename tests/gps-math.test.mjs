@@ -7,3 +7,5 @@ test('jitter contributes no distance and negative or missing device speed falls 
 test('regular stationary fixes do not become a signal gap and out-of-order callbacks are ignored',()=>{const p=point();assert.equal(gpsStep(p,point(40,41000),'Run',40000).gap,false);assert.equal(gpsStep(p,point(40.0001,2000),'Run',3000).accepted,false);});
 
 test('pace handles miles, kilometers, second carry and missing movement',()=>{assert.equal(gpsPace(1609.344/600),'10:00');assert.equal(gpsPace(1000/300,'km'),'5:00');assert.equal(gpsPace(1609.344/599.6),'10:00');for(const speed of [null,0,-1,NaN,Infinity])assert.equal(gpsPace(speed),'—');});
+
+test('moving coordinates override a zero device-speed reading',()=>{const result=gpsStep(point(),point(40.0001,6000,5,0),'Run');assert.ok(result.meters>0);assert.ok(result.speed>2);});

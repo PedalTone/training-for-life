@@ -1,8 +1,23 @@
 # Training for Life — development handoff
 
-Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 12, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — clean full-size sharing preview
+## Current change — responsive run/bike recording
+
+Release `2026.10.12 0907`: timer starts before GPS acquisition; Stop saves
+immediately before background place lookup. Record another prepares a zeroed
+workout and requires a separate Start tap. Larger controls ignore tab-swipe
+starts; last pace/speed holds through missing/weak fixes with sustained stationary
+readings still reaching zero. Timer-only renders avoid route-map recalculation
+and full-route persistence on every tick. Background enrichment preserves
+interval ordering and manual place edits. Existing notes and workout data stay intact.
+External Chrome touch/mocked-GPS checks pass for pending GPS, timeout, weak fixes,
+stationary readings, pause/resume, stale callbacks, repeated recordings and blocked
+place lookup. Phone/tablet/desktop screenshots inspected. Physical iPhone/GPS
+behavior still needs field confirmation. Production/Pages builds, 13 rendered checks and 13 GPS regression checks pass.
+Publication/live checks pending.
+
+## Previous change — clean full-size sharing preview
 
 Release `2026.10.11 2203` removes the positioning handle/outline/Drag text label
 from full-size preview. Back to editing restores positioning controls; text/data/

@@ -1,3 +1,5 @@
+New public release — 2026.10.12 0907: Responsive tracking controls, ready-then-start repeat recordings and stable pace during GPS gaps.
+
 New public release — 2026.10.11 2203: Full-size sharing previews hide text positioning outlines and labels.
 
 New public release — 2026.10.11 2149: Sharing text overlays have no blue background; only text with a subtle readability shadow exports.
@@ -24,9 +26,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 2203` shows a clean full-size sharing preview.
+Release decision: **New public release** — `2026.10.12 0907` improves run/bike timer response and GPS continuity.
 
-App, notes, tests, worker and deployment use `2026.10.11 2203`.
+App, notes, tests, worker and deployment use `2026.10.12 0907`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
