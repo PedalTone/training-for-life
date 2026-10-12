@@ -218,9 +218,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 2053";
+const APP_VERSION = "2026.10.11 2129";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Shared images have more balanced artwork and stats, a prominent full-width Avg Pace line, readable duration and the T4L mark. A compact preview stays visible while editing on phones."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Sharing has a larger phone preview and a full-size preview you can open before posting. Back to editing preserves your title, format and metric choices."] },
+  { version: "2026.10.11 2053", category: "Minor fix", changes: ["Shared images have more balanced artwork and stats, a prominent full-width Avg Pace line, readable duration and the T4L mark. A compact preview stays visible while editing on phones."] },
   { version: "2026.10.11 2005", category: "Minor fix", changes: ["Average running pace now reads together as Avg Pace: 15:32 min/mile in tracking, saved workout details and share images."] },
   { version: "2026.10.11 1943", category: "Minor fix", changes: ["Running now shows minutes-per-mile pace for current and average tracking, saved journals and share images. Biking keeps miles per hour. Kilometer tracking uses minutes per kilometer for runs."] },
   { version: "2026.10.11 1936", category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
@@ -229,7 +230,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 1903", category: "Minor fix", changes: ["Image sharing now uses one Share Image button, with automatic saving when sharing is unavailable. Formats are labeled for Instagram and TikTok. Route shows the full recorded route by default; hiding start/end areas is optional."] },
   { version: "2026.10.11 1853", category: "Major fix", changes: ["Share a completed workout as a Photo, Route or Workout Card image. Choose your recorded metrics and Story, Portrait or Square size; share or download the preview. Route start/end areas are hidden by default, and private notes and check-ins stay out."] },
   { version: "2026.10.11 1815", category: "Major fix", changes: ["Plan now features one selected day, a larger picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are ready to choose with matching artwork on Home and Today. Speed now shows running on the track."] },
-  { version: "2026.10.11 1706", category: "Minor fix", changes: ["Face Pulls and Dead Hang are unselected examples until you choose them. Selection and completion now have separate controls; only chosen add-ons appear in your workout summary and backup."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

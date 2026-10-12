@@ -1,3 +1,5 @@
+New public release — 2026.10.11 2129: Larger phone share previews and a full-size preview with Back to editing.
+
 New public release — 2026.10.11 2053: Rebalanced sharing artwork/stats, prominent full-width pace, readable duration, T4L footer and phone preview beside editing workflow.
 
 New public release — 2026.10.11 2005: Average running pace is one clear line: Avg Pace: 15:32 min/mile, including share images.
@@ -16,9 +18,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 2053` polishes sharing composition and phone editing.
+Release decision: **New public release** — `2026.10.11 2129` makes sharing previews readable.
 
-App, notes, tests, worker and deployment use `2026.10.11 2053`.
+App, notes, tests, worker and deployment use `2026.10.11 2129`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

@@ -156,3 +156,5 @@ GPS Run tracking uses current and average min/mi pace (min/km with kilometers); 
 Average running pace displays inline as “Avg Pace: 15:32 min/mile” in tracking, journal details and share images.
 
 Share cards group artwork, title/date and stats, give Avg Pace a full-width line, format recorded duration as readable hours/minutes and include the approved T4L mark. On phones, the compact preview/title remain visible while options scroll.
+
+Sharing previews can be enlarged with View full-size preview; Back to editing preserves every choice. Phone editing previews are larger, and full-size mode uses the available width.

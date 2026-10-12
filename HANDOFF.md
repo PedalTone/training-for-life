@@ -2,7 +2,18 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — polished sharing composition and editing
+## Current change — readable sharing previews
+
+Release `2026.10.11 2129` enlarges phone previews from 160px to up to 320px
+(32dvh) and adds View full-size preview / Back to editing on all screen sizes.
+Full-size phone preview uses available width with scrolling for tall images;
+editing state/export data remain unchanged. Reduced-height editing uses 100px.
+Pages build and 13 rendered tests pass. External Chrome verifies enlarged sizes,
+expansion/return, preserved title, stable typing and Run/Bike export behavior at
+440/768/1280 widths. Screenshots of editing/full-size mode visually inspected.
+Publication pending.
+
+## Previous change — polished sharing composition and editing
 
 Release `2026.10.11 2053` balances Card art height per format/metric count,
 groups stats below title/date, gives Avg Pace a full-width 48px line and displays
