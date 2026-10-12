@@ -162,3 +162,5 @@ Sharing previews can be enlarged with View full-size preview; Back to editing pr
 Share images support an optional movable text box with Modern, Classic or Typewriter font and adjustable size. Drag it in the preview/full-size view; arrow keys also move it. Text is baked into the export and does not change saved workout data.
 
 Custom sharing text has a transparent background with a subtle text shadow. The outline and Drag text label are editing guides and never appear in exports.
+
+Full-size sharing previews show the finished image without text positioning guides. Use Back to editing to move text.

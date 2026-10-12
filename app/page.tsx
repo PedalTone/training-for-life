@@ -218,9 +218,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.11 2149";
+const APP_VERSION = "2026.10.11 2203";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Custom sharing text no longer has a blue background. Only the text and a subtle readability shadow appear in the shared image; the drag outline is an editing guide."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
+  { version: "2026.10.11 2149", category: "Minor fix", changes: ["Custom sharing text no longer has a blue background. Only the text and a subtle readability shadow appear in the shared image; the drag outline is an editing guide."] },
   { version: "2026.10.11 2142", category: "Major fix", changes: ["Add a custom text box to share images, choose Modern, Classic or Typewriter font and adjust its size. Drag it on the preview or full-size view to position it. The text is included in the shared image without changing your saved workout."] },
   { version: "2026.10.11 2129", category: "Minor fix", changes: ["Sharing has a larger phone preview and a full-size preview you can open before posting. Back to editing preserves your title, format and metric choices."] },
   { version: "2026.10.11 2053", category: "Minor fix", changes: ["Shared images have more balanced artwork and stats, a prominent full-width Avg Pace line, readable duration and the T4L mark. A compact preview stays visible while editing on phones."] },
@@ -229,7 +230,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 1936", category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
   { version: "2026.10.11 1927", category: "Minor fix", changes: ["Edit the title on share images without changing the saved workout. Save screenshots as local attachments without AI extraction. Removed AI access, assessment goals and generation controls; About now describes current tracking, sharing and backups. Saved legacy details and reports remain available."] },
   { version: "2026.10.11 1913", category: "Minor fix", changes: ["Route sharing now includes the street map, start/finish markers and city/state label inside the image. Full routes remain the default. You can edit labels for city/state crossings; failed map loading can be retried."] },
-  { version: "2026.10.11 1903", category: "Minor fix", changes: ["Image sharing now uses one Share Image button, with automatic saving when sharing is unavailable. Formats are labeled for Instagram and TikTok. Route shows the full recorded route by default; hiding start/end areas is optional."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

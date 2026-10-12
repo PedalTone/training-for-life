@@ -2,7 +2,17 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — transparent sharing text
+## Current change — clean full-size sharing preview
+
+Release `2026.10.11 2203` removes the positioning handle/outline/Drag text label
+from full-size preview. Back to editing restores positioning controls; text/data/
+exports remain unchanged. Help copy matches this interaction. Pages build and
+13 rendered tests pass. External Chrome checks no handle in full-size mode,
+mouse/touch/keyboard editing placement, return/edit, 9 font/format exports,
+transparent pixels and unchanged storage. Phone full-size and tablet/desktop
+editing screenshots visually inspected. Publication pending.
+
+## Previous change — transparent sharing text
 
 Release `2026.10.11 2149` removes the navy fill from custom sharing text.
 Only cream text with a subtle shadow exports; positioning outline/Drag text label
