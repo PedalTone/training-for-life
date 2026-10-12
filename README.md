@@ -152,3 +152,5 @@ Share titles can be edited in the composer; they affect only the exported image,
 Share previews retain their dimensions while text edits render. Story Workout Cards use a larger illustration and a grouped title/date/metrics block; Photo and Route templates retain their full-image/map layouts.
 
 GPS Run tracking uses current and average min/mi pace (min/km with kilometers); Bike uses mph or km/h. Journals and shared images use the same activity-specific metrics. Mixed days derive run pace and bike speed independently.
+
+Average running pace displays inline as “Avg Pace: 15:32 min/mile” in tracking, journal details and share images.

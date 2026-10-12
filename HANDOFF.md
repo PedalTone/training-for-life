@@ -2,7 +2,16 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — running pace and cycling speed
+## Current change — inline average pace
+
+Release `2026.10.11 2005` formats tracked running average pace inline as
+`Avg Pace: 15:32 min/mile` in tracker/journal and canvas share exports. Kilometers
+retain min/km. Data and calculations unchanged. Pages build, 13 rendered tests
+and 8 share-data tests pass. External Chrome Run/Bike units/export checks pass;
+phone/tablet/desktop screenshots and Story export visually inspected.
+Publication pending.
+
+## Previous change — running pace and cycling speed
 
 Release `2026.10.11 1943` uses current/average min/mi for Run (min/km
 when kilometers chosen), mph/km/h for Bike. Journals show average/fastest

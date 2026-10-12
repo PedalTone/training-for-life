@@ -15,7 +15,7 @@ export function toShareCardData(session: Session, plan: {key:string;theme:string
   add('duration','Duration',session.duration || (seconds>0 ? gpsTime(seconds) : undefined));
   const runs=gps.filter(w=>w.activity==='Run'), bikes=gps.filter(w=>w.activity==='Bike');
   const runMeters=runs.reduce((n,w)=>n+w.meters,0),runSeconds=runs.reduce((n,w)=>n+w.seconds,0);
-  add('pace',runs.length?'Average pace':'Pace',runMeters>0&&runSeconds>0?`${gpsPace(runMeters/runSeconds)} min/mi`:session.pace);
+  add('pace',runs.length?'Avg Pace':'Pace',runMeters>0&&runSeconds>0?`${gpsPace(runMeters/runSeconds)} min/mile`:session.pace);
   add('calories','Calories',session.calories);
   const bikeMeters=bikes.reduce((n,w)=>n+w.meters,0),bikeSeconds=bikes.reduce((n,w)=>n+w.seconds,0);
   if(bikeMeters>0&&bikeSeconds>0)add('speed',runs.length?'Average bike speed':'Average speed',`${(bikeMeters/bikeSeconds*3600/1609.344).toFixed(1)} mph`);

@@ -37,7 +37,7 @@ export async function renderShareCard(data:ShareCardData,options:ShareCardOption
     if(options.showLocation){ctx.fillStyle='#fffaf1';ctx.font='500 30px system-ui';locationLines.forEach((line,i)=>{ctx.fillText(fitText(ctx,line,w-pad*2,30,26,'system-ui','500'),pad,top+boxHeight+14+i*36);});}
 
   }
-  metrics.forEach((m,i)=>{const x=pad+(i%cols)*cellW,y=startY+Math.floor(i/cols)*125;ctx.fillStyle=dark?'#fffaf1':'#203449';ctx.fillText(fitText(ctx,m.value,cellW-24,metrics.length===1?100:72,30),x,y);ctx.fillStyle=dark?'#efd7b9':'#62717c';ctx.font='400 32px system-ui';ctx.fillText(m.label,x,y+82);});
+  metrics.forEach((m,i)=>{const x=pad+(i%cols)*cellW,y=startY+Math.floor(i/cols)*125;ctx.fillStyle=dark?'#fffaf1':'#203449';if(m.id==='pace'&&m.label==='Avg Pace'){ctx.fillText(fitText(ctx,`${m.label}: ${m.value}`,cellW-24,38,26),x,y);return;}ctx.fillText(fitText(ctx,m.value,cellW-24,metrics.length===1?100:72,30),x,y);ctx.fillStyle=dark?'#efd7b9':'#62717c';ctx.font='400 32px system-ui';ctx.fillText(m.label,x,y+82);});
 
   ctx.fillStyle=dark?'#fffaf1':'#62717c';ctx.font='600 25px system-ui';ctx.fillText('TRAINING FOR LIFE',pad,h-pad);ctx.fillStyle='#c05319';ctx.fillRect(w-pad-110,h-pad+8,110,5);
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Could not generate an image.')),'image/png'));
