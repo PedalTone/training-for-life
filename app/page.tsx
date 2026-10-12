@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { workoutPhotos } from "./workout-photos";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
 import { addonChoices, toggleAddonSelection } from "./addon-selection";
@@ -39,7 +40,7 @@ export type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
   plannedKey?: string; plannedTheme?: string; planOverride?: boolean;
   pace?: string; calories?: string; startTime?: string; detailSource?: string;
-  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[]; workoutPhoto?: string; workoutScreenshots?: WorkoutScreenshot[];
+  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[]; workoutPhoto?: string; workoutPhotos?: string[]; workoutScreenshots?: WorkoutScreenshot[];
   importedWorkouts?: ScreenshotWorkout[];
   gpsWorkouts?: GpsWorkout[];
   updatedAt: string; completedAt?: string;
@@ -174,7 +175,7 @@ function normalizeSession(saved: Session): Session {
   const activities = saved.activities ?? (saved.activity ? [saved.activity] : []);
   const completedExercises = saved.completedExercises ?? [];
   const mobilityExercises = saved.mobilityExercises ?? completedExercises;
-  return { ...saved, workoutScreenshots: Array.isArray(saved.workoutScreenshots)?saved.workoutScreenshots.filter(item=>item?.id&&typeof item.imageData==='string'&&item.imageData.startsWith('data:image/')).slice(0,6):undefined, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: (saved.videos ?? []).map(stripVideoGuide), planOverride: typeof saved.planOverride === "boolean" ? saved.planOverride : undefined, injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
+  return { ...saved, workoutPhotos: workoutPhotos(saved), workoutPhoto: workoutPhotos(saved)[0], workoutScreenshots: Array.isArray(saved.workoutScreenshots)?saved.workoutScreenshots.filter(item=>item?.id&&typeof item.imageData==='string'&&item.imageData.startsWith('data:image/')).slice(0,6):undefined, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: (saved.videos ?? []).map(stripVideoGuide), planOverride: typeof saved.planOverride === "boolean" ? saved.planOverride : undefined, injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
 }
 function weekDates(date: Date) {
   const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() + 6) % 7));
@@ -218,9 +219,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.12 0922";
+const APP_VERSION = "2026.10.12 1819";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["The tracker lists every saved recording with a green check, start time, distance and duration. Earlier intervals remain visible while preparing or recording the next workout."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Add up to six photos to each workout log and keep them in History and backups. GPS Resume has a stable button; discard is separated behind Discard options to prevent accidental warnings while resuming."] },
+  { version: "2026.10.12 0922", category: "Minor fix", changes: ["The tracker lists every saved recording with a green check, start time, distance and duration. Earlier intervals remain visible while preparing or recording the next workout."] },
   { version: "2026.10.12 0907", category: "Minor fix", changes: ["Start the timer immediately, stop and save while GPS is connecting, and keep the last known pace or speed through GPS gaps. Record another workout opens a fresh recording ready for Start. Larger timer controls respond without waiting for map place names."] },
   { version: "2026.10.11 2203", category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
   { version: "2026.10.11 2149", category: "Minor fix", changes: ["Custom sharing text no longer has a blue background. Only the text and a subtle readability shadow appear in the shared image; the drag outline is an editing guide."] },
@@ -229,7 +231,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 2053", category: "Minor fix", changes: ["Shared images have more balanced artwork and stats, a prominent full-width Avg Pace line, readable duration and the T4L mark. A compact preview stays visible while editing on phones."] },
   { version: "2026.10.11 2005", category: "Minor fix", changes: ["Average running pace now reads together as Avg Pace: 15:32 min/mile in tracking, saved workout details and share images."] },
   { version: "2026.10.11 1943", category: "Minor fix", changes: ["Running now shows minutes-per-mile pace for current and average tracking, saved journals and share images. Biking keeps miles per hour. Kilometer tracking uses minutes per kilometer for runs."] },
-  { version: "2026.10.11 1936", category: "Minor fix", changes: ["The share title stays visible while you type: preview updates no longer collapse the image. Story workout cards use a larger illustration with title and stats grouped beneath it, removing the large empty middle."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -478,6 +479,7 @@ export default function Home() {
   const [noteCopyNotice, setNoteCopyNotice] = useState("");
   useEffect(() => setNoteCopyNotice(""), [activeKey, session.plannedKey, session.plannedTheme]);
   const [photoNotice, setPhotoNotice] = useState("");
+  const [addingPhotos, setAddingPhotos] = useState(false);
   const workoutPhotoInput = useRef<HTMLInputElement>(null);
   const noteTextarea = useRef<HTMLTextAreaElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -828,9 +830,21 @@ export default function Home() {
     updateInjury({ reported: false, impact: "", bodyArea: "", note: "" });
   };
   const removeImportedWorkout = (index: number) => update({ importedWorkouts: (session.importedWorkouts ?? []).filter((_, itemIndex) => itemIndex !== index) });
-  const addWorkoutPhoto = async (file: File) => {
-    try { setPhotoNotice("Compressing photo…"); update({ workoutPhoto: await prepareWorkoutPhoto(file) }); setPhotoNotice("Photo saved with this workout and its backups."); }
-    catch (error) { setPhotoNotice(error instanceof Error ? error.message : "That photo could not be saved."); }
+  const addWorkoutPhotos = async (files: File[]) => {
+    if (addingPhotos) return;
+    const date = sessionRef.current.date;
+    const capacity = 6 - workoutPhotos(sessionRef.current).length;
+    if (capacity <= 0) { setPhotoNotice("Up to six photos per workout. Remove one to add another."); return; }
+    setAddingPhotos(true);
+    try {
+      setPhotoNotice("Preparing photos…");
+      const additions = await Promise.all(files.slice(0, capacity).map(prepareWorkoutPhoto));
+      if (sessionRef.current.date !== date) { setPhotoNotice("The day changed. Please add the photos again on the intended day."); return; }
+      const photos = [...workoutPhotos(sessionRef.current), ...additions].slice(0,6);
+      update({ workoutPhotos: photos, workoutPhoto: photos[0] }, true);
+      setPhotoNotice(`${additions.length} photo${additions.length===1?"":"s"} added. Photos are included in backups.${files.length>capacity?" Only the first six fit this workout.":""}`);
+    } catch (error) { setPhotoNotice(error instanceof Error ? error.message : "Photos could not be added."); }
+    finally { setAddingPhotos(false); }
   };
   const togglePanel = (panel: "workout", open: boolean) => setOpenPanel(open ? panel : null);
 
@@ -885,7 +899,7 @@ export default function Home() {
         <label className="today-note-label">Workout note<textarea ref={noteTextarea} value={session.notes} onChange={(e) => update({ notes: e.target.value })} onInput={(e) => resizeNoteField(e.currentTarget)} placeholder="What went well? Anything to remember?" rows={3} aria-label="Workout note"/></label>
         <div className="prior-note-copy">{priorWorkoutNotes ? <><button type="button" onClick={copyPriorNotes} disabled={!loaded}>{session.notes.trim() ? "Append prior workout notes" : "Copy prior workout notes"}</button><small>Last {plan.theme} · {dateFromKey(priorWorkoutNotes.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</small></> : null}{noteCopyNotice && <p role="status">{noteCopyNotice}</p>}</div>
         <div className="today-attachments">
-<details className="today-photo"><summary>{session.workoutPhoto ? "Workout photo" : "Add photo"}</summary><div className="workout-photo-body">{session.workoutPhoto ? <><img src={session.workoutPhoto} alt="Workout reference"/><div><button onClick={() => workoutPhotoInput.current?.click()}>Replace photo</button><button className="quiet-photo" onClick={() => { update({ workoutPhoto: undefined }); setPhotoNotice("Photo removed from this workout."); }}>Remove</button></div></> : <button className="workout-photo-add" onClick={() => workoutPhotoInput.current?.click()}>＋ Add workout photo</button>}<input ref={workoutPhotoInput} type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void addWorkoutPhoto(file); event.currentTarget.value = ""; }}/>{photoNotice && <p className="photo-notice" role="status">{photoNotice}</p>}<small className="workout-photo-help">Compressed for quick recognition and included in your backups.</small></div></details>
+<details className="today-photo"><summary>{workoutPhotos(session).length ? `Workout photos (${workoutPhotos(session).length})` : "Add photos"}</summary><div className="workout-photo-body"><div className="workout-photo-grid">{workoutPhotos(session).map((photo,index)=><figure key={`${index}-${photo.slice(-24)}`}><img src={photo} alt={`Workout photo ${index+1}`}/><button disabled={addingPhotos} className="quiet-photo" onClick={()=>{const photos=workoutPhotos(sessionRef.current).filter((_,i)=>i!==index);update({workoutPhotos:photos,workoutPhoto:photos[0]},true);setPhotoNotice("Photo removed from this workout.");}}>Remove photo {index+1}</button></figure>)}</div><button disabled={addingPhotos||workoutPhotos(session).length>=6} className="workout-photo-add" onClick={()=>workoutPhotoInput.current?.click()}>{addingPhotos?"Adding photos…":"＋ Add workout photos"}</button><input ref={workoutPhotoInput} type="file" accept="image/*" multiple onChange={event=>{const files=Array.from(event.target.files||[]);if(files.length)void addWorkoutPhotos(files);event.currentTarget.value="";}}/>{photoNotice&&<p className="photo-notice" role="status">{photoNotice}</p>}<small className="workout-photo-help">Up to six photos. Compressed and included in your backups.</small></div></details>
 <ScreenshotAttachments key={activeKey} screenshots={session.workoutScreenshots} onChange={items=>update({workoutScreenshots:items})}/>{Boolean(session.importedWorkouts?.length) && <details className="screenshot-import"><summary>Previously saved workout details</summary><div className="imported-workout-list" aria-label="Added workout screenshots">{session.importedWorkouts?.map((workout, index) => <div className="imported-workout-row" key={`${workout.date}-${workout.startTime}-${index}`}><div><b>Screenshot {index + 1}</b><span>{[workout.date, workout.startTime].filter(Boolean).join(" · ") || "Workout details added"}</span><div className="imported-workout-metrics">{[["Duration", workout.duration], ["Distance", workout.distance], ["Pace", workout.pace], ["Calories", workout.calories], ["Activity", workout.activity]].filter(([, value]) => value).map(([label, value]) => <span key={label}><b>{label}</b>{value}</span>)}</div></div><button className="text-button" onClick={() => removeImportedWorkout(index)}>Remove</button></div>)}</div></details>}
         </div>
 <details className="today-more-metrics"><summary>More metrics</summary><div className="field-grid"><label><span>Pace</span><div><input value={session.pace ?? ""} onChange={(e) => update({ pace: e.target.value })} placeholder="—"/></div></label><label><span>Calories</span><div><input inputMode="numeric" value={session.calories ?? ""} onChange={(e) => update({ calories: e.target.value })} placeholder="—"/></div></label><label><span>Start time</span><div><input value={session.startTime ?? ""} onChange={(e) => update({ startTime: e.target.value })} placeholder="—"/></div></label></div></details>

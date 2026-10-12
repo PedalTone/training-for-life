@@ -164,3 +164,5 @@ Share images support an optional movable text box with Modern, Classic or Typewr
 Custom sharing text has a transparent background with a subtle text shadow. The outline and Drag text label are editing guides and never appear in exports.
 
 Full-size sharing previews show the finished image without text positioning guides. Use Back to editing to move text.
+
+Workout logs support up to six compressed photos, selected together or added later, with individual removal. Existing single photos remain available. History and backups include the full gallery. GPS discard controls are separate from Resume behind Discard options.

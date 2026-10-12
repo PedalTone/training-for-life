@@ -1,4 +1,5 @@
 "use client";
+import { workoutPhotos } from './workout-photos';
 import { ScreenshotAttachments } from './screenshot-attachments';
 import { useState } from 'react';
 import type { Session, Video } from './page';
@@ -32,7 +33,7 @@ export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdi
     {session && hasRecorded && onShare && <button type="button" className="workout-share-action" onClick={onShare}>Share workout ↗</button>}
     {!hasRecorded && <p className="journal-empty">Nothing recorded for this day yet. Your photos, notes and workout details will appear here when you log them.</p>}
     <ScreenshotAttachments key={date} screenshots={session?.workoutScreenshots}/>
-    {session?.workoutPhoto && <figure className="journal-photo"><img src={session.workoutPhoto} alt={`Workout photo from ${date}`}/></figure>}
+    {session && workoutPhotos(session).length>0 && <div className="journal-photo-grid">{workoutPhotos(session).map((photo,index)=><figure className="journal-photo" key={index}><img src={photo} alt={`Workout photo ${index+1} from ${date}`}/></figure>)}</div>}
     {(metrics.length>0 || session?.detailSource) && <section className="journal-section"><h2>Workout details</h2><dl className="journal-metrics">{metrics.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>{session?.detailSource && <p className="journal-subtle">Recorded from {session.detailSource}</p>}</section>}
     {!!session?.gpsWorkouts?.length && <section className="journal-section"><h2>GPS workouts</h2>{session.gpsWorkouts.map(workout => { const totals=gpsUnits(workout.meters,workout.seconds,'mi');const isRun=workout.activity==='Run';return <div key={workout.id}><h3>{workout.activity}</h3><dl className="journal-metrics"><div><dt>Elapsed time</dt><dd>{gpsTime(workout.seconds)}</dd></div><div><dt>Distance</dt><dd>{totals.distance} mi</dd></div><div className={isRun?'gps-inline-pace':undefined}><dt>{isRun?'Avg Pace:':'Average speed'}</dt><dd>{isRun?`${gpsPace(workout.seconds>0?workout.meters/workout.seconds:null)} min/mile`:`${totals.average} mph`}</dd></div><div><dt>{isRun?'Fastest pace':'Maximum speed'}</dt><dd>{isRun?`${gpsPace(workout.maxSpeed)} min/mile`:`${(workout.maxSpeed*3600/1609.344).toFixed(1)} mph`}</dd></div><div><dt>Started</dt><dd>{new Date(workout.startedAt).toLocaleTimeString()}</dd></div><div><dt>Ended</dt><dd>{new Date(workout.endedAt).toLocaleTimeString()}</dd></div></dl><GpsRouteMap route={workout.route} onLabel={onRouteLabel?label=>onRouteLabel(workout.id,label):undefined}/>{workout.gaps>0&&<p>{workout.gaps} GPS gaps; distance may be incomplete.</p>}</div>;})}</section>}
     {session?.notes?.trim() && <section className="journal-section"><h2>Your notes</h2><p className="journal-notes">{session.notes}</p></section>}

@@ -1,3 +1,5 @@
+New public release — 2026.10.12 1819: Multiple log photos and separated discard controls for safer GPS resumption.
+
 New public release — 2026.10.12 0922: Persistent saved-recording list in the tracker confirms every interval while starting the next.
 
 New public release — 2026.10.12 0907: Responsive tracking controls, ready-then-start repeat recordings and stable pace during GPS gaps.
@@ -28,9 +30,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.12 0922` keeps saved intervals visible in the tracker.
+Release decision: **New public release** — `2026.10.12 1819` adds multiple photos and safer GPS resumption.
 
-App, notes, tests, worker and deployment use `2026.10.12 0922`.
+App, notes, tests, worker and deployment use `2026.10.12 1819`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

@@ -1622,3 +1622,11 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-recordings small { font-size: 14px; margin-top: 4px; color: #596a76; }
 .gps-saved-check { color: #386047; background: #e4ecdf; border-radius: 50%; width: 28px; height: 28px; display: grid; place-items: center; flex-shrink: 0; }
 .gps-saved-label { color: #386047; font-size: 14px; }
+
+.workout-photo-grid, .journal-photo-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+.workout-photo-grid figure, .journal-photo-grid figure { margin: 0; min-width: 0; }
+.workout-photo-grid img, .journal-photo-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; }
+.workout-photo-grid button { width: 100%; min-height: 44px; margin-top: 8px; }
+.gps-discard { margin-top: 18px; border-top: 1px solid #e8e0d5; padding-top: 12px; }
+.gps-discard summary { font-size: 14px; color: #596a76; cursor: pointer; }
+.gps-discard button { margin-top: 12px; min-height: 48px; padding: 12px; border: 1px solid #c98a64; border-radius: 9px; background: transparent; color: #974016; }

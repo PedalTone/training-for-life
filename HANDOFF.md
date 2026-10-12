@@ -2,7 +2,20 @@
 
 Updated October 12, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — saved recording evidence
+## Current change — multiple photos and safer resume
+
+Release `2026.10.12 1819` adds up to six compressed photos per log, multi-file
+selection, individual removal and journal galleries. Legacy single photos remain
+visible and the first photo remains compatible with sharing. Photos stay in
+existing session backups. GPS action buttons have stable identities; discard
+is separated behind Discard options, away from Resume/Stop. Production/Pages
+builds, 13 rendered checks and 5 photo/save regression checks pass. External
+Chrome checks multi-file upload, removal and reload; simulated app hiding pauses
+and single-touch Resume triggers no discard dialog. GPS regression checks pass.
+Phone/tablet/desktop galleries inspected. Physical iPhone field confirmation
+remains. Publication/live verification pending.
+
+## Previous change — saved recording evidence
 
 Release `2026.10.12 0922` adds a tracker list of all recordings for the selected
 day, with green saved checks, interval number/activity, start time, distance and
