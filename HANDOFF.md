@@ -10,7 +10,9 @@ exports remain unchanged. Help copy matches this interaction. Pages build and
 13 rendered tests pass. External Chrome checks no handle in full-size mode,
 mouse/touch/keyboard editing placement, return/edit, 9 font/format exports,
 transparent pixels and unchanged storage. Phone full-size and tablet/desktop
-editing screenshots visually inspected. Publication pending.
+editing screenshots visually inspected. Published product `d74825c` via successful
+Pages run `38194335964`. Live release 2203 and exact JS/CSS/worker/art/icon assets
+verified. Live full-size handle absence and editing/export checks pass.
 
 ## Previous change — transparent sharing text
 
