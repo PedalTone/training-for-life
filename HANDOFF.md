@@ -9,7 +9,9 @@ Release `2026.10.11 2005` formats tracked running average pace inline as
 retain min/km. Data and calculations unchanged. Pages build, 13 rendered tests
 and 8 share-data tests pass. External Chrome Run/Bike units/export checks pass;
 phone/tablet/desktop screenshots and Story export visually inspected.
-Publication pending.
+Published product `faab033` via successful Pages run `38186791554`. Live
+JavaScript release 2005 and Avg Pace formatting verified; live external Chrome
+Run/Bike tracking, unit selection and share export checks pass.
 
 ## Previous change — running pace and cycling speed
 
