@@ -15,7 +15,9 @@ External Chrome touch/mocked-GPS checks pass for pending GPS, timeout, weak fixe
 stationary readings, pause/resume, stale callbacks, repeated recordings and blocked
 place lookup. Phone/tablet/desktop screenshots inspected. Physical iPhone/GPS
 behavior still needs field confirmation. Production/Pages builds, 13 rendered checks and 13 GPS regression checks pass.
-Publication/live checks pending.
+Published product `6bb27ff` via successful Pages run `38253686476`.
+Live release 0907 and exact JS/CSS/worker/icons/art verified. The complete
+external Chrome touch/mocked-GPS checks also pass against the public app.
 
 ## Previous change — clean full-size sharing preview
 
