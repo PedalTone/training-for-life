@@ -10,7 +10,9 @@ duration. The list remains visible during a fresh or active recording and reload
 from the existing session data. No storage/schema changes. Production/Pages builds and 13 rendered checks pass.
 External Chrome touch/GPS tests verify two intervals remain visible through
 next-recording preparation, active tracking and reload; phone/tablet/desktop
-screenshots inspected. Publication verification pending.
+screenshots inspected. Published product `17ac735` through successful Pages
+run `38255382412`. Live release 0922 and exact JS/CSS/worker/icons/art verified;
+all touch/GPS and saved-list/reload checks also pass on the public app.
 
 ## Previous change — responsive run/bike recording
 
