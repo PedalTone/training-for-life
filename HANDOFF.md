@@ -11,7 +11,9 @@ editing state/export data remain unchanged. Reduced-height editing uses 100px.
 Pages build and 13 rendered tests pass. External Chrome verifies enlarged sizes,
 expansion/return, preserved title, stable typing and Run/Bike export behavior at
 440/768/1280 widths. Screenshots of editing/full-size mode visually inspected.
-Publication pending.
+Published product `bf73f02` through successful Pages run `38192173064`.
+Live release 2129 and JS/CSS/worker/art/icon assets match the local build. Live
+external Chrome expanded preview, preserved edits, typing and exports pass.
 
 ## Previous change — polished sharing composition and editing
 
