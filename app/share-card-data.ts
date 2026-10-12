@@ -1,18 +1,28 @@
 import type { Session } from './page';
 import { cleanRoute, mercator, type GpsRoute, type RouteCoordinate } from './gps-route';
-import { gpsTime, gpsPace } from './gps-math';
+import { gpsPace } from './gps-math';
 export type ShareMetric = { id: string; label: string; value: string };
 export type ShareCardData = { date: string; title: string; workoutKey: string; metrics: ShareMetric[]; photo?: string; route?: GpsRoute };
 export type ShareCardTemplate = 'card' | 'photo' | 'route';
 export type ShareCardFormat = 'story' | 'portrait' | 'square';
 export const shareFormats = { story: { label: 'Story', width: 1080, height: 1920 }, portrait: { label: 'Portrait', width: 1080, height: 1350 }, square: { label: 'Square', width: 1080, height: 1080 } } as const;
+export function shareDuration(seconds:number):string {
+ const minutes=Math.round(Math.max(0,seconds)/60);
+ if(seconds>0&&minutes===0)return `${Math.round(seconds)} sec`;
+ const hours=Math.floor(minutes/60),rest=minutes%60;
+ return hours?`${hours} hr${rest?` ${rest} min`:''}`:`${minutes} min`;
+}
+function compactDuration(value:string):string {
+ const match=value.trim().match(/^(\d+):(\d{2}):(\d{2})$/);
+ return match?shareDuration(Number(match[1])*3600+Number(match[2])*60+Number(match[3])):value;
+}
 export function toShareCardData(session: Session, plan: {key:string;theme:string}): ShareCardData {
   const gps = (session.gpsWorkouts || []).filter(w => Number.isFinite(w.meters) && w.meters >= 0 && Number.isFinite(w.seconds) && w.seconds >= 0);
   const meters = gps.reduce((n,w)=>n+w.meters,0), seconds = gps.reduce((n,w)=>n+w.seconds,0);
   const metrics: ShareMetric[] = [];
   const add = (id:string,label:string,value?:string) => { if(value?.trim() && !['—','-'].includes(value.trim()))metrics.push({id,label,value:value.trim()}); };
   add('distance','Distance',session.distance || (meters>0 ? `${(meters/1609.344).toFixed(2)} mi` : undefined));
-  add('duration','Duration',session.duration || (seconds>0 ? gpsTime(seconds) : undefined));
+  add('duration','Duration',(session.duration?compactDuration(session.duration):'') || (seconds>0 ? shareDuration(seconds) : undefined));
   const runs=gps.filter(w=>w.activity==='Run'), bikes=gps.filter(w=>w.activity==='Bike');
   const runMeters=runs.reduce((n,w)=>n+w.meters,0),runSeconds=runs.reduce((n,w)=>n+w.seconds,0);
   add('pace',runs.length?'Avg Pace':'Pace',runMeters>0&&runSeconds>0?`${gpsPace(runMeters/runSeconds)} min/mile`:session.pace);

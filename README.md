@@ -154,3 +154,5 @@ Share previews retain their dimensions while text edits render. Story Workout Ca
 GPS Run tracking uses current and average min/mi pace (min/km with kilometers); Bike uses mph or km/h. Journals and shared images use the same activity-specific metrics. Mixed days derive run pace and bike speed independently.
 
 Average running pace displays inline as “Avg Pace: 15:32 min/mile” in tracking, journal details and share images.
+
+Share cards group artwork, title/date and stats, give Avg Pace a full-width line, format recorded duration as readable hours/minutes and include the approved T4L mark. On phones, the compact preview/title remain visible while options scroll.

@@ -2,7 +2,20 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — inline average pace
+## Current change — polished sharing composition and editing
+
+Release `2026.10.11 2053` balances Card art height per format/metric count,
+groups stats below title/date, gives Avg Pace a full-width 48px line and displays
+GPS/HH:MM:SS duration as readable minutes/hours. All templates use the approved
+T4L icon/footer. On phones a compact preview and title stay fixed above scrollable
+options; reduced-height viewports use a smaller preview. No saved data changes.
+Pages build, 13 rendered tests and 9 share-data tests pass. External Chrome checks
+five fixtures across three PNG sizes (route tiles mocked), Run/Bike units, natural
+phone title typing, unchanged storage and photo/route availability. Phone/tablet/
+desktop screenshots and exported long-text/Story/Photo cards visually inspected.
+Typecheck retains 8 prior diagnostics with no sharing errors. Publication pending.
+
+## Previous change — inline average pace
 
 Release `2026.10.11 2005` formats tracked running average pace inline as
 `Avg Pace: 15:32 min/mile` in tracker/journal and canvas share exports. Kilometers

@@ -10,7 +10,7 @@ export async function renderShareCard(data:ShareCardData,options:ShareCardOption
   const {width:w,height:h}=shareFormats[options.format];const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Image rendering is unavailable.');
   const selectedCount=options.metricIds.filter(id=>data.metrics.some(m=>m.id===id)).length;
   const isStory=options.format==='story';
-  const artHeight=isStory&&options.template==='card'?h*(selectedCount?.56:.65):selectedCount?Math.min(w/2,h*.32):h*.6;
+  const artHeight=options.template==='card'?h*(isStory?(selectedCount===4?.54:selectedCount>2?.60:.65):options.format==='square'?(selectedCount===4?.22:selectedCount?.32:.6):(selectedCount===4?.34:selectedCount>2?.43:selectedCount?.48:.6)):h*.6;
   const pad=84;const dark=options.template!=='card';const metrics=options.metricIds.map(id=>data.metrics.find(m=>m.id===id)).filter((m):m is NonNullable<typeof m>=>Boolean(m)).slice(0,4);
   ctx.fillStyle=dark?'#203449':'#fffaf1';ctx.fillRect(0,0,w,h);
   const photo=options.photo || data.photo;
@@ -26,7 +26,7 @@ export async function renderShareCard(data:ShareCardData,options:ShareCardOption
   const titleY=options.template==='card'?artHeight+45:pad;
   ctx.font='700 64px Georgia';const titleLines=lines(ctx,options.title?.trim()||data.title,w-pad*2,2);titleLines.forEach((line,i)=>{ctx.font='700 64px Georgia';ctx.fillText(fitText(ctx,line,w-pad*2,64,40,'Georgia'),pad,titleY+i*72);});
   ctx.font='400 30px system-ui';const date=/^\d{4}-\d{2}-\d{2}$/.test(data.date)?new Date(data.date+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):data.date;ctx.fillText(date,pad,titleY+titleLines.length*72+12);
-  const metricHeight=metrics.length>2?250:130;const startY=isStory&&options.template==='card'?titleY+titleLines.length*72+110:Math.max(options.template==='card'?titleY+titleLines.length*72+90:0,h-pad-80-metricHeight);const cols=metrics.length===1?1:2;const cellW=(w-pad*2)/cols;
+  const pace=metrics.find(m=>m.id==='pace'&&m.label==='Avg Pace');const mainMetrics=metrics.filter(m=>m!==pace);const metricHeight=Math.ceil(mainMetrics.length/2)*140+(pace?80:0);const startY=options.template==='card'?titleY+titleLines.length*72+110:Math.max(options.template==='card'?titleY+titleLines.length*72+90:0,h-pad-80-metricHeight);const cols=mainMetrics.length===1?1:2;const cellW=(w-pad*2)/cols;
   if(options.template==='route') {
     const segments=shareRouteSegments(data.route,options.hideRouteEnds);const top=titleY+titleLines.length*72+84;
     const location=options.locationLabel??data.route?.locationLabel;
@@ -37,8 +37,10 @@ export async function renderShareCard(data:ShareCardData,options:ShareCardOption
     if(options.showLocation){ctx.fillStyle='#fffaf1';ctx.font='500 30px system-ui';locationLines.forEach((line,i)=>{ctx.fillText(fitText(ctx,line,w-pad*2,30,26,'system-ui','500'),pad,top+boxHeight+14+i*36);});}
 
   }
-  metrics.forEach((m,i)=>{const x=pad+(i%cols)*cellW,y=startY+Math.floor(i/cols)*125;ctx.fillStyle=dark?'#fffaf1':'#203449';if(m.id==='pace'&&m.label==='Avg Pace'){ctx.fillText(fitText(ctx,`${m.label}: ${m.value}`,cellW-24,38,26),x,y);return;}ctx.fillText(fitText(ctx,m.value,cellW-24,metrics.length===1?100:72,30),x,y);ctx.fillStyle=dark?'#efd7b9':'#62717c';ctx.font='400 32px system-ui';ctx.fillText(m.label,x,y+82);});
-
-  ctx.fillStyle=dark?'#fffaf1':'#62717c';ctx.font='600 25px system-ui';ctx.fillText('TRAINING FOR LIFE',pad,h-pad);ctx.fillStyle='#c05319';ctx.fillRect(w-pad-110,h-pad+8,110,5);
+  mainMetrics.forEach((m,i)=>{const x=pad+(i%cols)*cellW,y=startY+Math.floor(i/cols)*140;ctx.fillStyle=dark?'#fffaf1':'#203449';ctx.fillText(fitText(ctx,m.value,cellW-24,mainMetrics.length===1?88:68,30),x,y);ctx.fillStyle=dark?'#efd7b9':'#62717c';ctx.font='400 30px system-ui';ctx.fillText(m.label,x,y+78);});
+  if(pace){const y=startY+Math.ceil(mainMetrics.length/2)*140+12;ctx.fillStyle=dark?'#fffaf1':'#203449';ctx.fillText(fitText(ctx,`${pace.label}: ${pace.value}`,w-pad*2,48,32),pad,y);}
+  const footerY=h-150;
+  const logo=await loadImage('./icon-192-2026.10.10-inclusive.png');
+  ctx.drawImage(logo,pad,footerY,72,72);ctx.fillStyle=dark?'#fffaf1':'#62717c';ctx.font='600 25px system-ui';ctx.fillText('TRAINING FOR LIFE',pad+92,footerY+24);
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Could not generate an image.')),'image/png'));
 }

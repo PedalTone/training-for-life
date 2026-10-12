@@ -3,17 +3,17 @@ import assert from 'node:assert/strict';
 import {build} from 'esbuild';
 const compiled=await build({entryPoints:['app/share-card-data.ts'],bundle:true,write:false,platform:'node',format:'cjs'});
 const shareModule={exports:{}};new Function('module','exports',compiled.outputFiles[0].text)(shareModule,shareModule.exports);
-const {toShareCardData,shareRouteSegments,projectShareRoute,shareFormats}=shareModule.exports;
+const {toShareCardData,shareRouteSegments,projectShareRoute,shareFormats,shareDuration}=shareModule.exports;
 const base={date:'2026-10-11',activity:'',duration:'',distance:'',notes:'PRIVATE',mobilityExercises:['Face Pulls','Dead Hang'],completedExercises:[],injury:{note:'PRIVATE'},videos:[],status:'completed'};
 const run={activity:'Run',meters:5000,seconds:1800,route:{segments:[Array.from({length:30},(_,i)=>[-74+i*.001,40.7])],locationLabel:'New York, NY'}};
 test('GPS run derives only supported totals and respects saved metrics',()=>{
  const source={...base,activity:'Run',gpsWorkouts:[run],pace:'6:00 / km',calories:'350'};const before=structuredClone(source);const data=toShareCardData(source,{key:'endurance',theme:'Endurance'});
- assert.deepEqual(data.metrics.map(m=>m.id),['distance','duration','pace','calories']);assert.equal(data.metrics[0].value,'3.11 mi');assert.equal(data.metrics[1].value,'00:30:00');assert.equal(data.metrics.find(m=>m.id==='pace').value,'9:39 min/mile');assert.deepEqual(source,before);assert.ok(!JSON.stringify(data).includes('PRIVATE'));
+ assert.deepEqual(data.metrics.map(m=>m.id),['distance','duration','pace','calories']);assert.equal(data.metrics[0].value,'3.11 mi');assert.equal(data.metrics[1].value,'30 min');assert.equal(data.metrics.find(m=>m.id==='pace').value,'9:39 min/mile');assert.deepEqual(source,before);assert.ok(!JSON.stringify(data).includes('PRIVATE'));
  assert.equal(toShareCardData({...source,distance:'5 km',duration:'30 min'}, {key:'endurance',theme:'Endurance'}).metrics[0].value,'5 km');
 });
 test('walking/hiking GPS and multiple recordings preserve separate route segments',()=>{
  const data=toShareCardData({...base,activity:'Hike',gpsWorkouts:[{...run,activity:'Walk'},run]}, {key:'endurance',theme:'Endurance'});
- assert.equal(data.title,'Hike');assert.equal(data.route.segments.length,2);assert.equal(data.metrics.find(m=>m.id==='duration').value,'01:00:00');
+ assert.equal(data.title,'Hike');assert.equal(data.route.segments.length,2);assert.equal(data.metrics.find(m=>m.id==='duration').value,'1 hr');
 });
 test('strength includes only completed exercises, no invented sets/reps/heart rate/volume',()=>{
  const data=toShareCardData({...base,duration:'28 min',completedExercises:['Rows','Rows','Carry']},{key:'strength',theme:'Strength'});
@@ -41,3 +41,5 @@ test('bikes use mph and mixed workouts calculate each activity separately',()=>{
  assert.equal(mixed.metrics.find(m=>m.id==='pace').value,'9:39 min/mile');
  assert.equal(mixed.metrics.find(m=>m.id==='speed').value,'10.0 mph');
 });
+
+test('share duration uses readable hours and minutes',()=>{assert.equal(shareDuration(4320),'1 hr 12 min');assert.equal(shareDuration(1800),'30 min');assert.equal(shareDuration(20),'20 sec');});
