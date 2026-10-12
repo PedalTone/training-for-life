@@ -10,7 +10,10 @@ stay editor-only. No storage or positioning changes. Pages build and 13 rendered
 tests pass. External Chrome verifies touch/mouse/keyboard movement, all fonts and
 formats, removal restoring original bytes, and identical underlying image pixel
 inside the previously filled box away from text. Phone/tablet/desktop editor and
-export screenshots visually inspected. Publication pending.
+export screenshots visually inspected. Published product `6610a67` through
+successful Pages run `38193468052`. Live release 2149 and exact JS/CSS/worker/art
+assets verified. Live transparent-pixel, dragging/fonts/size and nine export
+checks pass.
 
 ## Previous change — movable share text box
 
