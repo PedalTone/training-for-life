@@ -1600,3 +1600,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
  .share-body-expanded .share-preview-frame { flex-shrink:0; width:100%; max-width:none; }
 }
 @media(max-width:680px) and (max-height:650px) { .share-body:not(.share-body-expanded) .share-preview-frame { max-width:calc(100px * var(--share-ratio)); } }
+
+.share-text-handle { position:absolute; width:72%; height:22%; border:2px dashed #fffaf1; outline:1px solid #203449; background:transparent; padding:0; cursor:move; touch-action:none; z-index:1; }
+.share-text-handle span { position:absolute; bottom:0; right:0; padding:3px 6px; background:#203449; color:#fffaf1; font-size:12px; }
+.share-controls textarea { display:block; width:100%; min-height:90px; margin:8px 0 12px; padding:10px; border:1px solid #d8cdbd; border-radius:10px; background:white; color:#203449; font:inherit; font-size:16px; }
+.share-text-settings { display:grid; gap:12px; margin-bottom:12px; }.share-text-settings input { display:block; width:100%; min-height:36px; accent-color:#bc4c12; }

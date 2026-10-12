@@ -1,3 +1,5 @@
+New public release — 2026.10.11 2142: Add and drag a custom sharing text box with three fonts and adjustable font size.
+
 New public release — 2026.10.11 2129: Larger phone share previews and a full-size preview with Back to editing.
 
 New public release — 2026.10.11 2053: Rebalanced sharing artwork/stats, prominent full-width pace, readable duration, T4L footer and phone preview beside editing workflow.
@@ -18,9 +20,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 2129` makes sharing previews readable.
+Release decision: **New public release** — `2026.10.11 2142` adds movable custom sharing text.
 
-App, notes, tests, worker and deployment use `2026.10.11 2129`.
+App, notes, tests, worker and deployment use `2026.10.11 2142`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

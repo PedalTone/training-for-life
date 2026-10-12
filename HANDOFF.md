@@ -2,7 +2,21 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — readable sharing previews
+## Current change — movable share text box
+
+Release `2026.10.11 2142` adds one optional share-only text box (160 characters),
+Modern/Classic/Typewriter fonts and 24–96 font size. Mouse/touch dragging and arrow
+keys position it within normalized image bounds in either preview mode. Canvas
+export includes the text, rounded translucent navy backing and wrapping/clipping;
+drag handles never export. Removal restores the original image. Focus trap now
+includes textareas and excludes hidden full-size-mode controls.
+External Chrome verifies editing/font/size, mouse/touch/keyboard movement, full-size
+return, 9 font/format exports, exact PNG sizes, remove restoring original bytes,
+unchanged saved data and 440/768/1280 layouts. Screenshots and export inspected.
+Typecheck has no sharing diagnostics; existing unrelated diagnostics remain.
+Pages build and 13 rendered tests pass. Publication pending.
+
+## Previous change — readable sharing previews
 
 Release `2026.10.11 2129` enlarges phone previews from 160px to up to 320px
 (32dvh) and adds View full-size preview / Back to editing on all screen sizes.
