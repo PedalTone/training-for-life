@@ -5,7 +5,7 @@ export function drawShareText(ctx:CanvasRenderingContext2D,w:number,h:number,box
  if(!box.text.trim())return;
  const {x,y}=textPosition(box.x,box.y),left=x*w,top=y*h,width=w*.72,height=h*.22;
  const size=Math.max(24,Math.min(96,box.size)),lineHeight=size*1.25;
- ctx.save();ctx.beginPath();ctx.roundRect(left,top,width,height,16);ctx.fillStyle='rgba(20,39,57,.88)';ctx.fill();ctx.clip();
+ ctx.save();ctx.beginPath();ctx.roundRect(left,top,width,height,16);ctx.clip();ctx.shadowColor='rgba(13,31,48,.8)';ctx.shadowBlur=4;ctx.shadowOffsetY=2;
  ctx.fillStyle='#fffaf1';ctx.font=`600 ${size}px ${shareTextFonts[box.font]||shareTextFonts.modern}`;ctx.textBaseline='top';
  const lines:string[]=[];let line='';
  for(const paragraph of box.text.split('\n')){for(const word of paragraph.split(/\s+/)){const next=line?line+' '+word:word;if(ctx.measureText(next).width>width-40&&line){lines.push(line);line=word;}else line=next;}lines.push(line);line='';}

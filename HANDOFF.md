@@ -2,7 +2,17 @@
 
 Updated October 11, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — movable share text box
+## Current change — transparent sharing text
+
+Release `2026.10.11 2149` removes the navy fill from custom sharing text.
+Only cream text with a subtle shadow exports; positioning outline/Drag text label
+stay editor-only. No storage or positioning changes. Pages build and 13 rendered
+tests pass. External Chrome verifies touch/mouse/keyboard movement, all fonts and
+formats, removal restoring original bytes, and identical underlying image pixel
+inside the previously filled box away from text. Phone/tablet/desktop editor and
+export screenshots visually inspected. Publication pending.
+
+## Previous change — movable share text box
 
 Release `2026.10.11 2142` adds one optional share-only text box (160 characters),
 Modern/Classic/Typewriter fonts and 24–96 font size. Mouse/touch dragging and arrow

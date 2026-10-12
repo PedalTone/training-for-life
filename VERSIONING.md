@@ -1,3 +1,5 @@
+New public release — 2026.10.11 2149: Sharing text overlays have no blue background; only text with a subtle readability shadow exports.
+
 New public release — 2026.10.11 2142: Add and drag a custom sharing text box with three fonts and adjustable font size.
 
 New public release — 2026.10.11 2129: Larger phone share previews and a full-size preview with Back to editing.
@@ -20,9 +22,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.11 2142` adds movable custom sharing text.
+Release decision: **New public release** — `2026.10.11 2149` removes the text overlay background.
 
-App, notes, tests, worker and deployment use `2026.10.11 2142`.
+App, notes, tests, worker and deployment use `2026.10.11 2149`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

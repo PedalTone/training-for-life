@@ -160,3 +160,5 @@ Share cards group artwork, title/date and stats, give Avg Pace a full-width line
 Sharing previews can be enlarged with View full-size preview; Back to editing preserves every choice. Phone editing previews are larger, and full-size mode uses the available width.
 
 Share images support an optional movable text box with Modern, Classic or Typewriter font and adjustable size. Drag it in the preview/full-size view; arrow keys also move it. Text is baked into the export and does not change saved workout data.
+
+Custom sharing text has a transparent background with a subtle text shadow. The outline and Drag text label are editing guides and never appear in exports.
