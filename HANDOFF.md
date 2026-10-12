@@ -14,7 +14,10 @@ External Chrome verifies editing/font/size, mouse/touch/keyboard movement, full-
 return, 9 font/format exports, exact PNG sizes, remove restoring original bytes,
 unchanged saved data and 440/768/1280 layouts. Screenshots and export inspected.
 Typecheck has no sharing diagnostics; existing unrelated diagnostics remain.
-Pages build and 13 rendered tests pass. Publication pending.
+Pages build and 13 rendered tests pass. Published product `9d9c9b4` via successful
+Pages run `38192926417`. Live release 2142 and exact JS/CSS/worker/art/icon assets
+verified; live text editing, mouse/touch/keyboard movement, fonts/size, nine exports,
+removal and unchanged storage checks pass.
 
 ## Previous change — readable sharing previews
 
