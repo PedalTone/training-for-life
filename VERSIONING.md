@@ -1,3 +1,5 @@
+New public release — 2026.10.13 1425: Mobility has a shaped side-bending figure with an overhead arm.
+
 New public release — 2026.10.13 1422: Speed uses a runner with motion lines in History.
 
 New public release — 2026.10.13 1419: Red Body notes list flags and recognizable dumbbell Strength icon.
@@ -40,9 +42,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.13 1422` shows Speed as a runner with motion lines.
+Release decision: **New public release** — `2026.10.13 1425` clarifies the Mobility stretching pose.
 
-App, notes, tests, worker and deployment use `2026.10.13 1422`.
+App, notes, tests, worker and deployment use `2026.10.13 1425`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

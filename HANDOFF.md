@@ -2,12 +2,21 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Speed motion icon
+## Current change — clearer Mobility figure
+
+Release `2026.10.13 1425` gives Mobility/Yoga/Pilates a shaped side-bending
+figure with overhead stretching arm and defined torso. Navy palette retained.
+No workout/data changes. Production/Pages builds and 13 rendered tests pass.
+External Chrome History checks pass; phone/tablet/desktop figure inspected.
+Publication/live checks pending.
+
+## Previous change — Speed motion icon
 
 Release `2026.10.13 1422` replaces the History Speed shoe with a navy runner
 and three motion lines. Other category icons and workout records unchanged.
 Production/Pages builds and 13 rendered tests pass. External Chrome History
-checks pass; motion runner inspected at phone/tablet/desktop sizes. Publish pending.
+checks pass; motion runner inspected at phone/tablet/desktop sizes. Published `f4ae3b4` via successful Pages run `38446385028`; live release
+1422, exact assets and History checks verified.
 
 ## Previous change — clear Strength and body flags
 
