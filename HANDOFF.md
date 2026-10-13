@@ -2,7 +2,17 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — consistent History tabs
+## Current change — refined History icons and tiles
+
+Release `2026.10.13 1130` implements approved mockup styling in Weekly Details:
+navy SVG icons, Endurance stopwatch, separate green completion and red body flags,
+neutral pending markers, orange today outline and legend. Existing workout
+assignments, records and calendar behavior preserved. Production/Pages builds
+and 13 rendered tests pass. External Chrome confirms SVG icons, constant navy,
+today outline and separate green check/red flag on a completed body-note day.
+Phone/tablet/desktop layouts inspected; view switching passes. Publish pending.
+
+## Previous change — consistent History tabs
 
 Release `2026.10.13 1055` uses Today tab styling for Weekly Details/Month:
 shared typography, transparent background, orange selected underline. Body notes

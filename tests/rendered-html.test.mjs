@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.10\.13 1055/);
+  assert.match(html, /2026\.10\.13 1130/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -62,7 +62,7 @@ test("What’s new groups exactly ten categorized dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 10);
-  assert.match(releaseBlock, /2026\.10\.11 2053/);
+  assert.match(releaseBlock, /2026\.10\.11 2129/);
   assert.equal((releaseBlock.match(/category: "(?:Major|Minor) fix"/g) ?? []).length, 10);
   assert.doesNotMatch(releaseBlock, /2026\.10\.11 1324/);
   assert.doesNotMatch(releaseBlock, /2026\.10\.10 2045/);
@@ -149,7 +149,7 @@ test("one-day workout changes are the authoritative Plan and History type", asyn
   assert.match(page, /const chosen = loaded \? session : existing \|\| session/);
   assert.match(page, /function WeekView[\s\S]*?historicalPlan\(saved, scheduleForDate/);
   assert.match(page, /function HistoryView[\s\S]*?const plan = historicalPlan\(saved, scheduleForDate/);
-  assert.match(page, /<span className="history-day-icon"[^>]*>\{plan\.icon\}<\/span>/);
+  assert.match(page, /<span className="history-day-icon"[^>]*><HistoryWorkoutIcon workoutKey=\{plan\.key\}\/><\/span>/);
 });
 
 test("Weekly workout mapping follows the app's Monday-through-Sunday order", async () => {

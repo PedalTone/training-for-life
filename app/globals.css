@@ -1641,3 +1641,18 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 
 .history-view-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); flex: 1; min-width: 0; }
 .history-controls .filter { flex-shrink: 0; }
+
+.history-page .scan-days button .history-day-icon { color: #203449; display: grid; place-items: center; }
+.history-day-icon svg { width: 28px; height: 28px; }
+.scan-days button { position: relative; border: 2px solid transparent; min-height: 110px; }
+.scan-days button.history-today { border-color: #b94b17; }
+.history-today-label { color: #b94b17; font: normal 700 9px/1.2 var(--sans); }
+.scan-days button .history-status-row { display: flex; justify-content: center; align-items: center; gap: 3px; min-height: 25px; }
+.scan-days button .history-status-row i.history-complete, .history-status-legend .history-complete { background: #548160; color: #fffaf2; }
+.history-page .scan-days button .history-status-row i.history-neutral { background: transparent; color: #85919b; }
+.history-body-flag { color: #b3332b; background: transparent; }
+.history-status-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; font-size: 14px; color: #596875; padding: 4px 8px; }
+.history-status-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.history-status-legend b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; }
+
+.history-status-row .history-body-flag { font-size: 16px; line-height: 1; }
