@@ -8,7 +8,9 @@ Release `2026.10.13 0004` offers 4/8/12 weeks. Training categories sort by
 completed-day count, ties alphabetically; completed add-ons have a ranked list
 within the same period, deduplicated per day. No persistence changes. Production/Pages builds, 13 rendered tests and 4
 Progress tests pass. External Chrome verifies 4/8/12 period counts and ordering;
-phone/tablet/desktop screenshots inspected. Publication checks pending.
+phone/tablet/desktop screenshots inspected. Published `2acf573` via successful
+Pages run `38344759385`. Live release 0004 and exact JS/CSS/worker/art/icons
+verified; live 4/8/12 counts, ordering and responsive checks pass.
 
 ## Previous change — multiple photos and safer resume
 
