@@ -2,7 +2,14 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — clear Strength and body flags
+## Current change — Speed motion icon
+
+Release `2026.10.13 1422` replaces the History Speed shoe with a navy runner
+and three motion lines. Other category icons and workout records unchanged.
+Production/Pages builds and 13 rendered tests pass. External Chrome History
+checks pass; motion runner inspected at phone/tablet/desktop sizes. Publish pending.
+
+## Previous change — clear Strength and body flags
 
 Release `2026.10.13 1419`: Body notes list flags use matching red with pale
 red background; Strength is an unmistakable horizontal dumbbell with two weight

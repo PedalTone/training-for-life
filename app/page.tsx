@@ -220,9 +220,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.13 1419";
+const APP_VERSION = "2026.10.13 1422";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Body notes list flags are red to match History markers. Strength uses a recognizable navy dumbbell outline."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["History Speed workouts use a navy runner with motion lines to clearly distinguish faster running from easy aerobic activity."] },
+  { version: "2026.10.13 1419", category: "Minor fix", changes: ["Body notes list flags are red to match History markers. Strength uses a recognizable navy dumbbell outline."] },
   { version: "2026.10.13 1130", category: "Minor fix", changes: ["History uses consistent navy outline workout icons, including an Endurance stopwatch. Green completion checks and red body-note flags are separate; today has an orange outline and a clear legend explains the markers."] },
   { version: "2026.10.13 1055", category: "Minor fix", changes: ["History Weekly Details and Month tabs now use the same clean styling and orange selection underline as Today."] },
   { version: "2026.10.13 0004", category: "Minor fix", changes: ["Progress offers 4, 8 and 12 weeks. Workout categories and completed exercises rank from most to least frequent in the selected period."] },
@@ -231,7 +232,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.12 0907", category: "Minor fix", changes: ["Start the timer immediately, stop and save while GPS is connecting, and keep the last known pace or speed through GPS gaps. Record another workout opens a fresh recording ready for Start. Larger timer controls respond without waiting for map place names."] },
   { version: "2026.10.11 2203", category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
   { version: "2026.10.11 2149", category: "Minor fix", changes: ["Custom sharing text no longer has a blue background. Only the text and a subtle readability shadow appear in the shared image; the drag outline is an editing guide."] },
-  { version: "2026.10.11 2142", category: "Major fix", changes: ["Add a custom text box to share images, choose Modern, Classic or Typewriter font and adjust its size. Drag it on the preview or full-size view to position it. The text is included in the shared image without changing your saved workout."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
