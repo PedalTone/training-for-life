@@ -2,7 +2,15 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — refined History icons and tiles
+## Current change — clear Strength and body flags
+
+Release `2026.10.13 1419`: Body notes list flags use matching red with pale
+red background; Strength is an unmistakable horizontal dumbbell with two weight
+stacks and center bar. No data changes. Production/Pages builds and 13 rendered
+checks pass. External Chrome confirms red list flag and unchanged History
+interactions; phone/tablet/desktop dumbbell layouts inspected. Publish pending.
+
+## Previous change — refined History icons and tiles
 
 Release `2026.10.13 1130` implements approved mockup styling in Weekly Details:
 navy SVG icons, Endurance stopwatch, separate green completion and red body flags,

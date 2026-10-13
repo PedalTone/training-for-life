@@ -1,6 +1,6 @@
 export function HistoryWorkoutIcon({workoutKey}:{workoutKey:string}) {
  const key=workoutKey.toLowerCase();
- const strength=<><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M8 9h8l3 10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2Z"/></>;
+ const strength=<><rect x="4" y="5" width="4" height="14" rx="1"/><rect x="16" y="5" width="4" height="14" rx="1"/><path d="M8 10h8v4H8M2 9v6m20-6v6"/></>;
  const runner=<><circle cx="15" cy="4" r="2"/><path d="m8 10 4-3 4 4 4-2M12 7l-2 7 5 3 1 5M10 14l-4 6H2M8 10l-3 4"/></>;
  const stopwatch=<><circle cx="12" cy="14" r="8"/><path d="M9 2h6M12 2v4m6 2 2-2M12 10v4l3 2"/></>;
  const shoe=<><path d="m4 5 5 3 2 5 6 2 4 3v3H3a2 2 0 0 1-2-2l1-6Z"/><path d="m9 10 3-1m-1 4 3-1M2 18h19"/></>;

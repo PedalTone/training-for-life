@@ -1,3 +1,5 @@
+New public release — 2026.10.13 1419: Red Body notes list flags and recognizable dumbbell Strength icon.
+
 New public release — 2026.10.13 1130: Refined History with navy outline icons, Endurance stopwatch, separate status markers and today outline.
 
 New public release — 2026.10.13 1055: History Weekly Details/Month tabs match Today underline styling.
@@ -36,9 +38,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.13 1130` refines History icons and day tiles.
+Release decision: **New public release** — `2026.10.13 1419` clarifies Strength and Body notes icons.
 
-App, notes, tests, worker and deployment use `2026.10.13 1130`.
+App, notes, tests, worker and deployment use `2026.10.13 1419`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
