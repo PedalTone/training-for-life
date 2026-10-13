@@ -11,7 +11,9 @@ Weekly Details/Month stay the only tab-like controls. No stored data changes.
 Production/Pages builds, 13 rendered checks and 4 History search tests pass.
 External Chrome verifies Body notes-only results, preserved excerpts, collapsed
 filters staying active, clear/reset and Weekly/Month switching. Phone/tablet/
-desktop pictograms and expanded filters inspected. Publication checks pending.
+desktop pictograms and expanded filters inspected. Published `07140a0` via
+successful Pages run `38451198080`. Live release 1456 and exact JS/CSS/worker/
+art/icons verified; live Body notes filter/collapse/clear checks pass.
 
 ## Previous change — clearer Mobility figure
 
