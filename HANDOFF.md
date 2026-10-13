@@ -8,7 +8,9 @@ Release `2026.10.13 1419`: Body notes list flags use matching red with pale
 red background; Strength is an unmistakable horizontal dumbbell with two weight
 stacks and center bar. No data changes. Production/Pages builds and 13 rendered
 checks pass. External Chrome confirms red list flag and unchanged History
-interactions; phone/tablet/desktop dumbbell layouts inspected. Publish pending.
+interactions; phone/tablet/desktop dumbbell layouts inspected. Published
+`aa7069f` via successful Pages run `38446031525`. Live release 1419 and exact
+JS/CSS/worker/art/icons verified; red list flag checks pass on public app.
 
 ## Previous change — refined History icons and tiles
 
