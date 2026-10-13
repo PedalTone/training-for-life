@@ -2,7 +2,15 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Progress periods and frequency
+## Current change — consistent History tabs
+
+Release `2026.10.13 1055` uses Today tab styling for Weekly Details/Month:
+shared typography, transparent background, orange selected underline. Body notes
+remains a separate filter. No data changes. Production/Pages builds and 13
+rendered tests pass. External Chrome verifies view switching, month navigation
+and active underline; phone/tablet/desktop screenshots inspected. Publish pending.
+
+## Previous change — Progress periods and frequency
 
 Release `2026.10.13 0004` offers 4/8/12 weeks. Training categories sort by
 completed-day count, ties alphabetically; completed add-ons have a ranked list
