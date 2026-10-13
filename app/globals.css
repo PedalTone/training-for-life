@@ -1630,3 +1630,11 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-discard { margin-top: 18px; border-top: 1px solid #e8e0d5; padding-top: 12px; }
 .gps-discard summary { font-size: 14px; color: #596a76; cursor: pointer; }
 .gps-discard button { margin-top: 12px; min-height: 48px; padding: 12px; border: 1px solid #c98a64; border-radius: 9px; background: transparent; color: #974016; }
+
+.progress-exercises { padding: 22px; border: 1px solid #ded4c5; border-radius: 20px; background: #fffaf2; margin: 20px 0; }
+.progress-exercises h2 { margin: 8px 0; font-size: 24px; }
+.progress-exercises p { color: #596a76; line-height: 1.5; }
+.progress-exercises ol { list-style: none; margin: 16px 0 0; padding: 0; }
+.progress-exercises li { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #e8e0d5; font-size: 16px; }
+.progress-exercises li:last-child { border: 0; }
+.progress-exercises li span { white-space: nowrap; color: #596a76; }

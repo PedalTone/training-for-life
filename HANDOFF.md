@@ -1,8 +1,16 @@
 # Training for Life — development handoff
 
-Updated October 12, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — multiple photos and safer resume
+## Current change — Progress periods and frequency
+
+Release `2026.10.13 0004` offers 4/8/12 weeks. Training categories sort by
+completed-day count, ties alphabetically; completed add-ons have a ranked list
+within the same period, deduplicated per day. No persistence changes. Production/Pages builds, 13 rendered tests and 4
+Progress tests pass. External Chrome verifies 4/8/12 period counts and ordering;
+phone/tablet/desktop screenshots inspected. Publication checks pending.
+
+## Previous change — multiple photos and safer resume
 
 Release `2026.10.12 1819` adds up to six compressed photos per log, multi-file
 selection, individual removal and journal galleries. Legacy single photos remain

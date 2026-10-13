@@ -219,9 +219,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.12 1819";
+const APP_VERSION = "2026.10.13 0004";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Add up to six photos to each workout log and keep them in History and backups. GPS Resume has a stable button; discard is separated behind Discard options to prevent accidental warnings while resuming."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Progress offers 4, 8 and 12 weeks. Workout categories and completed exercises rank from most to least frequent in the selected period."] },
+  { version: "2026.10.12 1819", category: "Minor fix", changes: ["Add up to six photos to each workout log and keep them in History and backups. GPS Resume has a stable button; discard is separated behind Discard options to prevent accidental warnings while resuming."] },
   { version: "2026.10.12 0922", category: "Minor fix", changes: ["The tracker lists every saved recording with a green check, start time, distance and duration. Earlier intervals remain visible while preparing or recording the next workout."] },
   { version: "2026.10.12 0907", category: "Minor fix", changes: ["Start the timer immediately, stop and save while GPS is connecting, and keep the last known pace or speed through GPS gaps. Record another workout opens a fresh recording ready for Start. Larger timer controls respond without waiting for map place names."] },
   { version: "2026.10.11 2203", category: "Minor fix", changes: ["Full-size sharing preview shows the finished image with no text positioning outline or Drag text label. Use Back to editing to reposition your text."] },
@@ -230,7 +231,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.11 2129", category: "Minor fix", changes: ["Sharing has a larger phone preview and a full-size preview you can open before posting. Back to editing preserves your title, format and metric choices."] },
   { version: "2026.10.11 2053", category: "Minor fix", changes: ["Shared images have more balanced artwork and stats, a prominent full-width Avg Pace line, readable duration and the T4L mark. A compact preview stays visible while editing on phones."] },
   { version: "2026.10.11 2005", category: "Minor fix", changes: ["Average running pace now reads together as Avg Pace: 15:32 min/mile in tracking, saved workout details and share images."] },
-  { version: "2026.10.11 1943", category: "Minor fix", changes: ["Running now shows minutes-per-mile pace for current and average tracking, saved journals and share images. Biking keeps miles per hour. Kilometer tracking uses minutes per kilometer for runs."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

@@ -1,3 +1,5 @@
+New public release — 2026.10.13 0004: 4/8/12-week Progress periods and descending workout/exercise frequencies.
+
 New public release — 2026.10.12 1819: Multiple log photos and separated discard controls for safer GPS resumption.
 
 New public release — 2026.10.12 0922: Persistent saved-recording list in the tracker confirms every interval while starting the next.
@@ -30,9 +32,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.12 1819` adds multiple photos and safer GPS resumption.
+Release decision: **New public release** — `2026.10.13 0004` adds 8-week Progress and frequency ordering.
 
-App, notes, tests, worker and deployment use `2026.10.12 1819`.
+App, notes, tests, worker and deployment use `2026.10.13 0004`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

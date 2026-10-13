@@ -7,6 +7,9 @@ export function localProgress(entries:ProgressEntry[], today:string, weeks:numbe
  const finished=period.filter(e=>e.session.status==='completed'||e.session.status==='rest');
  const counts=new Map<string,number>();
  for(const e of finished) counts.set(e.key,(counts.get(e.key)||0)+1);
+ const exerciseCounts=new Map<string,number>();
+ for(const e of period) for(const name of new Set(e.session.completedExercises||[])) exerciseCounts.set(name,(exerciseCounts.get(name)||0)+1);
+ const exercises=[...exerciseCounts].map(([name,count])=>({name,count})).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
  const supporting=period.filter(e=>(e.session.completedExercises||[]).length>0).length;
  const comparisons: {theme:string;latest:Session;prior:Session}[]=[];
  for(const e of period.filter(e=>e.session.status==='completed')) {
@@ -22,5 +25,5 @@ export function localProgress(entries:ProgressEntry[], today:string, weeks:numbe
   const days=Math.round(day(today)-day(last.session.date));
   return days>=14?[{name,days,date:last.session.date}]:[];
  }).sort((a,b)=>b.days-a.days||a.name.localeCompare(b.name)).slice(0,3);
- return {counts,supporting,finished,comparisons,revisit};
+ return {counts,exercises,supporting,finished,comparisons,revisit};
 }
