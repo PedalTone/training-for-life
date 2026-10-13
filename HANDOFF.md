@@ -8,7 +8,9 @@ Release `2026.10.13 1055` uses Today tab styling for Weekly Details/Month:
 shared typography, transparent background, orange selected underline. Body notes
 remains a separate filter. No data changes. Production/Pages builds and 13
 rendered tests pass. External Chrome verifies view switching, month navigation
-and active underline; phone/tablet/desktop screenshots inspected. Publish pending.
+and active underline; phone/tablet/desktop screenshots inspected. Published
+`2ebafc5` via successful Pages run `38417675972`. Live release 1055 and exact
+JS/CSS/worker/icons/art verified; live History interaction/style checks pass.
 
 ## Previous change — Progress periods and frequency
 
