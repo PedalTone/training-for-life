@@ -8,7 +8,8 @@ Release `2026.10.13 1425` gives Mobility/Yoga/Pilates a shaped side-bending
 figure with overhead stretching arm and defined torso. Navy palette retained.
 No workout/data changes. Production/Pages builds and 13 rendered tests pass.
 External Chrome History checks pass; phone/tablet/desktop figure inspected.
-Publication/live checks pending.
+Published `f25d1bb` via successful Pages run `38447021964`. Live release
+1425 and exact JS/CSS/worker/art/icons verified; History checks pass publicly.
 
 ## Previous change — Speed motion icon
 
