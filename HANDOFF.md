@@ -2,7 +2,18 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — clearer Mobility figure
+## Current change — seated Mobility and unified filters
+
+Release `2026.10.13 1456` replaces Mobility/Yoga/Pilates with a seated toe-touch
+pictogram on a mat. Body notes only moves into Filters, combines with query/type/
+dates, and results retain red flags and note excerpts. Clear search resets it.
+Weekly Details/Month stay the only tab-like controls. No stored data changes.
+Production/Pages builds, 13 rendered checks and 4 History search tests pass.
+External Chrome verifies Body notes-only results, preserved excerpts, collapsed
+filters staying active, clear/reset and Weekly/Month switching. Phone/tablet/
+desktop pictograms and expanded filters inspected. Publication checks pending.
+
+## Previous change — clearer Mobility figure
 
 Release `2026.10.13 1425` gives Mobility/Yoga/Pilates a shaped side-bending
 figure with overhead stretching arm and defined torso. Navy palette retained.

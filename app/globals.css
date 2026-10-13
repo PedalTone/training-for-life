@@ -1658,3 +1658,9 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .history-status-row .history-body-flag { font-size: 16px; line-height: 1; }
 
 .history-page .flagged-list .history-body-note-mark { color: #b3332b; background: #f8e8e4; font-size: 20px; }
+
+.history-page .journal-filters .journal-body-filter { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; min-height: 48px; cursor: pointer; }
+.journal-body-filter input { width: 22px; height: 22px; accent-color: #203449; }
+.journal-body-filter span { display: inline-flex; align-items: center; gap: 8px; }
+.journal-body-filter b, .journal-result-flag { color: #b3332b; font-size: 20px; }
+.history-day-icon svg { width: 30px; height: 30px; }

@@ -23,3 +23,5 @@ test('matching excerpts include the search hit and never mutate source records',
  assert.match(result.excerpt,/target/);assert.ok(result.excerpt.length<=152);
  assert.equal(JSON.stringify(entries),before);
 });
+
+test('Body notes only composes with query, type and dates and preserves note excerpt',()=>{const rows=[entry('2026-10-01','Mobility',{injury:{reported:true,bodyArea:'Shoulder',note:'Sore after lifting'}}),entry('2026-10-02','Strength',{injury:{reported:true,bodyArea:'Knee',note:'Tender'}}),entry('2026-10-03','Mobility'),entry('2026-10-11','Mobility',{injury:{reported:true}})];const before=JSON.stringify(rows);const f={...emptyHistoryFilters,bodyOnly:true};assert.equal(searchJournal(rows,f,'2026-10-10').length,2);const found=searchJournal(rows,{...f,type:'Mobility',query:'shoulder',from:'2026-10-01',to:'2026-10-01'},'2026-10-10');assert.equal(found.length,1);assert.match(searchJournal(rows,{...f,type:'Mobility'},'2026-10-10')[0].excerpt,/Shoulder.*Sore/);assert.equal(JSON.stringify(rows),before);});

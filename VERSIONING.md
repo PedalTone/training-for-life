@@ -1,3 +1,5 @@
+New public release — 2026.10.13 1456: Clear seated Mobility stretch and Body notes integrated into journal Filters.
+
 New public release — 2026.10.13 1425: Mobility has a shaped side-bending figure with an overhead arm.
 
 New public release — 2026.10.13 1422: Speed uses a runner with motion lines in History.
@@ -42,9 +44,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.13 1425` clarifies the Mobility stretching pose.
+Release decision: **New public release** — `2026.10.13 1456` clarifies Mobility and consolidates History filters.
 
-App, notes, tests, worker and deployment use `2026.10.13 1425`.
+App, notes, tests, worker and deployment use `2026.10.13 1456`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
