@@ -10,7 +10,9 @@ neutral pending markers, orange today outline and legend. Existing workout
 assignments, records and calendar behavior preserved. Production/Pages builds
 and 13 rendered tests pass. External Chrome confirms SVG icons, constant navy,
 today outline and separate green check/red flag on a completed body-note day.
-Phone/tablet/desktop layouts inspected; view switching passes. Publish pending.
+Phone/tablet/desktop layouts inspected; view switching passes. Published
+`d7a0541` via successful Pages run `38423044875`. Live release 1130 and exact
+JS/CSS/worker/icons/art verified. Live icon/today/check/flag checks pass.
 
 ## Previous change — consistent History tabs
 
