@@ -14,7 +14,10 @@ recorded in AGENTS/README/checklist. Local external Chrome checks pass at
 440×956 and 393×852, plus 440×860 with 62px top/34px bottom safe-area
 allowance, for timeline navigation, colors, totals, filters, journals and position
 restoration. Production/Pages builds, 13 rendered checks and all 92 regressions
-pass. Typecheck retains the 8 pre-existing diagnostics. Publication pending.
+pass. Typecheck retains the 8 pre-existing diagnostics. Published `40572f0` via
+successful Pages run `38525940237`. Live release 0302 and exact JS/CSS/worker,
+icons and artwork verified. The same timeline/filter/journal/position and iPhone
+checks pass on the public app.
 
 ## Previous change — compact phone Home
 
