@@ -1,3 +1,4 @@
+import {workoutIsLocked} from '../app/workout-lock.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
@@ -50,8 +51,8 @@ test('Today keeps completion independent of body flags, including legacy complet
  const resolver=page.slice(page.indexOf('function resolveSessionStatus('),page.indexOf('function stateFor('));
  const expression=page.match(/const activeFinished = ([^;]+);/)[1];
  const js=ts.transpile(resolver,{target:ts.ScriptTarget.ES2022});
- const evaluate=new Function('session','plan','activeDate','today','dateKey',js+`;return ${expression};`);
- const resolve=s=>evaluate(s,{key:'strength'},new Date('2026-10-11T12:00:00'),new Date('2026-10-11T12:00:00'),d=>d.toISOString().slice(0,10));
+ const evaluate=new Function('session','plan','activeDate','today','dateKey','workoutIsLocked','editingDate',js+`;return ${expression};`);
+ const resolve=s=>evaluate(s,{key:'strength'},new Date('2026-10-11T12:00:00'),new Date('2026-10-11T12:00:00'),d=>d.toISOString().slice(0,10),workoutIsLocked,null);
  assert.equal(resolve({...source,status:'completed',injury:{reported:true}}),true);
  assert.equal(resolve({...source,status:'partial',completedAt:'2026-10-11T12:00:00Z',injury:{reported:true}}),true);
  assert.equal(resolve({...source,status:'partial',completedAt:undefined,injury:{reported:true}}),false);

@@ -166,3 +166,5 @@ Custom sharing text has a transparent background with a subtle text shadow. The 
 Full-size sharing previews show the finished image without text positioning guides. Use Back to editing to move text.
 
 Workout logs support up to six compressed photos, selected together or added later, with individual removal. Existing single photos remain available. History and backups include the full gallery. GPS discard controls are separate from Resume behind Discard options.
+
+Completed workouts are read-only until Edit is chosen on Today or the journal. Completion stays recorded during editing; Save changes + Backup locks again. Reloading also returns completed workouts to read-only mode. Photos, notes, add-ons, media, tracking and check-ins follow this lock; viewing and sharing remain available.

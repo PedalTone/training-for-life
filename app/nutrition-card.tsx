@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { NUTRITION_KEY, nutritionSchedule, nutritionSummary, readNutrition } from "./nutrition";
 import type { NutritionDay, NutritionRecords } from "./nutrition";
 
-export function NutritionCard({ date, expanded = false }: { date: string; expanded?: boolean }) {
+export function NutritionCard({ date, expanded = false, readOnly=false }: { date: string; expanded?: boolean;readOnly?:boolean }) {
   const [day, setDay] = useState<NutritionDay>({});
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState("");
@@ -13,6 +13,7 @@ export function NutritionCard({ date, expanded = false }: { date: string; expand
     catch { setNotice("Nutrition could not load. Reopen the app to try again; existing records are unchanged."); }
   }, [date]);
   function save(patch: Partial<NutritionDay>) {
+    if(readOnly)return;
     const next = { ...day, ...patch };
     setDay(next);
     try {
@@ -24,8 +25,8 @@ export function NutritionCard({ date, expanded = false }: { date: string; expand
   function question(field: "food" | "cutoff", label: string, applies: boolean) {
     const note = field === "food" ? "foodNote" : "cutoffNote";
     return <div className="nutrition-question">
-      <div className="nutrition-answer-row"><span>{label}</span>{applies ? <div role="group" aria-label={label}>{[true, false].map(value => <button type="button" key={String(value)} disabled={!ready} aria-pressed={day[field] === value} onClick={() => save({ [field]: day[field] === value ? undefined : value })}>{value ? "Yes" : "No"}</button>)}</div> : <small>Flexible{field === "cutoff" ? " tonight" : " today"}</small>}</div>
-      {applies && day[field] === false && <label className="nutrition-note">What happened? <small>Optional · use your keyboard’s microphone to dictate.</small><textarea rows={2} value={day[note] || ""} onChange={event => save({ [note]: event.target.value })} placeholder="A quick note, if useful" aria-label={`${label}: optional note`}/></label>}
+      <div className="nutrition-answer-row"><span>{label}</span>{applies ? <div role="group" aria-label={label}>{[true, false].map(value => <button type="button" key={String(value)} disabled={!ready||readOnly} aria-pressed={day[field] === value} onClick={() => save({ [field]: day[field] === value ? undefined : value })}>{value ? "Yes" : "No"}</button>)}</div> : <small>Flexible{field === "cutoff" ? " tonight" : " today"}</small>}</div>
+      {applies && day[field] === false && <label className="nutrition-note">What happened? <small>Optional · use your keyboard’s microphone to dictate.</small><textarea readOnly={readOnly} rows={2} value={day[note] || ""} onChange={event => save({ [note]: event.target.value })} placeholder="A quick note, if useful" aria-label={`${label}: optional note`}/></label>}
     </div>;
   }
   const Container = expanded ? "section" : "details";
@@ -34,8 +35,8 @@ export function NutritionCard({ date, expanded = false }: { date: string; expand
     <details className="nutrition-rules"><summary>My food plan</summary><p>High protein, whole foods: meat, fruit, vegetables and nuts. Skip bread and desserts. Flexible from Friday dinner through Sunday lunch.</p></details>
     {question("food", "Followed my food plan", schedule.food)}
     {question("cutoff", "Finished eating by 7:30 p.m.", schedule.cutoff)}
-    <p className="nutrition-help">Tap a selected answer to undo.</p>
-    <p className="nutrition-save" role="status">{notice || "Saves automatically · no workout completion needed"}</p>
+    <p className="nutrition-help">{readOnly?"Tap Edit to change check-ins.":"Tap a selected answer to undo."}</p>
+    <p className="nutrition-save" role="status">{readOnly?"Check-ins locked":notice || "Saves automatically · no workout completion needed"}</p>
   </Container>;
 }
 

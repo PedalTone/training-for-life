@@ -2,7 +2,25 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — video All filter and add confirmation
+## Current change — completed workout lock
+
+Release `2026.10.13 2234` locks completed/legacy completedAt workouts until
+explicit Edit on Today or the journal. Edit is scoped to a date and retains
+completion. Save changes + Backup locks again; cancellation leaves editing open.
+Native disabled controls + handler guards cover workout setup, notes, media,
+GPS, add-ons and check-ins; viewing/playback/sharing remain available. Settings
+video and Progress add-on additions respect the lock; completed historical video
+deletion and automatic library renames are blocked. Background GPS place
+enrichment can update already saved routes but cannot append new recordings.
+Finish blocks mutations/navigation and waits for media uploads; locked reloads
+do not autosave workout edits. No persistent edit flag or schema changes.
+Production/Pages builds, 13 rendered checks and all 89 regression checks pass.
+External Chrome verifies completed reload locks, all mutation controls, Settings
+additions, completion retention during Edit, cancel/save/relock, backup contents,
+playback/share and historical Edit scoped to one date. Phone/tablet/desktop
+lock banners inspected. Typecheck retains 8 pre-existing diagnostics. Publish pending.
+
+## Previous change — video All filter and add confirmation
 
 Release `2026.10.13 2205` fixes All-filter ternary precedence through a shared
 filter helper. Future/Recent Add buttons use today’s actual saved video IDs, show
