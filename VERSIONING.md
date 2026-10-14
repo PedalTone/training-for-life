@@ -1,3 +1,5 @@
+New public release — 2026.10.14 1831: Fetch video captions automatically and build a reviewable workout draft in the app, with cached captions and manual fallback.
+
 New public release — 2026.10.14 1633: Reusable video plans from reviewed caption drafts, per-set weights/results, computer caption fallback and same-load strength comparisons.
 
 New public release — 2026.10.14 0808: Progress shows ranked percentage bars, explicit missing workout types and a cleaner completed add-ons section.
@@ -60,9 +62,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.14 1633` turns video workouts into reusable plans and records weights/results for meaningful comparisons.
+Release decision: **New public release** — `2026.10.14 1831` retrieves video captions automatically and builds a draft with one tap.
 
-App, notes, tests, worker and deployment use `2026.10.14 1633`.
+App, notes, tests, worker and deployment use `2026.10.14 1831`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

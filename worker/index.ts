@@ -4,6 +4,7 @@ import handler from "vinext/server/app-router-entry";
 import { createWorkoutGuide } from "./workout-guide";
 import { createTrainingInsights } from "./training-insights";
 import { extractWorkoutScreenshot } from "./workout-screenshot";
+import { handleVideoCaptions } from "./video-captions";
 
 interface Env {
   ASSETS: Fetcher;
@@ -33,6 +34,10 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/video-captions") {
+      return handleVideoCaptions(request, { cache: (caches as CacheStorage & { default: Cache }).default, waitUntil: promise => ctx.waitUntil(promise) });
+    }
 
     if (url.pathname === "/api/workout-screenshot") {
       const origin = request.headers.get("Origin") || "";

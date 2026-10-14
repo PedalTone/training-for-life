@@ -2,7 +2,38 @@
 
 Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — reusable video plans and set results
+## Current change — automatic video captions
+
+Candidate release `2026.10.14 1831` adds one-tap Fetch captions & build draft,
+immediate loading/near-button feedback, cancellation/lock guards, a bounded
+local caption cache and collapsed manual fallback. Worker `/api/video-captions`
+validates exact YouTube hosts/IDs, bounds input/output/time, has best-effort
+per-isolate cooldown/concurrency limits, tries the transcript site's public GET
+page then English YouTube captions. Only the canonical video link is sent.
+No account, key, subscription/card or environment variables changed. The earlier
+free-trial question is obsolete: actual hosted retrieval now works without it;
+unused optional paid-provider code was removed.
+
+Real Mac and hosted retrieval succeed (GRFRg4Oafxc, 211 segments / 5,954
+characters), and hosted PkcpMul77Rg also succeeds. The primary site returns 403.
+Initial failures came from Cache API availability and edge rejection of
+`redirect:error`, corrected with nonfatal cache access and manual redirects that
+reject 3xx. Deployment propagation briefly served the earlier version after a
+successful native deployment; subsequent new and canonical-path requests reached
+the fixed version (canonical repeat returned the expected one-minute cooldown).
+Backend source `5e8ca44`, Sites version 157, deployment
+`appgdep_6ad0021dead08191b2ba9a4ceea20d29` confirmed successful. Final matching
+frontend/backend publication and real browser check pending. Backend checkout
+`/private/tmp/t4l-caption-api` has separate history; use the Sites source helper.
+
+Builds/tests and iPhone external Chrome verification are being finalized. Earlier
+fixture checks verify error/retry, one-tap draft/cache, review without autosave,
+manual fallback, per-set logging, backups, Edit lock and repeat at 440/393/375.
+No new baseline TypeScript errors. Preserve unrelated untracked files. Malformed
+duplicate Git ref `refs/remotes/github/main 2` blocked fetch; its contents were
+preserved at `/tmp/t4l-invalid-git-ref-main-2` before removal.
+
+## Previous change — reusable video plans and set results
 
 Release `2026.10.14 1633` adds local caption paste/file import and
 version-1 prepared JSON plan import to video cards in Future videos and Today.

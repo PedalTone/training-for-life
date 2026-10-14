@@ -34,6 +34,7 @@ build for server features. Node must be at least 22.13.0; CI uses Node 22.
 | `worker/training-insights.ts` | Retired frontend API; kept for compatibility |
 | `worker/workout-screenshot.ts` | Retired frontend API; kept for compatibility |
 | `worker/workout-guide.ts` | Legacy API implementation; current frontend no longer calls it |
+| `worker/video-captions.ts` | On-demand automatic captions, validation, bounded retrieval and caching |
 | `public/` | Brand artwork, texture, exercise illustrations, icons, PWA files |
 | `.github/workflows/deploy-pages.yml` | Builds and publishes GitHub Pages |
 
@@ -47,7 +48,7 @@ storage to solve a deployment or cache issue. Nutrition is saved separately in
 merges nutrition dates; older backups leave existing check-ins untouched.
 Nutrition does not alter workout completion or streaks.
 
-The public frontend no longer calls the separate Sites service for AI extraction or training assessment. Saved legacy reports, extracted screenshot details and goals are retained in storage and backups. Local screenshot attachments are compressed images, up to six per workout, included in History and backups; they never update metrics automatically.
+The public frontend calls the separate Sites service only for on-demand video captions; it no longer calls AI extraction or training assessment. Saved legacy reports, extracted screenshot details and goals are retained in storage and backups. Local screenshot attachments are compressed images, up to six per workout, included in History and backups; they never update metrics automatically.
 The service uses server-side `OPENAI_API_KEY` and `INSIGHTS_ACCESS_CODE`; never
 put their values in documentation or client code. Existing credential setup is
 separate from this chat migration. Inspect applicable API/hosting instructions
@@ -175,12 +176,22 @@ Progress shows ranked bars on a shared 0–100% scale for completed days in the 
 
 ## Video plans and set logging
 
-In Settings → Future workout videos → Build workout plan, create a plan from
-pasted captions, `.txt`/`.vtt`/`.srt`, or an imported version-1 JSON plan. Copy the
-canonical video link and open YouTube to Transcript to obtain captions. The
-frontend does not automatically fetch captions: the service blocked automated
-form submission, and this workflow uses its normal page without keys or a paid
-API. Caption processing is local, uses explicit exercise/volume cues and requires
+In Settings → Future workout videos → Build workout plan → Create plan, tap
+Fetch captions & build draft. The server tries the transcript site's public page,
+then direct English YouTube captions, and opens an editable draft without saving
+it automatically. No account or API key is required. Only the canonical video
+link goes to the caption service; workout results stay local. Requests occur only
+on tap, have bounded time/size and best-effort per-isolate rate limits, and do not
+retry indefinitely. The edge uses manual redirects with explicit 3xx rejection.
+
+Successful full captions are cached separately on this device (up to five videos,
+300,000 characters total); this cache is not included in workout backups. The
+server also attempts a seven-day edge cache; an unavailable Cache API does not
+prevent retrieval. Some videos lack English captions or temporarily block access.
+Paste captions or import a plan opens the manual `.txt`/`.vtt`/`.srt`/version-1
+JSON fallback, with the external transcript site and computer helper.
+
+Draft processing is local, uses explicit exercise/volume cues and requires
 review; it is not an AI interpretation of the complete video. Unknown movements
 can be added manually, unknown set counts stay labeled, and circuit instructions
 are retained in notes without silently expanding rounds. Source cue excerpts
