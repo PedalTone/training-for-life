@@ -2,7 +2,21 @@
 
 Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — compact phone Home
+## Current change — weekly History timeline
+
+Release `2026.10.14 0302` replaces Month with a 12-week scrollable timeline,
+three-week Earlier/Later jumps, older windows at the edges, and Back to this
+week. Current week is initially visible. Cursor/scroll position survives journal
+visits. Workout icons use muted category colors; completion checks stay green
+and body flags red. Body notes alone no longer count toward completed totals.
+No storage/schema changes. User confirmed iPhone-only support and verification;
+recorded in AGENTS/README/checklist. Local external Chrome checks pass at
+440×956 and 393×852, plus 440×860 with 62px top/34px bottom safe-area
+allowance, for timeline navigation, colors, totals, filters, journals and position
+restoration. Production/Pages builds, 13 rendered checks and all 92 regressions
+pass. Typecheck retains the 8 pre-existing diagnostics. Publication pending.
+
+## Previous change — compact phone Home
 
 Release `2026.10.14 0224` trims phone-only Home brand/card padding, section
 gaps, destination spacing and icon-container height. Typography, artwork and

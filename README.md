@@ -86,8 +86,8 @@ node --experimental-strip-types --test tests/insight-validation.test.mjs tests/t
 
 `npm run lint` and `npx tsc --noEmit` are additional diagnostics. Earlier runs
 failed; see HANDOFF.md and investigate current output before claiming they pass.
-Inspect the rendered app at desktop, tablet, and phone sizes and walk through
-changed interactions. Automated assertions alone do not verify layout quality.
+Inspect the rendered app at iPhone sizes, including safe areas, and walk through
+changed interactions. Tablet and desktop visual testing is not required. Automated assertions alone do not verify layout quality.
 
 ## Publish requested frontend changes
 
@@ -168,3 +168,5 @@ Full-size sharing previews show the finished image without text positioning guid
 Workout logs support up to six compressed photos, selected together or added later, with individual removal. Existing single photos remain available. History and backups include the full gallery. GPS discard controls are separate from Resume behind Discard options.
 
 Completed workouts are read-only until Edit is chosen on Today or the journal. Completion stays recorded during editing; Save changes + Backup locks again. Reloading also returns completed workouts to read-only mode. Photos, notes, add-ons, media, tracking and check-ins follow this lock; viewing and sharing remain available.
+
+History uses a 12-week scrolling timeline with Earlier/Later arrows moving three weeks at a time and loading older periods at the edges. Back to this week returns to the current week. Browsing position is preserved when opening a journal and returning. Subtle workout icon colors help reveal training patterns; completion checks remain green and body-note flags remain red. Search and Body notes only remain inside Filters; Nutrition follows the timeline.

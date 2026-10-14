@@ -9,8 +9,9 @@ published, and what remains. Keep it concise and current.
 
 The public frontend is GitHub Pages; the Sites worker supplies separate API
 features. See README for the two build paths. Preserve browser-stored workout
-data and dated schedule history. Render and visually inspect desktop, tablet,
-and phone layouts before declaring interface changes complete.
+data and dated schedule history. The app is for iPhone only (user preference, October 14, 2026). Render and
+visually inspect iPhone layouts and safe areas before declaring interface
+changes complete; tablet and desktop visual testing is not required.
 
 The user's general learning-app and readability standards also live in
 `~/.codex/AGENTS.md`. Apply them where relevant to this fitness tracker.

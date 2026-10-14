@@ -1700,3 +1700,21 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .approved-splash .home-nav-art { height: 48px; }
   .approved-splash .home-weather-settings { margin-top: 10px; }
 }
+
+.history-browse-controls { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 10px; order: 1; position: sticky; top: 0; z-index: 5; margin: 0 0 12px; padding: 12px; background: #fffaf2; border: 1px solid #ded4c5; border-radius: 14px; }
+.history-browse-controls > strong { grid-column: 1; display: block; font-size: 16px; }
+.history-browse-controls > div { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 10px; }
+.history-browse-controls button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 46px; padding: 9px 12px; border: 1px solid #d8cdbd; border-radius: 9px; background: #fffaf2; color: #203449; font-size: 14px; font-weight: 650; }
+.history-browse-controls button.history-back-current { margin-left: auto; background: #203449; color: #fffaf2; border-color: #203449; }
+.history-browse-controls button:disabled { opacity: .45; cursor: default; }
+.history-browse-controls > small { grid-column: 2; grid-row: 1; align-self: center; display: block; margin-top: 0; color: #596875; font-size: 13px; }
+.history-timeline-window { order: 3; position: relative; height: clamp(260px,calc(100dvh - 435px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),600px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: #84919c transparent; border-radius: 18px; }
+.history-timeline-window:focus-visible { outline: 2px solid #b94b17; outline-offset: 3px; }
+.history-timeline-window .multi-week { padding-right: 5px; }
+.history-page > .history-status-legend { order: 4; margin-top: 12px; }
+.history-color-key { order: 4; margin: 8px 8px 12px; color: #596875; font-size: 14px; }
+.history-color-key summary { cursor: pointer; min-height: 32px; }
+.history-color-key > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; padding: 12px 0; }
+.history-color-key span { display: flex; align-items: center; gap: 8px; }
+.history-color-key i { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+@media(max-width:420px) { .history-browse-controls button { padding-inline: 8px; font-size: 13px; } .history-color-key > div { grid-template-columns: repeat(2,minmax(0,1fr)); } }

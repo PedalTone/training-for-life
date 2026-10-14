@@ -20,7 +20,7 @@ Run this checklist before every patch and release. The goal is to verify the com
 
 - [ ] Today: the correct date and workout type appear; controls are readable; Finish + Backup has a clear saved/completed state; reopening the day preserves data.
 - [ ] Plan: dates are chronological, today is obvious, schedule icons match the active mapping, and the compact intro does not crowd the calendar.
-- [ ] History: Weekly Details shows three chronological weeks with the current week at the bottom; previous/next navigation works; prior schedule snapshots are used; blank/unassigned days do not show false Rest; icons and status marks remain readable.
+- [ ] History: 12 chronological weeks scroll with the current week initially visible; Earlier/Later move three weeks and load older windows at the edges; Back to this week and journal-return position work; prior schedule snapshots are used; blank/unassigned days do not show false Rest; icons and status marks remain readable.
 - [ ] Performance: rhythm, streak, consistency, weekly completion, injuries, goals context, and AI insights are separate from History.
 - [ ] Settings: collapsible sections—including Future workout videos—start closed; mobility editing, reference photos, descriptions, schedule mapping, YouTube links, backup, and restore remain usable.
 
@@ -34,7 +34,7 @@ Run this checklist before every patch and release. The goal is to verify the com
 
 ## 5. Responsive visual QA
 
-- [ ] Inspect rendered desktop, tablet, and iPhone-sized views.
+- [ ] Inspect rendered iPhone-sized views and safe areas; no tablet or desktop visual testing is required.
 - [ ] Look for small text, clipped labels, crowded rows, excessive blank space, horizontal scrolling, and bottom-nav overlap.
 - [ ] Confirm buttons have clear labels and adequate touch targets; icons never carry meaning by color alone.
 
