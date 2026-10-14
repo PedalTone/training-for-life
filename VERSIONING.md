@@ -1,3 +1,5 @@
+New public release — 2026.10.14 0224: Compact phone Home spacing keeps the complete menu visible without smaller text.
+
 New public release — 2026.10.14 0203: Full-width journal Edit workout sits directly above Share workout.
 
 New public release — 2026.10.14 0200: Journal Edit workout is a prominent navy button with a pencil icon.
@@ -52,9 +54,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.14 0203` groups journal Edit above Share workout.
+Release decision: **New public release** — `2026.10.14 0224` shortens phone Home spacing.
 
-App, notes, tests, worker and deployment use `2026.10.14 0203`.
+App, notes, tests, worker and deployment use `2026.10.14 0224`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

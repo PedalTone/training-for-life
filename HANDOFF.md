@@ -2,7 +2,19 @@
 
 Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — journal Edit beside Share workflow
+## Current change — compact phone Home
+
+Release `2026.10.14 0224` trims phone-only Home brand/card padding, section
+gaps, destination spacing and icon-container height. Typography, artwork and
+menu destinations remain unchanged. Layout retains natural scrolling for
+shorter screens/expanded weather settings. External Chrome measures Settings
+and release footer inside 440×893/860 viewports and a 956px viewport with
+62px top + 34px bottom safe-area allowance; fonts remain unchanged.
+Phone/tablet/desktop screenshots inspected. Production/Pages builds and 13
+rendered checks pass; What’s New and all Home destinations tested in external
+Chrome. Publication verification pending.
+
+## Previous change — journal Edit beside Share workflow
 
 Release `2026.10.14 0203` moves the prominent journal Edit button directly
 above Share workout; both are full-width in one action group below completion.

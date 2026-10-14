@@ -1685,3 +1685,18 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 
 .journal-workout-actions { display: grid; gap: 12px; margin: 24px 0; }
 .journal-workout-actions > button { width: 100%; margin: 0; }
+
+/* Keep Home’s complete menu within a tall phone viewport without shrinking text. */
+@media (max-width: 600px) {
+  .app-shell .approved-splash { padding-top: max(16px,env(safe-area-inset-top)); padding-bottom: max(12px,env(safe-area-inset-bottom)); }
+  .approved-splash .home-brand { padding-block: 14px; }
+  .approved-splash .home-brand h1 { margin-bottom: 6px; }
+  .approved-splash .home-section-heading { margin-top: 14px; margin-bottom: 8px; }
+  .approved-splash .home-today { padding-block: 16px; }
+  .approved-splash .home-today-body { margin-top: 10px; }
+  .approved-splash .home-today-footer { margin-top: 10px; padding-top: 10px; }
+  .approved-splash .home-destinations { gap: 8px; }
+  .approved-splash .home-destinations button { padding-block: 8px; }
+  .approved-splash .home-nav-art { height: 48px; }
+  .approved-splash .home-weather-settings { margin-top: 10px; }
+}

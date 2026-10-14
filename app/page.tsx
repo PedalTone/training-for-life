@@ -222,9 +222,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.14 0203";
+const APP_VERSION = "2026.10.14 0224";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["The prominent journal Edit workout button is full-width and sits directly above Share workout, grouping the main actions together."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Home uses slightly tighter phone card padding and spacing so the complete menu, including Settings, fits more comfortably. Text sizes and artwork stay the same."] },
+  { version: "2026.10.14 0203", category: "Minor fix", changes: ["The prominent journal Edit workout button is full-width and sits directly above Share workout, grouping the main actions together."] },
   { version: "2026.10.14 0200", category: "Minor fix", changes: ["Edit workout is a prominent navy button with a pencil icon at the top of the journal, making it easier to find."] },
   { version: "2026.10.13 2234", category: "Minor fix", changes: ["Finished workouts are locked until you tap Edit. Details, add-ons, videos, photos, screenshots, GPS and check-ins become read-only; viewing and sharing stay available. Saving changes locks the workout again without removing its completed status."] },
   { version: "2026.10.13 2205", category: "Minor fix", changes: ["All saved videos appear immediately in Future workout videos. Add to today shows Adding… then ✓ Added to today, including videos already saved in today’s workout and Recent videos."] },
@@ -233,7 +234,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.13 1422", category: "Minor fix", changes: ["History Speed workouts use a navy runner with motion lines to clearly distinguish faster running from easy aerobic activity."] },
   { version: "2026.10.13 1419", category: "Minor fix", changes: ["Body notes list flags are red to match History markers. Strength uses a recognizable navy dumbbell outline."] },
   { version: "2026.10.13 1130", category: "Minor fix", changes: ["History uses consistent navy outline workout icons, including an Endurance stopwatch. Green completion checks and red body-note flags are separate; today has an orange outline and a clear legend explains the markers."] },
-  { version: "2026.10.13 1055", category: "Minor fix", changes: ["History Weekly Details and Month tabs now use the same clean styling and orange selection underline as Today."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
