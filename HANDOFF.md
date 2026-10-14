@@ -2,13 +2,23 @@
 
 Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — prominent journal Edit
+## Current change — journal Edit beside Share workflow
+
+Release `2026.10.14 0203` moves the prominent journal Edit button directly
+above Share workout; both are full-width in one action group below completion.
+Back remains at the top. Edit/lock behavior unchanged. Production/Pages builds
+and 13 rendered checks pass. External Chrome checks direct-above-Share ordering
+and the full lock/Edit/save flow; phone/tablet/desktop screenshots inspected.
+Publication checks pending.
+
+## Previous change — prominent journal Edit
 
 Release `2026.10.14 0200` gives journal Edit workout a navy filled 52px button,
 cream label, pencil icon and visible keyboard focus. The Edit/lock behavior is
 unchanged. Production/Pages builds and 13 rendered checks pass. External
 Chrome verifies navy styling, 52px target and unchanged lock/Edit/save flow;
-phone/tablet/desktop journal screenshots inspected. Publication checks pending.
+phone/tablet/desktop journal screenshots inspected. Published `da073c1` via
+successful Pages run `38519912246`; live release 0200 and exact assets verified.
 
 ## Previous change — completed workout lock
 
