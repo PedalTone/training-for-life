@@ -16,7 +16,10 @@ add-ons, selected-only exclusion, journal preservation and empty state. Inspecte
 440×956, 393×852 and 440×860 with 62px top/34px bottom safe-area allowance.
 Also inspected 375×812 with a long custom workout name and legacy completion.
 Production/Pages builds, 13 rendered checks and all 95 regression checks pass.
-Typecheck retains eight pre-existing diagnostics. Publication pending.
+Typecheck retains eight pre-existing diagnostics. Published `922bb01` via
+successful Pages run `38561815069`. Live release 0808 and exact JS/CSS, worker,
+icons and workout artwork verified. All percentage/period/add-on/journal, empty,
+custom/legacy and iPhone browser checks also pass on the public app.
 
 ## Previous change — weekly History timeline
 
