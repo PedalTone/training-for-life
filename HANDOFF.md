@@ -9,7 +9,9 @@ above Share workout; both are full-width in one action group below completion.
 Back remains at the top. Edit/lock behavior unchanged. Production/Pages builds
 and 13 rendered checks pass. External Chrome checks direct-above-Share ordering
 and the full lock/Edit/save flow; phone/tablet/desktop screenshots inspected.
-Publication checks pending.
+Published `c649863` via successful Pages run `38520215892`. Live release 0203
+and exact JS/CSS/worker/art/icons verified; placement and lock/Edit/save checks
+pass on the public app.
 
 ## Previous change — prominent journal Edit
 
