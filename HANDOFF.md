@@ -1,8 +1,16 @@
 # Training for Life — development handoff
 
-Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — completed workout lock
+## Current change — prominent journal Edit
+
+Release `2026.10.14 0200` gives journal Edit workout a navy filled 52px button,
+cream label, pencil icon and visible keyboard focus. The Edit/lock behavior is
+unchanged. Production/Pages builds and 13 rendered checks pass. External
+Chrome verifies navy styling, 52px target and unchanged lock/Edit/save flow;
+phone/tablet/desktop journal screenshots inspected. Publication checks pending.
+
+## Previous change — completed workout lock
 
 Release `2026.10.13 2234` locks completed/legacy completedAt workouts until
 explicit Edit on Today or the journal. Edit is scoped to a date and retains

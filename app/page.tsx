@@ -222,9 +222,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.13 2234";
+const APP_VERSION = "2026.10.14 0200";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Finished workouts are locked until you tap Edit. Details, add-ons, videos, photos, screenshots, GPS and check-ins become read-only; viewing and sharing stay available. Saving changes locks the workout again without removing its completed status."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Edit workout is a prominent navy button with a pencil icon at the top of the journal, making it easier to find."] },
+  { version: "2026.10.13 2234", category: "Minor fix", changes: ["Finished workouts are locked until you tap Edit. Details, add-ons, videos, photos, screenshots, GPS and check-ins become read-only; viewing and sharing stay available. Saving changes locks the workout again without removing its completed status."] },
   { version: "2026.10.13 2205", category: "Minor fix", changes: ["All saved videos appear immediately in Future workout videos. Add to today shows Adding… then ✓ Added to today, including videos already saved in today’s workout and Recent videos."] },
   { version: "2026.10.13 1456", category: "Minor fix", changes: ["Mobility uses a recognizable seated toe-touch stretch on a mat. Body notes only is inside Filters and combines with search, workout type and dates, keeping the History tabs uncluttered."] },
   { version: "2026.10.13 1425", category: "Minor fix", changes: ["Mobility uses a more defined person in a side-bending stretch with an overhead arm, instead of a basic stick figure."] },
@@ -233,7 +234,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.13 1130", category: "Minor fix", changes: ["History uses consistent navy outline workout icons, including an Endurance stopwatch. Green completion checks and red body-note flags are separate; today has an orange outline and a clear legend explains the markers."] },
   { version: "2026.10.13 1055", category: "Minor fix", changes: ["History Weekly Details and Month tabs now use the same clean styling and orange selection underline as Today."] },
   { version: "2026.10.13 0004", category: "Minor fix", changes: ["Progress offers 4, 8 and 12 weeks. Workout categories and completed exercises rank from most to least frequent in the selected period."] },
-  { version: "2026.10.12 1819", category: "Minor fix", changes: ["Add up to six photos to each workout log and keep them in History and backups. GPS Resume has a stable button; discard is separated behind Discard options to prevent accidental warnings while resuming."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

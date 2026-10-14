@@ -1677,3 +1677,8 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .workout-edit-fields:disabled input, .workout-edit-fields:disabled textarea, .workout-edit-fields:disabled select { opacity: 1; -webkit-text-fill-color: #203449; }
 .today-addons button:disabled, .activity-card button:disabled, .add-video-toggle:disabled, .repeat-workout button:disabled { opacity: .55; cursor: default; }
 .locked-video-notice { margin: 12px 16px; font-size: 14px; }
+
+.journal-top .journal-edit-workout { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 18px; border: 1px solid #203449; border-radius: 12px; background: #203449; color: #fffaf2; font-size: 16px; font-weight: 750; box-shadow: 0 3px 8px #2034491a; flex-shrink: 0; }
+.journal-edit-workout svg { width: 20px; height: 20px; flex-shrink: 0; }
+.journal-top .journal-edit-workout:focus-visible { outline: 3px solid #b94b17; outline-offset: 3px; }
+.journal-top .journal-edit-workout:active { transform: scale(.98); background: #153048; }

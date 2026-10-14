@@ -1,3 +1,5 @@
+New public release — 2026.10.14 0200: Journal Edit workout is a prominent navy button with a pencil icon.
+
 New public release — 2026.10.13 2234: Finished workouts are locked until Edit; saving edits locks them again while retaining completion.
 
 New public release — 2026.10.13 2205: All saved videos display immediately; Add to today shows saving and saved states.
@@ -48,9 +50,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.13 2234` locks saved workouts until Edit.
+Release decision: **New public release** — `2026.10.14 0200` makes journal Edit easier to find.
 
-App, notes, tests, worker and deployment use `2026.10.13 2234`.
+App, notes, tests, worker and deployment use `2026.10.14 0200`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
