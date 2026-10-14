@@ -4,34 +4,42 @@ Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — automatic video captions
 
-Candidate release `2026.10.14 1831` adds one-tap Fetch captions & build draft,
-immediate loading/near-button feedback, cancellation/lock guards, a bounded
-local caption cache and collapsed manual fallback. Worker `/api/video-captions`
-validates exact YouTube hosts/IDs, bounds input/output/time, has best-effort
-per-isolate cooldown/concurrency limits, tries the transcript site's public GET
-page then English YouTube captions. Only the canonical video link is sent.
+Published release `2026.10.14 1831` adds one-tap Fetch captions & build draft,
+immediate loading/visible feedback, cancellation/lock guards, a bounded device
+caption cache and collapsed manual fallback. Only the canonical video link is
+sent to `/api/video-captions`; draft extraction/review and set results stay local.
 No account, key, subscription/card or environment variables changed. The earlier
-free-trial question is obsolete: actual hosted retrieval now works without it;
-unused optional paid-provider code was removed.
+free-trial question is obsolete; unused optional provider code was removed.
 
-Real Mac and hosted retrieval succeed (GRFRg4Oafxc, 211 segments / 5,954
-characters), and hosted PkcpMul77Rg also succeeds. The primary site returns 403.
-Initial failures came from Cache API availability and edge rejection of
-`redirect:error`, corrected with nonfatal cache access and manual redirects that
-reject 3xx. Deployment propagation briefly served the earlier version after a
-successful native deployment; subsequent new and canonical-path requests reached
-the fixed version (canonical repeat returned the expected one-minute cooldown).
-Backend source `5e8ca44`, Sites version 157, deployment
-`appgdep_6ad0021dead08191b2ba9a4ceea20d29` confirmed successful. Final matching
-frontend/backend publication and real browser check pending. Backend checkout
-`/private/tmp/t4l-caption-api` has separate history; use the Sites source helper.
+Worker validates exact YouTube hosts/IDs, bounds input/output/time, applies
+best-effort per-isolate cooldown/concurrency limits, tries the transcript site's
+public GET page then English YouTube captions. Primary site returns 403; direct
+YouTube retrieval succeeds locally and hosted (GRFRg4Oafxc, 211 segments / 5,954
+characters; PkcpMul77Rg also succeeds). The edge rejects `redirect:error`; manual
+redirect mode explicitly rejects 3xx instead. Cache API failure is nonfatal.
+Native deployment propagation briefly served the prior version after success;
+fresh later requests reached the fixed Worker. Successful captions reuse the
+bounded device cache; newly isolated clients on one IP can hit the expected
+one-minute same-video cooldown. No CAPTCHA/cookie bypass or media downloads.
 
-Builds/tests and iPhone external Chrome verification are being finalized. Earlier
-fixture checks verify error/retry, one-tap draft/cache, review without autosave,
-manual fallback, per-set logging, backups, Edit lock and repeat at 440/393/375.
-No new baseline TypeScript errors. Preserve unrelated untracked files. Malformed
-duplicate Git ref `refs/remotes/github/main 2` blocked fetch; its contents were
-preserved at `/tmp/t4l-invalid-git-ref-main-2` before removal.
+Frontend `cd12130` published via successful Pages run `38648400368`. Backend
+source `932e52e9`, Sites version 158, saved version
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_058ce1d99ea08191965c93d3c099574f`,
+deployment `appgdep_6ad00326e74c819186c2506f28cdc7cd` confirmed successful.
+Exact live release, JS/CSS, worker cache, icons/artwork/fallback file verified.
+Actual public GitHub-origin Chrome request returned 200 and full captions,
+built a reviewable draft without autosave, reused cache, then saved the reviewed
+plan. Full fixture flow covers errors/retry, manual fallback, different set
+weights, protected recorded rows, backups, locks, History and fresh repeat.
+Inspected external Chrome at 440/393/375 and safe-area allowance. 127 app tests,
+13 rendered checks, 20 focused caption checks and both builds pass; TypeScript
+retains only eight baseline diagnostics.
+
+Backend checkout `/private/tmp/t4l-caption-api` has separate Git history; use the
+Sites source helper and renewed credential for subsequent worker deployment.
+Preserve unrelated untracked files. Malformed duplicate Git ref
+`refs/remotes/github/main 2` blocked fetch; contents were preserved at
+`/tmp/t4l-invalid-git-ref-main-2` before removal. No required work remains.
 
 ## Previous change — reusable video plans and set results
 
