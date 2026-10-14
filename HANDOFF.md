@@ -12,7 +12,9 @@ and release footer inside 440×893/860 viewports and a 956px viewport with
 62px top + 34px bottom safe-area allowance; fonts remain unchanged.
 Phone/tablet/desktop screenshots inspected. Production/Pages builds and 13
 rendered checks pass; What’s New and all Home destinations tested in external
-Chrome. Publication verification pending.
+Chrome. Published `8647073` via successful Pages run `38522214855`. Live
+release 0224 and exact JS/CSS/worker/art/icons verified; phone fit, safe-area
+allowance, What’s New and Home navigation tests pass publicly.
 
 ## Previous change — journal Edit beside Share workflow
 
