@@ -29,7 +29,11 @@ Production/Pages builds, 13 rendered checks, all 107 app regressions and three
 fallback tests pass. External Chrome passes caption file/paste, draft/review,
 weights, typing focus, warm-up comparison, retained rows, backup contents,
 reload/lock, History and next-day repeat. Inspected 440×956, 393×852, 375×812
-and 440×860 with 62px top/34px bottom safe-area allowance. Publication pending. Typecheck retains 8 baseline
+and 440×860 with 62px top/34px bottom safe-area allowance. Published code
+`bf74c13` through successful Pages run `38633845964`. Live release label,
+JS/CSS, service worker, icons, illustrations and downloadable fallback match
+the tested build; the full external Chrome workflow also passes live.
+Typecheck retains 8 baseline
 errors. Optional retrieval preference question had no answer; proceeded with the
 free import workflow as stated in commentary.
 
