@@ -12,7 +12,9 @@ No storage changes. Production/Pages builds, 13 rendered checks and 2 video
 regressions pass. External Chrome verifies all 39 videos on initial open, filter
 switching, added/disabled state, transaction failure + retry, reload, Recent
 consistency and preserved notes; phone/tablet/desktop layouts inspected.
-Publication/live verification pending.
+Published `13e3e22` via successful Pages run `38499630656`. Live release
+2205 and exact JS/CSS/worker/art/icons verified; all 39/add/retry/reload checks
+also pass against public app.
 
 ## Previous change — seated Mobility and unified filters
 
