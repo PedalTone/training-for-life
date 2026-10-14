@@ -18,7 +18,10 @@ Production/Pages builds, 13 rendered checks and all 89 regression checks pass.
 External Chrome verifies completed reload locks, all mutation controls, Settings
 additions, completion retention during Edit, cancel/save/relock, backup contents,
 playback/share and historical Edit scoped to one date. Phone/tablet/desktop
-lock banners inspected. Typecheck retains 8 pre-existing diagnostics. Publish pending.
+lock banners inspected. Typecheck retains 8 pre-existing diagnostics. Published
+`cd9979c` via successful Pages run `38502109599`. Live release 2234 and exact
+JS/CSS/worker/art/icons verified; the full browser lock/Edit/save and historical
+date tests pass on public app.
 
 ## Previous change — video All filter and add confirmation
 
