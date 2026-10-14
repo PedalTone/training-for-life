@@ -1,10 +1,17 @@
 import type { Session } from './page';
 export type ProgressEntry = {session:Session;key:string;theme:string};
+const workoutTypes: [string,string][] = [['strength','Strength'],['endurance','Endurance'],['speed','Speed'],['aerobic','Easy aerobic'],['mobility','Mobility'],['rest','Recovery']];
+export function trainingMix(entries:ProgressEntry[], counts:Map<string,number>) {
+ const labels=new Map(workoutTypes);
+ for(const entry of entries) if(!labels.has(entry.key))labels.set(entry.key,entry.theme);
+ const total=[...counts.values()].reduce((sum,count)=>sum+count,0);
+ return [...labels].map(([key,label])=>{const count=counts.get(key)||0;return {key,label,count,percentage:total?count/total*100:0};}).sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label));
+}
 const day = (date:string) => Date.parse(`${date}T12:00:00Z`) / 86400000;
 export function localProgress(entries:ProgressEntry[], today:string, weeks:number, library:string[]) {
  const past=entries.filter(e=>e.session.date<=today).sort((a,b)=>b.session.date.localeCompare(a.session.date));
  const period=past.filter(e=>day(today)-day(e.session.date)<weeks*7);
- const finished=period.filter(e=>e.session.status==='completed'||e.session.status==='rest');
+ const finished=period.filter(e=>e.session.status==='completed'||e.session.status==='rest'||Boolean(e.session.completedAt));
  const counts=new Map<string,number>();
  for(const e of finished) counts.set(e.key,(counts.get(e.key)||0)+1);
  const exerciseCounts=new Map<string,number>();
@@ -25,5 +32,5 @@ export function localProgress(entries:ProgressEntry[], today:string, weeks:numbe
   const days=Math.round(day(today)-day(last.session.date));
   return days>=14?[{name,days,date:last.session.date}]:[];
  }).sort((a,b)=>b.days-a.days||a.name.localeCompare(b.name)).slice(0,3);
- return {counts,exercises,supporting,finished,comparisons,revisit};
+ return {counts,mix:trainingMix(past,counts),exercises,supporting,finished,comparisons,revisit};
 }

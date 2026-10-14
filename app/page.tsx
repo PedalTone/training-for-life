@@ -223,9 +223,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.14 0302";
+const APP_VERSION = "2026.10.14 0808";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["History replaces Month with a scrollable 12-week timeline. Earlier/Later arrows browse three weeks at a time; Back to this week returns to recent workouts. Subtle icon colors reveal training patterns while green checks and red body-note flags stay distinct."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Progress shows each workout type’s percentage and completed days, sorted most to least with History’s category colors. Missing types stay visible at 0%, and completed add-ons open below the chart. Choose 4, 8 or 12 weeks to see your training mix."] },
+  { version: "2026.10.14 0302", category: "Major fix", changes: ["History replaces Month with a scrollable 12-week timeline. Earlier/Later arrows browse three weeks at a time; Back to this week returns to recent workouts. Subtle icon colors reveal training patterns while green checks and red body-note flags stay distinct."] },
   { version: "2026.10.14 0224", category: "Minor fix", changes: ["Home uses slightly tighter phone card padding and spacing so the complete menu, including Settings, fits more comfortably. Text sizes and artwork stay the same."] },
   { version: "2026.10.14 0203", category: "Minor fix", changes: ["The prominent journal Edit workout button is full-width and sits directly above Share workout, grouping the main actions together."] },
   { version: "2026.10.14 0200", category: "Minor fix", changes: ["Edit workout is a prominent navy button with a pencil icon at the top of the journal, making it easier to find."] },
@@ -234,7 +235,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.13 1456", category: "Minor fix", changes: ["Mobility uses a recognizable seated toe-touch stretch on a mat. Body notes only is inside Filters and combines with search, workout type and dates, keeping the History tabs uncluttered."] },
   { version: "2026.10.13 1425", category: "Minor fix", changes: ["Mobility uses a more defined person in a side-bending stretch with an overhead arm, instead of a basic stick figure."] },
   { version: "2026.10.13 1422", category: "Minor fix", changes: ["History Speed workouts use a navy runner with motion lines to clearly distinguish faster running from easy aerobic activity."] },
-  { version: "2026.10.13 1419", category: "Minor fix", changes: ["Body notes list flags are red to match History markers. Strength uses a recognizable navy dumbbell outline."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

@@ -21,7 +21,7 @@ Run this checklist before every patch and release. The goal is to verify the com
 - [ ] Today: the correct date and workout type appear; controls are readable; Finish + Backup has a clear saved/completed state; reopening the day preserves data.
 - [ ] Plan: dates are chronological, today is obvious, schedule icons match the active mapping, and the compact intro does not crowd the calendar.
 - [ ] History: 12 chronological weeks scroll with the current week initially visible; Earlier/Later move three weeks and load older windows at the edges; Back to this week and journal-return position work; prior schedule snapshots are used; blank/unassigned days do not show false Rest; icons and status marks remain readable.
-- [ ] Performance: rhythm, streak, consistency, weekly completion, injuries, goals context, and AI insights are separate from History.
+- [ ] Progress: percentage bars use all completed days as the denominator, including labeled recovery; zero core/previously recorded types remain visible; 4/8/12 weeks update counts/order/observations; colors match History; completed add-ons expand and exclude uncompleted selections; comparisons and saved reports remain available.
 - [ ] Settings: collapsible sections—including Future workout videos—start closed; mobility editing, reference photos, descriptions, schedule mapping, YouTube links, backup, and restore remain usable.
 
 ## 4. Persistence and regression checks

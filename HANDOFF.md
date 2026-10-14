@@ -2,7 +2,23 @@
 
 Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — weekly History timeline
+## Current change — Progress training mix
+
+Release `2026.10.14 0808` implements the approved percentage-bar mockup:
+cream/navy card, underlined 4/8/12-week choices, ranked counts/shares with shared
+History colors, missing types retained at zero, most frequent/not recorded copy,
+and collapsed completed add-ons. Recovery is included and explicitly labeled;
+add-ons are separate. Prior additional/custom types remain listed at zero even
+when outside the period. Legacy completedAt counts agree with History. No
+storage/schema changes. Seven focused data tests pass. External Chrome verifies
+20-day sample percentages/bar lengths, zero Mobility, all periods, completed
+add-ons, selected-only exclusion, journal preservation and empty state. Inspected
+440×956, 393×852 and 440×860 with 62px top/34px bottom safe-area allowance.
+Also inspected 375×812 with a long custom workout name and legacy completion.
+Production/Pages builds, 13 rendered checks and all 95 regression checks pass.
+Typecheck retains eight pre-existing diagnostics. Publication pending.
+
+## Previous change — weekly History timeline
 
 Release `2026.10.14 0302` replaces Month with a 12-week scrollable timeline,
 three-week Earlier/Later jumps, older windows at the edges, and Back to this

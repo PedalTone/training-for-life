@@ -1,3 +1,5 @@
+New public release — 2026.10.14 0808: Progress shows ranked percentage bars, explicit missing workout types and a cleaner completed add-ons section.
+
 New public release — 2026.10.14 0302: History replaces Month with a 12-week scrolling timeline, Earlier/Later navigation and subtle workout colors.
 
 New public release — 2026.10.14 0224: Compact phone Home spacing keeps the complete menu visible without smaller text.
@@ -56,9 +58,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.14 0302` makes weekly History easier to browse and training patterns easier to spot.
+Release decision: **New public release** — `2026.10.14 0808` makes completed training proportions and missing types clear.
 
-App, notes, tests, worker and deployment use `2026.10.14 0302`.
+App, notes, tests, worker and deployment use `2026.10.14 0808`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
