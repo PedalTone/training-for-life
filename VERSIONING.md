@@ -1,3 +1,5 @@
+New public release — 2026.10.13 2205: All saved videos display immediately; Add to today shows saving and saved states.
+
 New public release — 2026.10.13 1456: Clear seated Mobility stretch and Body notes integrated into journal Filters.
 
 New public release — 2026.10.13 1425: Mobility has a shaped side-bending figure with an overhead arm.
@@ -44,9 +46,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.13 1456` clarifies Mobility and consolidates History filters.
+Release decision: **New public release** — `2026.10.13 2205` fixes saved video filtering and add confirmation.
 
-App, notes, tests, worker and deployment use `2026.10.13 1456`.
+App, notes, tests, worker and deployment use `2026.10.13 2205`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

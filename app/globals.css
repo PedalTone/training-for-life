@@ -1664,3 +1664,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .journal-body-filter span { display: inline-flex; align-items: center; gap: 8px; }
 .journal-body-filter b, .journal-result-flag { color: #b3332b; font-size: 20px; }
 .history-day-icon svg { width: 30px; height: 30px; }
+
+.more-page .video-actions > .video-add-today.video-added-today { background: #e4ecdf; color: #386047; border: 1px solid #bfd0b9; opacity: 1; }
+.video-add-today:disabled { cursor: default; }

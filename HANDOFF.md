@@ -2,7 +2,19 @@
 
 Updated October 13, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — seated Mobility and unified filters
+## Current change — video All filter and add confirmation
+
+Release `2026.10.13 2205` fixes All-filter ternary precedence through a shared
+filter helper. Future/Recent Add buttons use today’s actual saved video IDs, show
+Adding… then green ✓ Added to today, prevent duplicate taps during saves and
+show failures without marking success. Parent updates sessionRef after saving.
+No storage changes. Production/Pages builds, 13 rendered checks and 2 video
+regressions pass. External Chrome verifies all 39 videos on initial open, filter
+switching, added/disabled state, transaction failure + retry, reload, Recent
+consistency and preserved notes; phone/tablet/desktop layouts inspected.
+Publication/live verification pending.
+
+## Previous change — seated Mobility and unified filters
 
 Release `2026.10.13 1456` replaces Mobility/Yoga/Pilates with a seated toe-touch
 pictogram on a mat. Body notes only moves into Filters, combines with query/type/
