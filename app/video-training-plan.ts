@@ -1,0 +1,104 @@
+export type PlannedVideoSet = { id:string; reps:string; work:string; rest:string };
+export type VideoExercise = { id:string; name:string; setsSpecified:boolean; sets:PlannedVideoSet[]; evidence:string };
+export type VideoTrainingPlan = { version:1; exercises:VideoExercise[]; notes:string; source:'transcript'|'manual'; reviewedAt:string };
+export type VideoSetResult = { weight:string; unit:'lb'|'kg'; load:'single'|'pair'|'bodyweight'; reps:string; work:string; done:boolean; warmup:boolean };
+export const emptyResult = ():VideoSetResult => ({weight:'',unit:'lb',load:'single',reps:'',work:'',done:false,warmup:false});
+export const emptyPlannedSet = ():PlannedVideoSet => ({id:crypto.randomUUID(),reps:'',work:'',rest:''});
+export const emptyVideoExercise = ():VideoExercise => ({id:crypto.randomUUID(),name:'',setsSpecified:false,sets:[emptyPlannedSet()],evidence:''});
+const words:Record<string,number> = {one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,ninety:90};
+function numbers(text:string) { return text.toLowerCase().replace(/\b(twenty|thirty|forty|fifty|sixty|ninety)[ -](one|two|three|four|five|six|seven|eight|nine)\b/g,(_,a,b)=>String(words[a]+words[b])).replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|ninety)\b/g,w=>String(words[w])); }
+export function cleanCaptions(text:string) {
+ if(text.length>300_000)throw new Error('Choose a transcript shorter than 300,000 characters.');
+ const lines=text.replace(/\r/g,'').split('\n'),out:string[]=[];let previous='';let metadata=false;
+ for(let index=0;index<lines.length;index++){const raw=lines[index];const line=raw.trim();if(/^(?:NOTE|STYLE|REGION)(?:\s|$)/.test(line)){metadata=true;continue;}if(!line){metadata=false;continue;}if(metadata||/^WEBVTT|^Kind:|^Language:|-->/.test(line)||/^\d+$/.test(line)&&lines[index+1]?.includes('-->'))continue;
+ const plain=line.replace(/^\[?(?:\d{1,2}:)?\d{1,2}:\d{2}(?:[.,]\d{1,3})?\]?(?:\s+|$)/,'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/\[(?:music|applause)\]/gi,'').trim();if(!plain||plain===previous)continue;
+ // YouTube auto-captions repeat a rolling window. Remove overlap, not repeated sets.
+ const a=previous.split(/\s+/),b=plain.split(/\s+/);let overlap=0;
+ for(let n=Math.min(a.length,b.length);n>=2;n--)if(a.slice(-n).join(' ')===b.slice(0,n).join(' ')){overlap=n;break;}
+ const fresh=b.slice(overlap).join(' ');if(fresh)out.push(fresh);previous=plain;
+ }return out.join('\n');
+}
+const exercises:[string,string][] = [
+ ['Bulgarian split squat','bulgarian split squats?'],['Romanian deadlift','romanian deadlifts?|r\\.?d\\.?l\\.?s?'],['Goblet squat','goblet squats?'],['Split squat','split squats?'],['Reverse lunge','reverse lunges?'],['Walking lunge','walking lunges?'],['Kettlebell swing','(?:kettlebell |kb )?swings?'],['Kettlebell halo','(?:kettlebell |head )?halos?'],['Turkish get-up','turkish get[ -]?ups?'],['Clean and press','cleans? (?:and|&) press(?:es)?'],['Overhead press','(?:overhead|shoulder|military) press(?:es)?'],['Bent-over row','bent[ -]over rows?'],['Single-arm row','(?:single[ -]arm|one[ -]arm) rows?'],['Upright row','upright rows?'],['Farmer carry',"farmer(?:'s|s)? carr(?:y|ies)"],['Glute bridge','(?:glute|hip) bridges?'],['Hip thrust','hip thrusts?'],['Push-up','push[ -]?ups?'],['Pull-up','pull[ -]?ups?'],['Dead hang','dead hangs?'],['Face pull','face pulls?'],['Bench press','(?:bench|chest) press(?:es)?'],['Triceps extension','triceps? extensions?'],['Biceps curl','(?:biceps?|hammer) curls?'],['Lateral raise','lateral raises?'],['Side plank','side planks?'],['Plank','(?:forearm |high )?planks?'],['Mountain climber','mountain climbers?'],['Russian twist','russian twists?'],['Dead bug','dead bugs?'],['Bird dog','bird dogs?'],['Hollow hold','hollow (?:body )?holds?'],['Squat','squats?'],['Deadlift','deadlifts?'],['Lunge','lunges?'],['Snatch','(?:kettlebell |dumbbell )?snatches?'],['Thruster','thrusters?'],['Calf raise','calf raises?'],['Wall sit','wall sits?'],['Burpee','burpees?']
+];
+const exercisePattern=new RegExp('\\b('+exercises.map(([,pattern])=>`(?:${pattern})`).join('|')+')\\b','gi');
+export function draftVideoPlan(captions:string):VideoTrainingPlan {
+ const text=cleanCaptions(captions);if(!text.trim())throw new Error('No caption text found. Paste or upload the transcript first.');
+ const matches=[...text.matchAll(exercisePattern)];const rows:VideoExercise[]=[];const seen=new Set<string>();
+ for(let i=0;i<matches.length&&rows.length<60;i++){
+  const match=matches[i],start=match.index!,end=matches[i+1]?.index??Math.min(text.length,start+240);
+  const before=text.slice(Math.max(0,start-70),start).split(/[.!?\n]/).at(-1)||'';
+  if(/\b(?:not doing|won't do|instead of|no)\s*(?:any\s*)?$/i.test(before))continue;
+  const name=exercises.find(([,pattern])=>new RegExp(`^(?:${pattern})$`,'i').test(match[0]))![0];
+  const after=text.slice(start,Math.min(end,start+240)).split(/\n\s*\n/)[0];
+  const prefix=numbers(before);const local=numbers(after);const context=local.split(/\b(?:then|up next|next|move into|move to)\b/i)[0];
+  const setText=context.match(/\b(\d{1,2}(?:\s*(?:to|[-–])\s*\d{1,2})?)\s*sets?\b/)?.[1]||prefix.match(/\b(\d{1,2})\s*sets?(?:\s+of\s+\d{1,3})?\s*$/)?.[1]||'';
+  const count=/^\d+$/.test(setText)&&Number(setText)<=20&&Number(setText)>0?Number(setText):0;
+  const reps=context.match(/\bsets?\s+of\s+(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\b/)?.[1]||context.match(/\b(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\s*(?:reps?|repetitions?)\b/)?.[1]||prefix.match(/\b(\d{1,3})\s*$/)?.[1]||'';
+  const rest=context.match(/\b(?:rest|recovery|break)(?:\s+for)?\s+(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?\s*(?:seconds?|secs?|minutes?|mins?))\b/)?.[1]||context.match(/\b(\d{1,3}\s*(?:seconds?|secs?|minutes?|mins?))\s*(?:of\s+)?(?:rest|recovery|break)\b/)?.[1]||'';
+  const withoutRest=context.replace(/\b(?:rest|recovery|break)(?:\s+for)?\s+\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?\s*(?:seconds?|secs?|minutes?|mins?)\b/g,'').replace(/\b\d{1,3}\s*(?:seconds?|secs?|minutes?|mins?)\s*(?:of\s+)?(?:rest|recovery|break)\b/g,'');
+  const duration='(\\d{1,3}(?:\\s*(?:to|[-–])\\s*\\d{1,3})?\\s*(?:seconds?|secs?|minutes?|mins?))';
+  const body=withoutRest.slice(numbers(match[0]).length).replace(/^[\s:,-]+/,'');
+  const work=body.match(new RegExp('^'+duration+'\\b'))?.[1]||withoutRest.match(new RegExp('\\b(?:for|hold(?:\\s+for)?|work(?:\\s+for)?)\\s+'+duration+'\\b'))?.[1]||withoutRest.match(new RegExp('\\b'+duration+'\\s*(?:of\\s+)?work\\b'))?.[1]||prefix.match(new RegExp('\\bfor\\s+'+duration+'\\s*$'))?.[1]||'';
+  if(seen.has(name)&&!count&&!reps&&!work)continue;
+  seen.add(name);
+  rows.push({id:crypto.randomUUID(),name,setsSpecified:Boolean(count),sets:Array.from({length:count||1},()=>({...emptyPlannedSet(),reps,work,rest})),evidence:(before+' '+after).trim().slice(0,320)});
+ }
+ const overview=text.split(/[.!?\n]/).filter(line=>/\b(?:rounds?|circuits?|rest|work interval)\b/i.test(line)).slice(0,6).map(line=>line.trim()).filter(Boolean).join('\n').slice(0,1800);
+ return {version:1,exercises:rows,source:'transcript',reviewedAt:'',notes:(overview?'Caption instructions to review:\n'+overview+'\n\n':'')+'Draft from explicit caption cues. Check exercise order and instructions against the video. Unknown set counts use one blank logging row; add rows as needed. Circuit rounds and instructions that do not name an exercise are not expanded automatically.'};
+}
+function text(value:unknown,max=500):string{return typeof value==='string'?value.slice(0,max):'';}
+export function validateVideoPlan(value:unknown):VideoTrainingPlan|undefined {
+ if(!value||typeof value!=='object')return;const plan=value as VideoTrainingPlan;
+ if(plan.version!==1||!Array.isArray(plan.exercises)||plan.exercises.length>60)return;
+ const ids=new Set<string>();let total=0;
+ const rows:VideoExercise[]=[];
+ for(const row of plan.exercises){if(!row||!Array.isArray(row.sets)||!row.sets.length||row.sets.length>20||!text(row.id)||!text(row.name).trim()||ids.has(row.id)||['__proto__','constructor','prototype'].includes(row.id))return;ids.add(row.id);
+  const sets:PlannedVideoSet[]=[];for(const set of row.sets){if(!set||!text(set.id)||ids.has(set.id)||['__proto__','constructor','prototype'].includes(set.id))return;ids.add(set.id);sets.push({id:text(set.id),reps:text(set.reps,80),work:text(set.work,80),rest:text(set.rest,80)});}total+=sets.length;if(total>500)return;
+  rows.push({id:text(row.id),name:text(row.name,160).trim(),setsSpecified:row.setsSpecified===true,sets,evidence:text(row.evidence,500)});
+ }
+ if(!rows.length)return;
+ return {version:1,exercises:rows,source:plan.source==='transcript'?'transcript':'manual',notes:text(plan.notes,3000),reviewedAt:text(plan.reviewedAt,80)};
+}
+export function sanitizeVideoTraining<T extends object>(video:T):T {
+ if(!video||typeof video!=='object')return video;
+ const raw=video as T&{trainingPlan?:unknown;trainingResults?:unknown};
+ if(!('trainingPlan' in raw)&&!('trainingResults' in raw))return video;
+ const trainingPlan=validateVideoPlan(raw.trainingPlan);const trainingResults:Record<string,VideoSetResult>={};
+ const allowed=new Set(trainingPlan?.exercises.flatMap(row=>row.sets.map(set=>set.id))||[]);
+ if(raw.trainingResults&&typeof raw.trainingResults==='object')for(const [id,item] of Object.entries(raw.trainingResults)){if(!allowed.has(id)||!item||typeof item!=='object')continue;const value=item as VideoSetResult;trainingResults[id]={weight:text(value.weight,40),unit:value.unit==='kg'?'kg':'lb',load:['single','pair','bodyweight'].includes(value.load)?value.load:'single',reps:text(value.reps,80),work:text(value.work,80),done:value.done===true,warmup:value.warmup===true};}
+ return {...video,trainingPlan,trainingResults:Object.keys(trainingResults).length?trainingResults:undefined};
+}
+export function videoForNextWorkout<T extends object>(video:T):T {
+ const next={...sanitizeVideoTraining(video)} as T&{trainingResults?:unknown};delete next.trainingResults;return next;
+}
+
+export type StrengthSetSnapshot={date:string;reps:number;weight:number;unit:'lb'|'kg';load:VideoSetResult['load']};
+export function strengthSetComparisons(entries:{session:{date:string;videos?:{trainingPlan?:VideoTrainingPlan;trainingResults?:Record<string,VideoSetResult>}[]}}[],today:string,weeks:number) {
+ const groups=new Map<string,{name:string;days:Map<string,StrengthSetSnapshot>}>();
+ const loads=new Map<string,{name:string;days:Map<string,StrengthSetSnapshot>}>();
+ const day=(date:string)=>Date.parse(date+'T12:00:00Z')/86400000;
+ for(const {session} of entries){if(session.date>today||day(today)-day(session.date)>=weeks*7)continue;
+  for(const video of session.videos||[]){const plan=validateVideoPlan(video.trainingPlan);if(!plan)continue;
+   for(const exercise of plan.exercises)for(const set of exercise.sets){const result=video.trainingResults?.[set.id];if(!result?.done||result.warmup||typeof result.reps!=='string'||typeof result.weight!=='string'||!['lb','kg'].includes(result.unit)||!['single','pair','bodyweight'].includes(result.load)||!/^\d{1,4}$/.test(result.reps.trim()))continue;const reps=Number(result.reps);const weight=result.load==='bodyweight'?0:Number(result.weight);if(reps<1||reps>1000||result.load!=='bodyweight'&&(!result.weight.trim()||!Number.isFinite(weight)||weight<=0||weight>1000))continue;
+    const key=[exercise.name.trim().toLowerCase(),result.load,result.load==='bodyweight'?'bodyweight':result.unit,weight].join('|');
+    let group=groups.get(key);if(!group){group={name:exercise.name,days:new Map()};groups.set(key,group);}const prior=group.days.get(session.date);if(!prior||reps>prior.reps)group.days.set(session.date,{date:session.date,reps,weight,unit:result.unit,load:result.load});
+    if(result.load!=='bodyweight'){const loadKey=[exercise.name.trim().toLowerCase(),result.load,result.unit,reps].join('|');let loadGroup=loads.get(loadKey);if(!loadGroup){loadGroup={name:exercise.name,days:new Map()};loads.set(loadKey,loadGroup);}const oldLoad=loadGroup.days.get(session.date);if(!oldLoad||weight>oldLoad.weight)loadGroup.days.set(session.date,{date:session.date,reps,weight,unit:result.unit,load:result.load});}
+   }
+  }
+ }
+ const repRows=[...groups].map(([key,group])=>{const days=[...group.days.values()].sort((a,b)=>b.date.localeCompare(a.date));return {key:'reps|'+key,basis:'reps' as const,name:group.name,latest:days[0],prior:days[1]};});
+ const loadRows=[...loads].flatMap(([key,group])=>{const days=[...group.days.values()].sort((a,b)=>b.date.localeCompare(a.date));return days.length>1&&days[0].weight!==days[1].weight?[{key:'weight|'+key,basis:'weight' as const,name:group.name,latest:days[0],prior:days[1]}]:[];});
+ return [...loadRows,...repRows].sort((a,b)=>b.latest.date.localeCompare(a.latest.date)||a.name.localeCompare(b.name)).slice(0,12);
+}
+
+export function completeVideoSet(result:VideoSetResult,planned:PlannedVideoSet,done:boolean):Partial<VideoSetResult> {
+ if(!done)return {done:false};
+ return {done:true,reps:result.reps||(/^\d{1,3}$/.test(planned.reps.trim())?planned.reps.trim():''),work:result.work||planned.work};
+}
+
+export function canonicalVideoURL(video:{url:string;videoId?:string}) {
+ let id=video.videoId||'';
+ if(!/^[\w-]{11}$/.test(id)){try{const url=new URL(video.url);const host=url.hostname.toLowerCase();if(!['http:','https:'].includes(url.protocol))return '';id=host==='youtu.be'?url.pathname.split('/')[1]:['youtube.com','www.youtube.com','m.youtube.com'].includes(host)?url.searchParams.get('v')||url.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]{11})/)?.[1]||'':'';}catch{return '';}}
+ return /^[\w-]{11}$/.test(id)?`https://www.youtube.com/watch?v=${id}`:'';
+}

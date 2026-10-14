@@ -172,3 +172,59 @@ Completed workouts are read-only until Edit is chosen on Today or the journal. C
 History uses a 12-week scrolling timeline with Earlier/Later arrows moving three weeks at a time and loading older periods at the edges. Back to this week returns to the current week. Browsing position is preserved when opening a journal and returning. Subtle workout icon colors help reveal training patterns; completion checks remain green and body-note flags remain red. Search and Body notes only remain inside Filters; Nutrition follows the timeline.
 
 Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The six core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
+
+## Video plans and set logging
+
+In Settings → Future workout videos → Build workout plan, create a plan from
+pasted captions, `.txt`/`.vtt`/`.srt`, or an imported version-1 JSON plan. Copy the
+canonical video link and open YouTube to Transcript to obtain captions. The
+frontend does not automatically fetch captions: the service blocked automated
+form submission, and this workflow uses its normal page without keys or a paid
+API. Caption processing is local, uses explicit exercise/volume cues and requires
+review; it is not an AI interpretation of the complete video. Unknown movements
+can be added manually, unknown set counts stay labeled, and circuit instructions
+are retained in notes without silently expanding rounds. Source cue excerpts
+are retained with exercises; full captions are not stored in workout backups.
+
+Save reusable plan creates/updates the video blueprint in the library. Adding a
+video to Today or repeating a prior workout copies the blueprint without old
+weights, warm-up flags or completion. In Today → Workout → Workout videos →
+Workout plan, enter each set’s weight/unit/load and actual reps/time. Marking a
+set complete uses a specified exact rep/time target only when actual values are
+blank; shorter entered results are preserved. Ranges/unknown reps are not turned
+into exact counts. Warm-ups stay recorded but are excluded from comparisons.
+Recorded set rows cannot be dropped when saving a replacement plan. Completed
+workouts respect the existing Edit lock. Library edits do not rewrite older
+workout snapshots. Optional fields `Video.trainingPlan` and `trainingResults`
+are included in existing schema-1 backups; old backups remain compatible.
+
+Progress → Recorded strength sets compares the best completed non-warm-up set
+per day at the same exercise, unit and load setup: reps at the same weight, or
+changed weight at the same reps, within the selected period. Numeric actual reps are required. Results are descriptive;
+no estimated max or automatically prescribed load is generated. History shows
+read-only plans/results and links to the normal Edit workout flow.
+
+The optional [caption fallback](public/video-caption-fallback.py) runs on a
+computer, only after the primary site returns empty. It requires an existing
+`yt-dlp` installation, prefers uploader English captions, otherwise selects one
+English auto-caption track, never downloads media or reads browser cookies, and
+reuses `caption-cache/<video-id>.txt`. No automatic retry loop is used.
+
+```sh
+python3 public/video-caption-fallback.py 'https://www.youtube.com/watch?v=VIDEO_ID' --site-empty
+python3 public/video-caption-fallback.py --captions /path/to/captions.vtt
+python3 tests/video-caption-fallback.test.py
+```
+
+Prepared JSON plans (including plans authored here from a transcript) use this
+shape. All exercise/set IDs must be unique. Weight/results are excluded:
+
+```json
+{"version":1,"source":"transcript","reviewedAt":"","notes":"Coach's circuit instructions",
+ "exercises":[{"id":"exercise-1","name":"Goblet squat","setsSpecified":true,
+ "evidence":"Coach explicitly says one set of ten reps, then twenty seconds rest.",
+ "sets":[{"id":"set-1","reps":"10","work":"","rest":"20 sec"}]}]}
+```
+
+Import remains a draft until the user reviews and saves it. Limits: 60 exercises,
+20 rows per exercise, 500 rows total; transcript text 300,000 characters, files 1 MB.

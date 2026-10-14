@@ -2,7 +2,38 @@
 
 Updated October 14, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Progress training mix
+## Current change — reusable video plans and set results
+
+Release `2026.10.14 1633` adds local caption paste/file import and
+version-1 prepared JSON plan import to video cards in Future videos and Today.
+Drafts identify explicit known exercise/volume cues, retain source excerpts and
+circuit instructions, leave unknowns unspecified and require review. This is a
+free import workflow, not automatic caption retrieval or AI interpretation:
+direct primary-site POST was blocked (403), so Copy video link + standard site
+link is used. Downloadable `public/video-caption-fallback.py` is an on-demand
+computer helper; existing yt-dlp is required, one English caption track is
+selected, no media/cookies, cache reused, zero retry loop. Real caption download
+was not attempted (yt-dlp unavailable); cleanup and retrieval/caching paths tested
+with fixtures/mocked subprocesses. No API service or credentials changed.
+
+Blueprints live on `Video.trainingPlan`, dated weights/reps/time/unit/load/done/
+warm-up on `trainingResults`. Existing schema-1 backup includes both. Libraries
+keep only blueprints; repeat/add-to-today clear results; dated snapshots remain
+independent. Recorded rows cannot be discarded by replacing a plan. Completion
+fills specified exact reps/time only when blank; shorter actuals remain intact.
+Finished workouts follow Edit lock. History is read-only. Progress compares best
+completed non-warm-up sets: actual reps at identical exercise/load/unit/weight,
+or changed weight at matching reps/unit/setup, within selected weeks. Today now loads shared history for immediate repeat availability.
+
+Production/Pages builds, 13 rendered checks, all 107 app regressions and three
+fallback tests pass. External Chrome passes caption file/paste, draft/review,
+weights, typing focus, warm-up comparison, retained rows, backup contents,
+reload/lock, History and next-day repeat. Inspected 440×956, 393×852, 375×812
+and 440×860 with 62px top/34px bottom safe-area allowance. Publication pending. Typecheck retains 8 baseline
+errors. Optional retrieval preference question had no answer; proceeded with the
+free import workflow as stated in commentary.
+
+## Previous change — Progress training mix
 
 Release `2026.10.14 0808` implements the approved percentage-bar mockup:
 cream/navy card, underlined 4/8/12-week choices, ranked counts/shares with shared
