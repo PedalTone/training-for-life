@@ -4,11 +4,11 @@ Updated October 15, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — exact transcript website and easy fallback
 
-Release candidate **2026.10.15 1825** uses only the user's requested
+Published release **2026.10.15 1825** uses only the user's requested
 **https://youtubetotranscript.com/** for new automatic transcript requests. On
 failure, a prominent direct free-site link appears and paste/import opens. User
-asked October 15 to continue and provide this easy fallback; publish the tested
-flow with its limitation stated. No alternate online service/account/key is used.
+asked October 15 to continue and provide this easy fallback; the tested flow is
+published with its limitation stated. No alternate online service/account/key is used.
 Do not propose TranscriptAPI again; no account, key, subscription or environment
 change was made. Its unused optional adapter was removed and deployed.
 
@@ -28,15 +28,25 @@ The direct website + manual fallback is the verified route when access fails.
 Chrome flow pass. iPhone 440/393/375 checks verify visible exact free-site link,
 automatic paste expansion, no alternate-service control, entire fixture text,
 source/count, circuit drafting, manual replacement, cache and reviewed save.
-Rendered checks rerun after updating the oldest-release expectation for ten notes.
-Frontend publishing and live verification are in progress.
+All 13 rendered checks pass; both builds pass. Typecheck retains eight existing
+diagnostics, none in changed transcript files. GitHub code `a6e2b6b` published via
+successful Pages run `38817122015`. Live JS/CSS exactly match the local build;
+release, service worker, icons, workout artwork and fallback helper verified.
+Actual public GitHub-origin Chrome website request returned website_blocked503;
+the correct free-site link appeared, paste opened, and a manual transcript built
+a draft that saved after review. Full website success remains fixture-only. No
+required fallback/release work remains; automatic website access stays blocked.
 
 Backend cleanup source `5fa9df2e436cd87ae7de25fbd54bff72f38ef161` is published
 as Sites version 160, saved version
 `appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_fc130fa3d8788191841c26dac6ca9fa8`,
 successful deployment `appgdep_6ad0e682dce88191b49199a1b179929a`.
-Backend checkout `/private/tmp/t4l-caption-api` retains frontend release 1831;
-public frontend is GitHub Pages. Legacy URL-only clients remain compatible.
+The complete matching release was then published as Sites version 161, source
+`683f15a3b7e353b373f31b6224625385f2fccb13`, saved version
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_7f6854116f40819181bf17ea49082b4d`,
+successful deployment `appgdep_6ad15370751081919a0fb4303b01d02a`. Backend checkout
+is `/private/tmp/t4l-caption-api`; public frontend is GitHub Pages. Legacy
+URL-only clients remain compatible.
 Preserve unrelated untracked files.
 
 ## Previous change — automatic video captions
