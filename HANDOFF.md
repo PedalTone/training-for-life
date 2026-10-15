@@ -2,7 +2,31 @@
 
 Updated October 15, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — exact transcript website and easy fallback
+## Current change — supplied kettlebell transcript lexicon
+
+Release candidate **2026.10.15 1854** imports the user's original 94-entry JSON
+unchanged into app/data. A local matcher recognizes 256 supplied exercise phrases,
+plural/hyphen variants, specific movements and qualifiers. Longer compound names
+win; left/right, loading and position stay visible. Generic KB press does not imply
+strict technique; ordinary speech needs exercise context. Non-exercise families
+become notes. EMOM/AMRAP durations cannot leak into adjacent exercise work time;
+per-side reps/time remain per side. No default complex scheme, weights, circuit
+expansion or saved-record migration. Existing set/result/backup schemas remain.
+
+Long exercise-name fields now wrap in a two-line editor for iPhone review. The
+JSON import uses an explicit TS module path for Node tests; allowImportingTsExtensions
+is enabled with existing noEmit. 24 focused parser checks pass, including all 256
+provided phrases, ambiguous speech, distinct variants, compounds, negation,
+per-side cues, programming scope and saved/repeated data. Typecheck retains only
+eight pre-existing diagnostics. External Chrome passes draft/no-autosave → review/
+save → Today with blank results → reload, keeping prior history/notes; inspected
+440/393/375 and safe-area allowance. Both builds, all 135 app tests and 13 rendered
+checks pass; publication/live verification pending. The existing full-transcript
+website/fallback workflow is being regression-checked with fixtures.
+Automatic website retrieval remains blocked as documented below; this change
+improves local drafting for fetched, pasted or imported transcript text.
+
+## Previous change — exact transcript website and easy fallback
 
 Published release **2026.10.15 1825** uses only the user's requested
 **https://youtubetotranscript.com/** for new automatic transcript requests. On

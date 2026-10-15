@@ -1,3 +1,4 @@
+import {findTranscriptExercises,transcriptGuidance} from './transcript-exercises.ts';
 export type PlannedVideoSet = { id:string; reps:string; work:string; rest:string };
 export type VideoExercise = { id:string; name:string; setsSpecified:boolean; sets:PlannedVideoSet[]; evidence:string };
 export type VideoTrainingPlan = { version:1; exercises:VideoExercise[]; notes:string; source:'transcript'|'manual'; reviewedAt:string };
@@ -18,25 +19,20 @@ export function cleanCaptions(text:string) {
  const fresh=b.slice(overlap).join(' ');if(fresh)out.push(fresh);previous=plain;
  }return out.join('\n');
 }
-const exercises:[string,string][] = [
- ['Bulgarian split squat','bulgarian split squats?'],['Romanian deadlift','romanian deadlifts?|r\\.?d\\.?l\\.?s?'],['Goblet squat','goblet squats?'],['Split squat','split squats?'],['Reverse lunge','reverse lunges?'],['Walking lunge','walking lunges?'],['Kettlebell swing','(?:kettlebell |kb )?swings?'],['Kettlebell halo','(?:kettlebell |head )?halos?'],['Turkish get-up','turkish get[ -]?ups?'],['Clean and press','cleans? (?:and|&) press(?:es)?'],['Overhead press','(?:overhead|shoulder|military) press(?:es)?'],['Bent-over row','bent[ -]over rows?'],['Single-arm row','(?:single[ -]arm|one[ -]arm) rows?'],['Upright row','upright rows?'],['Farmer carry',"farmer(?:'s|s)? carr(?:y|ies)"],['Glute bridge','(?:glute|hip) bridges?'],['Hip thrust','hip thrusts?'],['Push-up','push[ -]?ups?'],['Pull-up','pull[ -]?ups?'],['Dead hang','dead hangs?'],['Face pull','face pulls?'],['Bench press','(?:bench|chest) press(?:es)?'],['Triceps extension','triceps? extensions?'],['Biceps curl','(?:biceps?|hammer) curls?'],['Lateral raise','lateral raises?'],['Side plank','side planks?'],['Plank','(?:forearm |high )?planks?'],['Mountain climber','mountain climbers?'],['Russian twist','russian twists?'],['Dead bug','dead bugs?'],['Bird dog','bird dogs?'],['Hollow hold','hollow (?:body )?holds?'],['Squat','squats?'],['Deadlift','deadlifts?'],['Lunge','lunges?'],['Snatch','(?:kettlebell |dumbbell )?snatches?'],['Thruster','thrusters?'],['Calf raise','calf raises?'],['Wall sit','wall sits?'],['Burpee','burpees?']
-];
-const exercisePattern=new RegExp('\\b('+exercises.map(([,pattern])=>`(?:${pattern})`).join('|')+')\\b','gi');
 function explicitWorkoutProtocol(text:string) {
  // A named workout list followed by an explicit protocol can supersede examples
  // earlier in a video. Keep this narrow; an ordinary exercise mention is not a list.
  const compact=text.replace(/\s+/g,' ');
- const pattern=new RegExp('\\b('+exercises.map(([,exercise])=>`(?:${exercise})`).join('|')+'|press(?:es)?)\\b','gi');
- let selected:{list:string;pattern:RegExp;instructions:string;sharedWork:string}|undefined;
+ let selected:{list:string;instructions:string;sharedWork:string}|undefined;
  for(const marker of compact.matchAll(/\b(?:the\s+)?exercises\s+are\s+/gi)){
   if(!/\bworkout\b/i.test(compact.slice(Math.max(0,marker.index!-160),marker.index)))continue;
   const start=marker.index!+marker[0].length,tail=compact.slice(start,start+1500);
   const protocol=/\b(?:the\s+)?protocol\s+is\b/i.exec(tail);
   if(!protocol||protocol.index>350)continue;
   const list=tail.slice(0,protocol.index).replace(/[.!?]+\s*$/,'').trim();
-  const listed=[...list.matchAll(pattern)];
+  const listed=findTranscriptExercises(list,{allowBarePress:true});
   // Unknown movements make the scope uncertain, so leave the usual draft path alone.
-  const remainder=list.replace(pattern,'').replace(/\b(?:and|the|a|an|then)\b/gi,'');
+  let remainder=list;for(const mention of [...listed].reverse())remainder=remainder.slice(0,mention.index)+remainder.slice(mention.index+mention.text.length);remainder=remainder.replace(/\b(?:and|the|a|an|then)\b/gi,'');
   if(listed.length<2||listed.length>10||/[^\s,;:&/.-]/.test(remainder))continue;
   const instructions=tail.slice(protocol.index+protocol[0].length,protocol.index+protocol[0].length+700).trim();
   const duration=numbers(instructions).match(/\b(\d{1,2})\s+exercises\s+for\s+(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?\s*(?:seconds?|secs?|minutes?|mins?))\s+per\s+exercise\b/i);
@@ -44,37 +40,41 @@ function explicitWorkoutProtocol(text:string) {
   // remain in the full source, including later corrections or exact set targets.
   if(!duration||Number(duration[1])!==listed.length)return;
   const later=compact.slice(start+protocol.index+protocol[0].length);
-  if(new RegExp(pattern.source,'i').test(later))return;
+  if(findTranscriptExercises(later,{allowBarePress:true}).length)return;
   // Multiple workouts need review; never silently discard a later protocol.
   if(selected)return;
-  selected={list,pattern,instructions,sharedWork:duration[2]};
+  selected={list,instructions,sharedWork:duration[2]};
  }
  return selected;
 }
 export function draftVideoPlan(captions:string):VideoTrainingPlan {
  const text=cleanCaptions(captions);if(!text.trim())throw new Error('No caption text found. Paste or upload the transcript first.');
  const protocol=explicitWorkoutProtocol(text),source=protocol?.list||text;
- const matches=[...source.matchAll(protocol?.pattern||exercisePattern)];const rows:VideoExercise[]=[];const seen=new Set<string>();
+ const matches=findTranscriptExercises(source,{allowBarePress:Boolean(protocol)});const rows:VideoExercise[]=[];const seen=new Set<string>();
  for(let i=0;i<matches.length&&rows.length<60;i++){
-  const match=matches[i],start=match.index!,end=matches[i+1]?.index??Math.min(source.length,start+240);
+  const match=matches[i],start=match.index,end=matches[i+1]?.index??Math.min(source.length,start+240);
   const before=source.slice(Math.max(0,start-70),start).split(/[.!?\n]/).at(-1)||'';
-  if(/\b(?:not doing|won't do|instead of|no)\s*(?:any\s*)?$/i.test(before))continue;
-  const name=exercises.find(([,pattern])=>new RegExp(`^(?:${pattern})$`,'i').test(match[0]))?.[0]||'Press';
+  if(/\b(?:not doing|won't do|do not(?: do)?|don't(?: do)?|skip|avoid|instead of|no|not)\s*(?:(?:any|a|the)\s*)?$/i.test(before))continue;
+  const name=match.name;
   const after=source.slice(start,Math.min(end,start+240)).split(/\n\s*\n/)[0];
-  const prefix=numbers(before);const local=numbers(after);const context=local.split(/\b(?:then|up next|next|move into|move to)\b/i)[0];
+  const prefix=numbers(before);const local=numbers(after);const context=local.split(/\b(?:then|up next|next|move into|move to|EMOM|AMRAP|every minute on the minute|as many (?:rounds|reps) as possible)\b/i)[0];
   const setText=context.match(/\b(\d{1,2}(?:\s*(?:to|[-–])\s*\d{1,2})?)\s*sets?\b/)?.[1]||prefix.match(/\b(\d{1,2})\s*sets?(?:\s+of\s+\d{1,3})?\s*$/)?.[1]||'';
   const count=/^\d+$/.test(setText)&&Number(setText)<=20&&Number(setText)>0?Number(setText):0;
-  const reps=context.match(/\bsets?\s+of\s+(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\b/)?.[1]||context.match(/\b(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\s*(?:reps?|repetitions?)\b/)?.[1]||prefix.match(/\b(\d{1,3})\s*$/)?.[1]||'';
+  const perSide=/\b(?:per (?:side|arm|leg)|(?:on )?each (?:side|arm|leg))\b/i.test(context);
+  let reps=context.match(/\bsets?\s+of\s+(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\b/)?.[1]||context.match(/\b(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\s*(?:reps?|repetitions?)\b/)?.[1]||context.match(/\b(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?)\s*(?:per|(?:on )?each)\s*(?:side|arm|leg)\b/)?.[1]||prefix.match(/\b(\d{1,3})\s*$/)?.[1]||'';
+  if(reps&&perSide)reps+=' per side';
   const rest=context.match(/\b(?:rest|recovery|break)(?:\s+for)?\s+(\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?\s*(?:seconds?|secs?|minutes?|mins?))\b/)?.[1]||context.match(/\b(\d{1,3}\s*(?:seconds?|secs?|minutes?|mins?))\s*(?:of\s+)?(?:rest|recovery|break)\b/)?.[1]||'';
   const withoutRest=context.replace(/\b(?:rest|recovery|break)(?:\s+for)?\s+\d{1,3}(?:\s*(?:to|[-–])\s*\d{1,3})?\s*(?:seconds?|secs?|minutes?|mins?)\b/g,'').replace(/\b\d{1,3}\s*(?:seconds?|secs?|minutes?|mins?)\s*(?:of\s+)?(?:rest|recovery|break)\b/g,'');
   const duration='(\\d{1,3}(?:\\s*(?:to|[-–])\\s*\\d{1,3})?\\s*(?:seconds?|secs?|minutes?|mins?))';
-  const body=withoutRest.slice(numbers(match[0]).length).replace(/^[\s:,-]+/,'');
-  const work=body.match(new RegExp('^'+duration+'\\b'))?.[1]||withoutRest.match(new RegExp('\\b(?:for|hold(?:\\s+for)?|work(?:\\s+for)?)\\s+'+duration+'\\b'))?.[1]||withoutRest.match(new RegExp('\\b'+duration+'\\s*(?:of\\s+)?work\\b'))?.[1]||prefix.match(new RegExp('\\bfor\\s+'+duration+'\\s*$'))?.[1]||protocol?.sharedWork||'';
+  const body=withoutRest.slice(numbers(match.text).length).replace(/^[\s:,-]+/,'');
+  const prefixWork=/\b(?:emom|amrap|every minute|as many|rounds?|circuits?|total|workout|block)\b/i.test(prefix)?'':prefix.match(new RegExp('\\bfor\\s+'+duration+'\\s*$'))?.[1]||'';
+  let work=body.match(new RegExp('^'+duration+'\\b'))?.[1]||withoutRest.match(new RegExp('\\b(?:for|hold(?:\\s+for)?|work(?:\\s+for)?)\\s+'+duration+'\\b'))?.[1]||withoutRest.match(new RegExp('\\b'+duration+'\\s*(?:of\\s+)?work\\b'))?.[1]||prefixWork||protocol?.sharedWork||'';
+  if(work&&perSide)work+=' per side';
   if(seen.has(name)&&!count&&!reps&&!work)continue;
   seen.add(name);
   rows.push({id:crypto.randomUUID(),name,setsSpecified:Boolean(count),sets:Array.from({length:count||1},()=>({...emptyPlannedSet(),reps,work,rest})),evidence:(before+' '+after).trim().slice(0,320)});
  }
- const overview=protocol?protocol.instructions:(text.split(/[.!?\n]/).filter(line=>/\b(?:rounds?|circuits?|rest|work interval)\b/i.test(line)).slice(0,6).map(line=>line.trim()).filter(Boolean).join('\n').slice(0,1800));
+ const overview=protocol?protocol.instructions:transcriptGuidance(text);
  return {version:1,exercises:rows,source:'transcript',reviewedAt:'',notes:(overview?'Transcript instructions to review:\n'+overview+'\n\n':'')+'Draft from explicit transcript instructions. Check exercise order and instructions against the video. Unknown set counts use one blank logging row; add rows as needed. Circuit rounds and instructions that do not name an exercise are not expanded automatically.'};
 }
 function text(value:unknown,max=500):string{return typeof value==='string'?value.slice(0,max):'';}

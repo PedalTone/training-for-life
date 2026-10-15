@@ -1791,3 +1791,5 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .video-transcript-text{max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;line-height:1.6;padding:12px;border:1px solid #dcd2c2;border-radius:10px;background:#fffaf2;color:#203449;-webkit-overflow-scrolling:touch}
 
 .video-transcript-fallback{padding:12px 14px;border:1px solid var(--border,#ddd4c7);border-radius:12px;background:var(--cream,#fff9f0)}.video-transcript-fallback>a{display:flex;align-items:center;min-height:44px;font-weight:700;font-size:16px}.video-transcript-fallback>p{font-size:16px;line-height:1.5;margin:4px 0 0}
+
+.video-plan-editor textarea.video-exercise-name{min-height:72px;resize:vertical;line-height:1.5}

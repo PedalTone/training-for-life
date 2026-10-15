@@ -1,0 +1,1609 @@
+{
+  "name": "Training 4 Life — Kettlebell Transcript Lexicon",
+  "version": "1.0",
+  "purpose": "Normalize speech-to-text workout transcripts into consistent kettlebell exercise terminology.",
+  "normalization_guidance": {
+    "case_insensitive": true,
+    "strip_optional_prefixes": [
+      "kettlebell",
+      "KB"
+    ],
+    "preserve_laterality": [
+      "left",
+      "right"
+    ],
+    "preserve_loading": [
+      "single",
+      "double",
+      "one bell",
+      "two bells"
+    ],
+    "preserve_position": [
+      "goblet",
+      "rack",
+      "front rack",
+      "suitcase",
+      "overhead",
+      "bottoms-up"
+    ],
+    "do_not_collapse_examples": [
+      "strict press vs push press vs jerk",
+      "Russian swing vs American swing",
+      "clean vs dead clean vs swing clean",
+      "snatch vs half snatch",
+      "goblet squat vs front/rack squat"
+    ]
+  },
+  "entries": [
+    {
+      "canonical": "kettlebell swing",
+      "aliases": [
+        "kb swing",
+        "bell swing",
+        "two hand swing",
+        "two-handed swing"
+      ],
+      "recognition_candidates": [
+        "bell swing",
+        "kb swing",
+        "kettlebell swing",
+        "two hand swing",
+        "two-handed swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "two-hand",
+        "single-arm",
+        "alternating",
+        "hand-to-hand",
+        "dead-stop",
+        "Russian",
+        "American"
+      ]
+    },
+    {
+      "canonical": "single-arm swing",
+      "aliases": [
+        "one arm swing",
+        "one-arm swing",
+        "single hand swing"
+      ],
+      "recognition_candidates": [
+        "one arm swing",
+        "one-arm swing",
+        "single hand swing",
+        "single-arm swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "left",
+        "right",
+        "alternating"
+      ]
+    },
+    {
+      "canonical": "two-hand swing",
+      "aliases": [
+        "two handed swing",
+        "two-handed swing",
+        "double hand swing"
+      ],
+      "recognition_candidates": [
+        "double hand swing",
+        "two handed swing",
+        "two-hand swing",
+        "two-handed swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "alternating swing",
+      "aliases": [
+        "hand to hand swing",
+        "hand-to-hand swing",
+        "switching swing"
+      ],
+      "recognition_candidates": [
+        "alternating swing",
+        "hand to hand swing",
+        "hand-to-hand swing",
+        "switching swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "dead-stop swing",
+      "aliases": [
+        "dead stop swing",
+        "parked swing",
+        "power swing"
+      ],
+      "recognition_candidates": [
+        "dead stop swing",
+        "dead-stop swing",
+        "parked swing",
+        "power swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "American swing",
+      "aliases": [
+        "overhead swing"
+      ],
+      "recognition_candidates": [
+        "American swing",
+        "overhead swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "Russian swing",
+      "aliases": [
+        "chest height swing"
+      ],
+      "recognition_candidates": [
+        "chest height swing",
+        "Russian swing"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "clean",
+      "aliases": [
+        "kettlebell clean",
+        "kb clean"
+      ],
+      "recognition_candidates": [
+        "clean",
+        "kb clean",
+        "kettlebell clean"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single-arm",
+        "double",
+        "dead",
+        "swing",
+        "hang"
+      ]
+    },
+    {
+      "canonical": "dead clean",
+      "aliases": [
+        "dead-start clean",
+        "dead start clean",
+        "clean from floor"
+      ],
+      "recognition_candidates": [
+        "clean from floor",
+        "dead clean",
+        "dead start clean",
+        "dead-start clean"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "swing clean",
+      "aliases": [
+        "clean from swing"
+      ],
+      "recognition_candidates": [
+        "clean from swing",
+        "swing clean"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "double clean",
+      "aliases": [
+        "double kettlebell clean",
+        "two bell clean",
+        "two-bell clean"
+      ],
+      "recognition_candidates": [
+        "double clean",
+        "double kettlebell clean",
+        "two bell clean",
+        "two-bell clean"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "snatch",
+      "aliases": [
+        "kettlebell snatch",
+        "kb snatch"
+      ],
+      "recognition_candidates": [
+        "kb snatch",
+        "kettlebell snatch",
+        "snatch"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single-arm",
+        "double",
+        "half",
+        "dead",
+        "hang"
+      ]
+    },
+    {
+      "canonical": "half snatch",
+      "aliases": [
+        "half-snatch"
+      ],
+      "recognition_candidates": [
+        "half snatch",
+        "half-snatch"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "dead snatch",
+      "aliases": [
+        "dead-start snatch",
+        "snatch from floor"
+      ],
+      "recognition_candidates": [
+        "dead snatch",
+        "dead-start snatch",
+        "snatch from floor"
+      ],
+      "family": "ballistic",
+      "qualifiers": []
+    },
+    {
+      "canonical": "high pull",
+      "aliases": [
+        "kettlebell high pull",
+        "kb high pull"
+      ],
+      "recognition_candidates": [
+        "high pull",
+        "kb high pull",
+        "kettlebell high pull"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single-arm",
+        "double"
+      ]
+    },
+    {
+      "canonical": "clean and jerk",
+      "aliases": [
+        "clean & jerk",
+        "long cycle",
+        "long-cycle"
+      ],
+      "recognition_candidates": [
+        "clean & jerk",
+        "clean and jerk",
+        "long cycle",
+        "long-cycle"
+      ],
+      "family": "sport",
+      "qualifiers": [
+        "single-arm",
+        "double"
+      ]
+    },
+    {
+      "canonical": "jerk",
+      "aliases": [
+        "kettlebell jerk",
+        "kb jerk"
+      ],
+      "recognition_candidates": [
+        "jerk",
+        "kb jerk",
+        "kettlebell jerk"
+      ],
+      "family": "ballistic",
+      "qualifiers": [
+        "single-arm",
+        "double"
+      ]
+    },
+    {
+      "canonical": "push press",
+      "aliases": [
+        "kettlebell push press",
+        "kb push press"
+      ],
+      "recognition_candidates": [
+        "kb push press",
+        "kettlebell push press",
+        "push press"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "single-arm",
+        "double"
+      ]
+    },
+    {
+      "canonical": "thruster",
+      "aliases": [
+        "kettlebell thruster",
+        "squat to press",
+        "squat press"
+      ],
+      "recognition_candidates": [
+        "kettlebell thruster",
+        "squat press",
+        "squat to press",
+        "thruster"
+      ],
+      "family": "compound",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "strict press",
+      "aliases": [
+        "military press",
+        "overhead press",
+        "kettlebell press",
+        "kb press"
+      ],
+      "recognition_candidates": [
+        "kb press",
+        "kettlebell press",
+        "military press",
+        "overhead press",
+        "strict press"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "single-arm",
+        "double",
+        "half-kneeling",
+        "tall-kneeling"
+      ]
+    },
+    {
+      "canonical": "floor press",
+      "aliases": [
+        "kettlebell floor press",
+        "kb floor press"
+      ],
+      "recognition_candidates": [
+        "floor press",
+        "kb floor press",
+        "kettlebell floor press"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "single-arm",
+        "double",
+        "alternating"
+      ]
+    },
+    {
+      "canonical": "bottoms-up press",
+      "aliases": [
+        "bottoms up press",
+        "bottom-up press",
+        "bottoms-up overhead press"
+      ],
+      "recognition_candidates": [
+        "bottom-up press",
+        "bottoms up press",
+        "bottoms-up overhead press",
+        "bottoms-up press"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "single-arm",
+        "half-kneeling"
+      ]
+    },
+    {
+      "canonical": "see-saw press",
+      "aliases": [
+        "seesaw press",
+        "see saw press",
+        "alternating double press"
+      ],
+      "recognition_candidates": [
+        "alternating double press",
+        "see saw press",
+        "see-saw press",
+        "seesaw press"
+      ],
+      "family": "press",
+      "qualifiers": []
+    },
+    {
+      "canonical": "Sots press",
+      "aliases": [
+        "Sotts press",
+        "sots press",
+        "squat press from bottom"
+      ],
+      "recognition_candidates": [
+        "Sots press",
+        "sots press",
+        "Sotts press",
+        "squat press from bottom"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "bent press",
+      "aliases": [
+        "kettlebell bent press"
+      ],
+      "recognition_candidates": [
+        "bent press",
+        "kettlebell bent press"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "canonical": "side press",
+      "aliases": [
+        "kettlebell side press"
+      ],
+      "recognition_candidates": [
+        "kettlebell side press",
+        "side press"
+      ],
+      "family": "press",
+      "qualifiers": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "canonical": "goblet squat",
+      "aliases": [
+        "goblet",
+        "kettlebell goblet squat",
+        "kb goblet squat"
+      ],
+      "recognition_candidates": [
+        "goblet",
+        "goblet squat",
+        "kb goblet squat",
+        "kettlebell goblet squat"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "pause",
+        "tempo",
+        "heels-elevated"
+      ]
+    },
+    {
+      "canonical": "front squat",
+      "aliases": [
+        "kettlebell front squat",
+        "rack squat",
+        "racked squat"
+      ],
+      "recognition_candidates": [
+        "front squat",
+        "kettlebell front squat",
+        "rack squat",
+        "racked squat"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "single",
+        "double",
+        "offset"
+      ]
+    },
+    {
+      "canonical": "double front squat",
+      "aliases": [
+        "double kettlebell front squat",
+        "double rack squat"
+      ],
+      "recognition_candidates": [
+        "double front squat",
+        "double kettlebell front squat",
+        "double rack squat"
+      ],
+      "family": "squat",
+      "qualifiers": []
+    },
+    {
+      "canonical": "rack squat",
+      "aliases": [
+        "racked squat",
+        "single rack squat"
+      ],
+      "recognition_candidates": [
+        "rack squat",
+        "racked squat",
+        "single rack squat"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "split squat",
+      "aliases": [
+        "kettlebell split squat"
+      ],
+      "recognition_candidates": [
+        "kettlebell split squat",
+        "split squat"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "front-rack",
+        "suitcase",
+        "goblet"
+      ]
+    },
+    {
+      "canonical": "rear-foot-elevated split squat",
+      "aliases": [
+        "RFESS",
+        "Bulgarian split squat",
+        "rear foot elevated split squat"
+      ],
+      "recognition_candidates": [
+        "Bulgarian split squat",
+        "rear foot elevated split squat",
+        "rear-foot-elevated split squat",
+        "RFESS"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "goblet",
+        "rack",
+        "suitcase"
+      ]
+    },
+    {
+      "canonical": "reverse lunge",
+      "aliases": [
+        "kettlebell reverse lunge",
+        "backward lunge"
+      ],
+      "recognition_candidates": [
+        "backward lunge",
+        "kettlebell reverse lunge",
+        "reverse lunge"
+      ],
+      "family": "lunge",
+      "qualifiers": [
+        "goblet",
+        "rack",
+        "suitcase",
+        "overhead"
+      ]
+    },
+    {
+      "canonical": "forward lunge",
+      "aliases": [
+        "kettlebell forward lunge"
+      ],
+      "recognition_candidates": [
+        "forward lunge",
+        "kettlebell forward lunge"
+      ],
+      "family": "lunge",
+      "qualifiers": [
+        "goblet",
+        "rack",
+        "suitcase"
+      ]
+    },
+    {
+      "canonical": "walking lunge",
+      "aliases": [
+        "kettlebell walking lunge"
+      ],
+      "recognition_candidates": [
+        "kettlebell walking lunge",
+        "walking lunge"
+      ],
+      "family": "lunge",
+      "qualifiers": [
+        "goblet",
+        "rack",
+        "suitcase"
+      ]
+    },
+    {
+      "canonical": "lateral lunge",
+      "aliases": [
+        "side lunge",
+        "kettlebell lateral lunge"
+      ],
+      "recognition_candidates": [
+        "kettlebell lateral lunge",
+        "lateral lunge",
+        "side lunge"
+      ],
+      "family": "lunge",
+      "qualifiers": [
+        "goblet",
+        "rack"
+      ]
+    },
+    {
+      "canonical": "Cossack squat",
+      "aliases": [
+        "cossack",
+        "side-to-side squat"
+      ],
+      "recognition_candidates": [
+        "cossack",
+        "Cossack squat",
+        "side-to-side squat"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "goblet",
+        "bodyweight"
+      ]
+    },
+    {
+      "canonical": "pistol squat",
+      "aliases": [
+        "pistol",
+        "single-leg squat"
+      ],
+      "recognition_candidates": [
+        "pistol",
+        "pistol squat",
+        "single-leg squat"
+      ],
+      "family": "squat",
+      "qualifiers": [
+        "goblet",
+        "rack"
+      ]
+    },
+    {
+      "canonical": "deadlift",
+      "aliases": [
+        "kettlebell deadlift",
+        "kb deadlift"
+      ],
+      "recognition_candidates": [
+        "deadlift",
+        "kb deadlift",
+        "kettlebell deadlift"
+      ],
+      "family": "hinge",
+      "qualifiers": [
+        "single",
+        "double",
+        "sumo",
+        "suitcase",
+        "staggered"
+      ]
+    },
+    {
+      "canonical": "Romanian deadlift",
+      "aliases": [
+        "RDL",
+        "kettlebell RDL",
+        "Romanian dead lift"
+      ],
+      "recognition_candidates": [
+        "kettlebell RDL",
+        "RDL",
+        "Romanian dead lift",
+        "Romanian deadlift"
+      ],
+      "family": "hinge",
+      "qualifiers": [
+        "single",
+        "double",
+        "single-leg",
+        "kickstand"
+      ]
+    },
+    {
+      "canonical": "single-leg Romanian deadlift",
+      "aliases": [
+        "single leg RDL",
+        "single-leg RDL",
+        "SL RDL"
+      ],
+      "recognition_candidates": [
+        "single leg RDL",
+        "single-leg RDL",
+        "single-leg Romanian deadlift",
+        "SL RDL"
+      ],
+      "family": "hinge",
+      "qualifiers": [
+        "contralateral",
+        "ipsilateral"
+      ]
+    },
+    {
+      "canonical": "sumo deadlift",
+      "aliases": [
+        "wide stance deadlift",
+        "kettlebell sumo deadlift"
+      ],
+      "recognition_candidates": [
+        "kettlebell sumo deadlift",
+        "sumo deadlift",
+        "wide stance deadlift"
+      ],
+      "family": "hinge",
+      "qualifiers": []
+    },
+    {
+      "canonical": "suitcase deadlift",
+      "aliases": [
+        "offset deadlift",
+        "one-sided deadlift"
+      ],
+      "recognition_candidates": [
+        "offset deadlift",
+        "one-sided deadlift",
+        "suitcase deadlift"
+      ],
+      "family": "hinge",
+      "qualifiers": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "canonical": "row",
+      "aliases": [
+        "kettlebell row",
+        "kb row"
+      ],
+      "recognition_candidates": [
+        "kb row",
+        "kettlebell row",
+        "row"
+      ],
+      "family": "pull",
+      "qualifiers": [
+        "single-arm",
+        "double",
+        "supported",
+        "gorilla",
+        "renegade"
+      ]
+    },
+    {
+      "canonical": "bent-over row",
+      "aliases": [
+        "bent over row",
+        "hinge row"
+      ],
+      "recognition_candidates": [
+        "bent over row",
+        "bent-over row",
+        "hinge row"
+      ],
+      "family": "pull",
+      "qualifiers": [
+        "single-arm",
+        "double"
+      ]
+    },
+    {
+      "canonical": "gorilla row",
+      "aliases": [
+        "gorilla rows",
+        "alternating gorilla row"
+      ],
+      "recognition_candidates": [
+        "alternating gorilla row",
+        "gorilla row",
+        "gorilla rows"
+      ],
+      "family": "pull",
+      "qualifiers": [
+        "alternating",
+        "double"
+      ]
+    },
+    {
+      "canonical": "renegade row",
+      "aliases": [
+        "plank row",
+        "kettlebell renegade row"
+      ],
+      "recognition_candidates": [
+        "kettlebell renegade row",
+        "plank row",
+        "renegade row"
+      ],
+      "family": "pull",
+      "qualifiers": [
+        "alternating"
+      ]
+    },
+    {
+      "canonical": "Turkish get-up",
+      "aliases": [
+        "Turkish get up",
+        "TGU",
+        "get-up",
+        "get up"
+      ],
+      "recognition_candidates": [
+        "get up",
+        "get-up",
+        "TGU",
+        "Turkish get up",
+        "Turkish get-up"
+      ],
+      "family": "grind",
+      "qualifiers": [
+        "full",
+        "half",
+        "reverse"
+      ]
+    },
+    {
+      "canonical": "half get-up",
+      "aliases": [
+        "half Turkish get-up",
+        "half TGU"
+      ],
+      "recognition_candidates": [
+        "half get-up",
+        "half TGU",
+        "half Turkish get-up"
+      ],
+      "family": "grind",
+      "qualifiers": []
+    },
+    {
+      "canonical": "windmill",
+      "aliases": [
+        "kettlebell windmill",
+        "kb windmill"
+      ],
+      "recognition_candidates": [
+        "kb windmill",
+        "kettlebell windmill",
+        "windmill"
+      ],
+      "family": "grind",
+      "qualifiers": [
+        "overhead",
+        "low",
+        "double"
+      ]
+    },
+    {
+      "canonical": "half-kneeling windmill",
+      "aliases": [
+        "half kneeling windmill"
+      ],
+      "recognition_candidates": [
+        "half kneeling windmill",
+        "half-kneeling windmill"
+      ],
+      "family": "grind",
+      "qualifiers": []
+    },
+    {
+      "canonical": "halo",
+      "aliases": [
+        "kettlebell halo",
+        "around the head"
+      ],
+      "recognition_candidates": [
+        "around the head",
+        "halo",
+        "kettlebell halo"
+      ],
+      "family": "mobility",
+      "qualifiers": [
+        "clockwise",
+        "counterclockwise",
+        "half-kneeling"
+      ]
+    },
+    {
+      "canonical": "around the world",
+      "aliases": [
+        "slingshot",
+        "around-the-world",
+        "kettlebell slingshot"
+      ],
+      "recognition_candidates": [
+        "around the world",
+        "around-the-world",
+        "kettlebell slingshot",
+        "slingshot"
+      ],
+      "family": "core",
+      "qualifiers": [
+        "clockwise",
+        "counterclockwise"
+      ]
+    },
+    {
+      "canonical": "figure eight",
+      "aliases": [
+        "figure 8",
+        "figure-eight",
+        "figure eight pass"
+      ],
+      "recognition_candidates": [
+        "figure 8",
+        "figure eight",
+        "figure eight pass",
+        "figure-eight"
+      ],
+      "family": "core",
+      "qualifiers": [
+        "to hold",
+        "with catch"
+      ]
+    },
+    {
+      "canonical": "Russian twist",
+      "aliases": [
+        "kettlebell Russian twist",
+        "seated twist"
+      ],
+      "recognition_candidates": [
+        "kettlebell Russian twist",
+        "Russian twist",
+        "seated twist"
+      ],
+      "family": "core",
+      "qualifiers": []
+    },
+    {
+      "canonical": "sit-up press",
+      "aliases": [
+        "sit up press",
+        "kettlebell sit-up press"
+      ],
+      "recognition_candidates": [
+        "kettlebell sit-up press",
+        "sit up press",
+        "sit-up press"
+      ],
+      "family": "core",
+      "qualifiers": []
+    },
+    {
+      "canonical": "plank drag",
+      "aliases": [
+        "kettlebell drag",
+        "plank pull-through",
+        "plank pull through"
+      ],
+      "recognition_candidates": [
+        "kettlebell drag",
+        "plank drag",
+        "plank pull through",
+        "plank pull-through"
+      ],
+      "family": "core",
+      "qualifiers": [
+        "alternating"
+      ]
+    },
+    {
+      "canonical": "farmer carry",
+      "aliases": [
+        "farmer's carry",
+        "farmers carry",
+        "farmer walk",
+        "farmer's walk"
+      ],
+      "recognition_candidates": [
+        "farmer carry",
+        "farmer walk",
+        "farmer's carry",
+        "farmer's walk",
+        "farmers carry"
+      ],
+      "family": "carry",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "suitcase carry",
+      "aliases": [
+        "suitcase walk",
+        "single-arm farmer carry",
+        "one-sided carry"
+      ],
+      "recognition_candidates": [
+        "one-sided carry",
+        "single-arm farmer carry",
+        "suitcase carry",
+        "suitcase walk"
+      ],
+      "family": "carry",
+      "qualifiers": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "canonical": "rack carry",
+      "aliases": [
+        "front rack carry",
+        "racked carry"
+      ],
+      "recognition_candidates": [
+        "front rack carry",
+        "rack carry",
+        "racked carry"
+      ],
+      "family": "carry",
+      "qualifiers": [
+        "single",
+        "double",
+        "offset"
+      ]
+    },
+    {
+      "canonical": "overhead carry",
+      "aliases": [
+        "waiter carry",
+        "waiter's carry",
+        "overhead walk"
+      ],
+      "recognition_candidates": [
+        "overhead carry",
+        "overhead walk",
+        "waiter carry",
+        "waiter's carry"
+      ],
+      "family": "carry",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "bottoms-up carry",
+      "aliases": [
+        "bottoms up carry",
+        "bottom-up carry"
+      ],
+      "recognition_candidates": [
+        "bottom-up carry",
+        "bottoms up carry",
+        "bottoms-up carry"
+      ],
+      "family": "carry",
+      "qualifiers": [
+        "rack",
+        "overhead"
+      ]
+    },
+    {
+      "canonical": "march",
+      "aliases": [
+        "kettlebell march",
+        "loaded march"
+      ],
+      "recognition_candidates": [
+        "kettlebell march",
+        "loaded march",
+        "march"
+      ],
+      "family": "carry",
+      "qualifiers": [
+        "rack",
+        "suitcase",
+        "overhead"
+      ]
+    },
+    {
+      "canonical": "arm bar",
+      "aliases": [
+        "kettlebell arm bar",
+        "KB arm bar"
+      ],
+      "recognition_candidates": [
+        "arm bar",
+        "KB arm bar",
+        "kettlebell arm bar"
+      ],
+      "family": "mobility",
+      "qualifiers": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "canonical": "pullover",
+      "aliases": [
+        "kettlebell pullover",
+        "floor pullover"
+      ],
+      "recognition_candidates": [
+        "floor pullover",
+        "kettlebell pullover",
+        "pullover"
+      ],
+      "family": "accessory",
+      "qualifiers": []
+    },
+    {
+      "canonical": "good morning",
+      "aliases": [
+        "kettlebell good morning",
+        "goblet good morning"
+      ],
+      "recognition_candidates": [
+        "goblet good morning",
+        "good morning",
+        "kettlebell good morning"
+      ],
+      "family": "hinge",
+      "qualifiers": []
+    },
+    {
+      "canonical": "calf raise",
+      "aliases": [
+        "kettlebell calf raise",
+        "loaded calf raise"
+      ],
+      "recognition_candidates": [
+        "calf raise",
+        "kettlebell calf raise",
+        "loaded calf raise"
+      ],
+      "family": "accessory",
+      "qualifiers": [
+        "single-leg",
+        "double-leg"
+      ]
+    },
+    {
+      "canonical": "hip bridge",
+      "aliases": [
+        "glute bridge",
+        "kettlebell glute bridge"
+      ],
+      "recognition_candidates": [
+        "glute bridge",
+        "hip bridge",
+        "kettlebell glute bridge"
+      ],
+      "family": "accessory",
+      "qualifiers": [
+        "two-leg",
+        "single-leg"
+      ]
+    },
+    {
+      "canonical": "hip thrust",
+      "aliases": [
+        "kettlebell hip thrust"
+      ],
+      "recognition_candidates": [
+        "hip thrust",
+        "kettlebell hip thrust"
+      ],
+      "family": "accessory",
+      "qualifiers": [
+        "two-leg",
+        "single-leg"
+      ]
+    },
+    {
+      "canonical": "clean and press",
+      "aliases": [
+        "clean & press",
+        "C and P",
+        "clean press"
+      ],
+      "recognition_candidates": [
+        "C and P",
+        "clean & press",
+        "clean and press",
+        "clean press"
+      ],
+      "family": "complex",
+      "qualifiers": [
+        "single-arm",
+        "double"
+      ]
+    },
+    {
+      "canonical": "clean squat press",
+      "aliases": [
+        "clean squat and press",
+        "clean squat press complex"
+      ],
+      "recognition_candidates": [
+        "clean squat and press",
+        "clean squat press",
+        "clean squat press complex"
+      ],
+      "family": "complex",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "swing clean press",
+      "aliases": [
+        "swing clean and press"
+      ],
+      "recognition_candidates": [
+        "swing clean and press",
+        "swing clean press"
+      ],
+      "family": "complex",
+      "qualifiers": [
+        "single-arm"
+      ]
+    },
+    {
+      "canonical": "swing clean squat press",
+      "aliases": [
+        "swing clean squat and press"
+      ],
+      "recognition_candidates": [
+        "swing clean squat and press",
+        "swing clean squat press"
+      ],
+      "family": "complex",
+      "qualifiers": [
+        "single-arm"
+      ]
+    },
+    {
+      "canonical": "snatch to reverse lunge",
+      "aliases": [
+        "snatch reverse lunge"
+      ],
+      "recognition_candidates": [
+        "snatch reverse lunge",
+        "snatch to reverse lunge"
+      ],
+      "family": "complex",
+      "qualifiers": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "canonical": "armor building complex",
+      "aliases": [
+        "ABC",
+        "armor building",
+        "armour building complex"
+      ],
+      "recognition_candidates": [
+        "ABC",
+        "armor building",
+        "armor building complex",
+        "armour building complex"
+      ],
+      "family": "complex",
+      "qualifiers": [
+        "double"
+      ]
+    },
+    {
+      "canonical": "humane burpee",
+      "aliases": [
+        "Dan John humane burpee"
+      ],
+      "recognition_candidates": [
+        "Dan John humane burpee",
+        "humane burpee"
+      ],
+      "family": "complex",
+      "qualifiers": []
+    },
+    {
+      "canonical": "kettlebell flow",
+      "aliases": [
+        "KB flow",
+        "flow"
+      ],
+      "recognition_candidates": [
+        "flow",
+        "KB flow",
+        "kettlebell flow"
+      ],
+      "family": "complex",
+      "qualifiers": []
+    },
+    {
+      "canonical": "rack position",
+      "aliases": [
+        "rack",
+        "front rack",
+        "racked position"
+      ],
+      "recognition_candidates": [
+        "front rack",
+        "rack",
+        "rack position",
+        "racked position"
+      ],
+      "family": "position",
+      "qualifiers": [
+        "single",
+        "double"
+      ]
+    },
+    {
+      "canonical": "overhead lockout",
+      "aliases": [
+        "lockout",
+        "overhead position"
+      ],
+      "recognition_candidates": [
+        "lockout",
+        "overhead lockout",
+        "overhead position"
+      ],
+      "family": "position",
+      "qualifiers": []
+    },
+    {
+      "canonical": "backswing",
+      "aliases": [
+        "back swing",
+        "hike pass",
+        "hike"
+      ],
+      "recognition_candidates": [
+        "back swing",
+        "backswing",
+        "hike",
+        "hike pass"
+      ],
+      "family": "technique",
+      "qualifiers": []
+    },
+    {
+      "canonical": "hip hinge",
+      "aliases": [
+        "hinge",
+        "hip-hinge"
+      ],
+      "recognition_candidates": [
+        "hinge",
+        "hip hinge",
+        "hip-hinge"
+      ],
+      "family": "technique",
+      "qualifiers": []
+    },
+    {
+      "canonical": "hardstyle",
+      "aliases": [
+        "hard style",
+        "hard-style"
+      ],
+      "recognition_candidates": [
+        "hard style",
+        "hard-style",
+        "hardstyle"
+      ],
+      "family": "style",
+      "qualifiers": []
+    },
+    {
+      "canonical": "kettlebell sport",
+      "aliases": [
+        "girevoy sport",
+        "GS",
+        "sport style"
+      ],
+      "recognition_candidates": [
+        "girevoy sport",
+        "GS",
+        "kettlebell sport",
+        "sport style"
+      ],
+      "family": "style",
+      "qualifiers": []
+    },
+    {
+      "canonical": "long cycle",
+      "aliases": [
+        "clean and jerk",
+        "clean & jerk"
+      ],
+      "recognition_candidates": [
+        "clean & jerk",
+        "clean and jerk",
+        "long cycle"
+      ],
+      "family": "sport",
+      "qualifiers": [
+        "one-arm",
+        "two-arm"
+      ]
+    },
+    {
+      "canonical": "one-arm long cycle",
+      "aliases": [
+        "OALC",
+        "single arm long cycle"
+      ],
+      "recognition_candidates": [
+        "OALC",
+        "one-arm long cycle",
+        "single arm long cycle"
+      ],
+      "family": "sport",
+      "qualifiers": []
+    },
+    {
+      "canonical": "two-arm long cycle",
+      "aliases": [
+        "TALC",
+        "double long cycle"
+      ],
+      "recognition_candidates": [
+        "double long cycle",
+        "TALC",
+        "two-arm long cycle"
+      ],
+      "family": "sport",
+      "qualifiers": []
+    },
+    {
+      "canonical": "EMOM",
+      "aliases": [
+        "every minute on the minute",
+        "E-M-O-M"
+      ],
+      "recognition_candidates": [
+        "E-M-O-M",
+        "EMOM",
+        "every minute on the minute"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "AMRAP",
+      "aliases": [
+        "as many rounds as possible",
+        "as many reps as possible",
+        "A-M-R-A-P"
+      ],
+      "recognition_candidates": [
+        "A-M-R-A-P",
+        "AMRAP",
+        "as many reps as possible",
+        "as many rounds as possible"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "ladder",
+      "aliases": [
+        "rep ladder",
+        "ascending ladder",
+        "descending ladder"
+      ],
+      "recognition_candidates": [
+        "ascending ladder",
+        "descending ladder",
+        "ladder",
+        "rep ladder"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "complex",
+      "aliases": [
+        "kettlebell complex",
+        "KB complex"
+      ],
+      "recognition_candidates": [
+        "complex",
+        "KB complex",
+        "kettlebell complex"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "chain",
+      "aliases": [
+        "kettlebell chain",
+        "movement chain"
+      ],
+      "recognition_candidates": [
+        "chain",
+        "kettlebell chain",
+        "movement chain"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "density block",
+      "aliases": [
+        "density set",
+        "density training"
+      ],
+      "recognition_candidates": [
+        "density block",
+        "density set",
+        "density training"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "interval",
+      "aliases": [
+        "work interval",
+        "timed interval"
+      ],
+      "recognition_candidates": [
+        "interval",
+        "timed interval",
+        "work interval"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    },
+    {
+      "canonical": "round",
+      "aliases": [
+        "rounds"
+      ],
+      "recognition_candidates": [
+        "round",
+        "rounds"
+      ],
+      "family": "programming",
+      "qualifiers": []
+    }
+  ]
+}

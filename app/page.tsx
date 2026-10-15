@@ -225,9 +225,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.15 1825";
+const APP_VERSION = "2026.10.15 1854";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Transcript fetching uses the requested free YouTube to Transcript website. If access fails, a direct free-site link appears and paste/import opens automatically. Read the complete fetched transcript with its source and word count, and review improved circuit instructions before saving."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Video workout drafts recognize more kettlebell names and abbreviations from the supplied lexicon, preserving distinct variations, left/right, loading and per-side instructions. Programming cues such as EMOM stay in review notes. Long exercise names wrap for easier editing; weights and unspecified targets stay blank."] },
+  { version: "2026.10.15 1825", category: "Minor fix", changes: ["Transcript fetching uses the requested free YouTube to Transcript website. If access fails, a direct free-site link appears and paste/import opens automatically. Read the complete fetched transcript with its source and word count, and review improved circuit instructions before saving."] },
   { version: "2026.10.14 1831", category: "Major fix", changes: ["Fetch captions & build draft pulls this video’s English captions automatically and opens a workout plan for review. Successful captions are cached for reuse; manual paste and file import stay available when a video cannot be retrieved. No account or API key is needed."] },
   { version: "2026.10.14 1633", category: "Major fix", changes: ["Video workouts now support reusable plans built from pasted/uploaded captions or imported plan files. Review exercises, sets, reps, work and rest, then log weights and results per set. Repeated workouts start fresh; History and backups retain results. Progress compares reps at the same load and changed load at the same reps, excluding warm-ups. A downloadable computer caption fallback is available."] },
   { version: "2026.10.14 0808", category: "Major fix", changes: ["Progress shows each workout type’s percentage and completed days, sorted most to least with History’s category colors. Missing types stay visible at 0%, and completed add-ons open below the chart. Choose 4, 8 or 12 weeks to see your training mix."] },
@@ -236,7 +237,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.14 0203", category: "Minor fix", changes: ["The prominent journal Edit workout button is full-width and sits directly above Share workout, grouping the main actions together."] },
   { version: "2026.10.14 0200", category: "Minor fix", changes: ["Edit workout is a prominent navy button with a pencil icon at the top of the journal, making it easier to find."] },
   { version: "2026.10.13 2234", category: "Minor fix", changes: ["Finished workouts are locked until you tap Edit. Details, add-ons, videos, photos, screenshots, GPS and check-ins become read-only; viewing and sharing stay available. Saving changes locks the workout again without removing its completed status."] },
-  { version: "2026.10.13 2205", category: "Minor fix", changes: ["All saved videos appear immediately in Future workout videos. Add to today shows Adding… then ✓ Added to today, including videos already saved in today’s workout and Recent videos."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

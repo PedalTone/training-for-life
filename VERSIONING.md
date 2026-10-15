@@ -1,3 +1,5 @@
+New public release — 2026.10.15 1854: Use the supplied kettlebell lexicon for aliases, distinct variations and side/loading cues; retain per-side doses and programming notes without inventing sets or weights.
+
 New public release — 2026.10.15 1825: Use the requested free transcript website, show a direct link and open paste/import when retrieval fails, display full fetched text and improve circuit drafts.
 
 No new release — 2026.10.15: Removed the unused alternate transcript-service backend integration; this backend cleanup kept release 2026.10.14 1831.
@@ -66,9 +68,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.15 1825` adds exact-website transcript retrieval with an accessible free-site fallback and complete transcript viewing.
+Release decision: **New public release** — `2026.10.15 1854` improves transcript workout drafting with the supplied kettlebell lexicon.
 
-App, notes, tests, worker and deployment use `2026.10.15 1825`.
+App, notes, tests, worker and deployment use `2026.10.15 1854`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

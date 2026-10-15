@@ -34,6 +34,7 @@ build for server features. Node must be at least 22.13.0; CI uses Node 22.
 | `worker/training-insights.ts` | Retired frontend API; kept for compatibility |
 | `worker/workout-screenshot.ts` | Retired frontend API; kept for compatibility |
 | `worker/workout-guide.ts` | Legacy API implementation; current frontend no longer calls it |
+| `app/transcript-exercises.ts`, `app/data/kettlebell-transcript-lexicon.json` | Local exercise recognition from the supplied kettlebell lexicon |
 | `worker/video-captions.ts` | On-demand automatic captions, validation, bounded retrieval and caching |
 | `public/` | Brand artwork, texture, exercise illustrations, icons, PWA files |
 | `.github/workflows/deploy-pages.yml` | Builds and publishes GitHub Pages |
@@ -209,7 +210,17 @@ Paste captions or import a plan opens the manual `.txt`/`.vtt`/`.srt`/version-1
 JSON fallback, with the external transcript site and computer helper.
 
 Draft processing is local, uses explicit exercise/volume cues and requires
-review; it is not an AI interpretation of the complete video. Unknown movements
+review; it is not an AI interpretation of the complete video. The supplied
+94-entry kettlebell lexicon is stored intact in
+`app/data/kettlebell-transcript-lexicon.json`. Its exercise names/aliases recognize
+abbreviations such as RDL/TGU and preserve distinct variations, side, loading and
+position. Long compound names stay one movement; ordinary phrases such as
+“good morning” need exercise context. Position, technique, style and programming
+terms become review notes rather than extra exercises. EMOM/AMRAP block durations
+do not become individual work/rest/set targets. Explicit per-side reps/time are
+retained without multiplying counts. Generic presses stay unspecified in
+technique; named complexes do not imply a default rep scheme. Weights stay blank.
+Existing saved workouts/results are not renamed or migrated. Unknown movements
 can be added manually, unknown set counts stay labeled, and circuit instructions
 are retained in notes without silently expanding rounds. Source cue excerpts
 are retained with exercises; full captions are not stored in workout backups.
