@@ -4,7 +4,7 @@ Updated October 15, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — supplied kettlebell transcript lexicon
 
-Release candidate **2026.10.15 1854** imports the user's original 94-entry JSON
+Published release **2026.10.15 1854** imports the user's original 94-entry JSON
 unchanged into app/data. A local matcher recognizes 256 supplied exercise phrases,
 plural/hyphen variants, specific movements and qualifiers. Longer compound names
 win; left/right, loading and position stay visible. Generic KB press does not imply
@@ -21,8 +21,16 @@ per-side cues, programming scope and saved/repeated data. Typecheck retains only
 eight pre-existing diagnostics. External Chrome passes draft/no-autosave → review/
 save → Today with blank results → reload, keeping prior history/notes; inspected
 440/393/375 and safe-area allowance. Both builds, all 135 app tests and 13 rendered
-checks pass; publication/live verification pending. The existing full-transcript
-website/fallback workflow is being regression-checked with fixtures.
+checks pass; the existing full-transcript website/fallback fixture regression also
+passes. Frontend commit `44cf932` published through successful Pages run
+`38820266431`. Live exact JS/CSS, release, service worker, icons/artwork and helper
+verified. The same draft/review/Today/reload/iPhone workflow passes on the public
+app, retaining prior history and blank dated results. No required work remains.
+Matching Sites version 162, source `e425014fb90df5537069e51046051b89d3e63617`,
+saved version `appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_a5e804a6e4f4819193e8d36ad14ec7bf`,
+successful deployment `appgdep_6ad15a006e4481919d274b9d6a8f6af1`. First live
+Sites check briefly served the prior release during propagation; the fresh
+recheck serves the exact 1854 release.
 Automatic website retrieval remains blocked as documented below; this change
 improves local drafting for fetched, pasted or imported transcript text.
 
