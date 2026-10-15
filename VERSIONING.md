@@ -1,3 +1,7 @@
+New public release — 2026.10.15 1825: Use the requested free transcript website, show a direct link and open paste/import when retrieval fails, display full fetched text and improve circuit drafts.
+
+No new release — 2026.10.15: Removed the unused alternate transcript-service backend integration; this backend cleanup kept release 2026.10.14 1831.
+
 New public release — 2026.10.14 1831: Fetch video captions automatically and build a reviewable workout draft in the app, with cached captions and manual fallback.
 
 New public release — 2026.10.14 1633: Reusable video plans from reviewed caption drafts, per-set weights/results, computer caption fallback and same-load strength comparisons.
@@ -62,9 +66,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.14 1831` retrieves video captions automatically and builds a draft with one tap.
+Release decision: **New public release** — `2026.10.15 1825` adds exact-website transcript retrieval with an accessible free-site fallback and complete transcript viewing.
 
-App, notes, tests, worker and deployment use `2026.10.14 1831`.
+App, notes, tests, worker and deployment use `2026.10.15 1825`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

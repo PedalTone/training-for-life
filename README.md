@@ -174,13 +174,30 @@ History uses a 12-week scrolling timeline with Earlier/Later arrows moving three
 
 Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The six core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
 
+## Full video transcripts
+
+The app requests the complete transcript from **https://youtubetotranscript.com/**.
+If retrieval fails, a prominent **Open free transcript website** link appears and
+the paste/import section opens automatically. Copy the video link, get its full
+transcript on that site, paste it into the app, then build and review the draft.
+The same free website is also linked before fetching. No alternate online
+service, account or API key is used by this interface.
+
+The exact website currently blocks automatic requests with an HTTP 403 access
+check. The fallback is verified; successful live automatic website retrieval is
+not verified. Successful website-response fixtures verify complete first/final
+text, source/word count, caching and review/save behavior. Existing workout data
+is preserved. Shared circuit instructions are recognized only when explicit;
+unspecified reps, exercise variations and set counts are never guessed.
+
 ## Video plans and set logging
 
 In Settings → Future workout videos → Build workout plan → Create plan, tap
-Fetch captions & build draft. The server tries the transcript site's public page,
-then direct English YouTube captions, and opens an editable draft without saving
-it automatically. No account or API key is required. Only the canonical video
-link goes to the caption service; workout results stay local. Requests occur only
+Fetch full transcript & build draft. The server requests the exact website and
+opens an editable draft if text is returned, without saving it automatically.
+When access fails, use the direct free-site link and expanded paste/import form.
+Only the canonical video link goes to the transcript service; workout results
+stay local. Requests occur only
 on tap, have bounded time/size and best-effort per-isolate rate limits, and do not
 retry indefinitely. The edge uses manual redirects with explicit 3xx rejection.
 

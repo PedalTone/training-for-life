@@ -2,6 +2,7 @@ import {fetchTranscript} from 'youtube-transcript';
 
 const MAX_TEXT=300_000, MAX_RESPONSE=2_000_000;
 export class CaptionError extends Error {code:string;status:number;constructor(code:string,message:string,status=422){super(message);this.code=code;this.status=status;}}
+export type TranscriptProvider='website'|'youtube'|'auto';
 type CaptionPayload={videoId:string;transcript:string;source:'transcript-site'|'youtube';language:string};
 const recent=new Map<string,number>();
 const requestsByIp=new Map<string,number[]>();
@@ -39,10 +40,15 @@ async function boundedFetch(fetcher:typeof fetch,input:RequestInfo|URL,init?:Req
  if(u.pathname.includes('/player')){try{const data=await result.clone().json() as {playabilityStatus?:{status?:string;reason?:string};captions?:unknown};console.info('caption metadata',{playability:data.playabilityStatus?.status,reason:data.playabilityStatus?.reason,hasCaptions:Boolean(data.captions)});}catch{/* diagnostics only; response size was already bounded. */}}
  return result;
 }
-export async function retrieveVideoCaptions(id:string,fetcher:typeof fetch=fetch):Promise<CaptionPayload>{
+export async function retrieveVideoCaptions(id:string,fetcher:typeof fetch=fetch,{provider='auto'}:{provider?:TranscriptProvider}={}):Promise<CaptionPayload>{
  const deadline=Date.now()+28_000;
  const safeFetch=((input:RequestInfo|URL,init?:RequestInit)=>{const remaining=deadline-Date.now();if(remaining<=0)throw new CaptionError('timeout','Caption fetching took too long. Try again later or paste captions.',503);return boundedFetch(fetcher,input,{...init,signal:AbortSignal.timeout(Math.min(8_000,remaining))});}) as typeof fetch;
- try{const r=await safeFetch(`https://youtubetotranscript.com/transcript?v=${id}&current_language_code=en`);if(r.ok){const transcript=transcriptSiteText(await r.text(),id);if(transcript.trim())return {videoId:id,transcript,source:'transcript-site',language:'en'};}}catch{/* One direct-caption fallback; no retries, cookies or challenge solving. */}
+ if(provider!=='youtube'){
+  let websiteError:unknown;
+  try{const r=await safeFetch(`https://youtubetotranscript.com/transcript?v=${id}&current_language_code=en`,{headers:{'User-Agent':'TrainingForLife/1.0',Accept:'text/html'}});if(r.ok){const transcript=transcriptSiteText(await r.text(),id);if(transcript.trim())return {videoId:id,transcript,source:'transcript-site',language:'en'};}websiteError=new CaptionError(r.status===403?'website_blocked':'website_unavailable','YouTube to Transcript blocked automatic access or returned no usable transcript. Open https://youtubetotranscript.com/ and paste the full transcript here.',503);}catch(error){websiteError=error;}
+  // Website-specific requests must never silently substitute a different source.
+  if(provider==='website'){if(websiteError instanceof CaptionError&&websiteError.code==='too_large')throw websiteError;throw websiteError instanceof CaptionError&&websiteError.code.startsWith('website_')?websiteError:new CaptionError('website_blocked','YouTube to Transcript is unavailable to the app. Open https://youtubetotranscript.com/ and paste the full transcript here.',503);}
+ }
  try{const segments=await fetchTranscript(id,{lang:'en',fetch:safeFetch});const transcript=segments.map(row=>decode(row.text)).filter(Boolean).join('\n');if(!transcript.trim())throw new CaptionError('empty','YouTube returned no caption text. Try pasting captions or importing a plan.');if(transcript.length>MAX_TEXT)throw new CaptionError('too_large','This transcript is too large. Import a shorter transcript.');return {videoId:id,transcript,source:'youtube',language:segments[0]?.lang||'en'};}
  catch(error){if(error instanceof CaptionError)throw error;const message=error instanceof Error?error.message:'';console.info('caption retrieval unavailable',{detail:message.slice(0,180)});if(/captcha|too many|429|confirm|bot/i.test(message))throw new CaptionError('blocked','YouTube blocked automatic captions for now. Try again later or paste captions.',429);if(/language/i.test(message))throw new CaptionError('language','English captions are unavailable for this video. You can paste a translated transcript.');throw new CaptionError('unavailable','Automatic captions could not be retrieved for this video. It may have no English captions, or YouTube may be blocking access. You can still paste captions or import a plan.');}
 }
@@ -62,17 +68,20 @@ export async function handleVideoCaptions(request:Request,{fetcher=fetch,cache,w
   if(reader){try{while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.length;if(bytes>2048){await reader.cancel();return reply({error:'Send only the YouTube video link.',code:'invalid'},400);}text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}finally{reader.releaseLock();}}
   let body;try{body=JSON.parse(text);}catch{return reply({error:'Send a valid YouTube video link.',code:'invalid'},400);}
   const id=captionVideoId(body?.url);if(!id)return reply({error:'Use a valid YouTube video link.',code:'invalid'},400);
-  const key=new Request(`https://training-4-life.tommy-tritone.chatgpt.site/caption-cache-v1/${id}`);
+  const provider:TranscriptProvider=body?.provider===undefined?'auto':body.provider;
+  if(!['website','youtube','auto'].includes(provider))return reply({error:'Choose a supported transcript source.',code:'invalid'},400);
+  const jobKey=`${provider}:${id}`;
+  const key=new Request(`https://training-4-life.tommy-tritone.chatgpt.site/transcript-cache-v2/${provider}/${id}`);
   let hit:Response|undefined;try{hit=await cache?.match(key);}catch{/* Hosted environments may disable Cache API; retrieval still works. */}
-  if(hit){try{const data=await hit.json() as CaptionPayload;if(data.videoId===id&&typeof data.transcript==='string'&&data.transcript.trim())return reply({...data,cached:true});}catch{/* Ignore a malformed cached response. */}}
+  if(hit){try{const data=await hit.json() as CaptionPayload;if(data.videoId===id&&typeof data.transcript==='string'&&data.transcript.trim()&&data.transcript.length<=MAX_TEXT&&(provider!=='website'||data.source==='transcript-site')&&(provider!=='youtube'||data.source==='youtube'))return reply({...data,cached:true});}catch{/* Ignore a malformed cached response. */}}
   const now=Date.now();for(const [key,at] of recent)if(now-at>60_000)recent.delete(key);
-  const ip=request.headers.get('CF-Connecting-IP')||'local';const limitKey=`${ip}:${id}`;
+  const ip=request.headers.get('CF-Connecting-IP')||'local';const limitKey=`${ip}:${jobKey}`;
   const times=(requestsByIp.get(ip)||[]).filter(at=>now-at<60_000);
   if(times.length>=6||(activeByIp.get(ip)||0)>=2)return reply({error:'Caption fetching is busy. Wait a minute before fetching another video.',code:'rate_limit'},429);
   if(recent.has(limitKey))return reply({error:'Please wait a minute before trying this video again, or paste captions.',code:'rate_limit'},429);
   requestsByIp.set(ip,[...times,now]);if(requestsByIp.size>1000)requestsByIp.delete(requestsByIp.keys().next().value!);
   recent.set(limitKey,now);if(recent.size>1000)recent.delete(recent.keys().next().value!);
-  let job=pending.get(id);if(!job){job=retrieveVideoCaptions(id,fetcher);pending.set(id,job);void job.finally(()=>pending.delete(id)).catch(()=>{});}
+  let job=pending.get(jobKey);if(!job){job=retrieveVideoCaptions(id,fetcher,{provider});pending.set(jobKey,job);void job.finally(()=>pending.delete(jobKey)).catch(()=>{});}
   activeByIp.set(ip,(activeByIp.get(ip)||0)+1);let data:CaptionPayload;
   try{data=await job;}finally{const count=(activeByIp.get(ip)||1)-1;if(count)activeByIp.set(ip,count);else activeByIp.delete(ip);}
   if(cache)waitUntil(Promise.resolve().then(()=>cache.put(key,Response.json(data,{headers:{'Cache-Control':'public, max-age=604800'}}))).catch(()=>{}));

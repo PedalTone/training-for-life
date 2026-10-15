@@ -59,6 +59,37 @@ test('video duration and cues for the next exercise are not assigned to the curr
  const plan=draftVideoPlan('Goblet squat. This video is 20 minutes long. Then 10 reps of kettlebell swings.');assert.equal(plan.exercises[0].sets[0].work,'');assert.equal(plan.exercises[0].sets[0].reps,'');
 });
 
+test('explicit workout protocol replaces introductory examples and shares only stated per-exercise work',()=>{
+ const transcript='Some movement examples are swings and Turkish get-ups.\nFor this workout the exercises are deadlifts, press and the goblet squat.\nThe protocol is three exercises for two minutes per exercise.\nComplete them consecutively. Take a 60 second break after every round. Start with two to three rounds in total.';
+ const plan=draftVideoPlan(transcript);
+ assert.deepEqual(plan.exercises.map(exercise=>exercise.name),['Deadlift','Press','Goblet squat']);
+ for(const exercise of plan.exercises){assert.equal(exercise.setsSpecified,false);assert.equal(exercise.sets.length,1);assert.equal(exercise.sets[0].work,'2 minutes');assert.equal(exercise.sets[0].reps,'');assert.equal(exercise.sets[0].rest,'');}
+ assert.match(plan.notes,/60 second break after every round/);assert.match(plan.notes,/two to three rounds/);
+ assert.doesNotMatch(plan.exercises[1].name,/Overhead|Bench/);
+});
+
+test('shared protocol timing needs a matching exercise count and scope needs explicit workout markers',()=>{
+ const mismatch=draftVideoPlan('For this workout the exercises are deadlift and goblet squat. The protocol is three exercises for two minutes per exercise. Rest 60 seconds between rounds.');
+ assert.equal(mismatch.exercises.find(exercise=>exercise.name==='Deadlift').sets[0].work,'');
+ const unmarked=draftVideoPlan('Kettlebell swing: 10 reps. The exercises are deadlift and goblet squat. The protocol is two exercises for two minutes per exercise.');
+ assert.equal(unmarked.exercises[0].name,'Kettlebell swing');
+ const unknown=draftVideoPlan('Kettlebell swing: 10 reps. For this workout the exercises are deadlift and an unfamiliar movement. The protocol is two exercises for two minutes per exercise.');
+ assert.equal(unknown.exercises[0].name,'Kettlebell swing');
+ const noProtocol=draftVideoPlan('Kettlebell swing: 10 reps. For this workout the exercises are deadlift and goblet squat.');
+ assert.equal(noProtocol.exercises[0].name,'Kettlebell swing');
+ const multiple=draftVideoPlan('For this workout the exercises are deadlift and goblet squat. The protocol is two exercises for two minutes per exercise. For another workout the exercises are plank and push-up. The protocol is two exercises for thirty seconds per exercise.');
+ assert.ok(multiple.exercises.some(exercise=>exercise.name==='Push-up'));assert.ok(multiple.exercises.some(exercise=>exercise.name==='Deadlift'));
+});
+
+test('unsupported shared set protocols and later exact targets remain available to draft extraction',()=>{
+ const sharedSets=draftVideoPlan('For this workout the exercises are deadlift and goblet squat. The protocol is three sets of ten reps of each exercise.');
+ assert.ok(sharedSets.exercises.some(exercise=>exercise.sets.length===3&&exercise.sets.every(set=>set.reps==='10')));
+ const laterTargets=draftVideoPlan('For this workout the exercises are deadlift and goblet squat. The protocol is two exercises for thirty seconds per exercise. Deadlift: three sets of ten reps. Goblet squat: three sets of twelve reps.');
+ const deadlift=laterTargets.exercises.filter(exercise=>exercise.name==='Deadlift').at(-1),squat=laterTargets.exercises.filter(exercise=>exercise.name==='Goblet squat').at(-1);
+ assert.equal(deadlift.sets.length,3);assert.ok(deadlift.sets.every(set=>set.reps==='10'));
+ assert.equal(squat.sets.length,3);assert.ok(squat.sets.every(set=>set.reps==='12'));
+});
+
 test('caption links and fallback commands use only a canonical validated YouTube ID',async()=>{
  const {canonicalVideoURL}=await import('../app/video-training-plan.ts');
  assert.equal(canonicalVideoURL({url:'https://youtu.be/abcdefghijk?x=$(anything)'}),'https://www.youtube.com/watch?v=abcdefghijk');
