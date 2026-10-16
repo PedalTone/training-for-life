@@ -4,7 +4,7 @@ Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — smooth Settings video-to-plan workflow
 
-Release candidate **2026.10.16 1148** follows Designly review: Add video & get
+Published release **2026.10.16 1148** follows Designly review: Add video & get
 transcript → user copies on exact free site → Paste & build → compact review →
 Save plan. Uses the website's actual POST /transcript form with youtube_url, not
 an assumed GET prefill. One user-triggered clipboard read; denied/unavailable
@@ -30,8 +30,19 @@ autosave, restored draft, save badge/reload, duplicate preservation, Today add,
 clipboard denial, storage failure/retry, recorded-row protection, backup/locks,
 automatic-error/file import and prior history. Inspected iPhone 440/393/375 and
 safe-area allowance; independent Designly review corrected competing actions.
-Final full builds/tests, publication and live verification pending. Preserve the
-unrelated untracked files. Existing automatic website access limitation remains.
+Both builds, all 145 app tests and 13 rendered checks pass. Typecheck retains
+the same eight pre-existing diagnostics; no new transcript-file diagnostics.
+Frontend commit `856bfb1b453fc31fb33730b44fec14d05a7ff6f6` published via successful
+Pages run `38927028886`. Live exact JS/CSS, release, service worker, icons/artwork
+and downloadable helper verified; the full isolated iPhone workflow also passes
+against the public app. Independent Designly visual signoff found no remaining
+material issues in review/saved states.
+Matching Sites version 163, source `c79693804adac13eaa9a464c1903fa8dcf7d7863`,
+saved version `appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_077289bec5dc81919f9afdef814d1ca5`,
+successful deployment `appgdep_6ad247b78a448191b967d122996aa2cc`.
+Preserve unrelated untracked files. Existing automatic website access limitation
+remains; mocked website navigation verifies the form, not successful extraction.
+No required work remains for the workflow simplification.
 
 ## Previous change — supplied kettlebell transcript lexicon
 
