@@ -1,3 +1,5 @@
+New public release — 2026.10.16 1956: Settings shows unread Grok Bot assessments with a private Google Drive reader before weekly planning.
+
 New public release — 2026.10.16 1148: Streamline Settings video-to-plan flow with the selected video sent to the free transcript site, one-tap Paste & build, compact review, resumable drafts and persistent Plan ready badges.
 
 New public release — 2026.10.15 1854: Use the supplied kettlebell lexicon for aliases, distinct variations and side/loading cues; retain per-side doses and programming notes without inventing sets or weights.
@@ -70,9 +72,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.16 1148` streamlines adding a video and saving its workout plan.
+Release decision: **New public release** — `2026.10.16 1956` adds the weekly assessment reader in Settings.
 
-App, notes, tests, worker and deployment use `2026.10.16 1148`.
+App, notes, tests, worker and deployment use `2026.10.16 1956`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

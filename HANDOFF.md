@@ -2,7 +2,38 @@
 
 Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — smooth Settings video-to-plan workflow
+## Current change — Settings assessment reader
+
+Candidate release **2026.10.16 1956** adds an unread/re-read assessment card
+above weekly mapping, explicit Mark as read, Google Docs private preview and
+Open in Google Drive fallback, source-check timestamp, notice refresh/errors
+and Plan next week landing at the report. Same-document revisions become unread.
+No workout/schedule/backup schema changes or automatic plan edits.
+
+Only a validated native Doc ID and modification/check timestamps are published
+in public/assessment-latest.json. Full report text remains in private Drive;
+iframe content is not copied to storage/source or cached by our service worker.
+Check for updates refreshes the published notice, not Drive. Sunday 8 p.m.
+automation must publish refreshed metadata after fetching the assessment;
+6 p.m. must update Grok-created latest-workout.json in place, keeping ID
+1oAFMw065E5ibpWtd5VJRw2tK1DWJwy3C. This workaround was confirmed by the user.
+Metadata-only updates keep the release label. Use scripts/update-assessment-notice.mjs
+with a verified native Google Doc ID and modified timestamp. Current notice is
+Assessment 2026-10-16, ID 1vsWuDF-erzfb8C8AGkFwv0ARiTdsRYxylFTNd6nju68.
+
+Both builds, all 161 app checks (including 13 rendered checks) pass. Typecheck
+retains the same eight baseline diagnostics. External Chrome fixtures cover
+unread/re-read/revision, explicit marking, cache/failure, no implicit iframe load,
+private URL, weekly mapping, prior history and Plan next week. Inspected iPhone
+440/393/375 and safe-area allowance. Corrected generic DATA label and strengthened
+Read button. Automatic approval review rejected the actual private viewer test
+because it printed private document body text to QA output; no bypass attempted.
+Actual signed-in report display requires the user's iPhone check; fixture tests
+verify viewer plumbing, not private Google authentication or report rendering.
+No new access-code service or Google/Gmail account permission was introduced.
+Publication and automation update pending.
+
+## Previous change — smooth Settings video-to-plan workflow
 
 Published release **2026.10.16 1148** follows Designly review: Add video & get
 transcript → user copies on exact free site → Paste & build → compact review →

@@ -274,3 +274,26 @@ shape. All exercise/set IDs must be unique. Weight/results are excluded:
 
 Import remains a draft until the user reviews and saves it. Limits: 60 exercises,
 20 rows per exercise, 500 rows total; transcript text 300,000 characters, files 1 MB.
+
+## Grok Bot assessment reader
+
+Settings shows the latest synced assessment notice above Weekly workout mapping.
+Read new assessment expands Google’s private Docs viewer; Open in Google Drive
+is always available if embedding or Google sign-in is blocked on iPhone. Mark as
+read is explicit and remembered on this device. Opening the viewer alone does not
+mark it read. A revised document becomes unread again. No report changes the plan.
+Plan next week lands on the assessment card with weekly mapping ready below it.
+
+Only the native Doc ID, modification time and source-check time are published in
+`public/assessment-latest.json`; assessment text is never copied into the public
+repository or frontend. Google enforces the document’s existing private access.
+The viewer requires network access and Google sign-in; no offline report content
+is stored. A notice can be cached on the device and is labeled when refresh fails.
+Check for updates refreshes the published notice, not Google Drive itself.
+
+The existing Sunday transfer automation updates `latest-workout.json` in place
+(Drive ID `1oAFMw065E5ibpWtd5VJRw2tK1DWJwy3C`) at 6 p.m. Eastern. At 8 p.m. it
+downloads the newest assessment and publishes its metadata notice. For a verified
+native Google Doc run `node --experimental-strip-types scripts/update-assessment-notice.mjs FILE_ID MODIFIED_TIME`,
+then build/publish the metadata change through Pages. Data-only notice refreshes
+keep the release label. Do not publish report contents or Google credentials.
