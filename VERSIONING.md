@@ -1,3 +1,5 @@
+New public release — 2026.10.16 1148: Streamline Settings video-to-plan flow with the selected video sent to the free transcript site, one-tap Paste & build, compact review, resumable drafts and persistent Plan ready badges.
+
 New public release — 2026.10.15 1854: Use the supplied kettlebell lexicon for aliases, distinct variations and side/loading cues; retain per-side doses and programming notes without inventing sets or weights.
 
 New public release — 2026.10.15 1825: Use the requested free transcript website, show a direct link and open paste/import when retrieval fails, display full fetched text and improve circuit drafts.
@@ -68,9 +70,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.15 1854` improves transcript workout drafting with the supplied kettlebell lexicon.
+Release decision: **New public release** — `2026.10.16 1148` streamlines adding a video and saving its workout plan.
 
-App, notes, tests, worker and deployment use `2026.10.15 1854`.
+App, notes, tests, worker and deployment use `2026.10.16 1148`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

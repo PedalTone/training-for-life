@@ -175,39 +175,46 @@ History uses a 12-week scrolling timeline with Earlier/Later arrows moving three
 
 Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The six core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
 
-## Full video transcripts
+## Video-to-plan workflow
 
-The app requests the complete transcript from **https://youtubetotranscript.com/**.
-If retrieval fails, a prominent **Open free transcript website** link appears and
-the paste/import section opens automatically. Copy the video link, get its full
-transcript on that site, paste it into the app, then build and review the draft.
-The same free website is also linked before fetching. No alternate online
-service, account or API key is used by this interface.
+Settings → Future workout videos has one primary **Add video & get transcript**
+action. It saves the video immediately and submits its canonical YouTube address
+to **https://youtubetotranscript.com/** using that site's public POST form
+(`/transcript`, `youtube_url`), opening a separate browser tab. Metadata enriches
+in the background; failed metadata lookup never prevents adding the video.
+Existing videos with a valid plan are recognized instead of duplicated/rebuilt.
+**Save video only** is available as a quiet alternative.
 
-The exact website currently blocks automatic requests with an HTTP 403 access
-check. The fallback is verified; successful live automatic website retrieval is
-not verified. Successful website-response fixtures verify complete first/final
-text, source/word count, caching and review/save behavior. Existing workout data
-is preserved. Shared circuit instructions are recognized only when explicit;
-unspecified reps, exercise variations and set counts are never guessed.
+Copy the transcript on the free site, return to the app and tap **Paste & build**.
+Clipboard reading occurs only on that tap. If unavailable/denied, one text box and
+**Build plan** appear. Review the compact exercise list, expand movements to edit,
+then **Save plan**. Add/Delete card actions stay hidden until save/cancel. A
+persistent **✓ Plan ready · N exercises** badge reflects the actual saved plan
+before opening any disclosure, including after reload. Blank future weights and
+prior workout snapshots remain independent.
+
+The most recent Settings draft (up to 300,000 transcript characters; 750,000
+serialized characters) resumes via a separate sessionStorage record. Drafts are
+not saved blueprints and do not appear as Plan ready. Today/session editors do not
+load Settings drafts. Saving/canceling clears only that video's matching temporary
+record. The category filter is one compact selector; category editing is collapsed.
+
+File import, manual creation and **Try automatic transcript** remain under
+**Other options**. Imported text builds the review directly. Automatic requests
+still use only the exact recommended website, with no silent source substitution.
+The exact website currently blocks automated retrieval with HTTP 403; a browser
+handoff passes the address, but the site still controls access and transcript
+copying. No cross-site automatic return or successful live transcript extraction
+is claimed. No alternate service, account or API key is used by this workflow.
 
 ## Video plans and set logging
-
-In Settings → Future workout videos → Build workout plan → Create plan, tap
-Fetch full transcript & build draft. The server requests the exact website and
-opens an editable draft if text is returned, without saving it automatically.
-When access fails, use the direct free-site link and expanded paste/import form.
-Only the canonical video link goes to the transcript service; workout results
-stay local. Requests occur only
-on tap, have bounded time/size and best-effort per-isolate rate limits, and do not
-retry indefinitely. The edge uses manual redirects with explicit 3xx rejection.
 
 Successful full captions are cached separately on this device (up to five videos,
 300,000 characters total); this cache is not included in workout backups. The
 server also attempts a seven-day edge cache; an unavailable Cache API does not
 prevent retrieval. Some videos lack English captions or temporarily block access.
-Paste captions or import a plan opens the manual `.txt`/`.vtt`/`.srt`/version-1
-JSON fallback, with the external transcript site and computer helper.
+Other options includes `.txt`/`.vtt`/`.srt` transcript and version-1 JSON plan
+import. The computer helper remains downloadable as documented below.
 
 Draft processing is local, uses explicit exercise/volume cues and requires
 review; it is not an AI interpretation of the complete video. The supplied

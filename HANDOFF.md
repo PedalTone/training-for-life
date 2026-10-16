@@ -1,8 +1,39 @@
 # Training for Life — development handoff
 
-Updated October 15, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — supplied kettlebell transcript lexicon
+## Current change — smooth Settings video-to-plan workflow
+
+Release candidate **2026.10.16 1148** follows Designly review: Add video & get
+transcript → user copies on exact free site → Paste & build → compact review →
+Save plan. Uses the website's actual POST /transcript form with youtube_url, not
+an assumed GET prefill. One user-triggered clipboard read; denied/unavailable
+access reveals one manual box. No cross-site automatic return claim. Website
+success is still blocked/unverified; browser tests intercept the public form to
+verify the canonical address is supplied and no other data is sent.
+
+Plan ready + exercise count is visible outside disclosures and derived from
+validated persisted trainingPlan. Save succeeds only after library persistence;
+failure leaves the draft editable. Saved plans/duplicates are reused, metadata
+loads in background, filters collapse to one selector, category edits and uncommon
+source tools collapse. Add/Delete disappear while building/reviewing; only Save
+is prominent. Imported text goes directly to review; full source stays optional.
+
+A bounded session draft resumes the most recent Settings builder after reload;
+it is separate from saved plans/workout storage and never opens in Today editors.
+Recorded-row protections, blank repeat results, backups, completed locks and
+Add-to-today confirmations remain. No workout/result/backup schema changes.
+
+10 focused helper tests and 34 parser/helper checks pass. External Chrome passes
+actual form request shape, explicit clipboard/no implicit reads, review without
+autosave, restored draft, save badge/reload, duplicate preservation, Today add,
+clipboard denial, storage failure/retry, recorded-row protection, backup/locks,
+automatic-error/file import and prior history. Inspected iPhone 440/393/375 and
+safe-area allowance; independent Designly review corrected competing actions.
+Final full builds/tests, publication and live verification pending. Preserve the
+unrelated untracked files. Existing automatic website access limitation remains.
+
+## Previous change — supplied kettlebell transcript lexicon
 
 Published release **2026.10.15 1854** imports the user's original 94-entry JSON
 unchanged into app/data. A local matcher recognizes 256 supplied exercise phrases,
