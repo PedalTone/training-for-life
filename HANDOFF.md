@@ -4,7 +4,7 @@ Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — native assessment file selection and local reader
 
-Candidate release **2026.10.16 2008** replaces the embedded private Google viewer
+Published release **2026.10.16 2008** replaces the embedded private Google viewer
 with Read latest assessment → native file picker → locally extracted text in
 Settings. Supports .docx/.txt/.md, heading/paragraph/list/table text, UTF-8 and
 BOM-marked UTF-16. Files controls the starting folder; cannot force Drive's
@@ -28,7 +28,16 @@ file preservation, cache/reload/reopen, explicit read, planning/history retentio
 and storage failure. Inspected 440/393/375 plus safe-area allowance. Typecheck
 retains eight baseline diagnostics with none in the assessment files. Actual iOS
 Files provider navigation remains a physical-iPhone check. Both builds and all 164 app checks (including 13 rendered checks) pass.
-Publication and final live checks pending.
+Frontend `2c4fc3aefbf0c86c2a3822676dae9dbc5333dbe3` published via successful
+Pages run `38985028855`. Exact live JS/CSS, lazy Word-reader chunk and service
+worker match release 2008. Full synthetic-file workflow also passes on the live
+app. The existing Sunday heartbeat wording was updated for Files/local reading;
+its times and operations are unchanged. Physical iOS Google Drive provider
+navigation remains user verification; no forced start-folder claim.
+Sites source `e4e3f263d4fdcaf87e3a59aa90467f62671358e8`, version 165, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_f69de1a7f4d48191899d52ffa715cb0d`,
+deployment `appgdep_6ad2bcd0322c8191b9fe56f7fa74ef09` succeeded. No runtime
+credentials or API behavior changed. No required implementation work remains.
 
 ## Previous change — Settings assessment reader
 
