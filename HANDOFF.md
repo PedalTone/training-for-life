@@ -4,7 +4,7 @@ Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — week planning and Progress assessments
 
-Release candidate **2026.10.17 0528** uses Progress-style This week/Next week
+Published release **2026.10.17 0528** uses Progress-style This week/Next week
 underline tabs in Plan. This week retains the day strip, artwork and overview.
 Next week holds dated Monday–Sunday mapping, automatic saves, optional custom
 types, and an internal assessment shortcut. Training Assessment now sits below
@@ -26,7 +26,14 @@ External Chrome verifies the two weeks, dates, saves, custom types, rollback on
 storage failure, reload, Monday adoption, new/old backup restore, assessment
 navigation/focus/exact-folder popup, Settings removal and history preservation.
 Inspected actual 440/393/375/320 iPhone layouts and safe-area allowance. No
-material visual issues remain. Publication and live verification pending.
+material visual issues remain. Frontend `c05c5931b16a08b5b1a6c89374495e6d869852a9`
+published via successful Pages run `39021188866`. Exact live JS/CSS, release,
+service worker, icons/artwork and helper verified. The complete isolated planning,
+assessment, backup/restore and iPhone flow also passes on the public app.
+Sites version 169, source `24c554bcc2a134c9b3bf6b5c9eebe8c171a6701c`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_a7839c80ef0881919341e16b199b38a0`,
+deployment `appgdep_6ad33fae2cac8191883214cafe8ceb4e` succeeded. Exact live Sites
+0528 label verified. No required work remains. Preserve unrelated untracked files.
 
 ## Previous change — Training Assessment icon and attribution
 
