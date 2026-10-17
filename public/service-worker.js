@@ -3,7 +3,7 @@
 // GitHub Pages previously served a redirect at this origin. A new cache name
 // clears that obsolete shell for existing visitors now that Pages serves the
 // application directly.
-const CACHE = "training-4-life-2026.10.16-2008";
+const CACHE = "training-4-life-2026.10.17-0449";
 const ICONS = [
   "block-up-overs.png", "plank-to-rotation.png", "scapular-push-up.png", "overhead-press.png", "i-t-y.png", "face-pulls.png",
   "swimmers.png", "open-book.png", "banded-7s.png", "windmill.png", "kb-waiter.png", "crossovers.png", "push-ups.png",
@@ -14,9 +14,6 @@ self.addEventListener("install", (event) => event.waitUntil(caches.open(CACHE).t
 self.addEventListener("activate", (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  // Assessment notices must refresh; Google’s private viewer stays outside our cache.
-  const requestUrl = new URL(event.request.url);
-  if (requestUrl.pathname.endsWith("/assessment-latest.json") || ["docs.google.com", "drive.google.com", "accounts.google.com"].includes(requestUrl.hostname)) return;
   // Current weather must reach the network; do not cache location-bearing URLs.
   if (["api.open-meteo.com", "tile.openstreetmap.org", "photon.komoot.io"].includes(new URL(event.request.url).hostname)) return;
   // Always let the browser check for a newer worker script. Returning a

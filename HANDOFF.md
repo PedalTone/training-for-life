@@ -1,8 +1,34 @@
 # Training for Life — development handoff
 
-Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — native assessment file selection and local reader
+## Current change — simple Assessments folder link
+
+Candidate release **2026.10.17 0449** reduces Settings to one calm full-row
+Grok Bot assessments link above weekly mapping. Exact target is the private
+Drive Assessments folder 1YJ98Xnn-ET46O70_xYzYqy1rkZQX0PbQ. Designly directed
+cream/navy styling, readable 18/16px text, one external arrow and no competing
+controls. Opens in a new tab/window, keeping weekly planning in place.
+
+Removed file parsing/import/reader, notice polling/read state, published notice
+JSON, its updater script and the direct fflate dependency. Opening Settings
+removes only t4l:assessment-document, t4l:assessment-notice and t4l:assessment-read.
+No other local records, legacy insight reports, history, schedules or backups
+are touched. No report contents are stored or loaded by this link. Sunday
+transfer times/targets stay the same; remove only the app-notice publication
+steps from the heartbeat, as they are no longer needed.
+
+Both builds and all 158 app checks (including 13 rendered checks) pass. External
+Chrome verifies exact folder/new-window navigation, no importer/reader/notice
+polling, narrow cache cleanup, history/legacy report preservation, Plan shortcut
+focus/mapping, reload and storage denial. Inspected iPhone 440/393/375 plus 320px
+edge and safe-area allowance. Independent Designly actual-screenshot signoff PASS
+with no required fixes. Typecheck retains eight baseline diagnostics; no new ones.
+The existing Sunday heartbeat now performs only the two original transfers;
+app metadata publishing steps were removed. Publication/live verification pending.
+Preserve unrelated untracked files.
+
+## Previous change — native assessment file selection and local reader
 
 Published release **2026.10.16 2008** replaces the embedded private Google viewer
 with Read latest assessment → native file picker → locally extracted text in
