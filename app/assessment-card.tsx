@@ -12,7 +12,8 @@ export function AssessmentCard() {
   }, []);
 
   return <a className="settings-card assessment-card assessment-read" href="https://drive.google.com/drive/folders/1YJ98Xnn-ET46O70_xYzYqy1rkZQX0PbQ" target="_blank" rel="noopener noreferrer">
-    <span><strong>Training Assessment</strong><small>Read the latest report in Google Drive.</small></span>
+    <span className="setting-icon data" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M8 17v-3m4 3v-6m4 6v-4"/></svg></span>
+    <span><strong>Training Assessment</strong><small>Read the latest report on Google Drive from Grok.</small></span>
     <span className="assessment-external" aria-hidden="true">↗</span>
   </a>;
 }

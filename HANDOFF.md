@@ -2,7 +2,16 @@
 
 Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — simple Assessments folder link
+## Current change — Training Assessment icon and attribution
+
+Release **2026.10.17 0513** adds a blue outline report/chart icon matching the
+other Settings icons. Description now reads “Read the latest report on Google
+Drive from Grok.” Same full-row link, exact folder, new-window behavior and cache
+cleanup; no data or API changes. iPhone 440/393/375, 320px edge and safe-area
+checks cover wrapping, icon, folder navigation, Plan focus, history and storage
+preservation. Publication/live checks pending.
+
+## Previous change — simple Assessments folder link
 
 Published release **2026.10.17 0451** reduces Settings to one calm full-row
 Training Assessment link above weekly mapping. Exact target is the private

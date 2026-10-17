@@ -227,9 +227,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.17 0451";
+const APP_VERSION = "2026.10.17 0513";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Training Assessment has a matching blue report icon and identifies the latest report as on Google Drive from Grok."] },
+  { version: "2026.10.17 0451", category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
   { version: "2026.10.17 0449", category: "Minor fix", changes: ["Settings now has one simple Grok Bot assessments link. Open the Google Drive folder to read your report before planning the week. File importing, saved report text and assessment notices have been removed."] },
   { version: "2026.10.16 2008", category: "Major fix", changes: ["Read latest assessment opens the iPhone file picker. Choose a Word or text report to display its contents directly in Settings, reopen the saved text later, and then choose your weekly workouts. Files controls its starting folder; Google Drive help is nearby."] },
   { version: "2026.10.16 1956", category: "New feature", changes: ["Settings shows a new-assessment indicator and private Google Drive reader above weekly planning. Mark a report as read, reopen it anytime, then choose your workouts. Report notices sync on Sunday evenings; assessment text stays in Google Drive."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.15 1825", category: "Minor fix", changes: ["Transcript fetching uses the requested free YouTube to Transcript website. If access fails, a direct free-site link appears and paste/import opens automatically. Read the complete fetched transcript with its source and word count, and review improved circuit instructions before saving."] },
   { version: "2026.10.14 1831", category: "Major fix", changes: ["Fetch captions & build draft pulls this video’s English captions automatically and opens a workout plan for review. Successful captions are cached for reuse; manual paste and file import stay available when a video cannot be retrieved. No account or API key is needed."] },
   { version: "2026.10.14 1633", category: "Major fix", changes: ["Video workouts now support reusable plans built from pasted/uploaded captions or imported plan files. Review exercises, sets, reps, work and rest, then log weights and results per set. Repeated workouts start fresh; History and backups retain results. Progress compares reps at the same load and changed load at the same reps, excluding warm-ups. A downloadable computer caption fallback is available."] },
-  { version: "2026.10.14 0808", category: "Major fix", changes: ["Progress shows each workout type’s percentage and completed days, sorted most to least with History’s category colors. Missing types stay visible at 0%, and completed add-ons open below the chart. Choose 4, 8 or 12 weeks to see your training mix."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
