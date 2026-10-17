@@ -4,7 +4,7 @@ Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — Settings assessment reader
 
-Candidate release **2026.10.16 1956** adds an unread/re-read assessment card
+Published release **2026.10.16 1956** adds an unread/re-read assessment card
 above weekly mapping, explicit Mark as read, Google Docs private preview and
 Open in Google Drive fallback, source-check timestamp, notice refresh/errors
 and Plan next week landing at the report. Same-document revisions become unread.
@@ -31,7 +31,17 @@ because it printed private document body text to QA output; no bypass attempted.
 Actual signed-in report display requires the user's iPhone check; fixture tests
 verify viewer plumbing, not private Google authentication or report rendering.
 No new access-code service or Google/Gmail account permission was introduced.
-Publication and automation update pending.
+Frontend commit `5fd8c6e83037657ba919bd739b49f0e9cc7fe8d1` published via
+successful Pages run `38984266104`. Exact live JS/CSS, release, service worker
+and notice JSON match the tested build. Full fixture-based iPhone workflow also
+passes on the public app. The single Sunday heartbeat was updated to preserve
+Grok's file ID at 6 p.m. and download + publish notice metadata at 8 p.m.; timing
+and task name remain unchanged. Actual future scheduled execution is untested.
+Sites version 164, source `3fe2124c66a8c2aea392249af1bde7dd171cc6a4`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_9a40b0c9a23081918c858b85d6036b79`,
+deployment `appgdep_6ad2baa7b738819192e9caa1af37b3b8` succeeded. No API or
+credentials changed. Remaining check: the user should open the private Google
+viewer on their signed-in iPhone; Open in Google Drive is the fallback.
 
 ## Previous change — smooth Settings video-to-plan workflow
 
