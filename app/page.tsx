@@ -15,6 +15,7 @@ import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
 import { addonChoices, toggleAddonSelection } from "./addon-selection";
 import { GpsTracker, useGpsTracker } from "./gps-tracker";
+import { correctedGpsActivities } from "./gps-edit";
 import { gpsTime, type GpsWorkout } from "./gps-math";
 import { LocalProgressView } from "./local-progress-view";
 import { HistorySearchPanel } from "./history-search-panel";
@@ -224,9 +225,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.17 0554";
+const APP_VERSION = "2026.10.17 1625";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
+  { version: "2026.10.17 0554", category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
   { version: "2026.10.17 0528", category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
   { version: "2026.10.17 0513", category: "Minor fix", changes: ["Training Assessment has a matching blue report icon and identifies the latest report as on Google Drive from Grok."] },
   { version: "2026.10.17 0451", category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
@@ -235,7 +237,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.16 1956", category: "New feature", changes: ["Settings shows a new-assessment indicator and private Google Drive reader above weekly planning. Mark a report as read, reopen it anytime, then choose your workouts. Report notices sync on Sunday evenings; assessment text stays in Google Drive."] },
   { version: "2026.10.16 1148", category: "Major fix", changes: ["Adding a video sends its address to the free transcript website. Copy the transcript there, then use Paste & build to review and save a compact exercise plan. Saved videos clearly show Plan ready and the exercise count. Drafts resume after returning; uncommon tools stay under Other options."] },
   { version: "2026.10.15 1854", category: "Minor fix", changes: ["Video workout drafts recognize more kettlebell names and abbreviations from the supplied lexicon, preserving distinct variations, left/right, loading and per-side instructions. Programming cues such as EMOM stay in review notes. Long exercise names wrap for easier editing; weights and unspecified targets stay blank."] },
-  { version: "2026.10.15 1825", category: "Minor fix", changes: ["Transcript fetching uses the requested free YouTube to Transcript website. If access fails, a direct free-site link appears and paste/import opens automatically. Read the complete fetched transcript with its source and word count, and review improved circuit instructions before saving."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -536,7 +537,7 @@ export default function Home() {
     if (!loaded || finishingRef.current || workoutIsLocked(session,editingDate)) return;
     setSaveState("Saving…"); if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      if(finishingRef.current||sessionRef.current.date!==session.date||workoutIsLocked(sessionRef.current,editingDateRef.current))return;
+      if(finishingRef.current||sessionRef.current!==session||workoutIsLocked(sessionRef.current,editingDateRef.current))return;
       const next = { ...session, updatedAt: new Date().toISOString() };
       saveSession(next).then(() => setSaveState("Saved on this device")).catch(() => { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(next)); setSaveState("Saved on this device"); });
     }, 400);
@@ -823,20 +824,26 @@ export default function Home() {
     setHistory(items => [next, ...items.filter(item => item.id !== todayKey)].sort((a,b) => b.date.localeCompare(a.date)));
     return `Added ${name} to today’s add-ons.`;
   };
-  const gps = useGpsTracker(async (date, workout) => {
+  const gps = useGpsTracker(async (date, workout, change) => {
+    if(saveTimer.current)clearTimeout(saveTimer.current);
     let saved: Session | undefined;
     try { saved = await getSession(date); } catch { const raw = localStorage.getItem(`t4l:${date}`); saved = raw ? JSON.parse(raw) : undefined; }
     const dayPlan = scheduleForDate(dateFromKey(date), activeSchedule, scheduleHistory)[dateFromKey(date).getDay()];
     const current = sessionRef.current.id === date ? sessionRef.current : saved ? normalizeSession(saved) : emptySession(date, dayPlan.key === "rest", dayPlan);
     const existing = current.gpsWorkouts || [];
     if(workoutIsLocked(current,editingDateRef.current)&&!existing.some(item=>item.id===workout.id))throw new Error("Tap Edit before recording another workout.");
-    const workouts = existing.some(item => item.id === workout.id) ? existing.map(item => item.id === workout.id ? workout : item) : [...existing, workout];
+    if(change === 'edit' && (workoutIsLocked(current,editingDateRef.current)||!existing.some(item=>item.id===workout.id)))throw new Error("Tap Edit workout before changing a saved recording.");
+    const previous = existing.find(item=>item.id===workout.id);
+    const updatedWorkout = change === 'route' && previous ? {...previous,route:workout.route} : change === 'edit' && previous ? {...previous,activity:workout.activity,seconds:workout.seconds,meters:workout.meters} : workout;
+    const workouts = existing.some(item => item.id === workout.id) ? existing.map(item => item.id === workout.id ? updatedWorkout : item) : [...existing, updatedWorkout];
     const meters = workouts.reduce((sum,item)=>sum+item.meters,0);
     const seconds = workouts.reduce((sum,item)=>sum+item.seconds,0);
     const next = { ...current, gpsWorkouts:workouts, activity:current.activity || workout.activity, activities:current.activities?.length ? current.activities : [workout.activity], duration:!current.duration || ((current.gpsWorkouts?.length || 0)>0 && current.duration===gpsTime((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.seconds,0))) ? gpsTime(seconds) : current.duration, distance:!current.distance || ((current.gpsWorkouts?.length || 0)>0 && current.distance===`${((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.meters,0)/1609.344).toFixed(2)} mi`) ? `${(meters/1609.344).toFixed(2)} mi` : current.distance, startTime:current.startTime || new Date(workout.startedAt).toLocaleTimeString("en-US", {hour:"2-digit",minute:"2-digit",hour12:false}), updatedAt:new Date().toISOString() };
+    if(change === 'edit')Object.assign(next,correctedGpsActivities(current.activity,current.activities,existing,workouts));
     try { await saveSession(next); } catch { localStorage.setItem(`t4l:${date}`,JSON.stringify(next)); }
     if(sessionRef.current.id===date){ sessionRef.current=next;setSession(next); }
     setHistory(items=>[next,...items.filter(item=>item.id!==date)].sort((a,b)=>b.date.localeCompare(a.date)));
+    return updatedWorkout;
   });
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
@@ -904,7 +911,7 @@ export default function Home() {
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
             <div className="panel-body"><fieldset className="workout-edit-fields" disabled={workoutReadOnly}><div className="day-workout-override"><label><span>Workout for this day</span><select value={plan.key} onChange={(event) => setDayWorkoutType(event.target.value)}>{workoutOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><div><small>{session.planOverride ? "One-day change · weekly plan stays the same" : "Following your weekly plan"}</small>{session.planOverride && <button onClick={restoreWeeklyWorkoutType}>Use weekly plan</button>}</div></div><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></fieldset></div>
           </details>
-        <GpsTracker tracker={gps} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
+        <GpsTracker tracker={gps} onEditWorkout={()=>beginWorkoutEdit(activeDate)} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
         <section className="today-addons"><div className="today-section-title"><h3>Add-ons</h3><button onClick={openMobilityPicker} disabled={workoutReadOnly}>＋ Add / edit</button></div>
         <p className="today-addon-count">{session.mobilityExercises.length} selected · {session.completedExercises.filter(name => session.mobilityExercises.includes(name)).length} completed</p>
         {addonChoices(session.mobilityExercises, libraryExercises.map(item => item.name)).map(name => {

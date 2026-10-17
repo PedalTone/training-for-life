@@ -2,7 +2,33 @@
 
 Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — retire the legacy Progress report section
+## Current change — editable recordings and familiar tracker controls
+
+Release candidate **2026.10.17 1625** adds per-recording pencil Edit, inline
+Run/Bike/distance/duration fields with Save/Cancel, and preserves exact raw totals
+when only classification changes. Manual daily fields stay; GPS-owned totals and
+auto activity names update. Routes, id/order, start/end/max/gaps stay recorded;
+share and journal derive the corrected activity's pace/speed. Activity also changes
+while paused/ready. Finished workouts require the existing Edit workout unlock;
+tracker provides a direct affordance. Saving/reload locks the completed day again.
+
+Designly directed 60px labeled Play (green), Pause (orange), Stop & save (red)
+controls; Record another stays neutral and prepare-only. Editor scrolls into view.
+Saved writes serialize; route-only enrichment merges into latest recording so it
+cannot overwrite corrected totals/type. Pending old autosave is cleared at GPS
+save, and stale session snapshots cannot write over a newer session.
+
+20 focused edit/save/share checks pass, including exact preservation, malformed
+inputs, aggregate/manual fields, late labels and finished locks. External Chrome
+passes simulated GPS start/pause/resume/stop once, two intervals, ready-then-start,
+classification correction, older interval time/distance, invalid/cancel/failed
+storage, reload, backup and finished edit/relock. Inspected 440/393/375 and safe
+areas; independent Designly visual signoff passes. Both builds, 158 app tests
+and 13 rendered checks pass. Typecheck retains eight pre-existing diagnostics;
+none in changed tracker/edit files. Publication/live verification pending.
+Physical iPhone GPS remains a device check.
+
+## Previous change — retire the legacy Progress report section
 
 Published release **2026.10.17 0554** removes Saved training reports and its
 period/review UI from Progress, including unused rendering helpers. The current

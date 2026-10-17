@@ -126,9 +126,15 @@ unavailable message with a decorative sun. Weather does not change workout plans
 ## iPhone GPS workouts
 
 Today → Workout → Track my run / bike uses foreground browser geolocation with explicit
-permission. Select Run/Bike and miles/kilometers, then Start GPS. Pause/Resume
-excludes paused time and never joins missing route segments. Stop + save route
+permission. Select Run/Bike and miles/kilometers, then the green Play/Start timer button. Orange Pause and green Resume
+excludes paused time and never joins missing route segments. Red Stop & save
 adds a GPS summary and segmented route map to the dated session; Finish + Backup then backs it up normally.
+Each saved recording has a pencil Edit control for Run/Bike, distance and duration.
+Changing activity preserves exact raw measurements, route and start/end times;
+pace/speed, auto-filled daily totals and sharing follow the correction. Activity
+can also change while paused. Finished workouts require Edit workout first.
+Recording another prepares a new timer; tap Start to begin. Edits and place-label
+updates serialize so late lookup results cannot overwrite a correction.
 Existing manual details remain; blank totals are filled and GPS-owned totals can
 accumulate multiple recordings. Journal shows each recording’s time, distance,
 average/maximum speed, start/end and detected gaps. GPS coordinates are stored locally, included in backups, and excluded from AI requests. A local route draft recovers paused after reload.

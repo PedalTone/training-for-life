@@ -1,3 +1,5 @@
+New public release — 2026.10.17 1625: Edit saved GPS activity, distance and duration; add familiar green Play, orange Pause and red Stop & save controls while preserving routes and completed-workout locks.
+
 New public release — 2026.10.17 0554: Remove obsolete Saved training reports from Progress; keep the Google Drive Training Assessment link.
 
 New public release — 2026.10.17 0528: Add This week/Next week Plan tabs, move Monday–Sunday mapping into Next week with future-effective saves, and move Training Assessment to Progress with a planning shortcut.
@@ -84,9 +86,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.17 0554` removes the retired API-era report section from Progress.
+Release decision: **New public release** — `2026.10.17 1625` adds saved-recording corrections and recognizable timer controls.
 
-App, notes, tests, worker and deployment use `2026.10.17 0554`.
+App, notes, tests, worker and deployment use `2026.10.17 1625`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
