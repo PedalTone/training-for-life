@@ -2,7 +2,18 @@
 
 Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — week planning and Progress assessments
+## Current change — retire the legacy Progress report section
+
+Release candidate **2026.10.17 0554** removes Saved training reports and its
+period/review UI from Progress, including unused rendering helpers. The current
+Google Drive Training Assessment card and Next week shortcut remain. Legacy
+report storage/backup/restore compatibility is preserved; nothing is erased.
+Both builds and 13 rendered checks pass. External Chrome with seeded legacy
+reports confirms their UI is absent, data retained, period choices/reload and
+assessment/Plan shortcut intact. Inspected 440/393/375 top/bottom and safe areas.
+Publication and live verification pending.
+
+## Previous change — week planning and Progress assessments
 
 Published release **2026.10.17 0528** uses Progress-style This week/Next week
 underline tabs in Plan. This week retains the day strip, artwork and overview.

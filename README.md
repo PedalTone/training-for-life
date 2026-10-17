@@ -49,7 +49,7 @@ storage to solve a deployment or cache issue. Nutrition is saved separately in
 merges nutrition dates; older backups leave existing check-ins untouched.
 Nutrition does not alter workout completion or streaks.
 
-The public frontend calls the separate Sites service only for on-demand video captions; it no longer calls AI extraction or training assessment. Saved legacy reports, extracted screenshot details and goals are retained in storage and backups. Local screenshot attachments are compressed images, up to six per workout, included in History and backups; they never update metrics automatically.
+The public frontend calls the separate Sites service only for on-demand video captions; it no longer calls AI extraction or training assessment. The obsolete Saved training reports section is removed from Progress. Legacy report data, extracted screenshot details and goals are retained in storage and backups. Local screenshot attachments are compressed images, up to six per workout, included in History and backups; they never update metrics automatically.
 The service uses server-side `OPENAI_API_KEY` and `INSIGHTS_ACCESS_CODE`; never
 put their values in documentation or client code. Existing credential setup is
 separate from this chat migration. Inspect applicable API/hosting instructions

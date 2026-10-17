@@ -224,9 +224,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.17 0528";
+const APP_VERSION = "2026.10.17 0554";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
+  { version: "2026.10.17 0528", category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
   { version: "2026.10.17 0513", category: "Minor fix", changes: ["Training Assessment has a matching blue report icon and identifies the latest report as on Google Drive from Grok."] },
   { version: "2026.10.17 0451", category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
   { version: "2026.10.17 0449", category: "Minor fix", changes: ["Settings now has one simple Grok Bot assessments link. Open the Google Drive folder to read your report before planning the week. File importing, saved report text and assessment notices have been removed."] },
@@ -235,7 +236,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.16 1148", category: "Major fix", changes: ["Adding a video sends its address to the free transcript website. Copy the transcript there, then use Paste & build to review and save a compact exercise plan. Saved videos clearly show Plan ready and the exercise count. Drafts resume after returning; uncommon tools stay under Other options."] },
   { version: "2026.10.15 1854", category: "Minor fix", changes: ["Video workout drafts recognize more kettlebell names and abbreviations from the supplied lexicon, preserving distinct variations, left/right, loading and per-side instructions. Programming cues such as EMOM stay in review notes. Long exercise names wrap for easier editing; weights and unspecified targets stay blank."] },
   { version: "2026.10.15 1825", category: "Minor fix", changes: ["Transcript fetching uses the requested free YouTube to Transcript website. If access fails, a direct free-site link appears and paste/import opens automatically. Read the complete fetched transcript with its source and word count, and review improved circuit instructions before saving."] },
-  { version: "2026.10.14 1831", category: "Major fix", changes: ["Fetch captions & build draft pulls this video’s English captions automatically and opens a workout plan for review. Successful captions are cached for reuse; manual paste and file import stay available when a video cannot be retrieved. No account or API key is needed."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -946,7 +946,7 @@ export default function Home() {
 
       {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openPlanDate} onMakeNextWeekPlan={makePlanForNextWeek} selectedWeek={planWeek} onWeek={setPlanWeek} scheduleKeys={scheduleKeys} onMapping={saveNextWeekMapping} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} onAssessment={openTrainingAssessment}/>}
       {tab === "history" && <HistoryView memory={historyTimelineMemory} filters={historyFilters} onFilters={setHistoryFilters} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openJournal}/>}
-      {tab === "performance" && <PerformanceView weeks={progressWeeks} setWeeks={setProgressWeeks} library={libraryExercises.map(e => e.name)} onAddExercise={addExerciseToToday} onOpenJournal={openJournal} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} insightReports={insightReports}/>}
+      {tab === "performance" && <PerformanceView weeks={progressWeeks} setWeeks={setProgressWeeks} library={libraryExercises.map(e => e.name)} onAddExercise={addExerciseToToday} onOpenJournal={openJournal} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory}/>}
       {tab === "more" && <MoreView editingDate={editingDate} todayLocked={workoutIsLocked(viewHistory.find(item=>item.date===dateKey(today)),editingDate)} onEditToday={()=>beginWorkoutEdit(today)} todayVideos={viewHistory.find(item=>item.date===dateKey(today))?.videos||[]} libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeys} setScheduleHistory={setScheduleHistory} scheduleHistory={scheduleHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addVideoToToday}/>}
       </>}
     </main>
@@ -1106,59 +1106,10 @@ function HistoryView({ memory, filters, onFilters, now, sessions, activeSchedule
   </div>;
 }
 
-const performanceAreas = [
-  { key: "mobility", label: "Mobility", icon: "↗", terms: ["mobility", "stretch", "flexibility"] },
-  { key: "aerobic", label: "Easy aerobic", icon: "≈", terms: ["aerobic", "zone 2", "easy", "cardio"] },
-  { key: "strength", label: "Full-body strength", icon: "🏋️", terms: ["strength", "kettlebell", "weight", "lift"] },
-  { key: "speed", label: "Speed", icon: "⚡", terms: ["speed", "interval", "tempo", "intensity"] },
-  { key: "endurance", label: "Endurance", icon: "∞", terms: ["endurance", "long", "distance"] },
-  { key: "rest", label: "Recovery", icon: "☾", terms: ["rest", "recovery", "recover"] },
-] as const;
-type PerformanceDirection = "stay" | "increase" | "decrease";
-function directionForArea(report: TrainingInsightReport, area: (typeof performanceAreas)[number]): PerformanceDirection {
-  const text = [
-    ...(report.wins || []),
-    ...(report.patterns || []),
-    ...(report.cautions || []),
-    ...(report.recommendations || []).flatMap((item) => [item.title, item.reason, item.action]),
-  ].join(" ").toLowerCase();
-  const relevant = text.split(/[.!?\n]+/).filter((sentence) => area.terms.some((term) => sentence.includes(term)));
-  if (!relevant.length) return "stay";
-  const joined = relevant.join(" ");
-  if (/reduce|decrease|less |cut back|back off|avoid|limit|ease|protect|modify/.test(joined)) return "decrease";
-  if (/increase|add |more |build|prioriti[sz]e|progress|extra/.test(joined)) return "increase";
-  return "stay";
-}
-function recommendationForArea(report: TrainingInsightReport, area: (typeof performanceAreas)[number]) {
-  const newAreaKey = area.key === "rest" ? "recovery" : area.key;
-  const concise = report.areaRecommendations?.[newAreaKey];
-  if (concise) return { direction: concise.direction, recommendation: concise.recommendation.trim() };
-  const entries = [
-    ...(report.recommendations || []).flatMap((item) => [item.action, item.reason]),
-    ...(report.cautions || []), ...(report.wins || []), ...(report.patterns || []),
-  ];
-  const recommendation = entries.find((item) => area.terms.some((term) => item.toLowerCase().includes(term)));
-  if (!recommendation) return { direction: "no_signal" as const, recommendation: "No clear signal yet." };
-  return { direction: directionForArea(report, area) === "stay" ? "keep" as const : directionForArea(report, area), recommendation: recommendation.trim() };
-}
-function conciseText(value: string, maxWords: number) {
-  const words = value.trim().split(/\s+/);
-  return words.length > maxWords ? `${words.slice(0, maxWords).join(" ")}…` : value.trim();
-}
-const insightDirectionMeta: Record<InsightDirection, { icon: string; label: string }> = {
-  keep: { icon: "→", label: "Stay the course" }, increase: { icon: "↗", label: "Do more" },
-  decrease: { icon: "↘", label: "Ease back" }, no_signal: { icon: "·", label: "No clear signal" },
-};
-
-function PerformanceView({ weeks, setWeeks, library, onAddExercise, onOpenJournal, now, sessions, activeSchedule, scheduleHistory, insightReports }: { weeks:number; setWeeks:(weeks:number)=>void; library: string[]; onAddExercise: (name:string)=>Promise<string>; onOpenJournal: (date:Date)=>void; now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; insightReports: TrainingInsightReport[]; }) {
-  const [insightPeriod, setInsightPeriod] = useState<0 | 30 | 90>(insightReports[0]?.periodDays ?? 30);
-  const [insightsOpen, setInsightsOpen] = useState(false);
-  const currentReport = insightReports.find((report) => report.periodDays === insightPeriod);
+function PerformanceView({ weeks, setWeeks, library, onAddExercise, onOpenJournal, now, sessions, activeSchedule, scheduleHistory }: { weeks:number; setWeeks:(weeks:number)=>void; library: string[]; onAddExercise: (name:string)=>Promise<string>; onOpenJournal: (date:Date)=>void; now: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; }) {
   return <div className="subpage performance-page">
     <LocalProgressView assessment={<AssessmentCard/>} weeks={weeks} setWeeks={setWeeks} entries={sessions.map(session => { const plan = historicalPlan(session, scheduleForDate(dateFromKey(session.date), activeSchedule, scheduleHistory), dateFromKey(session.date)); return {session, key:plan.key, theme:plan.theme}; })} today={dateKey(now)} library={library} onAdd={onAddExercise} onOpen={date=>onOpenJournal(dateFromKey(date))}/>
-    {insightReports.length>0 && <details className="ai-insights-card performance-insights" open={insightsOpen} onToggle={event=>setInsightsOpen(event.currentTarget.open)}><summary className="ai-insights-heading"><div><h2>Saved training reports</h2><p>Previously saved reports remain available for reference.</p></div><i aria-hidden="true">＋</i></summary><div className="insight-period" aria-label="Saved report period">{([[30,"30 days"],[90,"90 days"],[0,"All history"]] as const).map(([period,label])=><button key={period} aria-pressed={insightPeriod===period} onClick={()=>setInsightPeriod(period)}>{label}</button>)}</div>
-      {currentReport && <article className="insight-report concise-insight-report"><header><div><span>SAVED REVIEW · {currentReport.sessionsAnalyzed} DAYS</span><h3>{conciseText(currentReport.headline, 10)}</h3></div><time>{new Date(currentReport.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></header><section className="executive-summary"><h4>Summary</h4><p>{(currentReport.executiveSummary || currentReport.summary || currentReport.headline).trim()}</p></section><section className="exercise-recommendations"><h4>Recommendations by exercise type</h4><div>{performanceAreas.map((area) => { const item = recommendationForArea(currentReport, area); const meta = insightDirectionMeta[item.direction === "stay" ? "keep" : item.direction]; return <div className={`exercise-recommendation ${item.direction}`} key={area.key}><span className="training-area-icon" aria-hidden="true">{area.icon}</span><div><strong>{area.label}</strong><span className="exercise-direction"><b aria-hidden="true">{meta.icon}</b>{meta.label}</span><p>{item.recommendation}</p></div></div>; })}</div></section><footer><span>{currentReport.dataQuality.trim()}</span><small>Training guidance only—not medical diagnosis or treatment.</small></footer></article>}
-    </details>}
+
   </div>;
 }
 

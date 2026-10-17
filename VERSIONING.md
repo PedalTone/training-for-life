@@ -1,3 +1,5 @@
+New public release — 2026.10.17 0554: Remove obsolete Saved training reports from Progress; keep the Google Drive Training Assessment link.
+
 New public release — 2026.10.17 0528: Add This week/Next week Plan tabs, move Monday–Sunday mapping into Next week with future-effective saves, and move Training Assessment to Progress with a planning shortcut.
 
 New public release — 2026.10.17 0513: Give Training Assessment a matching blue report icon and identify the report as on Google Drive from Grok.
@@ -82,9 +84,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.17 0528` reorganizes weekly planning and assessment navigation.
+Release decision: **New public release** — `2026.10.17 0554` removes the retired API-era report section from Progress.
 
-App, notes, tests, worker and deployment use `2026.10.17 0528`.
+App, notes, tests, worker and deployment use `2026.10.17 0554`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
