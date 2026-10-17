@@ -4,7 +4,7 @@ Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — simple Assessments folder link
 
-Candidate release **2026.10.17 0451** reduces Settings to one calm full-row
+Published release **2026.10.17 0451** reduces Settings to one calm full-row
 Training Assessment link above weekly mapping. Exact target is the private
 Drive Assessments folder 1YJ98Xnn-ET46O70_xYzYqy1rkZQX0PbQ. Designly directed
 cream/navy styling, readable 18/16px text, one external arrow and no competing
@@ -28,8 +28,15 @@ The existing Sunday heartbeat now performs only the two original transfers;
 app metadata publishing steps were removed. Initial 0449 feature published as
 frontend 7bfef336f581167a1acf5dafb1fc21a05268bf4a via successful Pages run
 39018881892, plus Sites version 166/deployment appgdep_6ad336f45fc481919e7c3a081f8677cf.
-The user then requested the exact label Training Assessment. Final label/release
-0451 publication and live verification pending.
+The user then requested the exact label Training Assessment. Final frontend
+f9635e3801a604cc138c87e89fe13c447520002f published via successful Pages run
+39019007722. Exact live JS/CSS and service worker match release 0451. The final
+label and complete link/cache-cleanup/Plan/iPhone workflow pass on the public
+app using synthetic folder navigation (no private report contents accessed).
+Sites version 167, source d556634a29015f1be1b07b9f1ff37be76c908701, saved
+appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_70d40806497c81919dba653960ffe3ac,
+deployment appgdep_6ad33770057c8191bf583454ae68a5d5 succeeded. Final label also
+inspected in rendered iPhone screenshots. No required work remains.
 Preserve unrelated untracked files.
 
 ## Previous change — native assessment file selection and local reader
