@@ -2,7 +2,33 @@
 
 Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Training Assessment icon and attribution
+## Current change — week planning and Progress assessments
+
+Release candidate **2026.10.17 0528** uses Progress-style This week/Next week
+underline tabs in Plan. This week retains the day strip, artwork and overview.
+Next week holds dated Monday–Sunday mapping, automatic saves, optional custom
+types, and an internal assessment shortcut. Training Assessment now sits below
+Progress period choices and above the training mix; shortcut scrolls/focuses it.
+Settings no longer has assessment or mapping controls.
+
+Mappings use existing t4l:schedule-history snapshots, effective next Monday;
+this week's baseline is retained. Removed the old effect that copied the latest
+future mapping into today's snapshot on reload. Date resolution consults dated
+snapshots for future dates too. Schedule persists with checked writes/rollback;
+failed saves retain the displayed/stored prior plan. Backups now include optional
+scheduleHistory; restore supports both dated and old schedule-only backups.
+Week starts Monday, ends Sunday. No workout records or one-day overrides changed.
+
+Six focused checks pass for boundaries, future revisions, reload/Monday rollover,
+historical isolation and real backup serialization. Both builds, 151 app tests
+and 13 rendered checks pass; typecheck retains the same eight baseline errors.
+External Chrome verifies the two weeks, dates, saves, custom types, rollback on
+storage failure, reload, Monday adoption, new/old backup restore, assessment
+navigation/focus/exact-folder popup, Settings removal and history preservation.
+Inspected actual 440/393/375/320 iPhone layouts and safe-area allowance. No
+material visual issues remain. Publication and live verification pending.
+
+## Previous change — Training Assessment icon and attribution
 
 Release **2026.10.17 0513** adds a blue outline report/chart icon matching the
 other Settings icons. Description now reads “Read the latest report on Google

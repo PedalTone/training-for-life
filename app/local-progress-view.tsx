@@ -1,10 +1,10 @@
-import {useState} from 'react';
+import {useState, type ReactNode} from 'react';
 import {localProgress, type ProgressEntry} from './local-progress';
 import {strengthSetComparisons} from './video-training-plan';
 import {historyWorkoutColor} from './history-timeline';
 const percent=new Intl.NumberFormat('en-US',{maximumFractionDigits:1});
 const formatDate=(d:string)=>new Date(`${d}T12:00:00`).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-export function LocalProgressView({entries,today,library,onOpen,onAdd,weeks,setWeeks}:{weeks:number;setWeeks:(weeks:number)=>void;entries:ProgressEntry[];today:string;library:string[];onOpen:(date:string)=>void;onAdd:(name:string)=>Promise<string>}) {
+export function LocalProgressView({entries,today,library,onOpen,onAdd,weeks,setWeeks,assessment}:{assessment?:ReactNode;weeks:number;setWeeks:(weeks:number)=>void;entries:ProgressEntry[];today:string;library:string[];onOpen:(date:string)=>void;onAdd:(name:string)=>Promise<string>}) {
  const [notice,setNotice]=useState('');const [adding,setAdding]=useState(false);
  const data=localProgress(entries,today,weeks,library);
  const missing=data.mix.filter(row=>!row.count).map(row=>row.label);
@@ -14,6 +14,7 @@ export function LocalProgressView({entries,today,library,onOpen,onAdd,weeks,setW
  const recovery=data.counts.get('rest')||0;
  return <div className="local-progress">
   <header className="progress-intro"><h1>Your progress</h1><p>See what you do most—and what is missing.</p><div className="progress-period" aria-label="Progress period">{[4,8,12].map(n=><button key={n} aria-pressed={weeks===n} onClick={()=>setWeeks(n)}>{n} weeks</button>)}</div></header>
+  {assessment}
   <section className="progress-balance" aria-labelledby="training-mix-heading"><header><span className="kicker">YOUR TRAINING MIX</span><h2 id="training-mix-heading">{data.finished.length ? `${data.finished.length} completed ${data.finished.length===1?'day':'days'}`:'Your training mix starts here'}</h2><p>Last {weeks} weeks{recovery>0&&` · includes ${recovery} ${recovery===1?'recovery day':'recovery days'}`}</p></header>
    <div className="progress-balance-rows">{data.mix.map(({key,label,count,percentage})=><div className="progress-balance-row" key={key} data-workout-type={key}><div className="progress-row-label"><strong>{label}</strong><span><b>{percent.format(percentage)}%</b> · {count} {count===1?'day':'days'}</span></div><div className="progress-count-track" aria-hidden="true"><i style={{width:`${percentage}%`,background:historyWorkoutColor(key)}}/></div></div>)}</div>
    {data.finished.length>0?<div className="progress-mix-observations"><p><strong>Most frequent:</strong> {leadingLabel}</p>{missing.length>0?<p><strong>Not recorded:</strong> {missing.join(', ')}</p>:<p>Every listed type has a completed day.</p>}</div>:<p className="progress-mix-empty">Complete a workout to see your mix. Planned and unfinished days aren’t included.</p>}

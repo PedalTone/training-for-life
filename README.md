@@ -2,7 +2,7 @@
 
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
-one-day changes, mobility exercises, videos, photos, backup/restore, local screenshot attachments, GPS route maps and social share images. Plan uses a seven-day selector, one featured workout picture and a compact weekly overview. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today, Plan and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
+one-day changes, mobility exercises, videos, photos, backup/restore, local screenshot attachments, GPS route maps and social share images. Plan uses This week/Next week underline tabs. This week has a seven-day selector, one featured workout picture and a compact overview. Next week contains Monday–Sunday workout mapping; changes save automatically from next Monday and repeat weekly, retaining this week and logged workouts. Dated mappings are included in backups; older backups remain supported. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today, Plan and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
 with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development
@@ -277,11 +277,11 @@ Import remains a draft until the user reviews and saves it. Limits: 60 exercises
 
 ## Grok Bot assessments
 
-Settings has one quiet **Training Assessment** link above weekly workout mapping.
+Progress has one quiet **Training Assessment** link below its period choices, before the training mix. Plan → Next week has a shortcut that opens and focuses this card. Weekly mapping is now in Plan → Next week.
 It opens the private Google Drive Assessments folder in a new tab/window. Read the
 report in Google Drive, then return to the app to plan the week. There is no file
 picker, in-app report reader, unread badge, metadata polling or report storage.
-Opening Settings removes only the former reader’s three assessment cache keys;
+Opening the assessment card in Progress removes only the former reader’s three assessment cache keys;
 workout history, schedule, legacy insight reports and backups remain unchanged.
 
 The Sunday transfer automation still updates Grok-created latest-workout.json
