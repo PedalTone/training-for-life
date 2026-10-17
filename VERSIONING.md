@@ -1,5 +1,7 @@
 New public release — 2026.10.17 1625: Edit saved GPS activity, distance and duration; add familiar green Play, orange Pause and red Stop & save controls while preserving routes and completed-workout locks.
 
+No new release — 2026.10.17: Internal editor-state cleanup during final verification of the 1625 tracker release; no additional public feature.
+
 New public release — 2026.10.17 0554: Remove obsolete Saved training reports from Progress; keep the Google Drive Training Assessment link.
 
 New public release — 2026.10.17 0528: Add This week/Next week Plan tabs, move Monday–Sunday mapping into Next week with future-effective saves, and move Training Assessment to Progress with a planning shortcut.
