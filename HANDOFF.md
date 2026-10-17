@@ -4,14 +4,20 @@ Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — retire the legacy Progress report section
 
-Release candidate **2026.10.17 0554** removes Saved training reports and its
+Published release **2026.10.17 0554** removes Saved training reports and its
 period/review UI from Progress, including unused rendering helpers. The current
 Google Drive Training Assessment card and Next week shortcut remain. Legacy
 report storage/backup/restore compatibility is preserved; nothing is erased.
 Both builds and 13 rendered checks pass. External Chrome with seeded legacy
 reports confirms their UI is absent, data retained, period choices/reload and
 assessment/Plan shortcut intact. Inspected 440/393/375 top/bottom and safe areas.
-Publication and live verification pending.
+Frontend `8c66ea0a48fa119f4a8b175aa5b089f5d6814ae2` published via successful
+Pages run `39022794362`. Exact live JS/CSS, release, service worker and assets
+verified; the same seeded-report/iPhone regression passes on the public app.
+Sites version 170, source `879528aada463ee0cf29cedbf9d3cdec1c64f9c9`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_55aa1e5fd2188191bd3f679ea9a3dbba`,
+deployment `appgdep_6ad3459c30d48191a569d10e6c286624` succeeded; exact live
+0554 label verified. No required work remains. Preserve unrelated untracked files.
 
 ## Previous change — week planning and Progress assessments
 
