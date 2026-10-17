@@ -4,8 +4,8 @@ Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — simple Assessments folder link
 
-Candidate release **2026.10.17 0449** reduces Settings to one calm full-row
-Grok Bot assessments link above weekly mapping. Exact target is the private
+Candidate release **2026.10.17 0451** reduces Settings to one calm full-row
+Training Assessment link above weekly mapping. Exact target is the private
 Drive Assessments folder 1YJ98Xnn-ET46O70_xYzYqy1rkZQX0PbQ. Designly directed
 cream/navy styling, readable 18/16px text, one external arrow and no competing
 controls. Opens in a new tab/window, keeping weekly planning in place.
@@ -25,7 +25,11 @@ focus/mapping, reload and storage denial. Inspected iPhone 440/393/375 plus 320p
 edge and safe-area allowance. Independent Designly actual-screenshot signoff PASS
 with no required fixes. Typecheck retains eight baseline diagnostics; no new ones.
 The existing Sunday heartbeat now performs only the two original transfers;
-app metadata publishing steps were removed. Publication/live verification pending.
+app metadata publishing steps were removed. Initial 0449 feature published as
+frontend 7bfef336f581167a1acf5dafb1fc21a05268bf4a via successful Pages run
+39018881892, plus Sites version 166/deployment appgdep_6ad336f45fc481919e7c3a081f8677cf.
+The user then requested the exact label Training Assessment. Final label/release
+0451 publication and live verification pending.
 Preserve unrelated untracked files.
 
 ## Previous change — native assessment file selection and local reader

@@ -12,7 +12,7 @@ export function AssessmentCard() {
   }, []);
 
   return <a className="settings-card assessment-card assessment-read" href="https://drive.google.com/drive/folders/1YJ98Xnn-ET46O70_xYzYqy1rkZQX0PbQ" target="_blank" rel="noopener noreferrer">
-    <span><strong>Grok Bot assessments</strong><small>Read the latest report in Google Drive.</small></span>
+    <span><strong>Training Assessment</strong><small>Read the latest report in Google Drive.</small></span>
     <span className="assessment-external" aria-hidden="true">↗</span>
   </a>;
 }

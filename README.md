@@ -277,7 +277,7 @@ Import remains a draft until the user reviews and saves it. Limits: 60 exercises
 
 ## Grok Bot assessments
 
-Settings has one quiet **Grok Bot assessments** link above weekly workout mapping.
+Settings has one quiet **Training Assessment** link above weekly workout mapping.
 It opens the private Google Drive Assessments folder in a new tab/window. Read the
 report in Google Drive, then return to the app to plan the week. There is no file
 picker, in-app report reader, unread badge, metadata polling or report storage.

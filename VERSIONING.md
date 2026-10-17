@@ -1,3 +1,5 @@
+New public release — 2026.10.17 0451: Label the Settings folder link Training Assessment as requested.
+
 New public release — 2026.10.17 0449: Replace the assessment importer and stored reader with one clean link to the Google Drive Assessments folder.
 
 New public release — 2026.10.16 2008: Read latest assessment opens the native file picker and displays selected Word/text contents locally in Settings.
@@ -76,9 +78,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.17 0449` simplifies assessments to a Google Drive folder link.
+Release decision: **New public release** — `2026.10.17 0451` labels the simple Google Drive folder link Training Assessment.
 
-App, notes, tests, worker and deployment use `2026.10.17 0449`.
+App, notes, tests, worker and deployment use `2026.10.17 0451`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
