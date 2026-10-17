@@ -2,7 +2,35 @@
 
 Updated October 16, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Settings assessment reader
+## Current change — native assessment file selection and local reader
+
+Candidate release **2026.10.16 2008** replaces the embedded private Google viewer
+with Read latest assessment → native file picker → locally extracted text in
+Settings. Supports .docx/.txt/.md, heading/paragraph/list/table text, UTF-8 and
+BOM-marked UTF-16. Files controls the starting folder; cannot force Drive's
+Assessments directory. Help provides folder/native-Doc links and Word-export
+instructions. Google native shortcuts require export first. No PDF/OCR/legacy
+DOC support. Word imports lazy-load pinned fflate 0.8.2; XML/file/text bounds
+prevent uncontrolled imports. Text is rendered literally; no external images,
+links, scripts or Word relationships execute.
+
+The selected filename is identified independently of the latest notice. Import
+does not mark the latest notice read; the user explicitly marks it. Last selected
+report caches in separate t4l:assessment-document and reopens after reload. It is
+not part of workout backups. Cancel and malformed input preserve the prior copy;
+storage failure keeps new content readable for that visit with clear feedback.
+No report text is uploaded/published and no workouts or schedules are changed.
+Notice metadata and Sunday times stay the same.
+
+External Chrome with synthetic reports passes actual filechooser trigger/cancel,
+DOCX formatting/text extraction, TXT, literal markup/no external loads, invalid
+file preservation, cache/reload/reopen, explicit read, planning/history retention
+and storage failure. Inspected 440/393/375 plus safe-area allowance. Typecheck
+retains eight baseline diagnostics with none in the assessment files. Actual iOS
+Files provider navigation remains a physical-iPhone check. Both builds and all 164 app checks (including 13 rendered checks) pass.
+Publication and final live checks pending.
+
+## Previous change — Settings assessment reader
 
 Published release **2026.10.16 1956** adds an unread/re-read assessment card
 above weekly mapping, explicit Mark as read, Google Docs private preview and

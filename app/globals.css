@@ -1828,7 +1828,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .assessment-reader-heading h3 { font-size: 20px; margin: 0 0 8px; }
 .assessment-card a { color: #244858; text-decoration: underline; text-underline-offset: 3px; }
 .assessment-reader-heading a { display: inline-flex; align-items: center; min-height: 44px; font-size: 17px; font-weight: 700; }
-.assessment-reader iframe { width: 100%; height: 65svh; min-height: 360px; max-height: 760px; display: block; border: 1px solid #9aaeb6; border-radius: 8px; background: #fff; margin: 10px 0; }
 .assessment-card .assessment-viewer-help, .assessment-card .assessment-error { font-size: 16px; }
 .assessment-plan-link { width: 100%; min-height: 48px; margin: 12px 0; font-size: 17px; font-weight: 700; }
 .assessment-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
@@ -1839,3 +1838,16 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .more-page > section.assessment-card { margin-top: 14px; }
 .more-page > section.assessment-card::before { content: none; }
 .more-page .assessment-card > .assessment-read { background: #203449; color: #fffaf2; border-color: #203449; }
+
+.assessment-file-help { color: #40545c; }
+.assessment-card .assessment-file-help { font-size: 15px; line-height: 1.5; }
+.assessment-file-options { margin: 12px 0; border-top: 1px solid #d9d1c5; }
+.assessment-file-options > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: 16px; font-weight: 600; }
+.assessment-file-options a { display: flex; align-items: center; min-height: 44px; font-size: 16px; }
+.assessment-reader-heading h3 { overflow-wrap: anywhere; line-height: 1.4; }
+.assessment-document { border-top: 1px solid #d9d1c5; border-bottom: 1px solid #d9d1c5; padding: 8px 0 18px; overflow-wrap: anywhere; }
+.assessment-document p { white-space: pre-wrap; font-size: 18px; line-height: 1.65; margin: 16px 0; }
+.assessment-document h4 { font-weight: 750; font-size: 20px; line-height: 1.4; margin: 22px 0 12px; }
+.assessment-document :last-child { margin-bottom: 0; }
+.assessment-document :first-child { margin-top: 12px; }
+.assessment-read:disabled { opacity: .65; }

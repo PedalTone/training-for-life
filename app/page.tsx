@@ -227,9 +227,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.16 1956";
+const APP_VERSION = "2026.10.16 2008";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "New feature", changes: ["Settings shows a new-assessment indicator and private Google Drive reader above weekly planning. Mark a report as read, reopen it anytime, then choose your workouts. Report notices sync on Sunday evenings; assessment text stays in Google Drive."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Read latest assessment opens the iPhone file picker. Choose a Word or text report to display its contents directly in Settings, reopen the saved text later, and then choose your weekly workouts. Files controls its starting folder; Google Drive help is nearby."] },
+  { version: "2026.10.16 1956", category: "New feature", changes: ["Settings shows a new-assessment indicator and private Google Drive reader above weekly planning. Mark a report as read, reopen it anytime, then choose your workouts. Report notices sync on Sunday evenings; assessment text stays in Google Drive."] },
   { version: "2026.10.16 1148", category: "Major fix", changes: ["Adding a video sends its address to the free transcript website. Copy the transcript there, then use Paste & build to review and save a compact exercise plan. Saved videos clearly show Plan ready and the exercise count. Drafts resume after returning; uncommon tools stay under Other options."] },
   { version: "2026.10.15 1854", category: "Minor fix", changes: ["Video workout drafts recognize more kettlebell names and abbreviations from the supplied lexicon, preserving distinct variations, left/right, loading and per-side instructions. Programming cues such as EMOM stay in review notes. Long exercise names wrap for easier editing; weights and unspecified targets stay blank."] },
   { version: "2026.10.15 1825", category: "Minor fix", changes: ["Transcript fetching uses the requested free YouTube to Transcript website. If access fails, a direct free-site link appears and paste/import opens automatically. Read the complete fetched transcript with its source and word count, and review improved circuit instructions before saving."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.14 0808", category: "Major fix", changes: ["Progress shows each workout type’s percentage and completed days, sorted most to least with History’s category colors. Missing types stay visible at 0%, and completed add-ons open below the chart. Choose 4, 8 or 12 weeks to see your training mix."] },
   { version: "2026.10.14 0302", category: "Major fix", changes: ["History replaces Month with a scrollable 12-week timeline. Earlier/Later arrows browse three weeks at a time; Back to this week returns to recent workouts. Subtle icon colors reveal training patterns while green checks and red body-note flags stay distinct."] },
   { version: "2026.10.14 0224", category: "Minor fix", changes: ["Home uses slightly tighter phone card padding and spacing so the complete menu, including Settings, fits more comfortably. Text sizes and artwork stay the same."] },
-  { version: "2026.10.14 0203", category: "Minor fix", changes: ["The prominent journal Edit workout button is full-width and sits directly above Share workout, grouping the main actions together."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

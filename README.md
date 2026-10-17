@@ -277,22 +277,38 @@ Import remains a draft until the user reviews and saves it. Limits: 60 exercises
 
 ## Grok Bot assessment reader
 
-Settings shows the latest synced assessment notice above Weekly workout mapping.
-Read new assessment expands Google’s private Docs viewer; Open in Google Drive
-is always available if embedding or Google sign-in is blocked on iPhone. Mark as
-read is explicit and remembered on this device. Opening the viewer alone does not
-mark it read. A revised document becomes unread again. No report changes the plan.
-Plan next week lands on the assessment card with weekly mapping ready below it.
+Settings → Read latest assessment opens the native file picker. Select a Word
+(.docx), plain-text (.txt) or Markdown (.md) report to read its text directly in
+Settings. iOS owns the starting folder; no automatic Drive-folder preselection is
+claimed. The nearby help explains Files → Browse → Google Drive → Training 4 Life
+→ Assessments and Google Docs → Share & export for a Word copy. Folder/latest-Doc
+links remain available under help. Google Drive must be installed/configured in
+Files to appear there. Native .gdoc shortcuts, legacy .doc, PDF and image-only
+reports are unsupported and receive a useful error if supplied.
 
-Only the native Doc ID, modification time and source-check time are published in
-`public/assessment-latest.json`; assessment text is never copied into the public
-repository or frontend. Google enforces the document’s existing private access.
-The viewer requires network access and Google sign-in; no offline report content
-is stored. A notice can be cached on the device and is labeled when refresh fails.
-Check for updates refreshes the published notice, not Google Drive itself.
+Extraction happens locally: headings, paragraphs, breaks, list markers and table
+text are retained in reading order. No images, external relationships or scripts
+are executed. Word XML is bounded to 2 MB, selected files to 5 MB and report text
+to 200,000 characters. The pinned small fflate dependency loads only for Word
+files. Text exports support UTF-8 and BOM-marked UTF-16.
 
-The existing Sunday transfer automation updates `latest-workout.json` in place
-(Drive ID `1oAFMw065E5ibpWtd5VJRw2tK1DWJwy3C`) at 6 p.m. Eastern. At 8 p.m. it
+The most recent selected report is cached separately in t4l:assessment-document,
+not in workout backups. Cancel, unreadable input or storage failure preserve the
+previous saved copy. A storage failure leaves the new report readable for this
+visit with a clear message. Reopen selected assessment restores the saved text
+on later visits, including offline. No private report text enters the public
+repository, API requests or assessment notice. Reports never edit a workout plan.
+
+Only a validated native Doc ID and modification/check timestamps are published
+in public/assessment-latest.json for the latest/unread notice. Selecting a file
+does not prove it matches that Drive document; the reader identifies the selected
+filename and marking the latest notice as read is explicit. New/edited document
+notices become unread again. Check report notice refreshes the published notice,
+not Google Drive directly. Plan next week lands on the report card with weekly
+mapping ready below it.
+
+The Sunday transfer automation updates Grok-created latest-workout.json in place
+(Drive ID 1oAFMw065E5ibpWtd5VJRw2tK1DWJwy3C) at 6 p.m. Eastern. At 8 p.m. it
 downloads the newest assessment and publishes its metadata notice. For a verified
 native Google Doc run `node --experimental-strip-types scripts/update-assessment-notice.mjs FILE_ID MODIFIED_TIME`,
 then build/publish the metadata change through Pages. Data-only notice refreshes
