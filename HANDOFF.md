@@ -9,7 +9,14 @@ other Settings icons. Description now reads “Read the latest report on Google
 Drive from Grok.” Same full-row link, exact folder, new-window behavior and cache
 cleanup; no data or API changes. iPhone 440/393/375, 320px edge and safe-area
 checks cover wrapping, icon, folder navigation, Plan focus, history and storage
-preservation. Publication/live checks pending.
+preservation. Both builds and 13 rendered checks pass. Published frontend
+`a3484bd0f4634ca67b3040d6eb2727f465b84b52` via successful Pages run
+`39020243451`; exact live JS/CSS, release and service worker verified. Full
+isolated link/iPhone checks also pass on the public app.
+Sites version 168, source `3d5bb7163da61f2b7ed71469476e1219ead5c34e`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_1fa8368e7684819198b1017a5112944c`,
+deployment `appgdep_6ad33c245c0c8191a13b95e460f1ff51` succeeded; exact live
+0513 release verified. No required work remains.
 
 ## Previous change — simple Assessments folder link
 
