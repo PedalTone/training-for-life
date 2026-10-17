@@ -4,7 +4,7 @@ Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — editable recordings and familiar tracker controls
 
-Release candidate **2026.10.17 1625** adds per-recording pencil Edit, inline
+Published release **2026.10.17 1625** adds per-recording pencil Edit, inline
 Run/Bike/distance/duration fields with Save/Cancel, and preserves exact raw totals
 when only classification changes. Manual daily fields stay; GPS-owned totals and
 auto activity names update. Routes, id/order, start/end/max/gaps stay recorded;
@@ -25,8 +25,17 @@ classification correction, older interval time/distance, invalid/cancel/failed
 storage, reload, backup and finished edit/relock. Inspected 440/393/375 and safe
 areas; independent Designly visual signoff passes. Both builds, 158 app tests
 and 13 rendered checks pass. Typecheck retains eight pre-existing diagnostics;
-none in changed tracker/edit files. Publication/live verification pending.
-Physical iPhone GPS remains a device check.
+none in changed tracker/edit files. Initial feature frontend `431b1aa` published
+via Pages run `39066568855`; final internal editor-state cleanup frontend
+`a148913b86482db529867ca4cce7ef420c80a4fa` published via successful Pages run
+`39066722540`. Exact live JS/CSS, release, service worker and assets verified.
+The complete simulated GPS/edit/reload/backup/lock/iPhone flow passes against
+the public app. No pending code changes; physical iPhone GPS remains a device check.
+Sites version 171, source `bc4166c378d5b9bb4856fd0e6cce47f1d498a330`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_1355b32b600c819199adcfa05c540b62`,
+deployment `appgdep_6ad3da5aa5588191abcc71e4cf6666be` succeeded; exact live
+Sites 1625 release verified. No required implementation or publication work remains.
+Preserve unrelated untracked files.
 
 ## Previous change — retire the legacy Progress report section
 
