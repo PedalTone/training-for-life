@@ -1,3 +1,5 @@
+New public release — 2026.10.18 1054: Clarify the recording deletion confirmation as “Yes, delete” beside “Keep recording”.
+
 New public release — 2026.10.18 0852: Delete individual tracked recordings in Edit mode with confirmation and corrected automatic totals.
 
 New public release — 2026.10.18 0806: Add four-second GPS auto-pause/resume, lighten Pause orange, hide live-map place boxes until saved, and move tracking notes into Settings About.
@@ -94,9 +96,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 0852` adds deletion of individual saved run/bike recordings in Edit mode.
+Release decision: **New public release** — `2026.10.18 1054` clarifies the delete confirmation.
 
-App, notes, tests, worker and deployment use `2026.10.18 0852`.
+App, notes, tests, worker and deployment use `2026.10.18 1054`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

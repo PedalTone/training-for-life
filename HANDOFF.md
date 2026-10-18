@@ -2,7 +2,15 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — delete individual GPS recordings
+## Current change — clear deletion confirmation
+
+Release candidate **2026.10.18 1054** changes only the final confirmation label
+from Delete recording to Yes, delete; Keep recording and deletion safeguards
+remain. Both builds and 13 rendered checks pass. External Chrome deletion,
+cancel, failure rollback, reload, backup and completed-lock regression passes;
+iPhone confirmation screenshot inspected. Publication pending.
+
+## Previous change — delete individual GPS recordings
 
 Published release **2026.10.18 0852** adds Delete recording with trash icon inside
 Edit recording, inline confirmation/Keep recording, checked persistence and lock
