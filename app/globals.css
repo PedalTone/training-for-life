@@ -1887,9 +1887,11 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 button.workout-share-action { display:grid; grid-template-columns:40px minmax(0,1fr) 18px; align-items:center; gap:12px; width:100%; min-height:84px; padding:16px; border:1px solid #203449; border-radius:14px; background:#203449; color:#fffaf2; text-align:left; box-shadow:0 4px 12px #20344914; }
 .workout-share-icon { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:#f1e4d3; color:#974016; }
 .workout-share-icon svg { width:26px; height:26px; }
-.workout-share-copy { display:grid; gap:4px; min-width:0; }
-.workout-share-copy strong { font:700 18px/1.25 var(--sans); }
-.workout-share-platforms { display:flex; align-items:center; gap:12px; margin-top:3px; }
+.workout-share-copy { display:flex; align-items:center; justify-content:space-between; gap:10px; min-width:0; }
+.workout-share-copy strong { font:700 18px/1.25 var(--sans); white-space:nowrap; }
+.workout-share-platforms { display:flex; align-items:center; gap:8px; flex:none; }
 .workout-share-platforms img { display:block; width:28px; height:28px; object-fit:contain; flex:none; }
 .workout-share-arrow { width:18px; height:18px; color:#e4ad76; }
 button.workout-share-action:active { background:#2c465d; }
+
+@media(max-width:360px) { button.workout-share-action { grid-template-columns:minmax(0,1fr) 18px; } .workout-share-action .workout-share-icon { display:none; } }

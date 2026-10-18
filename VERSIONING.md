@@ -1,3 +1,5 @@
+New public release — 2026.10.18 1546: Place social icons to the right of Share workout on one row.
+
 New public release — 2026.10.18 1541: Replace the sharing subtitle with original Instagram and TikTok icons, hosted locally.
 
 New public release — 2026.10.18 1535: Give Today and journal Share workout a prominent branded action with an Instagram/TikTok image cue.
@@ -106,9 +108,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 1541` adds original social platform icons.
+Release decision: **New public release** — `2026.10.18 1546` aligns sharing icons beside the title.
 
-App, notes, tests, worker and deployment use `2026.10.18 1541`.
+App, notes, tests, worker and deployment use `2026.10.18 1546`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

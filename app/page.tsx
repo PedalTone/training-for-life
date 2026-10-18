@@ -226,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 1541";
+const APP_VERSION = "2026.10.18 1546";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Share workout now uses original Instagram and TikTok icons instead of the subtitle on Today and the journal."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Instagram and TikTok icons now sit to the right of Share workout on the same row."] },
+  { version: "2026.10.18 1541", category: "Minor fix", changes: ["Share workout now uses original Instagram and TikTok icons instead of the subtitle on Today and the journal."] },
   { version: "2026.10.18 1535", category: "Minor fix", changes: ["Share workout now stands out with a navy button, share icon and an Instagram/TikTok image cue, consistently on Today and the journal."] },
   { version: "2026.10.18 1316", category: "Minor fix", changes: ["Stop & save now shows saved tracking summaries with Edit, distance, duration and average pace or speed. Live metrics and setup controls return only when preparing another recording."] },
   { version: "2026.10.18 1054", category: "Minor fix", changes: ["Recording deletion now asks “Yes, delete” or “Keep recording” so the confirmation is clear."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.18 0728", category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
   { version: "2026.10.17 1625", category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
   { version: "2026.10.17 0554", category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
-  { version: "2026.10.17 0528", category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

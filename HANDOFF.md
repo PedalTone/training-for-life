@@ -2,7 +2,18 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — original social icons
+## Current change — inline social icons
+
+Release candidate **2026.10.18 1546** aligns original Instagram/TikTok icons to
+the right of Share workout on one row, in Today and journal. Narrow <=360px
+views omit the decorative share tile to preserve readable text and logo sizes.
+Same single composer action, no data/API changes. Design report updated.
+D01 PASS automated release notes; D02/D07/D11 PASS external Chrome screenshots
+440/393/375, numeric same-row/right-of-title checks, original icon loads, composer
+open/close, journal Edit ordering and navigation. Other matrix rows N/A: unaffected.
+Both builds and all 185 tests pass. Publication pending.
+
+## Previous change — original social icons
 
 Published release **2026.10.18 1541** replaces sharing subtitle with original
 Instagram gradient glyph and TikTok square icon downloaded from official packs.
