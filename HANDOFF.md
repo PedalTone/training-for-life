@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — original social icons
 
-Release candidate **2026.10.18 1541** replaces sharing subtitle with original
+Published release **2026.10.18 1541** replaces sharing subtitle with original
 Instagram gradient glyph and TikTok square icon downloaded from official packs.
 Locally hosted PNGs proportionally scaled to 112px for 28px display; provenance
 in public/social/README.md. Accessible image names; same single composer action,
@@ -13,7 +13,11 @@ release notes; D02/D07/D11 PASS external Chrome Today/journal iPhone 440/393/375
 screenshots, real image loads/dimensions, no subtitle, composer open/close and
 Edit ordering/navigation. Other matrix rows N/A: unchanged features. Both builds
 and all 185 tests pass. Native social sheet not changed or claimed. Icons are
-pre-cached for offline use. Publication pending.
+pre-cached for offline use. Frontend `341aafb2384753251dd17ba8f54509384efcf069`
+published via successful Pages run `39159743888`; exact live JS/CSS, worker,
+release, both social image bytes and other assets verified. Today/journal real
+image decode, composer and iPhone regression pass on public app. No API changes
+or Sites deployment required. No required work remains.
 
 ## Previous change — inviting social share action
 
