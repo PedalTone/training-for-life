@@ -225,9 +225,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 0806";
+const APP_VERSION = "2026.10.18 0852";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Delete an individual saved run or bike recording from its Edit panel. Confirm removal, with tracked totals updated and other recordings and workout notes preserved."] },
+  { version: "2026.10.18 0806", category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
   { version: "2026.10.18 0728", category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
   { version: "2026.10.17 1625", category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
   { version: "2026.10.17 0554", category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
@@ -236,7 +237,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.17 0451", category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
   { version: "2026.10.17 0449", category: "Minor fix", changes: ["Settings now has one simple Grok Bot assessments link. Open the Google Drive folder to read your report before planning the week. File importing, saved report text and assessment notices have been removed."] },
   { version: "2026.10.16 2008", category: "Major fix", changes: ["Read latest assessment opens the iPhone file picker. Choose a Word or text report to display its contents directly in Settings, reopen the saved text later, and then choose your weekly workouts. Files controls its starting folder; Google Drive help is nearby."] },
-  { version: "2026.10.16 1956", category: "New feature", changes: ["Settings shows a new-assessment indicator and private Google Drive reader above weekly planning. Mark a report as read, reopen it anytime, then choose your workouts. Report notices sync on Sunday evenings; assessment text stays in Google Drive."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -832,14 +832,17 @@ export default function Home() {
     const current = sessionRef.current.id === date ? sessionRef.current : saved ? normalizeSession(saved) : emptySession(date, dayPlan.key === "rest", dayPlan);
     const existing = current.gpsWorkouts || [];
     if(workoutIsLocked(current,editingDateRef.current)&&!existing.some(item=>item.id===workout.id))throw new Error("Tap Edit before recording another workout.");
-    if(change === 'edit' && (workoutIsLocked(current,editingDateRef.current)||!existing.some(item=>item.id===workout.id)))throw new Error("Tap Edit workout before changing a saved recording.");
+    if((change === 'edit'||change === 'delete') && (workoutIsLocked(current,editingDateRef.current)||!existing.some(item=>item.id===workout.id)))throw new Error("Tap Edit workout before changing a saved recording.");
     const previous = existing.find(item=>item.id===workout.id);
+    // A delayed place lookup must never recreate a deleted recording.
+    if(change === 'route' && !previous)return workout;
     const updatedWorkout = change === 'route' && previous ? {...previous,route:workout.route} : change === 'edit' && previous ? {...previous,activity:workout.activity,seconds:workout.seconds,meters:workout.meters} : workout;
-    const workouts = existing.some(item => item.id === workout.id) ? existing.map(item => item.id === workout.id ? updatedWorkout : item) : [...existing, updatedWorkout];
+    const workouts = change === 'delete' ? existing.filter(item=>item.id!==workout.id) : existing.some(item => item.id === workout.id) ? existing.map(item => item.id === workout.id ? updatedWorkout : item) : [...existing, updatedWorkout];
     const meters = workouts.reduce((sum,item)=>sum+item.meters,0);
     const seconds = workouts.reduce((sum,item)=>sum+item.seconds,0);
-    const next = { ...current, gpsWorkouts:workouts, activity:current.activity || workout.activity, activities:current.activities?.length ? current.activities : [workout.activity], duration:!current.duration || ((current.gpsWorkouts?.length || 0)>0 && current.duration===gpsTime((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.seconds,0))) ? gpsTime(seconds) : current.duration, distance:!current.distance || ((current.gpsWorkouts?.length || 0)>0 && current.distance===`${((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.meters,0)/1609.344).toFixed(2)} mi`) ? `${(meters/1609.344).toFixed(2)} mi` : current.distance, startTime:current.startTime || new Date(workout.startedAt).toLocaleTimeString("en-US", {hour:"2-digit",minute:"2-digit",hour12:false}), updatedAt:new Date().toISOString() };
-    if(change === 'edit')Object.assign(next,correctedGpsActivities(current.activity,current.activities,existing,workouts));
+    const next = { ...current, gpsWorkouts:workouts, activity:current.activity || workout.activity, activities:current.activities?.length ? current.activities : [workout.activity], duration:!current.duration || ((current.gpsWorkouts?.length || 0)>0 && current.duration===gpsTime((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.seconds,0))) ? (workouts.length?gpsTime(seconds):'') : current.duration, distance:!current.distance || ((current.gpsWorkouts?.length || 0)>0 && current.distance===`${((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.meters,0)/1609.344).toFixed(2)} mi`) ? (workouts.length?`${(meters/1609.344).toFixed(2)} mi`:'') : current.distance, startTime:current.startTime || new Date(workout.startedAt).toLocaleTimeString("en-US", {hour:"2-digit",minute:"2-digit",hour12:false}), updatedAt:new Date().toISOString() };
+    if(change === 'delete' && existing[0] && current.startTime===new Date(existing[0].startedAt).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:false}))next.startTime=workouts[0]?new Date(workouts[0].startedAt).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:false}):'';
+    if(change === 'edit'||change === 'delete')Object.assign(next,correctedGpsActivities(current.activity,current.activities,existing,workouts));
     try { await saveSession(next); } catch { localStorage.setItem(`t4l:${date}`,JSON.stringify(next)); }
     if(sessionRef.current.id===date){ sessionRef.current=next;setSession(next); }
     setHistory(items=>[next,...items.filter(item=>item.id!==date)].sort((a,b)=>b.date.localeCompare(a.date)));

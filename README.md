@@ -307,3 +307,5 @@ The Sunday transfer automation still updates Grok-created latest-workout.json
 assessment to the previously specified local folder at 8 p.m. It no longer
 publishes assessment metadata or changes app source. The app always links to the
 same Assessments folder and does not need a weekly release.
+
+Saved run/bike recordings can be deleted inside their Edit panel after confirmation. Automatic tracked totals update; other recordings, manual totals and workout notes remain. Completed workouts must first be unlocked with Edit workout.

@@ -1874,3 +1874,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-feature-summary { scroll-margin-top:12px; scroll-margin-bottom:140px; }
 
 .gps-auto-pause { display:flex; align-items:flex-start; gap:10px; padding:12px 0 16px; color:#203449; }.gps-auto-pause input { flex:0 0 22px; width:22px; height:22px; margin:1px 0 0; accent-color:#386047; }.gps-auto-pause b { display:block; font-size:16px; }.gps-auto-pause small { display:block; margin-top:4px; color:#596875; font-size:14px; line-height:1.4; }
+
+.gps-delete-zone { margin-top:18px; padding-top:16px; border-top:1px solid #d8cdbd; }
+.today-tabs-page .gps-recording-editor button.gps-delete-recording { display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:10px 12px; width:100%; border:1px solid #a93832; border-radius:9px; background:#fffaf2; color:#a93832; font:650 16px/1.3 var(--sans); }
+.gps-delete-recording svg { width:20px; height:20px; flex:none; }

@@ -19,3 +19,22 @@ test('correcting a recording updates auto totals/activity without duplicates, ro
 });
 
 test('finished workouts reject recording edits until explicitly unlocked; route enrichment preserves the lock',async()=>{const original={...base,gpsWorkouts:[record],completedAt:'2026-10-10T13:00:00Z'};await assert.rejects(save(original,{...record,activity:'Run'},'edit',false),/Edit workout/);const enriched=await save(original,{...record,route:{segments:[[[-74,40],[-74.001,40]]],locationLabel:'New York, NY'}},'route',false);assert.equal(enriched.status,'completed');assert.equal(enriched.completedAt,original.completedAt);assert.equal(enriched.gpsWorkouts[0].activity,'Bike');});
+
+test('deleting one interval recalculates automatic totals and keeps other recordings and notes',async()=>{
+ const first=await save({...base,activity:'',activities:[],duration:'',distance:''},record);
+ const run={...record,id:'run',activity:'Run',seconds:600,meters:1609.344};
+ const both=await save(first,run);
+ const next=await save(both,record,'delete');
+ assert.deepEqual(next.gpsWorkouts,[run]);assert.equal(next.duration,'00:10:00');assert.equal(next.distance,'1.00 mi');assert.deepEqual(next.activities,['Run']);assert.equal(next.activity,'Run');assert.equal(next.notes,base.notes);assert.deepEqual(next.videos,base.videos);assert.equal(next.status,'completed');
+ const last=await save(next,run,'delete');assert.deepEqual(last.gpsWorkouts,[]);assert.equal(last.duration,'');assert.equal(last.distance,'');assert.equal(last.startTime,'');assert.equal(last.activity,'');assert.deepEqual(last.activities,[]);
+});
+test('deleting retains manual fields and completed lock; missing or locked recordings cannot be deleted',async()=>{
+ const current={...base,gpsWorkouts:[record],startTime:'07:15',completedAt:record.endedAt};
+ const next=await save(current,record,'delete');assert.equal(next.duration,base.duration);assert.equal(next.distance,base.distance);assert.equal(next.startTime,'07:15');assert.equal(next.completedAt,current.completedAt);
+ await assert.rejects(save(current,record,'delete',false),/Edit workout/);
+ await assert.rejects(save({...current,gpsWorkouts:[]},record,'delete'),/Edit workout/);
+});
+test('late route enrichment never restores a deleted recording',async()=>{
+ const current={...base,gpsWorkouts:[]};
+ assert.equal(await save(current,{...record,route:{segments:[[[-74,40],[-73,40]]]}},'route'),undefined);
+});

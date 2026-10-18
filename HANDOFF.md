@@ -2,7 +2,19 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — auto-pause and a cleaner live tracker
+## Current change — delete individual GPS recordings
+
+Release candidate **2026.10.18 0852** adds Delete recording with trash icon inside
+Edit recording, inline confirmation/Keep recording, checked persistence and lock
+protection. Removes only the chosen recording, updates GPS-owned totals/activity
+and start time, preserves manual fields and clears cached latest recording.
+Delayed route enrichment cannot recreate a deleted record. Both builds and all
+180 tests pass. External Chrome verifies confirmation/cancel, failed storage,
+remaining/last deletion, recalculated totals, reload, backup and completed lock;
+440/393/375 layouts visually inspected. Typecheck retains eight baseline errors.
+Publication pending.
+
+## Previous change — auto-pause and a cleaner live tracker
 
 Published release **2026.10.18 0806** uses light orange/navy Pause, hides city/state
 box + label editor on live/ready/paused maps until Stop & save, and moves the
