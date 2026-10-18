@@ -98,7 +98,7 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 1054` clarifies the delete confirmation.
+Release decision: **No new release** — design documentation/regression integration only; retain `2026.10.18 1054`.
 
 App, notes, tests, worker and deployment use `2026.10.18 1054`.
 

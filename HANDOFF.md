@@ -13,7 +13,11 @@ automatic pixel/accessibility audit. Stale video/Settings/checklist labels corre
 No UI/assets/data changes; no new visual pass claimed. D01–D12 pixel/device
 checks are N/A for this documentation-only change. Both builds, 169 app/doc
 checks and 13 rendered checks pass (182 total); `git diff --check` passes.
-Public release label remains 2026.10.18 1054. GitHub publication pending.
+Public release label remains 2026.10.18 1054. Commit
+`c5713dae6f08eebc7c1d6c063c7627563a69d16d` pushed to GitHub; Pages run
+`39146877793` passed including the new test:design step. Exact live JS/CSS,
+service worker, 1054 label and assets verified. No API/worker source changes or
+Sites redeployment required. No required work remains.
 
 ## Previous change — clear deletion confirmation
 
