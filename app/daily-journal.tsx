@@ -1,4 +1,5 @@
 "use client";
+import {ShareWorkoutButton} from "./share-workout-button";
 import {VideoPlanView} from "./video-plan-view";
 import { workoutPhotos } from './workout-photos';
 import { ScreenshotAttachments } from './screenshot-attachments';
@@ -31,7 +32,7 @@ export function DailyJournal({ date, today, session, plan, onDate, onBack, onEdi
     <header className="journal-heading"><span className="kicker">WORKOUT JOURNAL</span><h1>{plan.theme}</h1><time dateTime={date}>{dayDate(date).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</time></header>
     <div className="journal-landscape" aria-hidden="true" style={adventureBackgroundFor(plan.key)}/>
     {session && <p className="journal-status">{(session.status==='completed' || session.completedAt) ? '✓ Workout complete' : session.status==='rest' ? 'Recovery day' : hasRecorded ? 'Workout in progress' : 'Nothing logged yet'}{session.completedAt && <small>Finished {new Date(session.completedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</small>}</p>}
-    <div className="journal-workout-actions"><button type="button" className="journal-edit-workout" onClick={onEdit}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l5-1L20 8a2.8 2.8 0 0 0-4-4L5 15Z"/></svg><span>Edit workout</span></button>{session && hasRecorded && onShare && <button type="button" className="workout-share-action" onClick={onShare}>Share workout ↗</button>}</div>
+    <div className="journal-workout-actions"><button type="button" className="journal-edit-workout" onClick={onEdit}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l5-1L20 8a2.8 2.8 0 0 0-4-4L5 15Z"/></svg><span>Edit workout</span></button>{session && hasRecorded && onShare && <ShareWorkoutButton onClick={onShare}/>}</div>
     {!hasRecorded && <p className="journal-empty">Nothing recorded for this day yet. Your photos, notes and workout details will appear here when you log them.</p>}
     <ScreenshotAttachments key={date} screenshots={session?.workoutScreenshots}/>
     {session && workoutPhotos(session).length>0 && <div className="journal-photo-grid">{workoutPhotos(session).map((photo,index)=><figure className="journal-photo" key={index}><img src={photo} alt={`Workout photo ${index+1} from ${date}`}/></figure>)}</div>}

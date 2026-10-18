@@ -1,4 +1,5 @@
 "use client";
+import {ShareWorkoutButton} from "./share-workout-button";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { historyWeeks, shiftHistoryWeeks, historyWorkoutColor, historyWorkoutColors } from "./history-timeline";
@@ -225,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 1316";
+const APP_VERSION = "2026.10.18 1535";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Stop & save now shows saved tracking summaries with Edit, distance, duration and average pace or speed. Live metrics and setup controls return only when preparing another recording."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Share workout now stands out with a navy button, share icon and an Instagram/TikTok image cue, consistently on Today and the journal."] },
+  { version: "2026.10.18 1316", category: "Minor fix", changes: ["Stop & save now shows saved tracking summaries with Edit, distance, duration and average pace or speed. Live metrics and setup controls return only when preparing another recording."] },
   { version: "2026.10.18 1054", category: "Minor fix", changes: ["Recording deletion now asks “Yes, delete” or “Keep recording” so the confirmation is clear."] },
   { version: "2026.10.18 0852", category: "Minor fix", changes: ["Delete an individual saved run or bike recording from its Edit panel. Confirm removal, with tracked totals updated and other recordings and workout notes preserved."] },
   { version: "2026.10.18 0806", category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
@@ -236,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.17 0554", category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
   { version: "2026.10.17 0528", category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
   { version: "2026.10.17 0513", category: "Minor fix", changes: ["Training Assessment has a matching blue report icon and identifies the latest report as on Google Drive from Grok."] },
-  { version: "2026.10.17 0451", category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -949,7 +950,7 @@ export default function Home() {
 
         <NutritionCard key={activeKey} date={activeKey} expanded readOnly={workoutReadOnly}/>
         </fieldset></section>
-<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}><p className="today-save-state" role="status">{activeFinished?"Saved on this device · Locked":saveState}</p>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div> : <div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div>}{activeFinished && <button type="button" className="workout-share-action" onClick={() => setShareData(toShareCardData(session, plan))}>Share workout ↗</button>}</div>
+<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}><p className="today-save-state" role="status">{activeFinished?"Saved on this device · Locked":saveState}</p>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div> : <div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div>}{activeFinished && <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/>}</div>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}

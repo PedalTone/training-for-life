@@ -1,3 +1,5 @@
+New public release — 2026.10.18 1535: Give Today and journal Share workout a prominent branded action with an Instagram/TikTok image cue.
+
 New public release — 2026.10.18 1316: Stop & save switches tracking to saved summaries and Edit, without duplicate live metrics; Record another restores setup.
 
 No new release — 2026.10.18: Require design report review for every app change, including functional and internal work; retain 1054.
@@ -102,9 +104,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 1316` clearly separates saved tracking from live setup.
+Release decision: **New public release** — `2026.10.18 1535` refreshes the share entry point.
 
-App, notes, tests, worker and deployment use `2026.10.18 1316`.
+App, notes, tests, worker and deployment use `2026.10.18 1535`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

@@ -1882,3 +1882,13 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-options.gps-saved-options { grid-template-columns:1fr; margin-bottom:16px; }
 .gps-saved-actions { margin:16px 0; }
 .gps-recording-row .gps-saved-average { color:#203449; margin-top:4px; }
+
+/* One inviting entry point to the image composer, shared by Today and journal. */
+button.workout-share-action { display:grid; grid-template-columns:40px minmax(0,1fr) 18px; align-items:center; gap:12px; width:100%; min-height:84px; padding:16px; border:1px solid #203449; border-radius:14px; background:#203449; color:#fffaf2; text-align:left; box-shadow:0 4px 12px #20344914; }
+.workout-share-icon { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:#f1e4d3; color:#974016; }
+.workout-share-icon svg { width:26px; height:26px; }
+.workout-share-copy { display:grid; gap:4px; min-width:0; }
+.workout-share-copy strong { font:700 18px/1.25 var(--sans); }
+.workout-share-copy small { font:400 14px/1.4 var(--sans); color:#ead4bb; white-space:normal; }
+.workout-share-arrow { width:18px; height:18px; color:#e4ad76; }
+button.workout-share-action:active { background:#2c465d; }
