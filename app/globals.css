@@ -1851,3 +1851,24 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .gps-edit-recording:disabled { opacity:.5; }.gps-unlock-edit { width:100%; margin:10px 0; }
 .gps-recording-editor { margin-top:12px; padding:14px; border:1px solid #d8cdbd; border-radius:12px; background:#f7f0e4; }.gps-recording-editor fieldset { min-width:0; padding:0; margin:0; border:0; }.gps-recording-editor legend { font-size:17px; font-weight:700; margin-bottom:12px; }.gps-recording-editor label { display:grid; gap:6px; font-size:15px; font-weight:650; }.gps-recording-editor select,.gps-recording-editor input { width:100%; min-width:0; min-height:46px; box-sizing:border-box; border:1px solid #cfc5b6; border-radius:8px; padding:9px; background:#fffaf2; color:#203449; font:400 16px/1.3 var(--sans); }.gps-edit-totals { display:grid; grid-template-columns:1fr 1.25fr; gap:10px; margin-top:12px; }.gps-recording-editor p { font-size:14px; line-height:1.45; margin:12px 0; }.gps-recording-editor [role=alert] { color:#a93832; font-weight:650; }.gps-edit-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }.gps-edit-actions button { min-height:46px; padding:9px; border:1px solid #203449; border-radius:9px; background:#203449; color:#fffaf2; font:650 16px/1.3 var(--sans); }.gps-edit-actions button:last-child { background:transparent; color:#203449; border-color:#cfc5b6; }
 @media(max-width:360px) { .gps-edit-totals { grid-template-columns:1fr; } }
+/* GPS is a primary workout feature, with a recognizable run/bike/route launcher. */
+.today-tabs-page .gps-card { margin:18px 0 22px; border:1px solid #d9cbbb; border-radius:18px; background:#fffaf2; box-shadow:0 5px 16px #2034490b; overflow:hidden; }
+.today-tabs-page .gps-card > .gps-feature-summary { display:block; padding:16px 16px 0; list-style:none; cursor:pointer; }
+.gps-feature-summary::-webkit-details-marker { display:none; }
+.gps-feature-main { display:flex; align-items:center; gap:14px; }
+.gps-feature-graphic { display:grid; flex:0 0 76px; width:76px; height:82px; place-items:center; color:#fffaf2; background:#203449; border-radius:13px; }
+.gps-feature-graphic svg { display:block; width:72px; height:72px; }
+.gps-feature-copy { display:grid; min-width:0; gap:4px; }
+.gps-feature-kicker { color:#596875; font-size:11px; font-weight:750; line-height:1.3; letter-spacing:.12em; text-transform:uppercase; }
+.today-tabs-page .gps-feature-summary .gps-feature-copy b { color:#203449; font:750 19px/1.25 var(--sans); }
+.today-tabs-page .gps-feature-summary .gps-feature-copy small { color:#596875; font-size:14px; line-height:1.4; }
+.gps-feature-footer { display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:48px; margin-top:13px; border-top:1px solid #e4dbcd; }
+.gps-feature-state { display:flex; align-items:center; gap:5px; color:#596875; font-size:13px; line-height:1.4; }
+.gps-state-saved,.gps-state-recording { color:#386047; }.gps-state-paused,.gps-state-waiting { color:#974016; }
+.gps-feature-action { display:flex; align-items:center; flex:0 0 auto; gap:5px; color:#203449; font:700 15px/1.3 var(--sans); }.gps-feature-action svg { width:17px; height:17px; color:#b94b17; }
+.gps-feature-open { display:none; }.gps-card[open] > .gps-feature-summary .gps-feature-closed { display:none; }.gps-card[open] > .gps-feature-summary .gps-feature-open { display:inline; }.gps-card[open] > .gps-feature-summary .gps-feature-action svg { transform:rotate(90deg); }
+.today-tabs-page .gps-card[open] > .gps-feature-summary { border-bottom:1px solid #e4dbcd; }.today-tabs-page .gps-card > .gps-body { padding:0 16px 18px; }
+.gps-feature-summary:focus-visible { outline:3px solid #315f9e; outline-offset:-4px; border-radius:16px; }
+@media(max-width:360px) { .today-tabs-page .gps-card > .gps-feature-summary { padding-inline:13px; }.gps-feature-main { gap:11px; }.gps-feature-graphic { flex-basis:64px; width:64px; height:76px; }.gps-feature-graphic svg { width:62px; height:62px; }.today-tabs-page .gps-feature-summary .gps-feature-copy b { font-size:18px; }.today-tabs-page .gps-feature-summary .gps-feature-copy small { font-size:13px; } }
+
+.gps-feature-summary { scroll-margin-top:12px; scroll-margin-bottom:140px; }

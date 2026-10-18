@@ -225,9 +225,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.17 1625";
+const APP_VERSION = "2026.10.18 0728";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
+  { version: "2026.10.17 1625", category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
   { version: "2026.10.17 0554", category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
   { version: "2026.10.17 0528", category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
   { version: "2026.10.17 0513", category: "Minor fix", changes: ["Training Assessment has a matching blue report icon and identifies the latest report as on Google Drive from Grok."] },
@@ -236,7 +237,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.16 2008", category: "Major fix", changes: ["Read latest assessment opens the iPhone file picker. Choose a Word or text report to display its contents directly in Settings, reopen the saved text later, and then choose your weekly workouts. Files controls its starting folder; Google Drive help is nearby."] },
   { version: "2026.10.16 1956", category: "New feature", changes: ["Settings shows a new-assessment indicator and private Google Drive reader above weekly planning. Mark a report as read, reopen it anytime, then choose your workouts. Report notices sync on Sunday evenings; assessment text stays in Google Drive."] },
   { version: "2026.10.16 1148", category: "Major fix", changes: ["Adding a video sends its address to the free transcript website. Copy the transcript there, then use Paste & build to review and save a compact exercise plan. Saved videos clearly show Plan ready and the exercise count. Drafts resume after returning; uncommon tools stay under Other options."] },
-  { version: "2026.10.15 1854", category: "Minor fix", changes: ["Video workout drafts recognize more kettlebell names and abbreviations from the supplied lexicon, preserving distinct variations, left/right, loading and per-side instructions. Programming cues such as EMOM stay in review notes. Long exercise names wrap for easier editing; weights and unspecified targets stay blank."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

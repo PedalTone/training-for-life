@@ -1,3 +1,5 @@
+New public release — 2026.10.18 0728: Promote GPS tracking to a distinct run/bike/route feature card with explicit capability copy, status and Open tracker action.
+
 New public release — 2026.10.17 1625: Edit saved GPS activity, distance and duration; add familiar green Play, orange Pause and red Stop & save controls while preserving routes and completed-workout locks.
 
 No new release — 2026.10.17: Internal editor-state cleanup during final verification of the 1625 tracker release; no additional public feature.
@@ -88,9 +90,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.17 1625` adds saved-recording corrections and recognizable timer controls.
+Release decision: **New public release** — `2026.10.18 0728` makes GPS tracking a prominent main feature on Today.
 
-App, notes, tests, worker and deployment use `2026.10.17 1625`.
+App, notes, tests, worker and deployment use `2026.10.18 0728`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

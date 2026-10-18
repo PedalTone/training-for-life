@@ -1,8 +1,25 @@
 # Training for Life — development handoff
 
-Updated October 17, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — editable recordings and familiar tracker controls
+## Current change — prominent GPS feature launcher
+
+Release candidate **2026.10.18 0728** promotes the Today GPS tracker from a thin
+orange submenu to a bordered cream card with navy runner/bicycle/route SVG,
+iPhone GPS label, time/distance/map and run-pace/bike-speed copy. Footer exposes
+ready, recording/waiting, paused and saved states plus Open/View/Resume action.
+Native summary is the whole target; keyboard works and opening never starts GPS.
+Open state says Hide tracker. Repeat/Main workout order and all tracker data,
+controls, maps, editing, completed locks and backups remain unchanged.
+
+Designly composition and independent actual visual QA approve 440/393/375 layouts.
+External Chrome passes launcher/keyboard/no-auto-start, GPS state changes,
+collapse without pausing, saved count/reload, 320px edge and safe areas. Existing
+full simulated GPS/edit/reload/backup/lock regression also passes with new card.
+Both release builds and all 13 rendered checks pass. Publication and live
+checks pending.
+
+## Previous change — editable recordings and familiar tracker controls
 
 Published release **2026.10.17 1625** adds per-recording pencil Edit, inline
 Run/Bike/distance/duration fields with Save/Cancel, and preserves exact raw totals

@@ -125,6 +125,10 @@ unavailable message with a decorative sun. Weather does not change workout plans
 
 ## iPhone GPS workouts
 
+Today’s Workout tab has a prominent cream GPS feature card with a navy runner,
+bicycle and route graphic. The whole card opens setup; it does not start GPS.
+The launcher shows ready, recording/waiting, paused and saved-recording states.
+
 Today → Workout → Track my run / bike uses foreground browser geolocation with explicit
 permission. Select Run/Bike and miles/kilometers, then the green Play/Start timer button. Orange Pause and green Resume
 excludes paused time and never joins missing route segments. Red Stop & save
