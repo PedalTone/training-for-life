@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — prominent GPS feature launcher
 
-Release candidate **2026.10.18 0728** promotes the Today GPS tracker from a thin
+Published release **2026.10.18 0728** promotes the Today GPS tracker from a thin
 orange submenu to a bordered cream card with navy runner/bicycle/route SVG,
 iPhone GPS label, time/distance/map and run-pace/bike-speed copy. Footer exposes
 ready, recording/waiting, paused and saved states plus Open/View/Resume action.
@@ -16,8 +16,16 @@ Designly composition and independent actual visual QA approve 440/393/375 layout
 External Chrome passes launcher/keyboard/no-auto-start, GPS state changes,
 collapse without pausing, saved count/reload, 320px edge and safe areas. Existing
 full simulated GPS/edit/reload/backup/lock regression also passes with new card.
-Both release builds and all 13 rendered checks pass. Publication and live
-checks pending.
+Both release builds and all 13 rendered checks pass. Frontend
+`a3bb11371e61b7be78b78024bb035d78057f8def` published via successful Pages run
+`39123275117`. Exact live JS/CSS, release, service worker and assets verified.
+Both the launcher/state/keyboard and complete GPS/edit/backup/lock iPhone
+regressions pass on the public app. Sites version 172, source
+`4d923322e5726862a574a1ed4ec74b175d28fab4`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_aa560a0d46608191bff7131741d80484`,
+deployment `appgdep_6ad4ad5fa8588191851f39fed5c0315f` succeeded; exact live
+Sites 0728 label verified.
+Preserve unrelated untracked files. No required implementation work remains.
 
 ## Previous change — editable recordings and familiar tracker controls
 
