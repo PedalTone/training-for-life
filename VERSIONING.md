@@ -1,3 +1,5 @@
+New public release — 2026.10.18 1316: Stop & save switches tracking to saved summaries and Edit, without duplicate live metrics; Record another restores setup.
+
 No new release — 2026.10.18: Require design report review for every app change, including functional and internal work; retain 1054.
 
 No new release — 2026.10.18: Add the Designly design standards report and mandatory regression documentation checks; public UI and release 2026.10.18 1054 unchanged.
@@ -100,9 +102,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **No new release** — design documentation/regression integration only; retain `2026.10.18 1054`.
+Release decision: **New public release** — `2026.10.18 1316` clearly separates saved tracking from live setup.
 
-App, notes, tests, worker and deployment use `2026.10.18 1054`.
+App, notes, tests, worker and deployment use `2026.10.18 1316`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

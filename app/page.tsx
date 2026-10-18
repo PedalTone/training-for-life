@@ -225,9 +225,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 1054";
+const APP_VERSION = "2026.10.18 1316";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Recording deletion now asks “Yes, delete” or “Keep recording” so the confirmation is clear."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Stop & save now shows saved tracking summaries with Edit, distance, duration and average pace or speed. Live metrics and setup controls return only when preparing another recording."] },
+  { version: "2026.10.18 1054", category: "Minor fix", changes: ["Recording deletion now asks “Yes, delete” or “Keep recording” so the confirmation is clear."] },
   { version: "2026.10.18 0852", category: "Minor fix", changes: ["Delete an individual saved run or bike recording from its Edit panel. Confirm removal, with tracked totals updated and other recordings and workout notes preserved."] },
   { version: "2026.10.18 0806", category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
   { version: "2026.10.18 0728", category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
@@ -236,7 +237,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.17 0528", category: "Major fix", changes: ["Plan has This week and Next week tabs. Weekly workout mapping is now in Next week, saved from Monday onward without changing this week or logged workouts. Training Assessment lives in Progress, with a shortcut from Next week. Dated mappings are included in backups."] },
   { version: "2026.10.17 0513", category: "Minor fix", changes: ["Training Assessment has a matching blue report icon and identifies the latest report as on Google Drive from Grok."] },
   { version: "2026.10.17 0451", category: "Minor fix", changes: ["The simple Google Drive folder link in Settings is now labeled Training Assessment."] },
-  { version: "2026.10.17 0449", category: "Minor fix", changes: ["Settings now has one simple Grok Bot assessments link. Open the Google Drive folder to read your report before planning the week. File importing, saved report text and assessment notices have been removed."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

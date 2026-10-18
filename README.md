@@ -314,3 +314,5 @@ publishes assessment metadata or changes app source. The app always links to the
 same Assessments folder and does not need a weekly release.
 
 Saved run/bike recordings can be deleted inside their Edit panel after confirmation. Automatic tracked totals update; other recordings, manual totals and workout notes remain. Completed workouts must first be unlocked with Edit workout.
+
+After Stop & save, GPS tracking shows saved summaries with Edit and average pace/speed, without duplicate live metrics or setup controls. Record another workout restores setup and a separate Start button; saved intervals stay visible.
