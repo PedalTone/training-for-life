@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — saved tracking presentation
 
-Release candidate **2026.10.18 1316** hides live metrics, Activity setup and
+Published release **2026.10.18 1316** hides live metrics, Activity setup and
 auto-pause controls once tracking is saved. Saved summaries retain Edit, exact
 time/distance and per-activity average pace/speed; Units and saved map remain.
 Record another follows summaries and prepares setup without starting GPS.
@@ -12,7 +12,11 @@ D01 (release notes automated), D02/D03/D04/D05 PASS in external Chrome fixtures:
 failure rollback, locks/backup; 440/393/375 screenshots inspected. D06–D12
 N/A to changed UI; existing behavior unaffected. Physical GPS/native iOS not
 claimed. Three focused rendered-state tests added. Both builds and all 185 tests pass;
-typecheck retains eight baseline diagnostics with none in the tracker. Publication pending.
+typecheck retains eight baseline diagnostics with none in the tracker.
+Frontend `339a6391641c2b0003d1b5674388f7677368ca0e` published via successful
+Pages run `39148599085`. Exact live JS/CSS, worker, release and assets verified.
+Full saved-view/edit/delete/backup/lock regression and six-tab navigation smoke
+pass on public app. No API changes or Sites deployment needed. No required work remains.
 
 ## Previous change — design report applies to every change
 
