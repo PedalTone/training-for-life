@@ -2,7 +2,9 @@
 
 ## Continuing development across chats
 
-Read `HANDOFF.md`, `README.md`, and `VERSIONING.md` before editing. Inspect
+Read `HANDOFF.md`, `README.md`, and `VERSIONING.md` before editing.
+Read [DESIGN_STANDARDS.md](DESIGN_STANDARDS.md) and
+[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) for every design or interface change. Inspect
 `git status` and the existing diff; preserve unfinished work from earlier chats.
 Update `HANDOFF.md` after a substantial change with what was verified, what was
 published, and what remains. Keep it concise and current.
@@ -38,3 +40,16 @@ verify the live app serves that exact release label.
 The user grants standing permission to publish tested app changes whenever they
 ask for a change (reaffirmed October 10, 2026). Complete verification and publish
 requested changes without asking again.
+
+## Design regression standard
+
+[DESIGN_STANDARDS.md](DESIGN_STANDARDS.md) is the app-specific Designly report.
+Preserve its brand, artwork, interaction and data-state rules. Before completion,
+record PASS / FAIL / N/A with reason for applicable D01–D12 matrix rows and
+actual evidence in HANDOFF.md or the change description. New user decisions
+override prior patterns; update report/checklist together. Run `npm run test:design`
+(included in `npm test` and Pages CI). That check validates documentation wiring,
+not visual quality. Inspect changed iPhone UI in an external browser or use user
+screenshots; routine Codex built-in-browser inspection is prohibited by the
+user's standing restriction. Record device-only checks honestly. No UI change
+means no new screenshot requirement.

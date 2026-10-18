@@ -1,0 +1,30 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile,access} from 'node:fs/promises';
+
+const root=new URL('../',import.meta.url);
+const read=path=>readFile(new URL(path,root),'utf8');
+
+test('design report links remain valid and project guidance requires its review',async()=>{
+ const report=await read('DESIGN_STANDARDS.md');
+ for(const match of report.matchAll(/\]\(([^)]+)\)/g)){
+  const target=match[1];if(/^https?:/.test(target))continue;
+  await access(new URL(target.split('#')[0],root));
+ }
+ for(const path of ['AGENTS.md','README.md','TESTING_CHECKLIST.md']){
+  const text=await read(path);
+  assert.match(text,/\]\(DESIGN_STANDARDS\.md\)/,`${path} must link the design report`);
+ }
+ const checklist=await read('TESTING_CHECKLIST.md');
+ assert.match(checklist,/D01[–-]D12/);
+ assert.match(checklist,/PASS.*FAIL.*N\/A/);
+});
+
+test('design documentation checks run in both npm test and GitHub release checks',async()=>{
+ const {scripts}=JSON.parse(await read('package.json'));
+ assert.equal(scripts['test:design'],'node --test tests/design-standards.test.mjs');
+ assert.match(scripts.test,/npm run test:design\s*&&/);
+ const workflow=await read('.github/workflows/deploy-pages.yml');
+ assert.match(workflow,/run: npm run test:design/);
+ assert.ok(workflow.indexOf('run: npm run test:design')<workflow.indexOf('run: npm run build:pages'));
+});

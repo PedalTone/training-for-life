@@ -2,7 +2,20 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — clear deletion confirmation
+## Current change — durable Designly design standards
+
+Documentation/test integration only; no new public release (1054 retained).
+DESIGN_STANDARDS.md records brand, typography, artwork/icon vocabulary, iPhone
+accessibility, truthful states and D01–D12 feature acceptance/signoff criteria.
+AGENTS.md, README and TESTING_CHECKLIST require it. `npm run test:design` checks
+local report links and integration into npm test and Pages CI. This is not an
+automatic pixel/accessibility audit. Stale video/Settings/checklist labels corrected.
+No UI/assets/data changes; no new visual pass claimed. D01–D12 pixel/device
+checks are N/A for this documentation-only change. Both builds, 169 app/doc
+checks and 13 rendered checks pass (182 total); `git diff --check` passes.
+Public release label remains 2026.10.18 1054. GitHub publication pending.
+
+## Previous change — clear deletion confirmation
 
 Published release **2026.10.18 1054** changes only the final confirmation label
 from Delete recording to Yes, delete; Keep recording and deletion safeguards

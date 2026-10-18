@@ -10,6 +10,9 @@ with notes via typing or the phone keyboard’s dictation.
 Read `AGENTS.md`, `HANDOFF.md`, `VERSIONING.md`, and `TESTING_CHECKLIST.md` first.
 Inspect `git status` before editing: this folder can contain unfinished work.
 Keep the handoff updated after substantial changes.
+The [Designly design standards report](DESIGN_STANDARDS.md) defines the visual
+system, interaction rules and D01–D12 feature acceptance matrix. Apply it with
+the pre-ship checklist; record visual evidence separately from automated checks.
 
 - Project folder: `/Users/thomasmorris/Documents/ChatGPT/Fitness Plan`
 - GitHub: https://github.com/PedalTone/training-for-life
@@ -78,7 +81,8 @@ git diff --check
 ```
 
 `npm run build:pages` writes `gh-pages-dist/` (app under `app/`).
-`npm test` runs the vinext build and `tests/rendered-html.test.mjs`; it does not
+`npm test` runs the design-documentation integration checks, vinext build and
+`tests/rendered-html.test.mjs`; it does not
 include every test file. On a Node version supporting TypeScript stripping,
 additional focused tests can be run with:
 
