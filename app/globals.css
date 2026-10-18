@@ -1889,6 +1889,7 @@ button.workout-share-action { display:grid; grid-template-columns:40px minmax(0,
 .workout-share-icon svg { width:26px; height:26px; }
 .workout-share-copy { display:grid; gap:4px; min-width:0; }
 .workout-share-copy strong { font:700 18px/1.25 var(--sans); }
-.workout-share-copy small { font:400 14px/1.4 var(--sans); color:#ead4bb; white-space:normal; }
+.workout-share-platforms { display:flex; align-items:center; gap:12px; margin-top:3px; }
+.workout-share-platforms img { display:block; width:28px; height:28px; object-fit:contain; flex:none; }
 .workout-share-arrow { width:18px; height:18px; color:#e4ad76; }
 button.workout-share-action:active { background:#2c465d; }

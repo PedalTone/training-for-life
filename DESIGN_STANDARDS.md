@@ -134,8 +134,8 @@ scroll jumps and layout changes during typing.
 Completed workouts stay locked until Edit is explicitly chosen; saving edits or
 reloading locks again. Viewing and sharing remain available. Journal Edit workout
 is prominent and directly above Share workout. The shared Today/journal Share
-workout action uses a navy surface, share icon and “Image for
-Instagram · TikTok” cue; it opens the image composer and must not imply direct
+workout action uses a navy surface, share icon and original Instagram/TikTok logo assets beneath the label,
+replacing the subtitle; it opens the image composer and must not imply direct
 posting or an account connection. Deletion has a separate destructive
 region: Delete recording → explanation → **Yes, delete** / **Keep recording**.
 Cancel leaves data intact; deletion removes only the selected record and updates

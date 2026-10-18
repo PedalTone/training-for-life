@@ -317,4 +317,4 @@ Saved run/bike recordings can be deleted inside their Edit panel after confirmat
 
 After Stop & save, GPS tracking shows saved summaries with Edit and average pace/speed, without duplicate live metrics or setup controls. Record another workout restores setup and a separate Start button; saved intervals stay visible.
 
-Today and the journal share one prominent navy Share workout action with a share icon and Instagram/TikTok image cue. It opens the existing local image composer; it does not post directly to social accounts.
+Today and the journal share one prominent navy Share workout action with a share icon and original Instagram/TikTok logo assets instead of a subtitle. It opens the existing local image composer; it does not post directly to social accounts.

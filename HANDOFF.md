@@ -2,7 +2,20 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — inviting social share action
+## Current change — original social icons
+
+Release candidate **2026.10.18 1541** replaces sharing subtitle with original
+Instagram gradient glyph and TikTok square icon downloaded from official packs.
+Locally hosted PNGs proportionally scaled to 112px for 28px display; provenance
+in public/social/README.md. Accessible image names; same single composer action,
+no social posting integration. Design report/checklist updated. D01 PASS automated
+release notes; D02/D07/D11 PASS external Chrome Today/journal iPhone 440/393/375
+screenshots, real image loads/dimensions, no subtitle, composer open/close and
+Edit ordering/navigation. Other matrix rows N/A: unchanged features. Both builds
+and all 185 tests pass. Native social sheet not changed or claimed. Icons are
+pre-cached for offline use. Publication pending.
+
+## Previous change — inviting social share action
 
 Published release **2026.10.18 1535** introduces shared ShareWorkoutButton in
 Today finished state and journal. Navy/cream, warm share icon tile, chevron and
