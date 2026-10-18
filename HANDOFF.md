@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — inviting social share action
 
-Release candidate **2026.10.18 1535** introduces shared ShareWorkoutButton in
+Published release **2026.10.18 1535** introduces shared ShareWorkoutButton in
 Today finished state and journal. Navy/cream, warm share icon tile, chevron and
 “Image for Instagram · TikTok” cue. Opens the unchanged composer;
 no external posting, social logos, account connections or saved-data changes.
@@ -13,7 +13,11 @@ PASS external Chrome 440/393/375 Today/journal screenshots, composer open/close,
 Edit before Share, backup/locked-day and six-tab navigation. D03–D06/D08–D10/D12
 N/A: unchanged tracker/planning/data/settings. Both builds, 172 app/doc tests and
 13 rendered checks pass (185 total). Physical iOS social-sheet not claimed;
-sharing internals unchanged. Publication pending.
+sharing internals unchanged. Frontend `a64c84f1519cbea5e2eb72ade07e6e9154a0aa07`
+published via successful Pages run `39159292420`; exact live JS/CSS, worker,
+release and assets verified. The same Today/journal/composer/iPhone regression
+passes on the public app. No API changes or Sites deployment needed.
+No required work remains.
 
 ## Previous change — saved tracking presentation
 
