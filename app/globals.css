@@ -1843,7 +1843,7 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .today-tabs-page .gps-actions button { display:flex; align-items:center; justify-content:center; gap:8px; min-height:60px; }
 .gps-actions svg,.gps-edit-recording svg,.gps-unlock-edit svg { flex:0 0 22px; width:22px; height:22px; }
 .today-tabs-page .gps-actions button[type=button].gps-start { background:#386047; border-color:#386047; color:#fffaf2; }
-.today-tabs-page .gps-actions button[type=button].gps-pause { background:#a64b16; border-color:#a64b16; color:#fffaf2; }
+.today-tabs-page .gps-actions button[type=button].gps-pause { background:#f4ae55; border-color:#c8842f; color:#203449; }
 .today-tabs-page .gps-actions button[type=button].gps-stop { background:#a93832; border-color:#a93832; color:#fffaf2; }
 .today-tabs-page .gps-actions button.gps-record-another { background:transparent; border-color:#d8cdbd; color:#203449; }
 .gps-recordings li { display:block; }.gps-recording-row { display:flex; align-items:center; gap:10px; }.gps-recording-row>div { flex:1; min-width:0; }
@@ -1872,3 +1872,5 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 @media(max-width:360px) { .today-tabs-page .gps-card > .gps-feature-summary { padding-inline:13px; }.gps-feature-main { gap:11px; }.gps-feature-graphic { flex-basis:64px; width:64px; height:76px; }.gps-feature-graphic svg { width:62px; height:62px; }.today-tabs-page .gps-feature-summary .gps-feature-copy b { font-size:18px; }.today-tabs-page .gps-feature-summary .gps-feature-copy small { font-size:13px; } }
 
 .gps-feature-summary { scroll-margin-top:12px; scroll-margin-bottom:140px; }
+
+.gps-auto-pause { display:flex; align-items:flex-start; gap:10px; padding:12px 0 16px; color:#203449; }.gps-auto-pause input { flex:0 0 22px; width:22px; height:22px; margin:1px 0 0; accent-color:#386047; }.gps-auto-pause b { display:block; font-size:16px; }.gps-auto-pause small { display:block; margin-top:4px; color:#596875; font-size:14px; line-height:1.4; }

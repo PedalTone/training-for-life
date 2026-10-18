@@ -130,8 +130,8 @@ bicycle and route graphic. The whole card opens setup; it does not start GPS.
 The launcher shows ready, recording/waiting, paused and saved-recording states.
 
 Today → Workout → Track my run / bike uses foreground browser geolocation with explicit
-permission. Select Run/Bike and miles/kilometers, then the green Play/Start timer button. Orange Pause and green Resume
-excludes paused time and never joins missing route segments. Red Stop & save
+permission. Select Run/Bike and miles/kilometers, then the green Play/Start timer button. Light orange Pause and green Resume
+exclude paused time and never joins missing route segments. Red Stop & save
 adds a GPS summary and segmented route map to the dated session; Finish + Backup then backs it up normally.
 Each saved recording has a pencil Edit control for Run/Bike, distance and duration.
 Changing activity preserves exact raw measurements, route and start/end times;
@@ -146,14 +146,22 @@ average/maximum speed, start/end and detected gaps. GPS coordinates are stored l
 Maps use OpenStreetMap tiles with visible attribution and normal browser caching.
 Photon reverse geocoding names up to eight sampled route points once when saving;
 place names are cached locally. Both services receive location information and
-may be unavailable. City/state labels appear inside each map and can be edited
+may be unavailable. The live/paused tracker omits city/state overlays and label
+editing so the map stays clear. Labels appear after Stop & save and can be edited
 in Today or the journal to include missed crossings. Old totals-only recordings
 remain intact and cannot gain a route retroactively.
 
 Keep the app visible: hidden pages automatically pause. Screen Wake Lock is
 requested where available, but lock-screen/background recording is not supported
 by this web app. GPS accuracy and iPhone screen-awake behavior need physical-device
-verification. Average speed includes stops while recording and excludes pauses.
+verification. Auto-pause is enabled by default, with a local opt-out stored in
+`t4l:gps-auto-pause`. Four seconds of fresh reliable GPS at ≤0.5 m/s pauses the
+clock while keeping the watch alive. Movement at ≥0.9 m/s plus real displacement
+resumes into a separate route segment. Poor/stale GPS breaks the stop countdown;
+it never pauses/resumes on missing signal alone. Auto-paused time/distance are
+excluded; manual Pause and app hiding stop the watch and require explicit Resume.
+Reload recovers paused rather than starting GPS automatically. Tracking estimates,
+foreground/privacy and map-provider notes live in Settings → About.
 
 ## Share workout images
 

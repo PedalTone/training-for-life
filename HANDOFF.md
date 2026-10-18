@@ -2,7 +2,29 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — prominent GPS feature launcher
+## Current change — auto-pause and a cleaner live tracker
+
+Release candidate **2026.10.18 0806** uses light orange/navy Pause, hides city/state
+box + label editor on live/ready/paused maps until Stop & save, and moves the
+tracker's foreground/estimate/privacy/provider notes into Settings → About.
+Operational errors/status and map attribution remain. Saved/journal/share map
+labels remain available; no existing workout/backup schema changes.
+
+Auto-pause defaults on with an optional checkbox and t4l:gps-auto-pause preference.
+Fresh reliable GPS ≤0.5 m/s continuously for four seconds pauses only the clock;
+watch stays alive. ≥0.9 m/s plus displacement resumes a new route segment. Active
+time/distance exclude the paused span and bridging jump. Missing/stale/inaccurate
+fixes reset the low-motion countdown and never auto-resume. Manual pause/background
+stop the watch and need explicit Resume; reload recovers paused. Auto-pause can be
+turned off while auto-paused to resume explicitly. Stop/save works in every state.
+
+Six focused state tests pass. External Chrome GPS fixture verifies thresholds,
+excluded time/distance, GPS loss, manual/background pause, setting/reload, live vs
+saved map boxes, Settings notes and 440/393/375 layouts. Complete prior GPS edit,
+backup and completed-lock regression also passes. Final builds/tests and live
+publication pending. Physical iPhone GPS still needs the user's field check.
+
+## Previous change — prominent GPS feature launcher
 
 Published release **2026.10.18 0728** promotes the Today GPS tracker from a thin
 orange submenu to a bordered cream card with navy runner/bicycle/route SVG,
