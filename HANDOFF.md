@@ -4,11 +4,17 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — clear deletion confirmation
 
-Release candidate **2026.10.18 1054** changes only the final confirmation label
+Published release **2026.10.18 1054** changes only the final confirmation label
 from Delete recording to Yes, delete; Keep recording and deletion safeguards
 remain. Both builds and 13 rendered checks pass. External Chrome deletion,
 cancel, failure rollback, reload, backup and completed-lock regression passes;
-iPhone confirmation screenshot inspected. Publication pending.
+iPhone confirmation screenshot inspected. Frontend
+`557843c54946b3cb88dea89ecb792e94765f18ed` published via successful Pages run
+`39137961381`; exact live JS/CSS, worker and assets verified. Sites version 175,
+source `a0cb82bd44672e0b8a5cb14fc53fa0537ab18fcf`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_50aa01660fd4819183e057aa6068eca2`,
+deployment `appgdep_6ad4dd77d18c8191885791b83d82b9f5` succeeded; live label verified.
+No required work remains.
 
 ## Previous change — delete individual GPS recordings
 
