@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — auto-pause and a cleaner live tracker
 
-Release candidate **2026.10.18 0806** uses light orange/navy Pause, hides city/state
+Published release **2026.10.18 0806** uses light orange/navy Pause, hides city/state
 box + label editor on live/ready/paused maps until Stop & save, and moves the
 tracker's foreground/estimate/privacy/provider notes into Settings → About.
 Operational errors/status and map attribution remain. Saved/journal/share map
@@ -21,8 +21,16 @@ turned off while auto-paused to resume explicitly. Stop/save works in every stat
 Six focused state tests pass. External Chrome GPS fixture verifies thresholds,
 excluded time/distance, GPS loss, manual/background pause, setting/reload, live vs
 saved map boxes, Settings notes and 440/393/375 layouts. Complete prior GPS edit,
-backup and completed-lock regression also passes. Final builds/tests and live
-publication pending. Physical iPhone GPS still needs the user's field check.
+backup and completed-lock regression also passes. Both builds and all 177 tests
+pass. Typecheck retains eight pre-existing diagnostics; no new tracker errors.
+Frontend `493b764793dec58529b523e66fe4be2a2aa8b130` published via successful
+Pages run `39125877875`. Exact live JS/CSS, service worker, icons and workout
+assets verified; both full browser regressions pass on the public app.
+Sites version 173, source `39134977436e56e28664c619d6f2a0848d0cc6df`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_6ccae9b14830819191c54db51efec4ae`,
+deployment `appgdep_6ad4b67586a08191aed9a11aa6a0bd20` succeeded; exact live
+Sites 0806 label verified.
+Physical iPhone GPS still needs the user's field check.
 
 ## Previous change — prominent GPS feature launcher
 
