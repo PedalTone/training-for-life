@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — delete individual GPS recordings
 
-Release candidate **2026.10.18 0852** adds Delete recording with trash icon inside
+Published release **2026.10.18 0852** adds Delete recording with trash icon inside
 Edit recording, inline confirmation/Keep recording, checked persistence and lock
 protection. Removes only the chosen recording, updates GPS-owned totals/activity
 and start time, preserves manual fields and clears cached latest recording.
@@ -12,7 +12,13 @@ Delayed route enrichment cannot recreate a deleted record. Both builds and all
 180 tests pass. External Chrome verifies confirmation/cancel, failed storage,
 remaining/last deletion, recalculated totals, reload, backup and completed lock;
 440/393/375 layouts visually inspected. Typecheck retains eight baseline errors.
-Publication pending.
+Frontend `26eb67c8bf33d5cb60af1a28c28a189835e9c741` published through successful
+Pages run `39128959647`; exact live JS/CSS, release, worker and assets verified.
+The full deletion/edit/backup/lock regression also passes against the public app.
+Sites version 174, source `d832f35d50527c31202014aa6ec9b4fed803b262`, saved
+`appgprj_6a87b0a15b7c819189a3ff37e2f4c26c~appgver_6a160bf9b0b88191b433434ffd124633`,
+deployment `appgdep_6ad4c0c078dc8191814de206eb0cfaf3` succeeded; live label verified.
+No required work remains. Unrelated untracked files preserved.
 
 ## Previous change — auto-pause and a cleaner live tracker
 
