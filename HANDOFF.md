@@ -4,14 +4,18 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — inline social icons
 
-Release candidate **2026.10.18 1546** aligns original Instagram/TikTok icons to
+Published release **2026.10.18 1546** aligns original Instagram/TikTok icons to
 the right of Share workout on one row, in Today and journal. Narrow <=360px
 views omit the decorative share tile to preserve readable text and logo sizes.
 Same single composer action, no data/API changes. Design report updated.
 D01 PASS automated release notes; D02/D07/D11 PASS external Chrome screenshots
 440/393/375, numeric same-row/right-of-title checks, original icon loads, composer
 open/close, journal Edit ordering and navigation. Other matrix rows N/A: unaffected.
-Both builds and all 185 tests pass. Publication pending.
+Both builds and all 185 tests pass. Frontend
+`8aec67b1daa6126aafdd11a1ef9fc252a72922ae` published via successful Pages run
+`39160106338`. Exact live JS/CSS, worker, release and social icons verified;
+same-row/iPhone/composer regression passes on public app. No API changes or
+Sites deployment needed. No required work remains.
 
 ## Previous change — original social icons
 
