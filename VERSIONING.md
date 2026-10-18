@@ -1,3 +1,5 @@
+No new release — 2026.10.18: Require design report review for every app change, including functional and internal work; retain 1054.
+
 No new release — 2026.10.18: Add the Designly design standards report and mandatory regression documentation checks; public UI and release 2026.10.18 1054 unchanged.
 
 New public release — 2026.10.18 1054: Clarify the recording deletion confirmation as “Yes, delete” beside “Keep recording”.

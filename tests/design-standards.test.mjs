@@ -11,9 +11,10 @@ test('design report links remain valid and project guidance requires its review'
   const target=match[1];if(/^https?:/.test(target))continue;
   await access(new URL(target.split('#')[0],root));
  }
- for(const path of ['AGENTS.md','README.md','TESTING_CHECKLIST.md']){
+ for(const path of ['AGENTS.md','README.md','TESTING_CHECKLIST.md','DESIGN_STANDARDS.md']){
   const text=await read(path);
-  assert.match(text,/\]\(DESIGN_STANDARDS\.md\)/,`${path} must link the design report`);
+  if(path!=='DESIGN_STANDARDS.md')assert.match(text,/\]\(DESIGN_STANDARDS\.md\)/,`${path} must link the design report`);
+  assert.match(text,/Review DESIGN_STANDARDS\.md for every app change/,`${path} must require review for every app change`);
  }
  const checklist=await read('TESTING_CHECKLIST.md');
  assert.match(checklist,/D01[–-]D12/);

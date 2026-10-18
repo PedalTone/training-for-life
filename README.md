@@ -13,6 +13,7 @@ Keep the handoff updated after substantial changes.
 The [Designly design standards report](DESIGN_STANDARDS.md) defines the visual
 system, interaction rules and D01–D12 feature acceptance matrix. Apply it with
 the pre-ship checklist; record visual evidence separately from automated checks.
+Review DESIGN_STANDARDS.md for every app change, including functional fixes, data/storage changes, refactors, dependencies, documentation and deployment changes.
 
 - Project folder: `/Users/thomasmorris/Documents/ChatGPT/Fitness Plan`
 - GitHub: https://github.com/PedalTone/training-for-life

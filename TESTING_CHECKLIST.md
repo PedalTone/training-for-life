@@ -4,6 +4,8 @@ Run this checklist before every patch and release. The goal is to verify the com
 
 ## 0. Design standards gate
 
+Review DESIGN_STANDARDS.md for every app change, including functional fixes, data/storage changes, refactors, dependencies, documentation and deployment changes.
+
 - [ ] Read the [Designly design standards report](DESIGN_STANDARDS.md).
 - [ ] Mark applicable D01–D12 rows PASS / FAIL / N/A with reason; record commands, rendered evidence, device-only limitations and exceptions in HANDOFF.md or the change description.
 - [ ] Run `npm run test:design` (also included in `npm test` and Pages CI). Documentation checks do not replace visual inspection of changed UI.

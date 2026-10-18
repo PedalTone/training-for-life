@@ -8,6 +8,10 @@ precedence; update this report when an approved design decision changes.
 
 ## Purpose and authority
 
+Review DESIGN_STANDARDS.md for every app change, including functional fixes, data/storage changes, refactors, dependencies, documentation and deployment changes.
+The review is mandatory even when visual checks are N/A. Assess affected
+interaction/data-state rules; record why any matrix row does not apply.
+
 **Relentless forward progress:** make taking action easy, recognize small efforts,
 and make the saved record trustworthy. A short stretch or a shorter workout is
 still useful. Do not imply that equal category percentages or maximum duration

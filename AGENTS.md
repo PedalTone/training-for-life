@@ -4,7 +4,7 @@
 
 Read `HANDOFF.md`, `README.md`, and `VERSIONING.md` before editing.
 Read [DESIGN_STANDARDS.md](DESIGN_STANDARDS.md) and
-[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) for every design or interface change. Inspect
+[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) for every app change. Inspect
 `git status` and the existing diff; preserve unfinished work from earlier chats.
 Update `HANDOFF.md` after a substantial change with what was verified, what was
 published, and what remains. Keep it concise and current.
@@ -42,6 +42,8 @@ ask for a change (reaffirmed October 10, 2026). Complete verification and publis
 requested changes without asking again.
 
 ## Design regression standard
+
+Review DESIGN_STANDARDS.md for every app change, including functional fixes, data/storage changes, refactors, dependencies, documentation and deployment changes.
 
 [DESIGN_STANDARDS.md](DESIGN_STANDARDS.md) is the app-specific Designly report.
 Preserve its brand, artwork, interaction and data-state rules. Before completion,

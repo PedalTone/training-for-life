@@ -2,7 +2,17 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — durable Designly design standards
+## Current change — design report applies to every change
+
+The user explicitly requires DESIGN_STANDARDS.md review for every app change,
+including functional fixes, storage/data, refactors, dependencies, docs and
+publishing changes. AGENTS, README, checklist and report now say this; the design
+integration test protects the all-change scope. N/A visual checks still require
+a reason; no new UI or screenshot requirement for internal-only work.
+No new release; 1054 retained. Both design integration checks and diff check pass.
+D01–D12 visual checks N/A: policy/test-only change. No app code or assets changed.
+
+## Previous change — durable Designly design standards
 
 Documentation/test integration only; no new public release (1054 retained).
 DESIGN_STANDARDS.md records brand, typography, artwork/icon vocabulary, iPhone
