@@ -16,6 +16,7 @@ test('design report links remain valid and project guidance requires its review'
   if(path!=='DESIGN_STANDARDS.md')assert.match(text,/\]\(DESIGN_STANDARDS\.md\)/,`${path} must link the design report`);
   assert.match(text,/Review DESIGN_STANDARDS\.md for every app change/,`${path} must require review for every app change`);
  }
+ for(const path of ['AGENTS.md','DESIGN_STANDARDS.md','TESTING_CHECKLIST.md'])assert.match(await read(path),/Review duplicate functions and buttons for every app change\./,`${path} must require duplicate functionality review`);
  const checklist=await read('TESTING_CHECKLIST.md');
  assert.match(checklist,/D01[–-]D12/);
  assert.match(checklist,/PASS.*FAIL.*N\/A/);

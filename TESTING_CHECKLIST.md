@@ -11,6 +11,13 @@ Review DESIGN_STANDARDS.md for every app change, including functional fixes, dat
 - [ ] Run `npm run test:design` (also included in `npm test` and Pages CI). Documentation checks do not replace visual inspection of changed UI.
 - [ ] Update the report and checklist when an explicit user-approved design changes.
 
+## Duplicate functionality gate
+
+Review duplicate functions and buttons for every app change.
+- [ ] Inspect affected handlers/components for overlapping implementations; share equivalent logic without changing behavior.
+- [ ] Inspect each rendered new/edit/saving/saved/locked/failure state for redundant buttons, repeated saved/status blocks and competing actions with the same result.
+- [ ] Keep one action per task context; document justified repeats across views, per-record actions or accessibility/navigation. Record findings in HANDOFF.md.
+
 ## 1. Source and version
 
 - [ ] Record the release decision in VERSIONING.md. Public releases use the America/New_York publication timestamp `YYYY.MM.DD HHmm`; internal changes retain the current label.
@@ -29,7 +36,7 @@ Review DESIGN_STANDARDS.md for every app change, including functional fixes, dat
 
 - [ ] GPS auto-pause: fresh near-zero fixes for four seconds freeze time/distance; real movement resumes with a separate route segment. Weak/stale/missing GPS does not pause/resume alone. Manual/background pause stays manual; opt-out persists and stop/save works while auto-paused. Live map has no place box/editor until saved; explanatory notes are in Settings About.
 - [ ] GPS tracker: green Play/Start/Resume, light orange Pause and red Stop & save respond once; Stop & save switches to saved summaries/Edit without duplicate live metrics/setup controls; Record another only prepares and restores setup. Edit saved activity/distance/duration, including older intervals; Delete recording opens Yes, delete / Keep recording confirmation; test cancel, storage failure, older/latest/last deletion, updated totals and no late-map resurrection; preserve id/order/routes, manual daily fields, reload and backup. Confirm pace/speed changes, invalid/cancel/storage-failure behavior, late place labels, and completed Edit/relock.
-- [ ] Today: the correct date and workout type appear; controls are readable; Finish + Backup has a clear saved/completed state; reopening the day preserves data.
+- [ ] Today: the correct date and workout type appear; controls are readable; Finish + Backup has one saved/locked banner with Edit at the top; no duplicate saved/Edit block in the footer; sharing remains below; reopening the day preserves data.
 - [ ] Plan: This week/Next week tabs match Progress; dates run Monday–Sunday. This week retains the artwork/overview. Next week mapping saves from next Monday without changing this week or saved workouts; custom types, reload, Monday rollover and failed-storage rollback work. Assessment shortcut opens/focuses the card in Progress.
 - [ ] History: 12 chronological weeks scroll with the current week initially visible; Earlier/Later move three weeks and load older windows at the edges; Back to this week and journal-return position work; prior schedule snapshots are used; blank/unassigned days do not show false Rest; icons and status marks remain readable.
 - [ ] Progress: percentage bars use all completed days as the denominator, including labeled recovery; zero core/previously recorded types remain visible; 4/8/12 weeks update counts/order/observations; colors match History; completed add-ons expand and exclude uncompleted selections; comparisons remain available; the obsolete Saved training reports section is absent even when legacy reports exist in storage.

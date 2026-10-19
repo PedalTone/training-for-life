@@ -2,7 +2,25 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — inline social icons
+## Current change — one saved-workout banner
+
+Release candidate **2026.10.18 1552** retains the top saved/locked banner and
+Edit action. Removes duplicate saved text, Workout finished block and Edit from
+Today footer, which keeps Share workout. Immediate backup feedback moves into
+top banner; unsaved/edit-mode Finish/Save changes + Backup stays unchanged.
+Removed unused completion-animation state. Added standing duplicate-function/
+button review to AGENTS, design report and checklist, protected by design test.
+Review distinguishes redundant controls within a task from deliberate shared
+controls across views. Duplicate review: removed Today footer Edit/status and
+its unused animation state; shared ShareWorkoutButton and per-record GPS Edit
+are intentional. D01 PASS release-note tests; D02/D11 PASS external Chrome
+440/393/375 screenshots and all three Today tabs: exactly one Edit, no footer
+status/completion block, sharing available. Top Edit unlock, save/relock/reload,
+backup confirmation and journal sharing/navigation pass. Other rows N/A to this
+UI change. Both builds and all 185 tests pass, including updated design checks.
+Publication pending.
+
+## Previous change — inline social icons
 
 Published release **2026.10.18 1546** aligns original Instagram/TikTok icons to
 the right of Share workout on one row, in Today and journal. Narrow <=360px

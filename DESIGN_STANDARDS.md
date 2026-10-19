@@ -123,6 +123,20 @@ such as GPS tracking in a visually weak submenu. Keep labels concrete and short;
 remove duplicate copy. Put background limitations in Settings → About while
 keeping actionable errors and live status close to the relevant control.
 
+## Duplicate functions and buttons
+
+Review duplicate functions and buttons for every app change.
+Search the affected feature and neighboring entry points for duplicate handlers,
+overlapping components and repeated actions or status blocks. Render new/edit/
+saving/saved/locked/failure states to catch duplicates that only appear together
+in a specific state. One task context should have one clear action for a given
+result; equivalent behavior should share a function/component where practical.
+The same action on separate screens, per-record Edit controls and deliberate
+accessibility/navigation affordances are legitimate when they serve distinct
+contexts. Document exceptions and preserve existing save/data/lock semantics.
+Record the review findings and any consolidation in the signoff. Static text
+matching cannot decide whether two functions are semantically equivalent.
+
 ## Interaction and data truth
 
 A tap must produce immediate, honest feedback. Distinguish ready, active, paused,
@@ -131,7 +145,9 @@ persistence succeeds. Disable duplicate submissions while saving and provide a
 retry without destroying input after failure. Avoid rerender-driven focus loss,
 scroll jumps and layout changes during typing.
 
-Completed workouts stay locked until Edit is explicitly chosen; saving edits or
+Today has one saved/locked banner and Edit action above its internal tabs;
+do not duplicate saved status or Edit in the footer. The finished footer keeps
+Share workout. Completed workouts stay locked until Edit is explicitly chosen; saving edits or
 reloading locks again. Viewing and sharing remain available. Journal Edit workout
 is prominent and directly above Share workout. The shared Today/journal Share
 workout action uses a navy surface, share icon and original Instagram/TikTok logo assets to the right of the label on the same row,
@@ -232,6 +248,7 @@ Physical iPhone checks (verified / still needed):
 Readability / contrast / touch / focus / safe-area findings:
 Data preservation / save-failure / lock / backup checks:
 PASS / FAIL / N/A per applicable matrix row, with reason:
+Duplicate functions/buttons review and intentional repeats:
 Known limitations, fixes or explicit user-approved exceptions:
 Release decision / deployment verification if applicable:
 ```

@@ -226,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 1546";
+const APP_VERSION = "2026.10.18 1552";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Instagram and TikTok icons now sit to the right of Share workout on the same row."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
+  { version: "2026.10.18 1546", category: "Minor fix", changes: ["Instagram and TikTok icons now sit to the right of Share workout on the same row."] },
   { version: "2026.10.18 1541", category: "Minor fix", changes: ["Share workout now uses original Instagram and TikTok icons instead of the subtitle on Today and the journal."] },
   { version: "2026.10.18 1535", category: "Minor fix", changes: ["Share workout now stands out with a navy button, share icon and an Instagram/TikTok image cue, consistently on Today and the journal."] },
   { version: "2026.10.18 1316", category: "Minor fix", changes: ["Stop & save now shows saved tracking summaries with Edit, distance, duration and average pace or speed. Live metrics and setup controls return only when preparing another recording."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.18 0806", category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
   { version: "2026.10.18 0728", category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
   { version: "2026.10.17 1625", category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
-  { version: "2026.10.17 0554", category: "Minor fix", changes: ["Removed the obsolete Saved training reports section from Progress. The current Training Assessment link on Google Drive remains available."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -460,9 +460,6 @@ export default function Home() {
   const [attachingScreenshot,setAttachingScreenshot]=useState(false);
   const workoutReadOnly=!loaded||finishing||workoutIsLocked(session,editingDate);
   const canEditSession=()=>loaded&&sessionRef.current.date===activeKey&&!finishingRef.current&&!workoutIsLocked(sessionRef.current,editingDateRef.current);
-  // Ephemeral feedback: never replay celebrations for restored workout records.
-  const [celebratingDate, setCelebratingDate] = useState<string | null>(null);
-  useEffect(() => { setCelebratingDate(null); }, [activeKey, tab, enteredApp]);
   const [saveState, setSaveState] = useState("Loading your plan…");
   const [history, setHistory] = useState<Session[]>([]);
   const [showMobilityPicker, setShowMobilityPicker] = useState(false);
@@ -737,7 +734,7 @@ export default function Home() {
   const beginWorkoutEdit=(date:Date)=>{
     if(finishingRef.current)return;
     const key=dateKey(date);editingDateRef.current=key;setEditingDate(key);
-    setFinishBackupState("");setCelebratingDate(null);openDate(date);
+    setFinishBackupState("");openDate(date);
   };
   const finishAndBackup = async () => {
     if(!canEditSession()||addingPhotos||attachingVideo||attachingScreenshot)return;
@@ -755,7 +752,6 @@ export default function Home() {
       try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
       sessionRef.current=current;setSession(current); setHistory(allSessions);
       editingDateRef.current=null;setEditingDate(null);
-      setCelebratingDate(current.date);
       setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
       setFinishBackupState("✓ Day recorded + backup saved");
     } catch (error) { setFinishBackupState(error instanceof DOMException && error.name === "AbortError" ? "" : "Try Finish + Backup Again"); }
@@ -905,7 +901,7 @@ export default function Home() {
           <div className="hero-topline"><span>{activeDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span></div>
           <h2>{plan.theme}</h2><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/>
         </section>
-        {activeFinished&&<div className="workout-lock-banner"><div><strong>Saved workout · Locked</strong><small>Tap Edit to make changes.</small></div><button type="button" onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div>}
+        {activeFinished&&<div className="workout-lock-banner"><div><strong>Saved workout · Locked</strong><small role="status">{finishBackupState || "Tap Edit to make changes."}</small></div><button type="button" onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div>}
         {!activeFinished&&session.completedAt&&<p className="workout-editing-note">Editing saved workout · Save changes to lock it again.</p>}
         <div className="today-section-tabs" role="tablist" aria-label="Today sections">{([['workout','Workout'],['log','Log'],['check-ins','Check-ins']] as const).map(([key,label],index) => <button key={key} id={`today-tab-${key}`} role="tab" aria-controls={`today-panel-${key}`} aria-selected={todaySection === key} onClick={() => setTodaySection(key)} onKeyDown={(event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); const keys = ['workout','log','check-ins'] as const; const next = keys[(index + (event.key === 'ArrowRight' ? 1 : 2)) % 3]; setTodaySection(next); document.getElementById(`today-tab-${next}`)?.focus(); } }}>{label}</button>)}</div>
         {gps.draft && todaySection !== "workout" && <button className="today-tracking-status" onClick={() => setTodaySection("workout")}>{gps.draft.activity} · {gps.autoPaused ? "Auto-paused" : gps.running ? "Recording" : gps.pending ? "Connecting" : "Paused"} · Open tracker</button>}
@@ -950,7 +946,7 @@ export default function Home() {
 
         <NutritionCard key={activeKey} date={activeKey} expanded readOnly={workoutReadOnly}/>
         </fieldset></section>
-<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}><p className="today-save-state" role="status">{activeFinished?"Saved on this device · Locked":saveState}</p>{activeFinished ? <div className="finish-complete" role="status"><span className={`completion-mark ${celebratingDate === activeKey ? "just-completed" : ""}`} aria-hidden="true" onAnimationEnd={() => setCelebratingDate(null)}><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" pathLength="1"/></svg></span><div><strong>Workout finished</strong><small>{finishBackupState || "Logged on this device · backup saved"}</small></div><button onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div> : <div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div>}{activeFinished && <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/>}</div>
+<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/> : <><p className="today-save-state" role="status">{saveState}</p><div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div></>}</div>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}

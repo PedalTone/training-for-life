@@ -55,3 +55,16 @@ not visual quality. Inspect changed iPhone UI in an external browser or use user
 screenshots; routine Codex built-in-browser inspection is prohibited by the
 user's standing restriction. Record device-only checks honestly. No UI change
 means no new screenshot requirement.
+
+## Duplicate functions and buttons
+
+Review duplicate functions and buttons for every app change.
+Before completion, inspect the affected screen and adjacent flows for redundant
+buttons, repeated saved/status blocks, competing actions with the same result,
+and overlapping function/component implementations. Keep one clear control for
+each action in its task context and reuse a shared implementation where behavior
+is equivalent. Repetition across separate views, distinct per-record actions,
+and justified accessibility/navigation affordances may be intentional; record
+the reason rather than removing them indiscriminately. Check rendered states
+(new, editing, saving, saved, locked and failed) and record duplicate-review
+findings in HANDOFF.md. Preserve behavior and data when consolidating.

@@ -1,3 +1,5 @@
+New public release — 2026.10.18 1552: Keep only the top saved-workout/Edit banner on Today; remove duplicate footer status and Edit.
+
 New public release — 2026.10.18 1546: Place social icons to the right of Share workout on one row.
 
 New public release — 2026.10.18 1541: Replace the sharing subtitle with original Instagram and TikTok icons, hosted locally.
@@ -108,9 +110,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 1546` aligns sharing icons beside the title.
+Release decision: **New public release** — `2026.10.18 1552` removes duplicate saved-workout controls.
 
-App, notes, tests, worker and deployment use `2026.10.18 1546`.
+App, notes, tests, worker and deployment use `2026.10.18 1552`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
