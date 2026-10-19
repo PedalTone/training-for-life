@@ -4,7 +4,7 @@ Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 ## Current change — one saved-workout banner
 
-Release candidate **2026.10.18 1552** retains the top saved/locked banner and
+Published release **2026.10.18 1552** retains the top saved/locked banner and
 Edit action. Removes duplicate saved text, Workout finished block and Edit from
 Today footer, which keeps Share workout. Immediate backup feedback moves into
 top banner; unsaved/edit-mode Finish/Save changes + Backup stays unchanged.
@@ -18,7 +18,10 @@ are intentional. D01 PASS release-note tests; D02/D11 PASS external Chrome
 status/completion block, sharing available. Top Edit unlock, save/relock/reload,
 backup confirmation and journal sharing/navigation pass. Other rows N/A to this
 UI change. Both builds and all 185 tests pass, including updated design checks.
-Publication pending.
+Frontend `c38f5276f160e2f1c57ee0e8c44b681439937702` published via successful
+Pages run `39184719963`; exact live JS/CSS, worker, label and assets verified.
+One-Edit/all-three-tabs/save/relock/reload/share regression passes on public app.
+No API changes or Sites deployment needed. No required work remains.
 
 ## Previous change — inline social icons
 
