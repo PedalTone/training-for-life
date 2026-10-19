@@ -2,7 +2,19 @@
 
 Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — one saved-workout banner
+## Current change — assessment in Progress only
+
+Release candidate **2026.10.18 2123** removes the Training Assessment shortcut
+from Plan → Next week. Progress retains its original Drive-folder card unchanged.
+Removed unused Plan prop/callback/focus state/effect and shortcut CSS. Mapping,
+Monday–Sunday and historical data unchanged. Duplicate review: one assessment
+entry in Progress, none in Plan/Settings. Design report/checklist updated.
+D01 PASS release notes; D06/D08/D12 PASS external Chrome 440/393/375 Plan
+screenshots, unchanged Progress link screenshot, seven mapping selects with
+edit/reload, assessment absent from both Plan tabs and Settings, six-tab navigation.
+Other rows N/A: unaffected. Both builds and all 185 tests pass. Publication pending.
+
+## Previous change — one saved-workout banner
 
 Published release **2026.10.18 1552** retains the top saved/locked banner and
 Edit action. Removes duplicate saved text, Workout finished block and Edit from

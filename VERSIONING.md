@@ -1,3 +1,5 @@
+New public release — 2026.10.18 2123: Remove Training Assessment from Plan; keep its existing link in Progress only.
+
 New public release — 2026.10.18 1552: Keep only the top saved-workout/Edit banner on Today; remove duplicate footer status and Edit.
 
 New public release — 2026.10.18 1546: Place social icons to the right of Share workout on one row.
@@ -110,9 +112,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 1552` removes duplicate saved-workout controls.
+Release decision: **New public release** — `2026.10.18 2123` keeps Training Assessment in Progress only.
 
-App, notes, tests, worker and deployment use `2026.10.18 1552`.
+App, notes, tests, worker and deployment use `2026.10.18 2123`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

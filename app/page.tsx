@@ -226,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 1552";
+const APP_VERSION = "2026.10.18 2123";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Training Assessment now appears in Progress only. The shortcut has been removed from Plan to keep weekly planning focused."] },
+  { version: "2026.10.18 1552", category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
   { version: "2026.10.18 1546", category: "Minor fix", changes: ["Instagram and TikTok icons now sit to the right of Share workout on the same row."] },
   { version: "2026.10.18 1541", category: "Minor fix", changes: ["Share workout now uses original Instagram and TikTok icons instead of the subtitle on Today and the journal."] },
   { version: "2026.10.18 1535", category: "Minor fix", changes: ["Share workout now stands out with a navy button, share icon and an Instagram/TikTok image cue, consistently on Today and the journal."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.18 0852", category: "Minor fix", changes: ["Delete an individual saved run or bike recording from its Edit panel. Confirm removal, with tracked totals updated and other recordings and workout notes preserved."] },
   { version: "2026.10.18 0806", category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
   { version: "2026.10.18 0728", category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
-  { version: "2026.10.17 1625", category: "Major fix", changes: ["Saved run/bike recordings now have Edit controls for activity, distance and duration, with pace/speed and automatic totals updated. Start/Resume uses a green play icon, Pause is orange, and Stop & save is red. Change activity while paused too. Routes and completed-workout edit locks stay protected."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -448,7 +448,6 @@ export default function Home() {
   const [journalDate, setJournalDate] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("today");
   const [planWeek, setPlanWeek] = useState<"this" | "next">("this");
-  const [focusAssessment, setFocusAssessment] = useState(false);
   const [enteredApp, setEnteredApp] = useState(() => { try { return sessionStorage.getItem("t4l:entered-app") === "1"; } catch { return false; } });
   const [session, setSession] = useState<Session>(() => emptySession(activeKey, basePlan.key === "rest", basePlan));
   const sessionRef = useRef(session);
@@ -659,14 +658,6 @@ export default function Home() {
   const scrollToTop = () => contentRef.current?.scrollTo({ top: 0, behavior: "instant" });
   const navigate = (next: Tab) => { setJournalDate(null); setTab(next); scrollToTop(); };
   const makePlanForNextWeek = () => { setPlanWeek("next"); scrollToTop(); };
-  const openTrainingAssessment = () => { setFocusAssessment(true); navigate("performance"); };
-  useEffect(() => {
-    if (tab !== "performance" || !focusAssessment) return;
-    const card = document.querySelector<HTMLElement>(".performance-page .assessment-card");
-    card?.scrollIntoView({ block: "center", behavior: "smooth" });
-    card?.focus({ preventScroll: true });
-    setFocusAssessment(false);
-  }, [tab, focusAssessment]);
   const saveNextWeekMapping = (next: string[]) => {
     const nextHistory = planNextWeek(scheduleHistory, scheduleKeys, next, today);
     let previousSchedule: string|null = null; let previousHistory: string|null = null;
@@ -951,7 +942,7 @@ export default function Home() {
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
 
-      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openPlanDate} onMakeNextWeekPlan={makePlanForNextWeek} selectedWeek={planWeek} onWeek={setPlanWeek} scheduleKeys={scheduleKeys} onMapping={saveNextWeekMapping} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} onAssessment={openTrainingAssessment}/>}
+      {tab === "week" && <WeekView today={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openPlanDate} onMakeNextWeekPlan={makePlanForNextWeek} selectedWeek={planWeek} onWeek={setPlanWeek} scheduleKeys={scheduleKeys} onMapping={saveNextWeekMapping} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts}/>}
       {tab === "history" && <HistoryView memory={historyTimelineMemory} filters={historyFilters} onFilters={setHistoryFilters} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory} onOpenDate={openJournal}/>}
       {tab === "performance" && <PerformanceView weeks={progressWeeks} setWeeks={setProgressWeeks} library={libraryExercises.map(e => e.name)} onAddExercise={addExerciseToToday} onOpenJournal={openJournal} now={today} sessions={viewHistory} activeSchedule={activeSchedule} scheduleHistory={scheduleHistory}/>}
       {tab === "more" && <MoreView editingDate={editingDate} todayLocked={workoutIsLocked(viewHistory.find(item=>item.date===dateKey(today)),editingDate)} onEditToday={()=>beginWorkoutEdit(today)} todayVideos={viewHistory.find(item=>item.date===dateKey(today))?.videos||[]} libraryExercises={libraryExercises} setLibraryExercises={setLibraryExercises} onRenameExercise={renameLibraryExercise} futureVideos={futureVideos} setFutureVideos={setFutureVideos} insightReports={insightReports} setInsightReports={setInsightReports} fitnessGoals={fitnessGoals} setFitnessGoals={setFitnessGoals} scheduleKeys={scheduleKeys} setScheduleKeys={setScheduleKeys} setScheduleHistory={setScheduleHistory} scheduleHistory={scheduleHistory} customWorkouts={customWorkouts} setCustomWorkouts={setCustomWorkouts} sessions={history} setHistory={setHistory} onDeleteVideo={deleteVideo} onAddToToday={addVideoToToday}/>}
@@ -1023,7 +1014,7 @@ function DailyMobility({ session, exercises, toggleExercise, onEdit }: { session
   return <details className="surface-card daily-mobility"><summary><span><b>Mobility exercises</b><small>{complete} of {session.mobilityExercises.length} completed</small></span><i>⌄</i></summary><div className="daily-mobility-body"><div className="checklist">{session.mobilityExercises.map((name) => { const checked = session.completedExercises.includes(name); const exercise = exerciseByName.get(name); const timerUrl = `https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1&exercise=${encodeURIComponent(name)}`; return <div key={name} className={`daily-exercise-row ${checked ? "checked" : ""}`}><button className="daily-exercise-toggle" aria-pressed={checked} onClick={() => toggleExercise(name)}><span className="exercise-visual"><MovementMark exerciseId={exercise?.id} name={name} graphicData={exercise?.graphicData}/></span><span className="exercise-copy"><strong>{name}</strong><small>{exercise?.equipment || "Mobility exercise"}</small></span><span className="check-target">{checked ? "✓" : ""}</span></button><a className="start-timer" href={timerUrl} target="_blank" rel="noreferrer">Start timer</a></div>; })}</div><button className="edit-mobility" onClick={onEdit}>Edit loaded exercises</button></div></details>;
 }
 
-function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate, onMakeNextWeekPlan, selectedWeek, onWeek, scheduleKeys, onMapping, customWorkouts, setCustomWorkouts, onAssessment }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void; onMakeNextWeekPlan: () => void; selectedWeek: "this" | "next"; onWeek: (week:"this"|"next")=>void; scheduleKeys:string[]; onMapping:(keys:string[])=>boolean; customWorkouts:CustomWorkout[]; setCustomWorkouts:React.Dispatch<React.SetStateAction<CustomWorkout[]>>; onAssessment:()=>void }) {
+function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate, onMakeNextWeekPlan, selectedWeek, onWeek, scheduleKeys, onMapping, customWorkouts, setCustomWorkouts }: { today: Date; sessions: Session[]; activeSchedule: Schedule; scheduleHistory: ScheduleSnapshot[]; onOpenDate: (date: Date) => void; onMakeNextWeekPlan: () => void; selectedWeek: "this" | "next"; onWeek: (week:"this"|"next")=>void; scheduleKeys:string[]; onMapping:(keys:string[])=>boolean; customWorkouts:CustomWorkout[]; setCustomWorkouts:React.Dispatch<React.SetStateAction<CustomWorkout[]>> }) {
   const [newWorkoutType, setNewWorkoutType] = useState("");
   const [mappingNotice, setMappingNotice] = useState("");
   const todayKey = dateKey(today);
@@ -1044,7 +1035,6 @@ function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate
     <div className="plan-week-tabs" role="tablist" aria-label="Plan week">{([['this','This week'],['next','Next week']] as const).map(([key,label])=><button type="button" key={key} id={`plan-tab-${key}`} role="tab" aria-selected={selectedWeek===key} aria-controls={`plan-panel-${key}`} tabIndex={selectedWeek===key?0:-1} onClick={()=>onWeek(key)} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?'this':event.key==='End'?'next':selectedWeek==='this'?'next':'this';onWeek(next);document.getElementById(`plan-tab-${next}`)?.focus();}}}>{label}</button>)}</div>
     <section className="plan-week-panel" role="tabpanel" id={`plan-panel-${selectedWeek}`} aria-labelledby={`plan-tab-${selectedWeek}`}>
     {selectedWeek === "next" ? <>
-      <button type="button" className="plan-assessment-link" onClick={onAssessment}><span><strong>Training Assessment</strong><small>Review your report in Progress before planning.</small></span><span aria-hidden="true">→</span></button>
       <section className="next-week-mapping surface-card" aria-labelledby="next-mapping-heading"><header><h2 id="next-mapping-heading">Weekly workout mapping</h2><p>Choose your Monday–Sunday routine. Changes start {days[0].toLocaleDateString("en-US",{month:"short",day:"numeric"})} and repeat weekly.</p></header>
       <div className="schedule-editor">{[1, 2, 3, 4, 5, 6, 0].map((index) => { const date = days[index===0?6:index-1]; const day = schedule[index]; return <label key={day.short}><span>{day.short}<small>{date.toLocaleDateString("en-US",{month:"short",day:"numeric"})}</small></span><select aria-label={`${date.toLocaleDateString("en-US", {weekday:"long"})} workout`} value={nextKeys[index] || day.key} onChange={event=>{const next=nextKeys.map((key,itemIndex)=>itemIndex===index?event.target.value:key);setMappingNotice(onMapping(next)?"Saved for next week.":"Could not save. Check device storage and try again.");}}>{workoutTypeOptions(customWorkouts).map(option=><option value={option.key} key={option.key}>{option.label}</option>)}</select></label>; })}</div>
       <p className="mapping-save-note" role="status">{mappingNotice || "Saved automatically on this device. This week and logged workouts stay as they are."}</p>

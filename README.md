@@ -300,7 +300,7 @@ Import remains a draft until the user reviews and saves it. Limits: 60 exercises
 
 ## Grok Bot assessments
 
-Progress has one quiet **Training Assessment** link below its period choices, before the training mix. Plan → Next week has a shortcut that opens and focuses this card. Weekly mapping is now in Plan → Next week.
+Progress has one quiet **Training Assessment** link below its period choices, before the training mix. It appears in Progress only; Plan has no assessment shortcut. Weekly mapping is now in Plan → Next week.
 It opens the private Google Drive Assessments folder in a new tab/window. Read the
 report in Google Drive, then return to the app to plan the week. There is no file
 picker, in-app report reader, unread badge, metadata polling or report storage.

@@ -1832,8 +1832,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .plan-week-tabs button[aria-selected=true] { color:#a34e24; }
 .plan-week-tabs button[aria-selected=true]::after { content:''; position:absolute; bottom:0; left:8px; right:8px; height:3px; border-radius:3px; background:#b94b17; }
 .plan-week-tabs button:focus-visible { outline:2px solid #315f9e; outline-offset:-2px; }
-.plan-assessment-link { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; padding:16px 18px; border:1px solid #d9d1c5; border-radius:16px; background:#fffaf2; color:#203449; text-align:left; font:inherit; }
-.plan-assessment-link strong { display:block; font-size:17px; }.plan-assessment-link small { display:block; margin-top:4px; color:#596875; font-size:15px; line-height:1.45; }.plan-assessment-link>span:last-child { font-size:24px; color:#b94b17; }
 .next-week-mapping.surface-card { padding:18px; margin-top:16px; background:#fffaf2; border-color:#d9d1c5; }
 .next-week-mapping h2 { margin:0; font:700 20px/1.3 var(--sans); }.next-week-mapping header p { font-size:16px; line-height:1.5; color:#596875; margin:8px 0 12px; }
 .next-week-mapping .schedule-editor { grid-template-columns:1fr; padding:0; gap:0; }.next-week-mapping .schedule-editor label { grid-template-columns:58px minmax(0,1fr); gap:12px; padding:10px 0; border-top:1px solid #e4dbcd; }.next-week-mapping .schedule-editor label>span { color:#203449; font-size:16px; }.next-week-mapping .schedule-editor small { display:block; margin-top:3px; color:#596875; font-size:13px; font-weight:400; }.next-week-mapping .schedule-editor select { font-size:16px; min-height:48px; padding:8px; background:#f2ecdf; }

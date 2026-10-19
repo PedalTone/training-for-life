@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.10\.18 1552/);
+  assert.match(html, /2026\.10\.18 2123/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -62,7 +62,7 @@ test("What’s new groups exactly ten categorized dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 10);
-  assert.match(releaseBlock, /2026\.10\.17 1625/);
+  assert.match(releaseBlock, /2026\.10\.18 0728/);
   assert.equal((releaseBlock.match(/category: "(?:(?:Major|Minor) fix|New feature)"/g) ?? []).length, 10);
   assert.doesNotMatch(releaseBlock, /2026\.10\.11 1324/);
   assert.doesNotMatch(releaseBlock, /2026\.10\.10 2045/);
@@ -82,7 +82,8 @@ test("Plan shortcut opens weekly mapping and leaves room above navigation", asyn
   assert.match(page, /Plan next week/);
   assert.match(page, /const makePlanForNextWeek = \(\) => \{ setPlanWeek\("next"\); scrollToTop\(\); \}/);
   assert.match(page, /aria-label="Plan week"/);
-  assert.match(page, /onAssessment=\{openTrainingAssessment\}/);
+  assert.doesNotMatch(page, /onAssessment|openTrainingAssessment|plan-assessment-link/);
+  assert.match(page, /assessment=\{<AssessmentCard\/>\}/);
   assert.match(page, /Weekly workout mapping/);
   assert.match(css, /\.week-page \{ padding-bottom: 12px;/);
 });
