@@ -23,7 +23,9 @@ metrics and composer; D12 PASS About and backup. D09/D10 N/A: video/media/set
 features unchanged. Physical GPS and native iPhone sharing remain device-only.
 Duplicate review PASS: one tracker and activity selector, shared validation/pace,
 saved-only summary and one top workout Edit; no competing Walk implementation.
-Publication pending. Frontend only; no Sites deployment needed.
+Published frontend `6e2dc2a37cd7d6c992bbe410e7648552db226834` via successful Pages run
+`39291421764`. Exact live JS/CSS, worker, release and assets verified; tracker-only
+Walk workflow passes on the public app. Frontend only; no Sites deployment needed.
 
 ## Previous change — walking auto-resume
 
