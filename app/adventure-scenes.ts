@@ -1,4 +1,5 @@
 export const adventureScenes = {
+  walk: { name: 'Walking trail', position: 'center' },
   strength: { name: 'Indoor strength room', position: '0% 0%' },
   speed: { name: 'Running on the track', position: '100% 0%' },
   aerobic: { name: 'Easy riverside jog', position: '0% 50%' },
@@ -26,7 +27,7 @@ export function adventureSceneFor(key: string) {
 export function adventureBackgroundFor(key: string) {
   key = artworkKey(key);
   const scene = adventureSceneFor(key);
-  const assets: Record<string,string> = { speed: 'speed-2026.10.11.jpg', yoga: 'yoga-2026.10.11.jpg', pilates: 'pilates-2026.10.11.jpg', swimming: 'swimming-2026.10.11.jpg', pickleball: 'pickleball-2026.10.11.jpg', tennis: 'tennis-2026.10.11.jpg', basketball: 'basketball-2026.10.11.jpg', endurance: 'endurance-trail.png', strength: 'strength-kettlebell-2026.10.11.png', mobility: 'mobility-rear-view-2026.10.11.png', aerobic: 'aerobic-woman-2026.10.11.png' };
+  const assets: Record<string,string> = { walk: 'endurance-trail.png', speed: 'speed-2026.10.11.jpg', yoga: 'yoga-2026.10.11.jpg', pilates: 'pilates-2026.10.11.jpg', swimming: 'swimming-2026.10.11.jpg', pickleball: 'pickleball-2026.10.11.jpg', tennis: 'tennis-2026.10.11.jpg', basketball: 'basketball-2026.10.11.jpg', endurance: 'endurance-trail.png', strength: 'strength-kettlebell-2026.10.11.png', mobility: 'mobility-rear-view-2026.10.11.png', aerobic: 'aerobic-woman-2026.10.11.png' };
   return assets[key]
     ? { backgroundImage: `url(./${assets[key]})`, backgroundPosition: 'center', backgroundSize: 'cover' }
     : { backgroundImage: 'url(./adventure-terrain.png)', backgroundPosition: scene.position, backgroundSize: '200% 300%' };

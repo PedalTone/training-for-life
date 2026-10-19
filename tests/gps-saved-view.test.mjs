@@ -27,3 +27,8 @@ test('mixed saved activities retain distinct units and completed lock affordance
  assert.match(html,/Avg Pace: 10:00 min\/mile/);assert.match(html,/Average speed: 6.0 mph/);assert.match(html,/Edit workout to change recordings/);
  assert.match(html,/aria-label="Edit recording 1: Run" disabled/);
 });
+
+test('Walk is selectable and saved walks show pace rather than biking speed',()=>{
+ const ready=render([]);assert.match(ready,/<option[^>]*>Walk<\/option>/);
+ const html=render([{...workout,activity:'Walk'}]);assert.match(html,/Edit recording 1: Walk/);assert.match(html,/Avg Pace: 10:00 min\/mile/);assert.doesNotMatch(html,/Average speed:/);
+});

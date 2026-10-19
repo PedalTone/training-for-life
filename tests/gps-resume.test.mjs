@@ -18,7 +18,7 @@ test('small walking steps resume after a two-minute stop with native speed missi
  }
 });
 test('slow walking and biking both resume from progressive coordinate movement',()=>{
- for(const [activity,speed] of [['Run',0.75],['Bike',4]]){
+ for(const [activity,speed] of [['Run',0.75],['Walk',0.75],['Bike',4]]){
   const result=resumeSequence(Array.from({length:10},(_,i)=>point(i,i*speed,null,20)),activity);
   assert.ok(result.some(r=>r.result.transition==='resume'),activity);
  }

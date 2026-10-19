@@ -14,7 +14,7 @@ test('training mix measures share of all completed days including recovery, not 
  assert.equal(data.mix.find(row=>row.key==='rest').percentage,25);
  assert.equal(data.mix.find(row=>row.key==='mobility').percentage,0);
  assert.equal(data.mix.reduce((sum,row)=>sum+row.percentage,0),100);
- assert.equal(data.mix.length,6);assert.equal(JSON.stringify(entries),before);
+ assert.equal(data.mix.length,7);assert.equal(JSON.stringify(entries),before);
 });
 test('missing historical types remain visible and percentages update with the selected window',()=>{
  const entries=[e('2026-10-10'),e('2026-09-01','yoga','Yoga'),e('2026-08-01','custom:Rowing','Rowing'),e('2026-10-11','tennis','Tennis')];
@@ -34,4 +34,10 @@ test('empty periods have zero shares and legacy completion agrees with History',
  assert.equal(empty.finished.length,0);assert.ok(empty.mix.every(row=>row.percentage===0));
  const legacy=localProgress([e('2026-10-09','strength','Strength',{status:'partial',completedAt:'2026-10-09T18:00:00Z'})],'2026-10-10',4,[]);
  assert.equal(legacy.finished.length,1);assert.equal(legacy.mix[0].percentage,100);
+});
+
+test('Walk is a separate category with zero state and completed-day percentages',()=>{
+ const empty=localProgress([],'2026-10-19',4,[]).mix;assert.equal(empty.find(row=>row.key==='walk').count,0);
+ const data=localProgress([e('2026-10-19','walk','Walk',{activity:'Walk'}),e('2026-10-18','rest','Recovery',{status:'rest'})],'2026-10-19',4,[]);
+ assert.equal(data.mix.find(row=>row.key==='walk').percentage,50);assert.equal(data.mix.find(row=>row.key==='aerobic').count,0);
 });

@@ -2,9 +2,38 @@
 
 Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — walking auto-resume
+## Current change — Walk category
 
-Release candidate **2026.10.19 1256** fixes the per-fix distance gate preventing
+Release **2026.10.19 1300** adds Walk as both a GPS activity and a workout
+category. A Walk day defaults to Walk tracking. Shared GPS activity validation
+and pace rules cover draft recovery, recording edits, saved summaries, journal
+and sharing. Plan offers Walk; Home/Today reuse approved trail artwork; History
+uses an upright walker in olive, matching Progress's separate Walk counts.
+Existing Run/Bike and historical category records remain unchanged.
+
+Verification: both builds and all 195 tests pass. Typecheck retains the same 10
+pre-existing diagnostics; none added. External Chrome fixture passes Plan
+Monday–Sunday options, future mapping/reload, one-day Walk/default/artwork,
+375/393/440 layouts without overflow, recording/save, Bike↔Walk correction,
+finish/backup/lock/reload, share composer, History walker/journal pace and Progress.
+GPS fixture passes long stops with Run/Walk/Bike, null/zero native speed, resume,
+manual/background/reload pause, segmented route and saved-only states. Existing
+edit/delete/storage-failure/backup/share/lock regression passes.
+
+Design matrix: D01 PASS shared artwork resolution unit tests and release SSR;
+D02/D03/D04/D05 PASS external Chrome fixtures and iPhone screenshots;
+D06/D07/D08 PASS mapping/reload, History/Progress screenshots and count tests;
+D11 PASS Walk and mixed-activity share metrics tests and composer open/close;
+D12 PASS updated About copy and backup fixture. D09/D10 N/A: no video/media/set
+changes. Physical iPhone GPS/permissions/native sharing remain device-only checks.
+Duplicate review PASS: one shared tracker, activity enum and pace helper; no
+parallel Walk tracker, competing actions or repeated saved/Edit block. Saved
+summary replaces live controls; existing one top Edit and Share remain intact.
+Publication pending; frontend-only change, no Sites API deployment needed.
+
+## Previous change — walking auto-resume
+
+Published release **2026.10.19 1256** fixes the per-fix distance gate preventing
 walking auto-resume. New gpsResumeStep keeps an independent <=10s coordinate
 window while auto-paused, refreshes at standstill, requires progressive movement
 >=max(5m, accuracy×0.3) across multiple fixes and >=0.7 m/s. Native missing/zero
@@ -21,7 +50,11 @@ D01 release tests applicable; other matrix rows N/A: unchanged features. Physica
 GPS field behavior not claimed. Both builds and all 190 unique tests pass.
 Typecheck reports 10 pre-existing diagnostics (including ShareWorkoutButton's
 ImportMeta.env typing); none in changed GPS files. Existing full edit/delete/
-backup/finished-lock/share regression also passes. Publication pending.
+backup/finished-lock/share regression also passes. Frontend
+`3fd090cb9eaec2648a39b6591dc8c212da800bba` published via successful Pages run
+`39289576408`, including new GPS CI gate. Exact live JS/CSS, worker, label and
+assets verified. Long-stop/incremental-walk/native-speed/manual-background/save
+regression passes on public app. No API changes or Sites deployment needed.
 
 ## Previous change — assessment in Progress only
 

@@ -23,7 +23,7 @@ export function toShareCardData(session: Session, plan: {key:string;theme:string
   const add = (id:string,label:string,value?:string) => { if(value?.trim() && !['—','-'].includes(value.trim()))metrics.push({id,label,value:value.trim()}); };
   add('distance','Distance',session.distance || (meters>0 ? `${(meters/1609.344).toFixed(2)} mi` : undefined));
   add('duration','Duration',(session.duration?compactDuration(session.duration):'') || (seconds>0 ? shareDuration(seconds) : undefined));
-  const runs=gps.filter(w=>w.activity==='Run'), bikes=gps.filter(w=>w.activity==='Bike');
+  const runs=gps.filter(w=>w.activity==='Run'||w.activity==='Walk'), bikes=gps.filter(w=>w.activity==='Bike');
   const runMeters=runs.reduce((n,w)=>n+w.meters,0),runSeconds=runs.reduce((n,w)=>n+w.seconds,0);
   add('pace',runs.length?'Avg Pace':'Pace',runMeters>0&&runSeconds>0?`${gpsPace(runMeters/runSeconds)} min/mile`:session.pace);
   add('calories','Calories',session.calories);

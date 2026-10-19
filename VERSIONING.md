@@ -1,3 +1,5 @@
+New public release — 2026.10.19 1300: Add Walk to GPS activities and workout categories, with walking pace in saved recordings, journal and sharing.
+
 New public release — 2026.10.19 1256: Fix auto-resume for small walking steps after long stops, including missing/zero native GPS speed; add GPS regressions to local tests and CI.
 
 New public release — 2026.10.18 2123: Remove Training Assessment from Plan; keep its existing link in Progress only.
@@ -114,9 +116,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.19 1256` fixes walking auto-resume after long stops.
+Release decision: **New public release** — `2026.10.19 1300` adds Walk as a tracker activity and workout category.
 
-App, notes, tests, worker and deployment use `2026.10.19 1256`.
+App, notes, tests, worker and deployment use `2026.10.19 1300`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

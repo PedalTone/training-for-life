@@ -134,11 +134,11 @@ Today’s Workout tab has a prominent cream GPS feature card with a navy runner,
 bicycle and route graphic. The whole card opens setup; it does not start GPS.
 The launcher shows ready, recording/waiting, paused and saved-recording states.
 
-Today → Workout → Track my run / bike uses foreground browser geolocation with explicit
-permission. Select Run/Bike and miles/kilometers, then the green Play/Start timer button. Light orange Pause and green Resume
+Today → Workout → Track my run / walk / bike uses foreground browser geolocation with explicit
+permission. Select Run/Walk/Bike and miles/kilometers, then the green Play/Start timer button. Light orange Pause and green Resume
 exclude paused time and never joins missing route segments. Red Stop & save
 adds a GPS summary and segmented route map to the dated session; Finish + Backup then backs it up normally.
-Each saved recording has a pencil Edit control for Run/Bike, distance and duration.
+Each saved recording has a pencil Edit control for Run/Walk/Bike, distance and duration.
 Changing activity preserves exact raw measurements, route and start/end times;
 pace/speed, auto-filled daily totals and sharing follow the correction. Activity
 can also change while paused. Finished workouts require Edit workout first.
@@ -196,7 +196,7 @@ Completed workouts are read-only until Edit is chosen on Today or the journal. C
 
 History uses a 12-week scrolling timeline with Earlier/Later arrows moving three weeks at a time and loading older periods at the edges. Back to this week returns to the current week. Browsing position is preserved when opening a journal and returning. Subtle workout icon colors help reveal training patterns; completion checks remain green and body-note flags remain red. Search and Body notes only remain inside Filters; Nutrition follows the timeline.
 
-Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The six core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
+Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The seven core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
 
 ## Video-to-plan workflow
 
@@ -320,3 +320,5 @@ After Stop & save, GPS tracking shows saved summaries with Edit and average pace
 Today and the journal share one prominent navy Share workout action with a share icon and original Instagram/TikTok logo assets instead of a subtitle. It opens the existing local image composer; it does not post directly to social accounts.
 
 GPS auto-resume accumulates small walking steps across a fresh, short GPS window, even after a long stop and when native speed is missing or stuck at zero. Progressive displacement is required; stationary time and the resume bridge remain excluded. Manual/background pause still requires Resume.
+
+Walk is a distinct Plan workout category, using the approved walking-trail artwork and an olive walking icon in History/Progress. A Walk day defaults its tracker to Walk. Run and Walk use pace; Bike uses speed. Existing records are not reclassified.

@@ -45,3 +45,10 @@ test('bikes use mph and mixed workouts calculate each activity separately',()=>{
 test('share duration uses readable hours and minutes',()=>{assert.equal(shareDuration(4320),'1 hr 12 min');assert.equal(shareDuration(1800),'30 min');assert.equal(shareDuration(20),'20 sec');});
 
 test('corrected Run to Bike classification switches sharing pace to speed',()=>{const data=toShareCardData({...base,activity:'Bike',gpsWorkouts:[{...run,activity:'Bike'}]}, {key:'endurance',theme:'Endurance'});assert.equal(data.title,'Bike');assert.ok(!data.metrics.some(item=>item.label==='Avg Pace'));assert.equal(data.metrics.find(item=>item.id==='speed').value,'6.2 mph');assert.equal(data.route.locationLabel,'New York, NY');});
+
+test('Walk tracking shares minutes per mile, including mixed walking and biking days',()=>{
+ const walk={...run,activity:'Walk'};const data=toShareCardData({...base,activity:'Walk',gpsWorkouts:[walk]}, {key:'walk',theme:'Walk'});
+ assert.equal(data.title,'Walk');assert.equal(data.metrics.find(m=>m.id==='pace').value,'9:39 min/mile');assert.equal(data.metrics.some(m=>m.id==='speed'),false);
+ const mixed=toShareCardData({...base,gpsWorkouts:[walk,{...run,activity:'Bike',meters:16093.44,seconds:3600}]},{key:'walk',theme:'Walk'});
+ assert.equal(mixed.metrics.find(m=>m.id==='pace').value,'9:39 min/mile');assert.equal(mixed.metrics.find(m=>m.id==='speed').value,'10.0 mph');
+});
