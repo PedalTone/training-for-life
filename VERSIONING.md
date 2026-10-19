@@ -1,3 +1,5 @@
+New public release — 2026.10.19 1256: Fix auto-resume for small walking steps after long stops, including missing/zero native GPS speed; add GPS regressions to local tests and CI.
+
 New public release — 2026.10.18 2123: Remove Training Assessment from Plan; keep its existing link in Progress only.
 
 New public release — 2026.10.18 1552: Keep only the top saved-workout/Edit banner on Today; remove duplicate footer status and Edit.
@@ -112,9 +114,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.18 2123` keeps Training Assessment in Progress only.
+Release decision: **New public release** — `2026.10.19 1256` fixes walking auto-resume after long stops.
 
-App, notes, tests, worker and deployment use `2026.10.18 2123`.
+App, notes, tests, worker and deployment use `2026.10.19 1256`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

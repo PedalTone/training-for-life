@@ -24,3 +24,24 @@ export function gpsPace(speed:number|null,unit:'mi'|'km'='mi') {
  const seconds=Math.round((unit==='mi'?1609.344:1000)/speed);
  return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
 }
+
+// Auto-resume needs its own short movement window. Per-fix walking steps can be
+// smaller than the distance filter, and the whole stopped duration is not pace.
+export type GpsResumeState={anchor:GpsPoint|null;previous:GpsPoint|null};
+export const newGpsResumeState=():GpsResumeState=>({anchor:null,previous:null});
+export function gpsResumeStep(state:GpsResumeState,point:GpsPoint,now:number,activity:'Run'|'Bike') {
+ const empty={state:newGpsResumeState(),speed:null as number|null,moving:false,reliable:false};
+ if(!gpsStep(state.previous,point,activity).accepted||point.accuracy>20||!Number.isFinite(now)||now-point.timestamp>5000||now-point.timestamp< -1000)return empty;
+ const anchor=state.anchor;
+ const reset=()=>({state:{anchor:point,previous:point},speed:null as number|null,moving:false,reliable:true});
+ if(!anchor||!state.previous||point.timestamp-state.previous.timestamp>5000||point.timestamp-anchor.timestamp>10000)return reset();
+ const meters=gpsDistance(anchor,point),seconds=(point.timestamp-anchor.timestamp)/1000;
+ // Refresh at a true standstill so minutes of stopped time never dilute speed.
+ if(meters<=0.25)return reset();
+ const speed=seconds>0?meters/seconds:null;
+ const threshold=Math.max(5,Math.min(anchor.accuracy,point.accuracy)*0.3);
+ const before=gpsDistance(anchor,state.previous);
+ // Require progressive displacement, not a single GPS jump or speed-only spike.
+ const moving=seconds>=2&&meters>=threshold&&before>=threshold*0.6&&meters>before+0.25;
+ return {state:{anchor,previous:point},speed,moving,reliable:true};
+}

@@ -3,18 +3,18 @@ import {GpsRouteMap} from './gps-route-map';
 import {autoPauseStep,newAutoPauseState} from './gps-auto-pause';
 import {editGpsWorkout,gpsEditDistance} from './gps-edit';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {gpsStep,gpsTime,gpsUnits,gpsPace,type GpsPoint,type GpsWorkout} from './gps-math';
+import {gpsStep,gpsTime,gpsUnits,gpsPace,gpsResumeStep,newGpsResumeState,type GpsPoint,type GpsWorkout} from './gps-math';
 type Draft={date:string;activity:'Run'|'Bike';startedAt:string;seconds:number;meters:number;maxSpeed:number;gaps:number;route?:GpsRoute;ready?:boolean};
 const key='t4l:gps-draft';
 export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'edit'|'route'|'delete')=>Promise<GpsWorkout|void>) {
  const [draft,setDraft]=useState<Draft|null>(null);const ref=useRef<Draft|null>(null);const [running,setRunning]=useState(false);const [pending,setPending]=useState(false);const [saving,setSaving]=useState(false);const savingRef=useRef(false);const [notice,setNotice]=useState('');const [saved,setSaved]=useState<GpsWorkout|null>(null);const [savedDate,setSavedDate]=useState<string|null>(null);const [speed,setSpeed]=useState<number|null>(null);const [held,setHeld]=useState(false);const [unit,setUnit]=useState<'mi'|'km'>('mi');
- const [autoPaused,setAutoPaused]=useState(false);const motion=useRef(newAutoPauseState());const [autoPauseEnabled,setAutoPauseEnabledState]=useState(()=>{try{return localStorage.getItem('t4l:gps-auto-pause')!=='false';}catch{return true;}});const autoEnabled=useRef(autoPauseEnabled);
+ const [autoPaused,setAutoPaused]=useState(false);const motion=useRef(newAutoPauseState());const resumeMotion=useRef(newGpsResumeState());const [autoPauseEnabled,setAutoPauseEnabledState]=useState(()=>{try{return localStorage.getItem('t4l:gps-auto-pause')!=='false';}catch{return true;}});const autoEnabled=useRef(autoPauseEnabled);
  const watch=useRef<number|null>(null);const generation=useRef(0);const stationarySince=useRef<number|null>(null);const routeEdits=useRef(new Map<string,number>());const savedRef=useRef<GpsWorkout|null>(null);const onSaveRef=useRef(onSave);onSaveRef.current=onSave;const last=useRef<GpsPoint|null>(null);const clock=useRef<number|null>(null);const fixAt=useRef(0);const signalTimestamp=useRef<number|undefined>(undefined);
  const saveQueue=useRef<Promise<unknown>>(Promise.resolve());
  const saveWorkout=(date:string,workout:GpsWorkout,change?:'edit'|'route'|'delete')=>{const pending=saveQueue.current.catch(()=>{}).then(()=>onSaveRef.current(date,workout,change));saveQueue.current=pending;return pending;};
  const persist=(d:Draft|null,write=true)=>{ref.current=d;setDraft(d);if(!write)return;try{if(d)localStorage.setItem(key,JSON.stringify(d));else localStorage.removeItem(key);}catch{setNotice('Device storage is unavailable. Keep this page open until you save totals.');}};
  const nowAge=()=>Date.now()-fixAt.current;
- const stop=()=>{generation.current++;motion.current=newAutoPauseState();setAutoPaused(false);if(watch.current!==null){navigator.geolocation.clearWatch(watch.current);watch.current=null;}if(clock.current!==null&&ref.current){persist({...ref.current,seconds:ref.current.seconds+Math.max(0,(Date.now()-clock.current)/1000)});}clock.current=null;last.current=null;signalTimestamp.current=undefined;setSpeed(null);setHeld(false);stationarySince.current=null;setRunning(false);setPending(false);};
+ const stop=()=>{generation.current++;motion.current=newAutoPauseState();resumeMotion.current=newGpsResumeState();setAutoPaused(false);if(watch.current!==null){navigator.geolocation.clearWatch(watch.current);watch.current=null;}if(clock.current!==null&&ref.current){persist({...ref.current,seconds:ref.current.seconds+Math.max(0,(Date.now()-clock.current)/1000)});}clock.current=null;last.current=null;signalTimestamp.current=undefined;setSpeed(null);setHeld(false);stationarySince.current=null;setRunning(false);setPending(false);};
  useEffect(()=>{try{const raw=localStorage.getItem(key);if(raw){const d=JSON.parse(raw);if(/^\d{4}-\d{2}-\d{2}$/.test(d.date)&&['Run','Bike'].includes(d.activity)&&Number.isFinite(Date.parse(d.startedAt))&&['seconds','meters','maxSpeed','gaps'].every(k=>Number.isFinite(d[k])&&d[k]>=0)){d.route=cleanRoute(d.route);ref.current=d;setDraft(d);setNotice('Recovered paused tracking. Resume or save your totals.');}}}catch{};const visibility=()=>{if(document.hidden&&(watch.current!==null||clock.current!==null)){stop();setNotice('Tracking paused while the app was hidden. Resume when ready.');}};document.addEventListener('visibilitychange',visibility);const interval=window.setInterval(()=>{if(clock.current!==null&&ref.current){const now=Date.now();persist({...ref.current,seconds:ref.current.seconds+Math.max(0,(now-clock.current)/1000)},Math.floor(now/1000)%5===0);clock.current=now;if(now-fixAt.current>5000)setHeld(true);}else if(watch.current!==null&&nowAge()>5000)setHeld(true);},1000);return()=>{stop();clearInterval(interval);document.removeEventListener('visibilitychange',visibility);};},[]);
  useEffect(()=>{if(!running)return;let cancelled=false;let lock:{release:()=>Promise<void>}|undefined;const wake=navigator as Navigator & {wakeLock?:{request:(type:string)=>Promise<{release:()=>Promise<void>}>}};wake.wakeLock?.request('screen').then(result=>{if(cancelled)void result.release();else lock=result;}).catch(()=>{});return()=>{cancelled=true;void lock?.release();};},[running]);
  function prepare(date:string,activity:'Run'|'Bike') {
@@ -28,37 +28,41 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
   const now=Date.now();const token=++generation.current;
   if(!ref.current)persist({date,activity,startedAt:new Date(now).toISOString(),seconds:0,meters:0,maxSpeed:0,gaps:0});
   else if(ref.current.ready)persist({...ref.current,ready:false,startedAt:new Date(now).toISOString()});
-  motion.current=newAutoPauseState();setAutoPaused(false);clock.current=now;fixAt.current=now;setSaved(null);savedRef.current=null;setSpeed(null);setHeld(false);stationarySince.current=null;
+  motion.current=newAutoPauseState();resumeMotion.current=newGpsResumeState();setAutoPaused(false);clock.current=now;fixAt.current=now;setSaved(null);savedRef.current=null;setSpeed(null);setHeld(false);stationarySince.current=null;
   setRunning(true);setPending(true);setNotice('Timer started. Waiting for GPS; distance begins with a reliable fix.');last.current=null;signalTimestamp.current=undefined;
   try{watch.current=navigator.geolocation.watchPosition(position=>{
    if(token!==generation.current||!ref.current)return;
    const point={latitude:position.coords.latitude,longitude:position.coords.longitude,accuracy:position.coords.accuracy,timestamp:position.timestamp,speed:position.coords.speed};
    const step=gpsStep(last.current,point,ref.current.activity,signalTimestamp.current);
-   if(!step.accepted){motion.current={...motion.current,lowSince:null,lastAt:null};setHeld(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'GPS signal is weak. Timer continues; showing the last known pace or speed.');return;}
+   if(!step.accepted){motion.current={...motion.current,lowSince:null,lastAt:null};resumeMotion.current=newGpsResumeState();setHeld(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'GPS signal is weak. Timer continues; showing the last known pace or speed.');return;}
    setPending(false);
    const now=Date.now();const nativeSpeed=point.speed!==null&&Number.isFinite(point.speed)&&point.speed>=0&&point.speed<=(ref.current.activity==='Run'?20:55)?point.speed:null;
-   const decision=autoPauseStep(motion.current,{at:point.timestamp,now,speed:nativeSpeed??step.speed,reliable:!step.gap&&point.accuracy<=20,moving:step.meters>0},autoEnabled.current);
+   const resume=motion.current.paused?gpsResumeStep(resumeMotion.current,point,now,ref.current.activity):null;
+   if(resume)resumeMotion.current=resume.state;
+   const decision=autoPauseStep(motion.current,{at:point.timestamp,now,speed:resume?resume.speed:(step.speed!==null&&step.speed>0?step.speed:nativeSpeed??step.speed),reliable:!step.gap&&point.accuracy<=20&&(!resume||resume.reliable),moving:resume?resume.moving:step.meters>0},autoEnabled.current);
    motion.current=decision.state;
    if(decision.transition==='pause'){
+    resumeMotion.current=gpsResumeStep(newGpsResumeState(),point,now,ref.current.activity).state;
     if(clock.current!==null)persist({...ref.current,seconds:ref.current.seconds+Math.max(0,(now-clock.current)/1000)});
     clock.current=null;setAutoPaused(true);setSpeed(0);setHeld(false);
    }else if(decision.transition==='resume'){
-    clock.current=now;setAutoPaused(false);last.current=null;signalTimestamp.current=undefined;
+    resumeMotion.current=newGpsResumeState();clock.current=now;setAutoPaused(false);last.current=null;signalTimestamp.current=undefined;
    }
    const paused=motion.current.paused;
    const route=!paused&&(!last.current||step.meters>0||step.gap)?appendRoute(ref.current.route,[point.longitude,point.latitude],!last.current||step.gap||decision.transition==='resume'):ref.current.route;
    const meters=paused||decision.transition==='resume'?0:step.meters;
    signalTimestamp.current=point.timestamp;if(paused||!last.current||step.meters>0||step.gap)last.current=point;fixAt.current=now;
+   const detectedSpeed=decision.transition==='resume'?(resume?.speed??step.speed):step.speed;
    if(paused){setSpeed(0);setHeld(false);}
-   else if(step.speed!==null&&step.speed>0){setSpeed(step.speed);setHeld(false);stationarySince.current=null;}
-   else if(step.speed===0){stationarySince.current??=now;if(now-stationarySince.current>=4000){setSpeed(0);setHeld(false);}else setHeld(true);}
+   else if(detectedSpeed!==null&&detectedSpeed>0){setSpeed(detectedSpeed);setHeld(false);stationarySince.current=null;}
+   else if(detectedSpeed===0){stationarySince.current??=now;if(now-stationarySince.current>=4000){setSpeed(0);setHeld(false);}else setHeld(true);}
    else{stationarySince.current=null;setHeld(true);}
    persist({...ref.current,route,meters:ref.current.meters+meters,maxSpeed:Math.max(ref.current.maxSpeed,paused?0:step.speed||0),gaps:ref.current.gaps+(step.gap?1:0)});
    setNotice(paused?'Auto-paused · Waiting for movement.':decision.transition==='resume'?'Movement detected · Recording resumed.':step.gap?'GPS gap detected; the missing route segment was not counted.':'GPS connected');
   },error=>{
    if(token!==generation.current)return;
    if(error.code===1){stop();setNotice('Location permission denied. Allow location in Safari settings to track.');}
-   else{motion.current={...motion.current,lowSince:null,lastAt:null};setHeld(true);setPending(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'Waiting for GPS. Timer continues; showing the last known pace or speed.');}
+   else{motion.current={...motion.current,lowSince:null,lastAt:null};resumeMotion.current=newGpsResumeState();setHeld(true);setPending(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'Waiting for GPS. Timer continues; showing the last known pace or speed.');}
   },{enableHighAccuracy:true,maximumAge:0,timeout:15000});}
   catch{stop();setNotice('Could not start GPS. Your totals are paused; try again.');}
  }
@@ -81,8 +85,8 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
  const updateSavedLabel=useCallback(async(date:string,workout:GpsWorkout,label:string)=>{routeEdits.current.set(workout.id,(routeEdits.current.get(workout.id)||0)+1);const next={...workout,route:{...workout.route!,locationLabel:label}};try{const updated=(await saveWorkout(date,next,'route'))||next;if(savedRef.current?.id===workout.id){setSaved(updated);savedRef.current=updated;setSavedDate(date);}}catch{setNotice('Could not save map label. Try again.');}},[]);
  const setAutoPauseEnabled=(enabled:boolean)=>{
   autoEnabled.current=enabled;setAutoPauseEnabledState(enabled);try{localStorage.setItem('t4l:gps-auto-pause',String(enabled));}catch{}
-  if(!enabled&&motion.current.paused&&watch.current!==null){motion.current=newAutoPauseState();setAutoPaused(false);clock.current=Date.now();last.current=null;signalTimestamp.current=undefined;setHeld(false);setNotice('Auto-pause off · Recording resumed.');}
-  else if(!motion.current.paused)motion.current=newAutoPauseState();
+  if(!enabled&&motion.current.paused&&watch.current!==null){motion.current=newAutoPauseState();resumeMotion.current=newGpsResumeState();setAutoPaused(false);clock.current=Date.now();last.current=null;signalTimestamp.current=undefined;setHeld(false);setNotice('Auto-pause off · Recording resumed.');}
+  else if(!motion.current.paused){motion.current=newAutoPauseState();resumeMotion.current=newGpsResumeState();}
  };
  const changeActivity=(activity:'Run'|'Bike')=>{if(ref.current&&clock.current===null&&!savingRef.current){persist({...ref.current,activity});setNotice('Activity updated. Resume when ready.');}};
  const updateSavedWorkout=async(date:string,workout:GpsWorkout)=>{

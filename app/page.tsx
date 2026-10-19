@@ -226,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.18 2123";
+const APP_VERSION = "2026.10.19 1256";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Training Assessment now appears in Progress only. The shortcut has been removed from Plan to keep weekly planning focused."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Tracking now detects small walking steps after an auto-paused stop and resumes even when GPS speed is missing or stuck at zero. Manual Pause stays manual, with safeguards against GPS noise and stale fixes."] },
+  { version: "2026.10.18 2123", category: "Minor fix", changes: ["Training Assessment now appears in Progress only. The shortcut has been removed from Plan to keep weekly planning focused."] },
   { version: "2026.10.18 1552", category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
   { version: "2026.10.18 1546", category: "Minor fix", changes: ["Instagram and TikTok icons now sit to the right of Share workout on the same row."] },
   { version: "2026.10.18 1541", category: "Minor fix", changes: ["Share workout now uses original Instagram and TikTok icons instead of the subtitle on Today and the journal."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.18 1054", category: "Minor fix", changes: ["Recording deletion now asks “Yes, delete” or “Keep recording” so the confirmation is clear."] },
   { version: "2026.10.18 0852", category: "Minor fix", changes: ["Delete an individual saved run or bike recording from its Edit panel. Confirm removal, with tracked totals updated and other recordings and workout notes preserved."] },
   { version: "2026.10.18 0806", category: "Major fix", changes: ["GPS tracking auto-pauses after four seconds near a standstill and resumes with movement; manual Pause remains manual, and missing GPS alone never triggers auto-pause. Pause is now a lighter orange. City/state boxes appear only after Stop & save, and explanatory tracking notes have moved to Settings → About."] },
-  { version: "2026.10.18 0728", category: "Minor fix", changes: ["Track my run / bike now has a distinct feature card with recognizable runner, bicycle and route graphics. Clear iPhone GPS capabilities, recording/paused/saved status and an Open tracker action make it easier to find. Opening setup does not start recording."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {

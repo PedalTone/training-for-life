@@ -1,7 +1,7 @@
 // Fresh, consecutive GPS evidence is required. Missing GPS is never a stop.
 export const AUTO_PAUSE_DELAY_MS=4000;
 export const AUTO_PAUSE_SPEED=0.5; // metres/second (~1.1 mph)
-export const AUTO_RESUME_SPEED=0.9; // separate threshold avoids stop/start chatter
+export const AUTO_RESUME_SPEED=0.7; // separate threshold avoids stop/start chatter
 export type AutoPauseState={paused:boolean;lowSince:number|null;lastAt:number|null};
 export const newAutoPauseState=():AutoPauseState=>({paused:false,lowSince:null,lastAt:null});
 export function autoPauseStep(state:AutoPauseState,fix:{at:number;now:number;speed:number|null;reliable:boolean;moving:boolean},enabled=true):{state:AutoPauseState;transition:'pause'|'resume'|null} {

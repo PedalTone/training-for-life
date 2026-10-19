@@ -1,8 +1,29 @@
 # Training for Life — development handoff
 
-Updated October 18, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — assessment in Progress only
+## Current change — walking auto-resume
+
+Release candidate **2026.10.19 1256** fixes the per-fix distance gate preventing
+walking auto-resume. New gpsResumeStep keeps an independent <=10s coordinate
+window while auto-paused, refreshes at standstill, requires progressive movement
+>=max(5m, accuracy×0.3) across multiple fixes and >=0.7 m/s. Native missing/zero
+speed cannot block reliable coordinate movement. Active positive coordinate
+speed beats a stale native zero. GPS loss/weak/stale fixes reset evidence.
+Manual/background pause still stops GPS and requires explicit Resume. Auto-resume
+starts a new route segment without counting the paused bridge; no data schema change.
+Five focused regressions added. npm test and Pages CI now run test:gps. D03/D04/D05
+external Chrome fixture passes two-minute stops, 1.1m steps, null/zero/positive
+native speed, Bike, one watch, excluded stopped totals, saved-only view and
+manual/background/reload behavior. 440/393/375 screens inspected. Duplicate review:
+one pure resume evidence helper reuses gpsStep/gpsDistance; no extra controls.
+D01 release tests applicable; other matrix rows N/A: unchanged features. Physical
+GPS field behavior not claimed. Both builds and all 190 unique tests pass.
+Typecheck reports 10 pre-existing diagnostics (including ShareWorkoutButton's
+ImportMeta.env typing); none in changed GPS files. Existing full edit/delete/
+backup/finished-lock/share regression also passes. Publication pending.
+
+## Previous change — assessment in Progress only
 
 Published release **2026.10.18 2123** removes the Training Assessment shortcut
 from Plan → Next week. Progress retains its original Drive-folder card unchanged.

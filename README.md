@@ -318,3 +318,5 @@ Saved run/bike recordings can be deleted inside their Edit panel after confirmat
 After Stop & save, GPS tracking shows saved summaries with Edit and average pace/speed, without duplicate live metrics or setup controls. Record another workout restores setup and a separate Start button; saved intervals stay visible.
 
 Today and the journal share one prominent navy Share workout action with a share icon and original Instagram/TikTok logo assets instead of a subtitle. It opens the existing local image composer; it does not post directly to social accounts.
+
+GPS auto-resume accumulates small walking steps across a fresh, short GPS window, even after a long stop and when native speed is missing or stuck at zero. Progressive displacement is required; stationary time and the resume bridge remain excluded. Manual/background pause still requires Resume.
