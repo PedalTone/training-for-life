@@ -1,3 +1,5 @@
+New public release — 2026.10.19 1306: Apply clarified scope: Walk is a tracker activity only, retaining walking pace for saved recordings, journal and sharing.
+
 New public release — 2026.10.19 1300: Add Walk to GPS activities and workout categories, with walking pace in saved recordings, journal and sharing.
 
 New public release — 2026.10.19 1256: Fix auto-resume for small walking steps after long stops, including missing/zero native GPS speed; add GPS regressions to local tests and CI.
@@ -116,9 +118,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.19 1300` adds Walk as a tracker activity and workout category.
+Release decision: **New public release** — `2026.10.19 1306` limits Walk to the tracker per user clarification.
 
-App, notes, tests, worker and deployment use `2026.10.19 1300`.
+App, notes, tests, worker and deployment use `2026.10.19 1306`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

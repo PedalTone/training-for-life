@@ -2,34 +2,28 @@
 
 Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Walk category
+## Current change — Walk tracker activity only
 
-Release **2026.10.19 1300** adds Walk as both a GPS activity and a workout
-category. A Walk day defaults to Walk tracking. Shared GPS activity validation
-and pace rules cover draft recovery, recording edits, saved summaries, journal
-and sharing. Plan offers Walk; Home/Today reuse approved trail artwork; History
-uses an upright walker in olive, matching Progress's separate Walk counts.
-Existing Run/Bike and historical category records remain unchanged.
+Release **2026.10.19 1306** applies the user's clarified scope: Walk is a GPS
+tracker activity alongside Run/Bike, not a new Plan/History/Progress category.
+Existing Walk/Easy walk Recovery/Aerobic activities and Walking add-on remain.
+The briefly published 1300 category extension is removed without deleting any
+stored workouts or changing existing schedules. Shared activity validation and
+pace handling cover draft recovery, editing, saved summaries, journal and sharing.
 
-Verification: both builds and all 195 tests pass. Typecheck retains the same 10
-pre-existing diagnostics; none added. External Chrome fixture passes Plan
-Monday–Sunday options, future mapping/reload, one-day Walk/default/artwork,
-375/393/440 layouts without overflow, recording/save, Bike↔Walk correction,
-finish/backup/lock/reload, share composer, History walker/journal pace and Progress.
-GPS fixture passes long stops with Run/Walk/Bike, null/zero native speed, resume,
-manual/background/reload pause, segmented route and saved-only states. Existing
-edit/delete/storage-failure/backup/share/lock regression passes.
-
-Design matrix: D01 PASS shared artwork resolution unit tests and release SSR;
-D02/D03/D04/D05 PASS external Chrome fixtures and iPhone screenshots;
-D06/D07/D08 PASS mapping/reload, History/Progress screenshots and count tests;
-D11 PASS Walk and mixed-activity share metrics tests and composer open/close;
-D12 PASS updated About copy and backup fixture. D09/D10 N/A: no video/media/set
-changes. Physical iPhone GPS/permissions/native sharing remain device-only checks.
-Duplicate review PASS: one shared tracker, activity enum and pace helper; no
-parallel Walk tracker, competing actions or repeated saved/Edit block. Saved
-summary replaces live controls; existing one top Edit and Share remain intact.
-Publication pending; frontend-only change, no Sites API deployment needed.
+Both builds and all 193 tests pass. Typecheck retains the 10 existing diagnostics.
+External Chrome checks Walk selection/save, Bike↔Walk editing, backup, locked-day
+reload, composer, journal pace and no new category in Plan/History/Progress.
+375/393/440 tracker layouts inspected without overflow; GPS regression includes
+Walk and Run/Bike after long stops. Full existing edit/delete/storage failure/
+backup/lock/share regression passed with the shared Walk-capable implementation.
+D01 PASS release SSR; D02/D03/D04/D05 PASS fixtures/screenshots; D06/D07/D08 PASS
+unchanged category behavior and retained journal pace; D11 PASS Walk/mixed share
+metrics and composer; D12 PASS About and backup. D09/D10 N/A: video/media/set
+features unchanged. Physical GPS and native iPhone sharing remain device-only.
+Duplicate review PASS: one tracker and activity selector, shared validation/pace,
+saved-only summary and one top workout Edit; no competing Walk implementation.
+Publication pending. Frontend only; no Sites deployment needed.
 
 ## Previous change — walking auto-resume
 

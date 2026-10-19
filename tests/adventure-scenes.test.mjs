@@ -34,7 +34,3 @@ test('new activities and existing custom names share distinct artwork', () => {
   assert.match(adventureBackgroundFor('speed').backgroundImage, /speed-2026.10.11/);
   assert.equal(adventureSceneFor('custom:Unknown').name, 'Indoor mobility studio');
 });
-
-test('Walk uses the existing outdoor trail consistently, including custom Walk names',()=>{
- assert.equal(adventureSceneFor('walk').name,'Walking trail');assert.match(adventureBackgroundFor('walk').backgroundImage,/endurance-trail/);assert.deepEqual(adventureBackgroundFor('custom:Walk'),adventureBackgroundFor('walk'));
-});

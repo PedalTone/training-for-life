@@ -98,7 +98,6 @@ const scheduleTypeOptions = [
   { key: "speed", label: "Speed / Intensity" }, { key: "endurance", label: "Endurance" },
 ];
 const additionalWorkoutPlans: WorkoutPlan[] = [
-  { key: "walk", theme: "Walk", icon: "🚶", guidance: "A walk at your own pace. Every step counts.", activities: ["Walk", "Brisk walk", "Other"] },
   { key: "yoga", theme: "Yoga", icon: "↗", guidance: "A yoga practice at your own pace.", activities: ["Yoga", "Other"] },
   { key: "pilates", theme: "Pilates", icon: "↗", guidance: "Controlled movement and core work.", activities: ["Mat Pilates", "Reformer Pilates", "Other"] },
   { key: "swimming", theme: "Swimming", icon: "≈", guidance: "Choose the swim that fits today.", activities: ["Pool swim", "Open-water swim", "Other"] },
@@ -227,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.19 1300";
+const APP_VERSION = "2026.10.19 1306";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Walk is now a workout category in Plan, History and Progress, and a GPS activity alongside Run and Bike. Walking uses pace in minutes per mile or kilometer in tracking, saved logs and sharing."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Walk is available in the tracker alongside Run and Bike, with walking pace in saved recordings, the journal and sharing. Plan and Progress keep their existing workout categories."] },
+  { version: "2026.10.19 1300", category: "Minor fix", changes: ["Added Walk GPS activity and walking pace in minutes per mile or kilometer in tracking, saved logs and sharing."] },
   { version: "2026.10.19 1256", category: "Major fix", changes: ["Tracking now detects small walking steps after an auto-paused stop and resumes even when GPS speed is missing or stuck at zero. Manual Pause stays manual, with safeguards against GPS noise and stale fixes."] },
   { version: "2026.10.18 2123", category: "Minor fix", changes: ["Training Assessment now appears in Progress only. The shortcut has been removed from Plan to keep weekly planning focused."] },
   { version: "2026.10.18 1552", category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
@@ -238,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.18 1535", category: "Minor fix", changes: ["Share workout now stands out with a navy button, share icon and an Instagram/TikTok image cue, consistently on Today and the journal."] },
   { version: "2026.10.18 1316", category: "Minor fix", changes: ["Stop & save now shows saved tracking summaries with Edit, distance, duration and average pace or speed. Live metrics and setup controls return only when preparing another recording."] },
   { version: "2026.10.18 1054", category: "Minor fix", changes: ["Recording deletion now asks “Yes, delete” or “Keep recording” so the confirmation is clear."] },
-  { version: "2026.10.18 0852", category: "Minor fix", changes: ["Delete an individual saved run or bike recording from its Edit panel. Confirm removal, with tracked totals updated and other recordings and workout notes preserved."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -903,7 +902,7 @@ export default function Home() {
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
             <div className="panel-body"><fieldset className="workout-edit-fields" disabled={workoutReadOnly}><div className="day-workout-override"><label><span>Workout for this day</span><select value={plan.key} onChange={(event) => setDayWorkoutType(event.target.value)}>{workoutOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><div><small>{session.planOverride ? "One-day change · weekly plan stays the same" : "Following your weekly plan"}</small>{session.planOverride && <button onClick={restoreWeeklyWorkoutType}>Use weekly plan</button>}</div></div><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></fieldset></div>
           </details>
-        <GpsTracker tracker={gps} defaultActivity={plan.key==='walk'?'Walk':'Run'} onEditWorkout={()=>beginWorkoutEdit(activeDate)} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
+        <GpsTracker tracker={gps} onEditWorkout={()=>beginWorkoutEdit(activeDate)} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
         <section className="today-addons"><div className="today-section-title"><h3>Add-ons</h3><button onClick={openMobilityPicker} disabled={workoutReadOnly}>＋ Add / edit</button></div>
         <p className="today-addon-count">{session.mobilityExercises.length} selected · {session.completedExercises.filter(name => session.mobilityExercises.includes(name)).length} completed</p>
         {addonChoices(session.mobilityExercises, libraryExercises.map(item => item.name)).map(name => {

@@ -1,6 +1,6 @@
 import type { Session } from './page';
 export type ProgressEntry = {session:Session;key:string;theme:string};
-const workoutTypes: [string,string][] = [['walk','Walk'],['strength','Strength'],['endurance','Endurance'],['speed','Speed'],['aerobic','Easy aerobic'],['mobility','Mobility'],['rest','Recovery']];
+const workoutTypes: [string,string][] = [['strength','Strength'],['endurance','Endurance'],['speed','Speed'],['aerobic','Easy aerobic'],['mobility','Mobility'],['rest','Recovery']];
 export function trainingMix(entries:ProgressEntry[], counts:Map<string,number>) {
  const labels=new Map(workoutTypes);
  for(const entry of entries) if(!labels.has(entry.key))labels.set(entry.key,entry.theme);

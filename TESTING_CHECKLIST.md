@@ -66,4 +66,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] Wait for deployment success, then reload the live URL.
 - [ ] Click Home, Today, Plan, History, Progress, and Settings on the live app and verify the release version and primary layout.
 
-- [ ] Walk category: Plan mapping and one-day selection persist; Home/Today trail artwork and History walker/olive color agree with Progress. Walk tracker defaults correctly and survives draft/save/reload/edit/backup. Run/Walk use min/mile or min/km, Bike uses mph or km/h, including mixed sharing. Existing Run/Bike records retain their types; no duplicated controls.
+
+- [ ] Walk tracker activity: selection, draft/save/reload/edit/backup retain Walk. Run/Walk use min/mile or min/km; Bike uses mph or km/h, including mixed sharing. Plan/Progress category options remain unchanged. Existing Run/Bike records retain types; no duplicate controls.

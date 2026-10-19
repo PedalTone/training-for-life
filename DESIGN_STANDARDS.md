@@ -276,4 +276,5 @@ touch-area sizing and readable interaction;
 focus and semantic accessibility criteria. These are acceptance references,
 not a claim of a completed conformance audit.
 
-Walk is a distinct workout category: reuse approved trail artwork, a recognizable upright walker and olive `#6b6d35` category color. Keep it selectable in Plan and counted separately in History/Progress (including zero); preserve past classifications. GPS offers one shared Run/Walk/Bike selector. Run and Walk use pace consistently in tracker, journal and share images.
+
+Walk is a tracker activity only (user decision October 19, 2026). Use one shared Run/Walk/Bike selector. Run and Walk use pace consistently in tracker, journal and sharing; preserve existing Plan/History/Progress category behavior.

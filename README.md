@@ -196,7 +196,7 @@ Completed workouts are read-only until Edit is chosen on Today or the journal. C
 
 History uses a 12-week scrolling timeline with Earlier/Later arrows moving three weeks at a time and loading older periods at the edges. Back to this week returns to the current week. Browsing position is preserved when opening a journal and returning. Subtle workout icon colors help reveal training patterns; completion checks remain green and body-note flags remain red. Search and Body notes only remain inside Filters; Nutrition follows the timeline.
 
-Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The seven core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
+Progress shows ranked bars on a shared 0–100% scale for completed days in the selected 4/8/12-week period, including explicitly labeled recorded recovery. The six core workout types and previously recorded additional/custom types stay visible at zero. Percentages use one decimal when needed and category colors match History. Most frequent/not recorded observations describe records without prescribing equal shares. Completed add-ons are expandable, sorted most to least and counted separately from the mix. Legacy completedAt records count consistently with History; planned/unfinished days and uncompleted selections do not count.
 
 ## Video-to-plan workflow
 
@@ -321,4 +321,5 @@ Today and the journal share one prominent navy Share workout action with a share
 
 GPS auto-resume accumulates small walking steps across a fresh, short GPS window, even after a long stop and when native speed is missing or stuck at zero. Progressive displacement is required; stationary time and the resume bridge remain excluded. Manual/background pause still requires Resume.
 
-Walk is a distinct Plan workout category, using the approved walking-trail artwork and an olive walking icon in History/Progress. A Walk day defaults its tracker to Walk. Run and Walk use pace; Bike uses speed. Existing records are not reclassified.
+
+Walk is available as a GPS tracker activity alongside Run and Bike. Run and Walk use pace; Bike uses speed in tracking, saved recordings, journal and sharing. This does not add a new Plan/Progress workout category or reclassify past workouts.

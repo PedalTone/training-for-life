@@ -9,7 +9,7 @@ export function shiftHistoryWeeks(cursor:Date,direction:number,today:Date) {
  const date=mondayOf(cursor);date.setDate(date.getDate()+direction*21);
  const latest=mondayOf(today);return date>latest?latest:date;
 }
-export const historyWorkoutColors = {walk:'#6b6d35',strength:'#a34e24',mobility:'#287c80',aerobic:'#315f9e',speed:'#77587c',endurance:'#526d91',rest:'#6d777e'};
+export const historyWorkoutColors = {strength:'#a34e24',mobility:'#287c80',aerobic:'#315f9e',speed:'#77587c',endurance:'#526d91',rest:'#6d777e'};
 export function historyWorkoutColor(key:string) {
  if(key.includes('strength'))return historyWorkoutColors.strength;
  if(['mobility','yoga','pilates'].includes(key))return historyWorkoutColors.mobility;
