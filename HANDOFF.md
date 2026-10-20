@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 20, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
@@ -24,7 +24,10 @@ navigation. D03–D11 N/A unchanged tracker, Plan, History, Progress, videos/med
 and sharing behavior. Duplicate review PASS: one visible shared timer, none in
 rendered exercise details/picker, no extra save/Edit/status controls. Legacy
 unmounted DailyMobility helper is unchanged and supplies no rendered duplicate.
-Publication verification pending below.
+Published frontend `fde37f262acc20f4e638ecffc248f01dafdf06fb` via successful
+Pages run `39432811363`. Exact live JS/CSS, service worker and release verified;
+shared timer/backup/reload/lock/navigation fixture passes on public app. No API
+changes or Sites deployment. No required work remains.
 
 ## Previous change — Repeat completed set
 
