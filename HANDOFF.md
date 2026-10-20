@@ -14,7 +14,9 @@ explicit Use previous weight remains, and existing 20/exercise + 500/workout lim
 apply. Completed sessions keep the Edit lock. No schema or API changes.
 
 Both builds and all 197 tests pass, including focused pure/SSR regressions (22).
-Publication pending.
+Published frontend `8b87d155cbbb1673e346e4870289287ff9eae89d` via successful
+Pages run `39345653069`. Exact live JS/CSS, worker, release and assets verified;
+full add-on/multi-set/reload/backup/lock/History fixture passes on the public app.
 External Chrome fixture passes full 23-row library including custom exercise,
 zero automatic selections, selected-only backup, planned/no-plan multi-set logging
 while iframe remains mounted, previous-weight copying, stable results, template
