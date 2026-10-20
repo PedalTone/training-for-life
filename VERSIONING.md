@@ -1,3 +1,5 @@
+New public release — 2026.10.20 1411: Make the shared Add-ons timer link prominent blue.
+
 New public release — 2026.10.20 0939: Restore one visible shared Start timer link for Today add-ons instead of per-exercise links.
 
 No new release — October 19, 2026: Create the October 20 development-chat handoff; documentation only, retain public release 2026.10.19 2245.
@@ -126,9 +128,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.20 0939` restores the shared add-ons timer link.
+Release decision: **New public release** — `2026.10.20 1411` makes the shared timer link blue.
 
-App, notes, tests, worker and deployment use `2026.10.20 0939`.
+App, notes, tests, worker and deployment use `2026.10.20 1411`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

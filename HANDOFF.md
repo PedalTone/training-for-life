@@ -4,7 +4,20 @@ Updated October 20, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — shared Add-ons timer
+## Current change — blue timer link
+
+Release **2026.10.20 1411** makes the one shared Add-ons timer link blue
+(#145dcc), weight 600, retaining underline, 16px text and 44px target.
+npm test and npm run build:pages pass. External Chrome checks computed blue,
+one link, unchanged destination, six-view navigation and no overflow at
+375/393/440; screenshots /tmp/addon-blue-{375,393,440}.png inspected.
+Blue on cream contrast is 5.83:1. D01 PASS release checks; D02 PASS rendered
+link/layout checks. D03–D12 N/A: unchanged behavior/surfaces/data. Duplicate
+review PASS: still one link, no added actions/functions or save/status blocks.
+Physical iPhone/VoiceOver checks remain device-only; existing typecheck
+limitations unchanged (not rerun). Publication verification pending.
+
+## Previous change — shared Add-ons timer
 
 Release **2026.10.20 0939** restores one visible Start timer link beside the
 Add-ons selection count, using the existing speaking-timer destination and

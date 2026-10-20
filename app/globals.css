@@ -1905,4 +1905,4 @@ button.workout-share-action:active { background:#2c465d; }
 /* One shared timer remains visible above the add-on list. */
 .today-addon-tools { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 12px; margin-bottom:8px; }
 .today-addon-tools .today-addon-count { margin:0; }
-.today-addon-timer { display:inline-flex; align-items:center; min-height:44px; color:#b94b17; font-size:16px; text-decoration:underline; text-underline-offset:3px; }
+.today-addon-timer { display:inline-flex; align-items:center; min-height:44px; color:#145dcc; font-size:16px; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
