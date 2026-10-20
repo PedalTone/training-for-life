@@ -27,7 +27,10 @@ comparison tests. D03–D06/D11 N/A unchanged tracking/maps/Plan/sharing.
 Duplicate review PASS: one per-exercise removal with inline confirmation, distinct
 from Add set, Repeat set and whole-video Delete; shared session patch and validator,
 no parallel persistence, extra Save/Edit/status controls. No schema/API change.
-Publication verification pending.
+Published frontend `eafe8d1712119e3807e276c600ec09c47b81a11b` via successful
+Pages run `39498479383`. Exact live JS/CSS/worker/release verified after deployment;
+removal/cancel/template/results/reload/backup/lock/iPhone regression passes on
+public app. No Sites deployment needed. No required work remains.
 
 ## Previous change — blue timer link
 
