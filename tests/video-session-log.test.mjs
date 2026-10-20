@@ -10,3 +10,5 @@ test('Repeat set appears only on completed editable session sets',()=>{
  assert.match(render('session',plan,results),/Repeat set 1 for Goblet squat/);assert.doesNotMatch(render('session',plan),/Repeat set 1/);
  for(const mode of ['read','template'])assert.doesNotMatch(render(mode,plan,results),/Repeat set 1/);
 });
+
+test('remove exercise is available only in editable dated session logs',()=>{assert.match(render('session',plan),/Remove Goblet squat from today/);for(const mode of ['read','template'])assert.doesNotMatch(render(mode,plan),/Remove from today|video-remove-exercise/);});

@@ -226,9 +226,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.20 1411";
+const APP_VERSION = "2026.10.20 1711";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
+  { version: APP_VERSION, category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
+  { version: "2026.10.20 1411", category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
   { version: "2026.10.20 0939", category: "Minor fix", changes: ["One visible Start timer link in Add-ons opens the speaking timer for any exercise, without repeated links in exercise details or the picker."] },
   { version: "2026.10.19 2245", category: "Minor fix", changes: ["Repeat any completed video exercise set with its recorded weight, units, reps or time and warm-up status. The new set stays unchecked until completed, while original results and reusable video plans stay intact."] },
   { version: "2026.10.19 1932", category: "Minor fix", changes: ["Today shows the full add-on library without selecting exercises automatically. Add sets directly to each video exercise, or log exercises manually when a video has no plan. Added sets keep existing results and leave the reusable video plan unchanged."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.19 1256", category: "Major fix", changes: ["Tracking now detects small walking steps after an auto-paused stop and resumes even when GPS speed is missing or stuck at zero. Manual Pause stays manual, with safeguards against GPS noise and stale fixes."] },
   { version: "2026.10.18 2123", category: "Minor fix", changes: ["Training Assessment now appears in Progress only. The shortcut has been removed from Plan to keep weekly planning focused."] },
   { version: "2026.10.18 1552", category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
-  { version: "2026.10.18 1546", category: "Minor fix", changes: ["Instagram and TikTok icons now sit to the right of Share workout on the same row."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -953,7 +953,7 @@ export default function Home() {
   </div>;
 }
 
-function VideoCard({ video, onPlan, onSessionPlan, onResults, startPlan=false, onWorkflowDone, planMode="session", onDelete, onAddToday, categoryLabel, onCategoryChange, addedToToday=false, addingToToday=false, addDisabled=false }: { video: Video; onSessionPlan?:(plan:VideoTrainingPlan,results?:Record<string,VideoSetResult>)=>boolean; startPlan?:boolean;onWorkflowDone?:()=>void;onPlan?:(plan:VideoTrainingPlan)=>boolean|void; onResults?:(results:Record<string,VideoSetResult>)=>void; planMode?:"template"|"session"|"read"; onDelete?: () => void; onAddToday?: () => void; addedToToday?: boolean; addingToToday?: boolean; addDisabled?: boolean; categoryLabel?: string; onCategoryChange?: (category: VideoCategory | "") => void }) {
+function VideoCard({ video, onPlan, onSessionPlan, onResults, startPlan=false, onWorkflowDone, planMode="session", onDelete, onAddToday, categoryLabel, onCategoryChange, addedToToday=false, addingToToday=false, addDisabled=false }: { video: Video; onSessionPlan?:(plan:VideoTrainingPlan|undefined,results?:Record<string,VideoSetResult>)=>boolean; startPlan?:boolean;onWorkflowDone?:()=>void;onPlan?:(plan:VideoTrainingPlan)=>boolean|void; onResults?:(results:Record<string,VideoSetResult>)=>void; planMode?:"template"|"session"|"read"; onDelete?: () => void; onAddToday?: () => void; addedToToday?: boolean; addingToToday?: boolean; addDisabled?: boolean; categoryLabel?: string; onCategoryChange?: (category: VideoCategory | "") => void }) {
   const cardRef = useRef<HTMLElement>(null);
   const [playing, setPlaying] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);

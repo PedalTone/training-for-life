@@ -153,3 +153,11 @@ export function repeatVideoSet(plan:VideoTrainingPlan,results:Record<string,Vide
  const added=trainingPlan.exercises.find(row=>row.id===exerciseId)!.sets.at(-1)!;
  return {trainingPlan,trainingResults:{...results,[added.id]:{...source,done:false}}};
 }
+
+// Remove only the chosen dated exercise and its results, never the reusable template.
+export function removeVideoExercise(plan:VideoTrainingPlan,results:Record<string,VideoSetResult>,exerciseId:string) {
+ const current=validateVideoPlan(plan);const exercise=current?.exercises.find(row=>row.id===exerciseId);if(!current||!exercise)return;
+ const exercises=current.exercises.filter(row=>row.id!==exerciseId);
+ const removed=new Set(exercise.sets.map(set=>set.id));
+ return {trainingPlan:exercises.length?validateVideoPlan({...current,exercises}):undefined,trainingResults:Object.fromEntries(Object.entries(results).filter(([id])=>!removed.has(id)))};
+}

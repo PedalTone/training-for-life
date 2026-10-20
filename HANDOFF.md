@@ -4,7 +4,32 @@ Updated October 20, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — blue timer link
+## Current change — remove dated video exercise
+
+Release **2026.10.20 1711** adds Remove from today inside each expanded dated
+video exercise. Keep exercise cancels; Yes, remove exercise explicitly removes
+that exercise and its logged sets together. Other exercise IDs/results and the
+Settings reusable template stay unchanged. Last-exercise removal clears that
+dated plan/results and still allows manual exercise logging. Completed workouts
+require Edit; History/template views expose no session removal control.
+
+npm test, npm run build:pages and all 203 tests pass. npx tsc --noEmit retains
+10 pre-existing diagnostics; none in changed video plan files. External Chrome
+fixture /tmp/check-remove-exercise.cjs passes confirm/cancel, logged removal,
+retained weights/IDs, template isolation, iframe persistence, selected-result
+backup, reload/Edit/relock, last removal/manual re-add and six-view navigation.
+Screenshots /tmp/remove-exercise-{375,393,440}.png inspected: readable confirmation,
+44px buttons, wrapped actions and no horizontal overflow. Physical iPhone keyboard,
+VoiceOver/native Files/YouTube playback remain device-only; iframe was mocked.
+D01 PASS release checks; D02/D09/D10/D12 PASS fixture and iPhone renders, backup
+and locks. D07 PASS read-only SSR. D08 PASS result sanitization and existing
+comparison tests. D03–D06/D11 N/A unchanged tracking/maps/Plan/sharing.
+Duplicate review PASS: one per-exercise removal with inline confirmation, distinct
+from Add set, Repeat set and whole-video Delete; shared session patch and validator,
+no parallel persistence, extra Save/Edit/status controls. No schema/API change.
+Publication verification pending.
+
+## Previous change — blue timer link
 
 Release **2026.10.20 1411** makes the one shared Add-ons timer link blue
 (#145dcc), weight 600, retaining underline, 16px text and 44px target.

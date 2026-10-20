@@ -1906,3 +1906,10 @@ button.workout-share-action:active { background:#2c465d; }
 .today-addon-tools { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 12px; margin-bottom:8px; }
 .today-addon-tools .today-addon-count { margin:0; }
 .today-addon-timer { display:inline-flex; align-items:center; min-height:44px; color:#145dcc; font-size:16px; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+
+.video-remove-exercise { margin-top:16px; padding-top:12px; border-top:1px solid #d9d1c5; }
+.video-remove-exercise p { font-size:16px; line-height:1.5; }
+.video-remove-exercise > div > div { display:flex; flex-wrap:wrap; gap:12px; }
+.video-remove-exercise button { min-height:44px; padding:10px 12px; white-space:normal; }
+.video-remove-exercise > button { color:#a93832; background:#fffaf2; border:1px solid #d9d1c5; }
+.video-remove-exercise .video-remove-confirm { background:#a93832; color:#fffaf2; }
