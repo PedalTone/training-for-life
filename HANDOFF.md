@@ -15,7 +15,10 @@ Blue on cream contrast is 5.83:1. D01 PASS release checks; D02 PASS rendered
 link/layout checks. D03–D12 N/A: unchanged behavior/surfaces/data. Duplicate
 review PASS: still one link, no added actions/functions or save/status blocks.
 Physical iPhone/VoiceOver checks remain device-only; existing typecheck
-limitations unchanged (not rerun). Publication verification pending.
+limitations unchanged (not rerun). Published `1d0152c90e2e5ce47008c6d5a8652864a5f823d5`
+via successful Pages run `39472696600`; exact live JS/CSS/service worker/release
+verified. Live Chrome blue-link/iPhone/navigation checks pass. No API changes
+or Sites deployment. No required work remains.
 
 ## Previous change — shared Add-ons timer
 
