@@ -1899,3 +1899,5 @@ button.workout-share-action:active { background:#2c465d; }
 .video-log-add-exercise input { width:100%; margin-top:6px; }
 .video-log-add-exercise button, .video-log-add-set { min-height:44px; margin:10px 0; }
 .video-log-add-set { color:#203449; border:1px solid #d9d1c5; background:#fffaf2; }
+
+.video-result-actions { display:flex; flex-wrap:wrap; gap:8px; }

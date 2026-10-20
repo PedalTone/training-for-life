@@ -115,3 +115,23 @@ test('manual video logging starts without captions, supports more sets and round
  const plan=appendVideoExercise(undefined,' Kettlebell swing ');assert.equal(plan.source,'manual');assert.equal(plan.exercises[0].name,'Kettlebell swing');assert.equal(plan.exercises[0].sets.length,1);assert.equal(plan.exercises[0].sets[0].reps,'');
  const next=appendVideoExercise(appendVideoSet(plan,plan.exercises[0].id),'Deadlift');assert.deepEqual(next.exercises.map(e=>e.sets.length),[2,1]);assert.deepEqual(validateVideoPlan(JSON.parse(JSON.stringify(next))),next);
 });
+
+
+test('repeat copies the chosen completed set, not the last set, and leaves completion unchecked',async()=>{
+ const {repeatVideoSet,appendVideoSet}=await import('../app/video-training-plan.ts');
+ const base=draftVideoPlan('Goblet squat: 1 set of 10 reps. Rest twenty seconds.');const row=base.exercises[0],id=row.sets[0].id;
+ const plan=appendVideoSet(base,row.id);plan.exercises[0].sets[1].reps='15';
+ const results={[id]:{weight:'24',unit:'kg',load:'pair',reps:'8',work:'35 sec',warmup:false,done:true}};
+ const before=JSON.stringify({plan,results});const next=repeatVideoSet(plan,results,row.id,id),newSet=next.trainingPlan.exercises[0].sets[2];
+ assert.equal(newSet.reps,'10');assert.equal(newSet.rest,'20 seconds');assert.notEqual(newSet.id,id);
+ assert.deepEqual(next.trainingResults[newSet.id],{...results[id],done:false});assert.deepEqual(next.trainingResults[id],results[id]);assert.equal(JSON.stringify({plan,results}),before);
+ assert.deepEqual(sanitizeVideoTraining(JSON.parse(JSON.stringify(next))),next);
+ assert.equal(repeatVideoSet(plan,results,'missing',id),undefined);assert.equal(repeatVideoSet(plan,results,row.id,'missing'),undefined);
+ assert.equal(repeatVideoSet(plan,{[id]:{...results[id],done:false}},row.id,id),undefined);
+ const full={...plan,exercises:[{...row,sets:Array.from({length:20},(_,i)=>({...row.sets[0],id:i?'extra-'+i:id}))}]};assert.equal(repeatVideoSet(full,results,row.id,id),undefined);
+});
+test('repeat retains bodyweight, time and warm-up details without inventing a completed effort',async()=>{
+ const {repeatVideoSet}=await import('../app/video-training-plan.ts');const plan=draftVideoPlan('Plank: hold forty seconds.');const row=plan.exercises[0],id=row.sets[0].id;
+ const result={weight:'',unit:'lb',load:'bodyweight',reps:'',work:'20 sec',done:true,warmup:true};
+ const next=repeatVideoSet(plan,{[id]:result},row.id,id);assert.deepEqual(Object.values(next.trainingResults).at(-1),{...result,done:false});
+});

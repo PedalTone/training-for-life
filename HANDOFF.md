@@ -2,7 +2,35 @@
 
 Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — full add-ons and video session sets
+## Current change — Repeat completed set
+
+Release **2026.10.19 2245** adds Repeat set to each completed editable video
+exercise set. It copies that exact set's targets and recorded weight/unit/load,
+reps/time and warm-up into a fresh appended ID with done=false. Earlier sets
+work even when later sets differ. Original data and reusable templates stay
+unchanged. Plan and copied results go through one session patch, avoiding a
+split update that could strip new results during sanitization. Existing Add set
+still creates blank actuals; Use previous weight still copies weight only.
+Set caps, saved-workout locks and read-only History/template modes remain intact.
+
+Both builds and all 200 tests pass. Typecheck retains the same 10 existing errors.
+External Chrome fixture passes repeat of non-last sets with different weights/
+units/reps, unchecked new completion, original IDs/results, iframe persistence,
+no-plan logging, template isolation, save/backup/reload/Edit/relock and five rows
+in read-only History. 375/393/440 screenshots inspected; 44px controls and wrapping
+action spacing, no overflow. Unit tests also cover bodyweight/time/warm-up,
+unfinished/invalid source rejection and the 20-set cap. No schema/API change.
+
+D01 PASS release SSR; D02/D09/D10/D12 PASS Today video logging and backup/lock
+fixture; D07 PASS History read-only fixture; D08 PASS done=false semantics and
+existing comparison regressions. D03–D06/D11 N/A unchanged tracker/map/Plan/share.
+Physical iPhone playback/keyboard remains device-only (iframe mocked in fixture).
+Duplicate review PASS: Repeat set copies a chosen completed set; Add set creates
+blank actuals; Use previous weight fills an existing row's load. Distinct actions
+share the existing append/validation/session updater, not parallel storage logic.
+No extra save/status/Edit block. Publication pending.
+
+## Previous change — full add-ons and video session sets
 
 Release **2026.10.19 1932** restores all library rows on Today (previously only
 selected rows and Face Pulls/Dead Hang examples were rendered). Rendering does

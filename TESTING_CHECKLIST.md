@@ -71,3 +71,5 @@ Review duplicate functions and buttons for every app change.
 
 - [ ] Today add-ons: full saved/default library (including custom/renamed items) is visible, not just Face Pulls/Dead Hang; rendering never selects or completes exercises. Inline selection and Add/edit picker agree; backup/summary include only chosen items.
 - [ ] Video set logging: with a saved plan or no plan, play video and add exercise/sets directly in its session log. Retain existing results/IDs, blank new actuals, copy previous weight only on request; session additions do not modify reusable templates. Reload/backup/edit/relock retain all rows; read-only/template views have no session-add controls.
+
+- [ ] Repeat set: choose any completed set (including an earlier one with different weights/units/reps/time); append a fresh ID with copied actuals/load/warm-up and unchecked completion. Preserve originals, other exercises and reusable template; copy plan/results in one session update. Verify caps, reload/backup, History read-only and completed Edit lock.

@@ -134,14 +134,22 @@ export function canonicalVideoURL(video:{url:string;videoId?:string}) {
 }
 
 // Session-only additions keep existing exercise/set IDs so recorded results stay attached.
-export function appendVideoSet(plan:VideoTrainingPlan,exerciseId:string):VideoTrainingPlan|undefined {
+export function appendVideoSet(plan:VideoTrainingPlan,exerciseId:string,sourceSetId?:string):VideoTrainingPlan|undefined {
  const exercise=plan.exercises.find(row=>row.id===exerciseId);
  if(!exercise||exercise.sets.length>=20)return;
- const prior=exercise.sets.at(-1);
+ const prior=sourceSetId?exercise.sets.find(set=>set.id===sourceSetId):exercise.sets.at(-1);
+ if(!prior)return;
  return validateVideoPlan({...plan,exercises:plan.exercises.map(row=>row.id===exerciseId?{...row,setsSpecified:true,sets:[...row.sets,{...emptyPlannedSet(),reps:prior?.reps||'',work:prior?.work||'',rest:prior?.rest||''}]}:row)});
 }
 export function appendVideoExercise(plan:VideoTrainingPlan|undefined,name:string):VideoTrainingPlan|undefined {
  if(!name.trim())return;
  const next=plan||{version:1 as const,exercises:[],source:'manual' as const,notes:'',reviewedAt:new Date().toISOString()};
  return validateVideoPlan({...next,exercises:[...next.exercises,{...emptyVideoExercise(),name:name.trim(),setsSpecified:true}]});
+}
+
+export function repeatVideoSet(plan:VideoTrainingPlan,results:Record<string,VideoSetResult>,exerciseId:string,setId:string) {
+ const source=results[setId];if(!source?.done)return;
+ const trainingPlan=appendVideoSet(plan,exerciseId,setId);if(!trainingPlan)return;
+ const added=trainingPlan.exercises.find(row=>row.id===exerciseId)!.sets.at(-1)!;
+ return {trainingPlan,trainingResults:{...results,[added.id]:{...source,done:false}}};
 }

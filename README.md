@@ -325,3 +325,5 @@ GPS auto-resume accumulates small walking steps across a fresh, short GPS window
 Walk is available as a GPS tracker activity alongside Run and Bike. Run and Walk use pace; Bike uses speed in tracking, saved recordings, journal and sharing. This does not add a new Plan/Progress workout category or reclassify past workouts.
 
 Today lists the full add-on library, including custom exercises; nothing is selected merely by displaying it. Video session logs have Add set per exercise and Add exercise for manual logging without captions/a prebuilt plan. These additions belong to the dated workout and leave reusable video templates unchanged. New set results start blank, existing result IDs persist, and finished workouts require Edit before adding rows.
+
+Completed video exercise sets have Repeat set. It appends a new set with the chosen set’s recorded weight, units, load type, reps/time and warm-up status; completion starts unchecked. The original set and reusable video template stay intact. Repeat works on earlier sets as well as the most recent set, within existing set limits.
