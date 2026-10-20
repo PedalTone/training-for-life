@@ -28,7 +28,10 @@ Physical iPhone playback/keyboard remains device-only (iframe mocked in fixture)
 Duplicate review PASS: Repeat set copies a chosen completed set; Add set creates
 blank actuals; Use previous weight fills an existing row's load. Distinct actions
 share the existing append/validation/session updater, not parallel storage logic.
-No extra save/status/Edit block. Publication pending.
+No extra save/status/Edit block. Published frontend
+`6e02c54db3afeb79f437bd0b3ffe8b1deb9bda49` via successful Pages run
+`39360681683`. Exact live JS/CSS, service worker, release and assets verified;
+repeat-set/copy/reload/backup/lock/History regression passes on public app.
 
 ## Previous change — full add-ons and video session sets
 
