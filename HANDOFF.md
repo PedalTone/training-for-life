@@ -2,7 +2,37 @@
 
 Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
-## Current change — Walk tracker activity only
+## Current change — full add-ons and video session sets
+
+Release **2026.10.19 1932** restores all library rows on Today (previously only
+selected rows and Face Pulls/Dead Hang examples were rendered). Rendering does
+not select/complete any exercise; custom and historical selections are retained.
+Video exercise logs now offer Add set directly; no-plan videos offer manual Add
+exercise without transcript retrieval. Session-only callbacks keep dated additions
+out of reusable templates. Stable IDs preserve prior results, new results are blank,
+explicit Use previous weight remains, and existing 20/exercise + 500/workout limits
+apply. Completed sessions keep the Edit lock. No schema or API changes.
+
+Both builds and all 197 tests pass, including focused pure/SSR regressions (22).
+Publication pending.
+External Chrome fixture passes full 23-row library including custom exercise,
+zero automatic selections, selected-only backup, planned/no-plan multi-set logging
+while iframe remains mounted, previous-weight copying, stable results, template
+isolation, finish/backup/reload/edit/relock. Screenshots at 375/393/440 inspected;
+no horizontal overflow; shared cream/navy controls and >44px actions remain legible.
+Typecheck has the same 10 pre-existing errors, none in changed plan components.
+D01 PASS release SSR; D02/D09/D10/D12 PASS library/log/backup/lock fixtures;
+D07 PASS actual History journal retains three rows read-only, plus mode=read SSR; D08 PASS pure
+result preservation/comparison tests; D03–D06/D11 N/A unchanged tracker/map/Plan/
+sharing layout. Physical iPhone keyboard/YouTube playback remains device-only;
+fixture checks iframe persistence, not real YouTube playback.
+Duplicate review PASS: shared append helpers reuse existing plan validator,
+set/result format and session updater. One Add set per exercise in session;
+plan-editor Add set remains for deliberate reusable plan edits. Add/edit picker
+is intentional bulk selection/history alongside inline Today choices. No extra
+saved/Edit blocks or competing save buttons added.
+
+## Previous change — Walk tracker activity only
 
 Release **2026.10.19 1306** applies the user's clarified scope: Walk is a GPS
 tracker activity alongside Run/Bike, not a new Plan/History/Progress category.

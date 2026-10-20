@@ -132,3 +132,16 @@ export function canonicalVideoURL(video:{url:string;videoId?:string}) {
  if(!/^[\w-]{11}$/.test(id)){try{const url=new URL(video.url);const host=url.hostname.toLowerCase();if(!['http:','https:'].includes(url.protocol))return '';id=host==='youtu.be'?url.pathname.split('/')[1]:['youtube.com','www.youtube.com','m.youtube.com'].includes(host)?url.searchParams.get('v')||url.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]{11})/)?.[1]||'':'';}catch{return '';}}
  return /^[\w-]{11}$/.test(id)?`https://www.youtube.com/watch?v=${id}`:'';
 }
+
+// Session-only additions keep existing exercise/set IDs so recorded results stay attached.
+export function appendVideoSet(plan:VideoTrainingPlan,exerciseId:string):VideoTrainingPlan|undefined {
+ const exercise=plan.exercises.find(row=>row.id===exerciseId);
+ if(!exercise||exercise.sets.length>=20)return;
+ const prior=exercise.sets.at(-1);
+ return validateVideoPlan({...plan,exercises:plan.exercises.map(row=>row.id===exerciseId?{...row,setsSpecified:true,sets:[...row.sets,{...emptyPlannedSet(),reps:prior?.reps||'',work:prior?.work||'',rest:prior?.rest||''}]}:row)});
+}
+export function appendVideoExercise(plan:VideoTrainingPlan|undefined,name:string):VideoTrainingPlan|undefined {
+ if(!name.trim())return;
+ const next=plan||{version:1 as const,exercises:[],source:'manual' as const,notes:'',reviewedAt:new Date().toISOString()};
+ return validateVideoPlan({...next,exercises:[...next.exercises,{...emptyVideoExercise(),name:name.trim(),setsSpecified:true}]});
+}

@@ -68,3 +68,6 @@ Review duplicate functions and buttons for every app change.
 
 
 - [ ] Walk tracker activity: selection, draft/save/reload/edit/backup retain Walk. Run/Walk use min/mile or min/km; Bike uses mph or km/h, including mixed sharing. Plan/Progress category options remain unchanged. Existing Run/Bike records retain types; no duplicate controls.
+
+- [ ] Today add-ons: full saved/default library (including custom/renamed items) is visible, not just Face Pulls/Dead Hang; rendering never selects or completes exercises. Inline selection and Add/edit picker agree; backup/summary include only chosen items.
+- [ ] Video set logging: with a saved plan or no plan, play video and add exercise/sets directly in its session log. Retain existing results/IDs, blank new actuals, copy previous weight only on request; session additions do not modify reusable templates. Reload/backup/edit/relock retain all rows; read-only/template views have no session-add controls.

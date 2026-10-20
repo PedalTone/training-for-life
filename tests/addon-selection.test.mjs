@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {addonChoices,toggleAddonSelection} from '../app/addon-selection.ts';
 
-test('example add-ons are visible without becoming selected or entering backup data',()=>{
+test('the full library is visible without becoming selected or entering backup data',()=>{
  const workout={mobilityExercises:[],completedExercises:[],notes:'Keep my notes'};
  const before=structuredClone(workout);
- assert.deepEqual(addonChoices(workout.mobilityExercises,['Face Pulls','Dead Hang','Rows']),['Face Pulls','Dead Hang']);
+ assert.deepEqual(addonChoices(workout.mobilityExercises,['Face Pulls','Dead Hang','Rows']),['Face Pulls','Dead Hang','Rows']);
  assert.deepEqual(JSON.parse(JSON.stringify(workout)),before);
  assert.equal(workout.mobilityExercises.length,0);
 });

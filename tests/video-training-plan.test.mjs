@@ -100,3 +100,18 @@ test('changed working weight is compared at matching reps, unit and setup',async
  const {strengthSetComparisons}=await import('../app/video-training-plan.ts');const plan=draftVideoPlan('Goblet squat: 1 set of 10 reps.');const record=(date,weight)=>({session:{date,videos:[{trainingPlan:plan,trainingResults:{[plan.exercises[0].sets[0].id]:{weight,unit:'kg',load:'single',reps:'10',work:'',done:true,warmup:false}}}]}});
  const comparison=strengthSetComparisons([record('2026-10-14','24'),record('2026-10-10','20')],'2026-10-14',4).find(row=>row.basis==='weight');assert.equal(comparison.latest.weight,24);assert.equal(comparison.prior.weight,20);assert.equal(comparison.latest.reps,10);
 });
+
+test('extra session sets preserve recorded IDs/results and do not modify the reusable plan',async()=>{
+ const {appendVideoSet}=await import('../app/video-training-plan.ts');
+ const plan=draftVideoPlan('Goblet squat: 1 set of 10 reps. Rest twenty seconds.');const snapshot=JSON.stringify(plan);const first=plan.exercises[0];
+ const result={weight:'24',unit:'kg',load:'single',reps:'8',work:'',done:true,warmup:false};
+ const next=appendVideoSet(plan,first.id);assert.equal(next.exercises[0].sets.length,2);assert.equal(next.exercises[0].setsSpecified,true);
+ assert.equal(next.exercises[0].sets[0].id,first.sets[0].id);assert.notEqual(next.exercises[0].sets[1].id,first.sets[0].id);assert.equal(next.exercises[0].sets[1].reps,'10');
+ const video=sanitizeVideoTraining({trainingPlan:next,trainingResults:{[first.sets[0].id]:result}});assert.deepEqual(video.trainingResults[first.sets[0].id],result);assert.equal(video.trainingResults[next.exercises[0].sets[1].id],undefined);assert.equal(JSON.stringify(plan),snapshot);
+ assert.equal(appendVideoSet(plan,'missing'),undefined);const full={...plan,exercises:[{...first,sets:Array.from({length:20},(_,i)=>({...first.sets[0],id:'set-'+i}))}]};assert.equal(appendVideoSet(full,first.id),undefined);
+});
+test('manual video logging starts without captions, supports more sets and roundtrips',async()=>{
+ const {appendVideoExercise,appendVideoSet}=await import('../app/video-training-plan.ts');assert.equal(appendVideoExercise(undefined,' '),undefined);
+ const plan=appendVideoExercise(undefined,' Kettlebell swing ');assert.equal(plan.source,'manual');assert.equal(plan.exercises[0].name,'Kettlebell swing');assert.equal(plan.exercises[0].sets.length,1);assert.equal(plan.exercises[0].sets[0].reps,'');
+ const next=appendVideoExercise(appendVideoSet(plan,plan.exercises[0].id),'Deadlift');assert.deepEqual(next.exercises.map(e=>e.sets.length),[2,1]);assert.deepEqual(validateVideoPlan(JSON.parse(JSON.stringify(next))),next);
+});

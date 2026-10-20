@@ -1,3 +1,5 @@
+New public release — 2026.10.19 1932: Restore the full Today add-on library and add session-level exercise/set logging for videos with or without a plan.
+
 New public release — 2026.10.19 1306: Apply clarified scope: Walk is a tracker activity only, retaining walking pace for saved recordings, journal and sharing.
 
 New public release — 2026.10.19 1300: Add Walk to GPS activities and workout categories, with walking pace in saved recordings, journal and sharing.
@@ -118,9 +120,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.19 1306` limits Walk to the tracker per user clarification.
+Release decision: **New public release** — `2026.10.19 1932` restores all add-ons and enables multiple video exercise sets.
 
-App, notes, tests, worker and deployment use `2026.10.19 1306`.
+App, notes, tests, worker and deployment use `2026.10.19 1932`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
