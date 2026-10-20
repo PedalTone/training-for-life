@@ -4,7 +4,29 @@ Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — Repeat completed set
+## Current change — shared Add-ons timer
+
+Release **2026.10.20 0939** restores one visible Start timer link beside the
+Add-ons selection count, using the existing speaking-timer destination and
+60-second defaults. Removed repeated timer links from Today Details and the
+Add/edit picker. No exercise-specific parameter, selection, completion or storage
+change. The link remains usable on locked workouts.
+
+npm test, npm run build:pages and all 200 behavioral/rendered tests pass.
+External Chrome isolated fixture checks one link, new-tab destination, no implicit
+selections, no row/picker duplicates, selected-only backup, reload/Edit/relock and
+six-view navigation. Screenshots /tmp/addon-timer-{375,393,440}.png inspected:
+readable underlined 16px link with 44px target; no horizontal overflow.
+Physical iPhone Safari/VoiceOver/native timer behavior remains device-only.
+Typecheck was not rerun; previous 10 diagnostics remain an existing limitation.
+D01 PASS release tests; D02 PASS Chrome fixture/screenshots; D12 PASS backup and
+navigation. D03–D11 N/A unchanged tracker, Plan, History, Progress, videos/media
+and sharing behavior. Duplicate review PASS: one visible shared timer, none in
+rendered exercise details/picker, no extra save/Edit/status controls. Legacy
+unmounted DailyMobility helper is unchanged and supplies no rendered duplicate.
+Publication verification pending below.
+
+## Previous change — Repeat completed set
 
 Release **2026.10.19 2245** adds Repeat set to each completed editable video
 exercise set. It copies that exact set's targets and recorded weight/unit/load,

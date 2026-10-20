@@ -1901,3 +1901,8 @@ button.workout-share-action:active { background:#2c465d; }
 .video-log-add-set { color:#203449; border:1px solid #d9d1c5; background:#fffaf2; }
 
 .video-result-actions { display:flex; flex-wrap:wrap; gap:8px; }
+
+/* One shared timer remains visible above the add-on list. */
+.today-addon-tools { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 12px; margin-bottom:8px; }
+.today-addon-tools .today-addon-count { margin:0; }
+.today-addon-timer { display:inline-flex; align-items:center; min-height:44px; color:#b94b17; font-size:16px; text-decoration:underline; text-underline-offset:3px; }

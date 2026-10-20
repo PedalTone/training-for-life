@@ -1,3 +1,5 @@
+New public release — 2026.10.20 0939: Restore one visible shared Start timer link for Today add-ons instead of per-exercise links.
+
 No new release — October 19, 2026: Create the October 20 development-chat handoff; documentation only, retain public release 2026.10.19 2245.
 
 New public release — 2026.10.19 2245: Repeat any completed video exercise set with its recorded weight, units, reps/time and warm-up status; the new set starts unchecked.
@@ -124,9 +126,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.19 2245` adds Repeat set to completed exercise logs.
+Release decision: **New public release** — `2026.10.20 0939` restores the shared add-ons timer link.
 
-App, notes, tests, worker and deployment use `2026.10.19 2245`.
+App, notes, tests, worker and deployment use `2026.10.20 0939`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 
