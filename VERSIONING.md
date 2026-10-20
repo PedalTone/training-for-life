@@ -1,3 +1,5 @@
+No new release — October 19, 2026: Create the October 20 development-chat handoff; documentation only, retain public release 2026.10.19 2245.
+
 New public release — 2026.10.19 2245: Repeat any completed video exercise set with its recorded weight, units, reps/time and warm-up status; the new set starts unchecked.
 
 New public release — 2026.10.19 1932: Restore the full Today add-on library and add session-level exercise/set logging for videos with or without a plan.

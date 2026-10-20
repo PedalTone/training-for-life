@@ -2,6 +2,8 @@
 
 Updated October 19, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
+New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
+
 ## Current change — Repeat completed set
 
 Release **2026.10.19 2245** adds Repeat set to each completed editable video
