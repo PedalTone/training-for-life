@@ -4,7 +4,34 @@ Updated October 20, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — remove dated video exercise
+## Current change — dated video completion
+
+Release **2026.10.20 2050** adds a Video completed checkbox on each dated video
+card, with or without a plan. Completion is explicit and independent of playback,
+set results and whole-day completion. Shared VideoCompletion renders read-only
+status on locked Today cards, History journal and recent video cards; templates
+have no completion control. Existing session patch persists optional completed
+boolean; normalization accepts only true, older records remain unmarked. Backups
+retain it. videoForNextWorkout resets completion/results for library/recent adds
+and repeat setup; current-day videos already present retain their logged state.
+
+npm test, npm run build:pages and all 206 tests pass. Typecheck retains the same
+10 pre-existing diagnostics (no new video diagnostics). External Chrome isolated
+fixture /tmp/check-video-completion.cjs checks planned/no-plan check/uncheck,
+play without auto-completion, independent videos, iframe persistence, retained
+sets/template, backup/reload/Edit/relock, journal status and six-view navigation.
+Screenshots /tmp/video-completion-{375,393,440}.png and journal screenshot inspected:
+16px labels, 48px+ hit area, clear check + text, no overflow. Real iPhone keyboard,
+VoiceOver/native Files/playback remain device-only; iframe fixture was mocked.
+D01 PASS release checks; D02/D07/D09/D10/D12 PASS fixture/screenshots and backup.
+D08 PASS retained set results and existing comparison regressions; D03–D06/D11
+N/A unchanged tracking/maps/Plan/sharing. Duplicate review PASS: one completion
+control per video, shared renderer for journal/locked cards; set completion and
+day Finish remain distinct. Repeat now reuses the shared reset helper rather
+than maintaining a parallel results-clearing implementation. No API change.
+Publication verification pending.
+
+## Previous change — remove dated video exercise
 
 Release **2026.10.20 1711** adds Remove from today inside each expanded dated
 video exercise. Keep exercise cancels; Yes, remove exercise explicitly removes

@@ -332,3 +332,8 @@ In a dated video workout, expand an exercise and choose **Remove from today**
 when skipping it. Confirmation removes that exercise and any logged sets from
 that day only. Other results and the reusable Settings plan stay unchanged;
 finished workouts require Edit first.
+
+Each dated workout video has a **Video completed** checkbox, even without a
+plan. The journal and backups retain the explicit status. Playback alone does
+not complete it; adding/repeating a video starts unchecked. Finished workouts
+require Edit to change the status.

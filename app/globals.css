@@ -1913,3 +1913,8 @@ button.workout-share-action:active { background:#2c465d; }
 .video-remove-exercise button { min-height:44px; padding:10px 12px; white-space:normal; }
 .video-remove-exercise > button { color:#a93832; background:#fffaf2; border:1px solid #d9d1c5; }
 .video-remove-exercise .video-remove-confirm { background:#a93832; color:#fffaf2; }
+
+.video-completion { display:flex; align-items:center; gap:12px; min-height:48px; margin:12px 0; padding:10px 12px; border:1px solid #d9d1c5; border-radius:10px; color:#203449; background:#fffaf2; font-size:16px; line-height:1.4; }
+label.video-completion { cursor:pointer; }
+.video-completion input { width:22px; height:22px; flex:0 0 22px; margin:0; accent-color:#386047; }
+.video-completion.completed { color:#386047; border-color:#9eb59e; background:#eef2e7; font-weight:600; }

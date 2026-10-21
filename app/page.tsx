@@ -1,4 +1,5 @@
 "use client";
+import {VideoCompletion} from "./video-completion";
 import {ShareWorkoutButton} from "./share-workout-button";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -44,7 +45,7 @@ const videoCategories = [
   { key: "endurance", label: "Endurance", icon: "∞" },
 ] as const;
 type VideoCategory = (typeof videoCategories)[number]["key"];
-export type Video = { url: string; label: string; videoId?: string; thumbnailData?: string; category?: VideoCategory; trainingPlan?:VideoTrainingPlan; trainingResults?:Record<string,VideoSetResult> };
+export type Video = { url: string; label: string; videoId?: string; thumbnailData?: string; category?: VideoCategory; completed?:boolean; trainingPlan?:VideoTrainingPlan; trainingResults?:Record<string,VideoSetResult> };
 function isVideoCategory(value: unknown): value is VideoCategory { return videoCategories.some((category) => category.key === value); }
 function videoCategoryLabel(category?: VideoCategory) { return videoCategories.find((item) => item.key === category)?.label || "Uncategorized"; }
 export type Session = {
@@ -226,9 +227,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.20 1711";
+const APP_VERSION = "2026.10.20 2050";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
+  { version: APP_VERSION, category: "New feature", changes: ["Mark each workout video completed directly on the day. Its status is saved in the journal and backups, while repeat workouts start unchecked."] },
+  { version: "2026.10.20 1711", category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
   { version: "2026.10.20 1411", category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
   { version: "2026.10.20 0939", category: "Minor fix", changes: ["One visible Start timer link in Add-ons opens the speaking timer for any exercise, without repeated links in exercise details or the picker."] },
   { version: "2026.10.19 2245", category: "Minor fix", changes: ["Repeat any completed video exercise set with its recorded weight, units, reps or time and warm-up status. The new set stays unchecked until completed, while original results and reusable video plans stay intact."] },
@@ -237,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.19 1300", category: "Minor fix", changes: ["Added Walk GPS activity and walking pace in minutes per mile or kilometer in tracking, saved logs and sharing."] },
   { version: "2026.10.19 1256", category: "Major fix", changes: ["Tracking now detects small walking steps after an auto-paused stop and resumes even when GPS speed is missing or stuck at zero. Manual Pause stays manual, with safeguards against GPS noise and stale fixes."] },
   { version: "2026.10.18 2123", category: "Minor fix", changes: ["Training Assessment now appears in Progress only. The shortcut has been removed from Plan to keep weekly planning focused."] },
-  { version: "2026.10.18 1552", category: "Minor fix", changes: ["Today keeps one saved-workout banner and Edit button at the top. The duplicate saved/Edit block above Share workout has been removed."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -917,7 +918,7 @@ export default function Home() {
         })}
 
         </section>
-            <section className="today-videos"><h3>Workout videos</h3>{session.videos.length > 0 && <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} planMode={workoutReadOnly?"read":"session"} onPlan={workoutReadOnly?undefined:plan=>saveSessionVideoPlan(i,video,plan)} onSessionPlan={workoutReadOnly?undefined:(trainingPlan,trainingResults)=>changeSessionVideo(i,video,{trainingPlan,...(trainingResults?{trainingResults}:{})})} onResults={workoutReadOnly?undefined:results=>changeSessionVideo(i,video,{trainingResults:results})} onDelete={workoutReadOnly?undefined:() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div>}{!showVideoForm ? <button disabled={workoutReadOnly} className="add-video-toggle" onClick={() => setShowVideoForm(true)}>＋ Add Video</button> : <fieldset className="inline-sheet workout-edit-fields" disabled={workoutReadOnly}><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</fieldset>}</section>
+            <section className="today-videos"><h3>Workout videos</h3>{session.videos.length > 0 && <div className="video-grid">{session.videos.map((video, i) => <VideoCard video={video} planMode={workoutReadOnly?"read":"session"} onPlan={workoutReadOnly?undefined:plan=>saveSessionVideoPlan(i,video,plan)} onSessionPlan={workoutReadOnly?undefined:(trainingPlan,trainingResults)=>changeSessionVideo(i,video,{trainingPlan,...(trainingResults?{trainingResults}:{})})} onResults={workoutReadOnly?undefined:results=>changeSessionVideo(i,video,{trainingResults:results})} onCompletedChange={workoutReadOnly?undefined:completed=>changeSessionVideo(i,video,{completed})} onDelete={workoutReadOnly?undefined:() => deleteVideo(session.id, i)} key={`${video.url}-${i}`}/>)}</div>}{!showVideoForm ? <button disabled={workoutReadOnly} className="add-video-toggle" onClick={() => setShowVideoForm(true)}>＋ Add Video</button> : <fieldset className="inline-sheet workout-edit-fields" disabled={workoutReadOnly}><input type="url" value={videoUrl} onChange={(e) => { videoLabelEdited.current = false; setVideoUrl(e.target.value); setVideoLabel(""); setVideoMessage(""); }} placeholder="Paste YouTube URL"/><input aria-label="YouTube video label" value={videoLabel} onChange={(e) => { videoLabelEdited.current = true; setVideoLabel(e.target.value); }} placeholder="Video title loads automatically"/><button className="compact-primary" onClick={attachVideo} disabled={attachingVideo}>{attachingVideo ? "Saving…" : "Save video"}</button>{videoMessage && <p className="video-message" role="status">{videoMessage}</p>}</fieldset>}</section>
 
         </section>
         <section id="today-panel-log" role="tabpanel" aria-labelledby="today-tab-log" hidden={todaySection !== "log"} className="today-section-panel today-log-panel"><fieldset className="workout-edit-fields" disabled={workoutReadOnly}>
@@ -953,7 +954,7 @@ export default function Home() {
   </div>;
 }
 
-function VideoCard({ video, onPlan, onSessionPlan, onResults, startPlan=false, onWorkflowDone, planMode="session", onDelete, onAddToday, categoryLabel, onCategoryChange, addedToToday=false, addingToToday=false, addDisabled=false }: { video: Video; onSessionPlan?:(plan:VideoTrainingPlan|undefined,results?:Record<string,VideoSetResult>)=>boolean; startPlan?:boolean;onWorkflowDone?:()=>void;onPlan?:(plan:VideoTrainingPlan)=>boolean|void; onResults?:(results:Record<string,VideoSetResult>)=>void; planMode?:"template"|"session"|"read"; onDelete?: () => void; onAddToday?: () => void; addedToToday?: boolean; addingToToday?: boolean; addDisabled?: boolean; categoryLabel?: string; onCategoryChange?: (category: VideoCategory | "") => void }) {
+function VideoCard({ video, onCompletedChange, onPlan, onSessionPlan, onResults, startPlan=false, onWorkflowDone, planMode="session", onDelete, onAddToday, categoryLabel, onCategoryChange, addedToToday=false, addingToToday=false, addDisabled=false }: { video: Video; onCompletedChange?:(completed:boolean)=>void; onSessionPlan?:(plan:VideoTrainingPlan|undefined,results?:Record<string,VideoSetResult>)=>boolean; startPlan?:boolean;onWorkflowDone?:()=>void;onPlan?:(plan:VideoTrainingPlan)=>boolean|void; onResults?:(results:Record<string,VideoSetResult>)=>void; planMode?:"template"|"session"|"read"; onDelete?: () => void; onAddToday?: () => void; addedToToday?: boolean; addingToToday?: boolean; addDisabled?: boolean; categoryLabel?: string; onCategoryChange?: (category: VideoCategory | "") => void }) {
   const cardRef = useRef<HTMLElement>(null);
   const [playing, setPlaying] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -970,6 +971,7 @@ function VideoCard({ video, onPlan, onSessionPlan, onResults, startPlan=false, o
     <div className="video-card-status">{categoryLabel && <span className="video-category-badge">{categoryLabel}</span>}{savedPlan?<span className="video-plan-ready" role="status">✓ Plan ready · {savedPlan.exercises.length} {savedPlan.exercises.length===1?"exercise":"exercises"}</span>:planMode==="template"&&<span className="video-plan-missing">No plan yet</span>}</div>
     {onCategoryChange && <details className="video-category-edit"><summary>Change category</summary><label className="video-category-control"><span>Category</span><select value={isVideoCategory(video.category) ? video.category : ""} onChange={(event) => onCategoryChange(event.target.value as VideoCategory | "")}><option value="">Uncategorized</option>{videoCategories.map((category) => <option value={category.key} key={category.key}>{category.icon} {category.label}</option>)}</select></label></details>}
     {playing && id ? <div className="inline-player"><iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`} title={video.label} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/><button onClick={() => setPlaying(false)}>Close player</button></div> : <button className="video-launch" onClick={play} aria-label={`Play ${video.label} inside Training for Life`}><span className="video-thumb">{thumbnail ? <img src={thumbnail} alt=""/> : null}<i>▶</i></span><span><strong>{video.label}</strong><small>{video.thumbnailData ? "Thumbnail saved · play here" : "YouTube · play here"}</small></span><b aria-hidden="true">›</b></button>}
+    {planMode!=="template"&&<VideoCompletion completed={video.completed} onChange={onCompletedChange}/>}
     {(video.trainingPlan||onPlan)&&<VideoPlanView video={video} onPlan={onPlan} onSessionPlan={onSessionPlan} onResults={onResults} mode={planMode} startRequested={startPlan} onWorkflowDone={finishPlanWorkflow} onEditingChange={setBuildingPlan}/>}
     {!buildingPlan&&(onAddToday || onDelete) && <div className="video-actions">
       {onDelete && !confirmingDelete && <button className="video-delete" onClick={() => setConfirmingDelete(true)} aria-label={`Delete ${video.label}`}>Delete</button>}

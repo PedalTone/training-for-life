@@ -92,7 +92,8 @@ export function validateVideoPlan(value:unknown):VideoTrainingPlan|undefined {
 }
 export function sanitizeVideoTraining<T extends object>(video:T):T {
  if(!video||typeof video!=='object')return video;
- const raw=video as T&{trainingPlan?:unknown;trainingResults?:unknown};
+ const raw=video as T&{trainingPlan?:unknown;trainingResults?:unknown;completed?:unknown};
+ if('completed' in raw)video={...video,completed:raw.completed===true};
  if(!('trainingPlan' in raw)&&!('trainingResults' in raw))return video;
  const trainingPlan=validateVideoPlan(raw.trainingPlan);const trainingResults:Record<string,VideoSetResult>={};
  const allowed=new Set(trainingPlan?.exercises.flatMap(row=>row.sets.map(set=>set.id))||[]);
@@ -100,7 +101,7 @@ export function sanitizeVideoTraining<T extends object>(video:T):T {
  return {...video,trainingPlan,trainingResults:Object.keys(trainingResults).length?trainingResults:undefined};
 }
 export function videoForNextWorkout<T extends object>(video:T):T {
- const next={...sanitizeVideoTraining(video)} as T&{trainingResults?:unknown};delete next.trainingResults;return next;
+ const next={...sanitizeVideoTraining(video)} as T&{trainingResults?:unknown;completed?:unknown};delete next.trainingResults;delete next.completed;return next;
 }
 
 export type StrengthSetSnapshot={date:string;reps:number;weight:number;unit:'lb'|'kg';load:VideoSetResult['load']};

@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {sanitizeVideoTraining,videoForNextWorkout} from '../app/video-training-plan.ts';
+test('video completion persists independently of plans and results and sanitizes strictly',()=>{const video={url:'video',label:'Workout',completed:true};assert.deepEqual(sanitizeVideoTraining(video),video);assert.equal(sanitizeVideoTraining({...video,completed:'true'}).completed,false);assert.equal(sanitizeVideoTraining({...video,trainingPlan:undefined}).completed,true);const roundtrip=JSON.parse(JSON.stringify(sanitizeVideoTraining(video)));assert.equal(roundtrip.completed,true);assert.equal(sanitizeVideoTraining({url:'old',label:'Legacy'}).completed,undefined);});
+test('reuse clears video completion without mutating original or its plan',()=>{const video={url:'video',label:'Workout',completed:true};assert.equal(videoForNextWorkout(video).completed,undefined);assert.equal(video.completed,true);});
+
+import {repeatWorkoutSetup} from '../app/prior-workout-notes.ts';
+test('repeat setup resets new video completion and preserves an already logged current video',()=>{const setup={activity:'',mobilityExercises:[],notes:'',videos:[]};const completed={url:'video',label:'Workout',completed:true};assert.equal(repeatWorkoutSetup(setup,{...setup,videos:[completed]}).videos[0].completed,undefined);assert.equal(repeatWorkoutSetup({...setup,videos:[completed]},{...setup,videos:[completed]}).videos[0].completed,true);});

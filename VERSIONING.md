@@ -1,3 +1,5 @@
+New public release — 2026.10.20 2050: Mark each dated YouTube video completed and retain its status in the journal and backups; repeat/add-to-today starts unchecked.
+
 New public release — 2026.10.20 1711: Remove an exercise from the dated YouTube workout with confirmation, leaving its reusable Settings plan unchanged.
 
 New public release — 2026.10.20 1411: Make the shared Add-ons timer link prominent blue.
@@ -130,9 +132,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.20 1711` adds session-only exercise removal.
+Release decision: **New public release** — `2026.10.20 2050` adds dated video completion.
 
-App, notes, tests, worker and deployment use `2026.10.20 1711`.
+App, notes, tests, worker and deployment use `2026.10.20 2050`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

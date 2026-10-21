@@ -1,3 +1,4 @@
+import {videoForNextWorkout} from "./video-training-plan.ts";
 type WorkoutType = { key: string; theme: string };
 type NoteSource = { date: string; notes: string; workoutType: WorkoutType };
 
@@ -31,7 +32,7 @@ export function repeatWorkoutSetup<V extends Video>(current: Setup<V>, source: S
   const activities = [...new Set([...(current.activities ?? (current.activity ? [current.activity] : [])), ...(source.activities ?? (source.activity ? [source.activity] : []))])];
   const videos = current.videos.map((video) => ({ ...video }));
   for (const video of source.videos) {
-    if (!videos.some((item) => (item.videoId || item.url) === (video.videoId || video.url))) { const copied = { ...video } as V & {trainingResults?:unknown}; delete copied.trainingResults; videos.push(copied); };
+    if (!videos.some((item) => (item.videoId || item.url) === (video.videoId || video.url))) { videos.push(videoForNextWorkout(video)); };
   }
   return {
     activities, activity: activities.join(' + '),

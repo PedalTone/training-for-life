@@ -75,3 +75,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] Repeat set: choose any completed set (including an earlier one with different weights/units/reps/time); append a fresh ID with copied actuals/load/warm-up and unchecked completion. Preserve originals, other exercises and reusable template; copy plan/results in one session update. Verify caps, reload/backup, History read-only and completed Edit lock.
 
 - [ ] Dated video exercise removal: Remove from today → Keep exercise / Yes, remove exercise; cancel preserves data, confirm removes only chosen exercise/results; last exercise supported; Settings template/other videos unchanged; reload/backup and finished Edit lock retained.
+
+- [ ] Video completed checkbox works with/without a plan; separate per-video status survives reload, backup/restore and journal. Playing/adding does not complete; finish locks and Edit permits correction. Repeat/add-to-today starts unchecked, templates unchanged.
