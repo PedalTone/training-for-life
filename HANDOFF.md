@@ -29,7 +29,10 @@ N/A unchanged tracking/maps/Plan/sharing. Duplicate review PASS: one completion
 control per video, shared renderer for journal/locked cards; set completion and
 day Finish remain distinct. Repeat now reuses the shared reset helper rather
 than maintaining a parallel results-clearing implementation. No API change.
-Publication verification pending.
+Published frontend `a01a1edb8cdda218513c13bdac51b0ff7b8184c2` via successful
+Pages run `39523887971`. Exact live JS/CSS/worker/release verified; completion,
+journal, backup/reload/lock and iPhone regression passes on the public app.
+No Sites deployment needed. No required work remains.
 
 ## Previous change — remove dated video exercise
 
