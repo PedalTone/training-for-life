@@ -34,7 +34,11 @@ and completed data plus existing regressions. D03–D06/D09/D11 N/A unchanged GP
 maps, Plan, videos and sharing. Duplicate review PASS: extracted one row renderer;
 selection and completion remain distinct, hidden reserved slots introduce no
 extra accessible action. Shared setter avoids parallel selection logic. No
-schema/API change or data migration. Publication verification pending.
+schema/API change or data migration. Published frontend
+`49c2e4f206f89acce72a0e1b132858e05d044ac8` via successful Pages run
+`39833013763`. Exact live JS/CSS/worker/release verified; full touch/stable-row/
+Push-Ups/backup/reload/lock regression passes on public app. No Sites deployment
+needed. No required work remains.
 
 ## Previous change — dated video completion
 
