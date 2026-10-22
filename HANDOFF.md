@@ -22,7 +22,11 @@ D01 PASS release checks; D02/D10/D12 PASS fixture/layout/backup/locks;
 D07/D08 PASS preserved selected/completed values and regression tests;
 D03–D06/D09/D11 N/A unchanged GPS/maps/Plan/videos/sharing. Duplicate review PASS:
 one row renderer and shared setter retained, obsolete frozen-order helper removed;
-no additional controls or save/status/Edit blocks. Publication verification pending.
+no additional controls or save/status/Edit blocks. Published frontend
+`c8a28a3bc738b668ba53fd74d10490ecc4cd53ff` via successful Pages run
+`39834671982`. Exact live JS/CSS/worker/release verified; selected-first movement,
+Push-Ups touch selection, backup/reload/lock/iPhone fixture passes on public app.
+No Sites deployment needed. No required work remains.
 
 ## Previous change — stable Add-ons selection
 
