@@ -4,7 +4,29 @@ Updated October 22, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — immediate selected-first Add-ons
+## Current change — simplified Today Log
+
+Release **2026.10.22 1451** puts Perceived effort first in Today’s Log with
+Easy / Medium / Hard. Medium retains stored value moderate for compatibility.
+Removes manual duration/distance and More metrics (pace/calories/start time)
+fields from this tab. Notes/photos/screenshots remain; legacy metric values,
+History, sharing and GPS data/controls are unchanged. No storage migration.
+
+npm test, npm run build:pages and all 208 tests pass. External Chrome fixture
+/tmp/check-log-effort.cjs verifies first field/labels, existing moderate selection,
+all effort options, absence of removed fields, notes and legacy metrics preserved
+in backup, reload/locked/edit/relock and six-view navigation. Inspected screenshots
+/tmp/log-effort-{375,393,440}.png: clear first-field hierarchy, readable buttons,
+44px targets and no overflow. Physical iPhone keyboard/VoiceOver/native Files
+remain device-only. Existing typecheck limitations unchanged; not rerun.
+D01 PASS release checks; D02/D10/D12 PASS fixture/iPhone/backup/lock;
+D07/D08 PASS retained recorded values and existing tests. D03–D06/D09/D11 N/A:
+GPS/maps/Plan/videos/sharing behavior unchanged. Duplicate review PASS: duration,
+distance and More metrics inputs removed from Log; one effort control group,
+notes/attachment controls retained, no extra Save/Edit/status blocks.
+Publication verification pending.
+
+## Previous change — immediate selected-first Add-ons
 
 Release **2026.10.22 1448** restores immediate selected-first ordering per user
 request. Removes frozen row-order state/helper, retaining explicit checkbox/label

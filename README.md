@@ -339,3 +339,7 @@ not complete it; adding/repeating a video starts unchecked. Finished workouts
 require Edit to change the status.
 
 Today add-ons move into the selected group at the top immediately; selection and Mark done remain separate actions.
+
+Today → Log starts with Perceived effort (Easy, Medium, Hard), followed by
+notes and attachments. Manual duration/distance/extra metrics inputs are removed;
+previously recorded values and GPS recording remain available in saved records.
