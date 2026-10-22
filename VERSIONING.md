@@ -1,3 +1,5 @@
+New public release — 2026.10.22 1433: Keep Today add-on rows steady while choosing, bind each checkbox explicitly to its exercise and enlarge touch targets. Saved choices group first on reopening Today.
+
 New public release — 2026.10.20 2050: Mark each dated YouTube video completed and retain its status in the journal and backups; repeat/add-to-today starts unchecked.
 
 New public release — 2026.10.20 1711: Remove an exercise from the dated YouTube workout with confirmation, leaving its reusable Settings plan unchanged.
@@ -132,9 +134,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.20 2050` adds dated video completion.
+Release decision: **New public release** — `2026.10.22 1433` fixes add-on checkbox selection stability.
 
-App, notes, tests, worker and deployment use `2026.10.20 2050`.
+App, notes, tests, worker and deployment use `2026.10.22 1433`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

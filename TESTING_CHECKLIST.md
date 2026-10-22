@@ -77,3 +77,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] Dated video exercise removal: Remove from today → Keep exercise / Yes, remove exercise; cancel preserves data, confirm removes only chosen exercise/results; last exercise supported; Settings template/other videos unchanged; reload/backup and finished Edit lock retained.
 
 - [ ] Video completed checkbox works with/without a plan; separate per-video status survives reload, backup/restore and journal. Playing/adding does not complete; finish locks and Edit permits correction. Repeat/add-to-today starts unchecked, templates unchanged.
+
+- [ ] Add-on selection: touch checkbox and label on Push-Ups and neighboring/long/custom rows in varied order, repeated check/uncheck and completion. No reordering while picking, wrong selection or swipe navigation; reopening groups saved choices first. Verify full library, selected-only backup, reload and completed lock.

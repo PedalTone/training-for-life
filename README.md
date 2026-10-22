@@ -337,3 +337,6 @@ Each dated workout video has a **Video completed** checkbox, even without a
 plan. The journal and backups retain the explicit status. Playback alone does
 not complete it; adding/repeating a video starts unchecked. Finished workouts
 require Edit to change the status.
+
+Today add-on rows stay in place while selecting exercises. Saved choices group
+first when Today is reopened; selection and Mark done remain separate actions.

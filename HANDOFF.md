@@ -1,10 +1,42 @@
 # Training for Life — development handoff
 
-Updated October 20, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 22, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — dated video completion
+## Current change — stable Add-ons selection
+
+Release **2026.10.22 1433** stops inline Add-ons from reordering under the user's
+finger. TodayAddonRows freezes current row order on the first checkbox action;
+reopening Today groups saved selections first. Initialization waits until actual
+interaction, avoiding a stale blank/library startup snapshot. Explicit input IDs
+and label associations plus a 44px checkbox target bind taps to the exercise.
+Native checked state feeds idempotent setAddonSelection; toggle remains a thin
+wrapper for compatibility. Completion uses the latest session ref. Label touches
+are excluded from swipe navigation. Reserved completion-button width and secondary
+line space prevent row-height changes while selecting/completing. Unselected
+placeholders are hidden/disabled and absent from accessibility controls.
+
+The original wrong-exercise tap was not reproduced in external Chrome before
+editing; immediate reorder and row resizing were confirmed in implementation.
+Post-fix touch regression checks exact names and unchanged row order/heights for
+Push-Ups, Bench Press, Scapular Push-Up, Crossovers and Dead Hang; both checkbox
+and label taps, repeated select/unselect, Mark done, selected-only backup, reload,
+selected-first reopening, Edit/relock and six-view navigation pass.
+Fixture: /tmp/check-addon-stable.cjs. Inspected external Chrome iPhone screenshots
+/tmp/addon-stable-{375,393,440}.png: readable wrapped names, 44px targets and no
+overflow. Physical iPhone Safari/VoiceOver still require device evidence.
+
+npm test, npm run build:pages and all 208 tests pass. Typecheck retains the same
+10 existing diagnostics, none in new row/helper code. D01 PASS release checks;
+D02/D10/D12 PASS touch/layout/backup/lock fixture; D07/D08 PASS retained selected
+and completed data plus existing regressions. D03–D06/D09/D11 N/A unchanged GPS,
+maps, Plan, videos and sharing. Duplicate review PASS: extracted one row renderer;
+selection and completion remain distinct, hidden reserved slots introduce no
+extra accessible action. Shared setter avoids parallel selection logic. No
+schema/API change or data migration. Publication verification pending.
+
+## Previous change — dated video completion
 
 Release **2026.10.20 2050** adds a Video completed checkbox on each dated video
 card, with or without a plan. Completion is explicit and independent of playback,
