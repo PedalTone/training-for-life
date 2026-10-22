@@ -4,7 +4,37 @@ Updated October 22, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — simplified Today Log
+## Current change — non-injury illness check-in
+
+Release **2026.10.22 1457** adds Illness check-in under Check-ins: Sick / unwell,
+optional Rested instead of working out and note. Independent optional illness
+record normalizes reported/rested/note/savedAt; old records remain unchanged.
+History has a distinct amber labeled flag, journal illness section/status and
+search includes illness terms/notes. Body notes only remains injury-specific.
+Saving a rested illness day uses status rest, clears completedAt and records
+illness.savedAt for saved/Edit/reload locking. Progress excludes sick rest days
+from completed mix while normal completed recovery still counts. Merely flagging
+illness does not prevent recording a workout. Templates, schedules and injury
+records are not rewritten. Backup/restore uses existing session schema.
+
+npm test, npm run build:pages and all 211 tests pass. Typecheck retains the same
+10 existing diagnostics; none in illness module/lock/progress integration.
+External Chrome fixture /tmp/check-illness.cjs passes separate flags, illness
+note, no injury mutation, rest save, no completion check, selected History flag,
+backup/reload/Edit/relock, journal and Progress exclusion plus six-view navigation.
+Inspected /tmp/illness-{375,393,440}.png and /tmp/illness-journal.png: clear separate
+sections, readable controls and no overflow; labels >=48px. Physical iPhone
+keyboard/VoiceOver/native Files remain device-only. Illness status uses amber,
+not the green workout-completion color. No medical recommendations are provided.
+D01 PASS release checks; D02/D07/D08/D10/D12 PASS fixture, unit/search/lock/mix
+regressions and iPhone renders. D03–D06/D09/D11 N/A unchanged tracker/maps/Plan/
+videos/share output (illness details are not included in sharing data).
+Duplicate review PASS: one illness flag and optional rest choice; independent
+body concern controls retained; shared finalization/normalization/rest predicate,
+existing save/backup/Edit flow reused without competing save/status blocks.
+Publication verification pending.
+
+## Previous change — simplified Today Log
 
 Release **2026.10.22 1451** puts Perceived effort first in Today’s Log with
 Easy / Medium / Hard. Medium retains stored value moderate for compatibility.

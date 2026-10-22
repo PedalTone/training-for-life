@@ -7,7 +7,7 @@ export function searchJournal(entries: JournalSearchEntry[], filters: HistoryFil
   const terms = fold(filters.query.trim()).split(/\s+/).filter(Boolean);
   return entries.filter(({session: s, theme}) => s.date <= today && (!filters.bodyOnly || s.injury?.reported===true) && (!filters.type || theme === filters.type) && (!filters.from || s.date >= filters.from) && (!filters.to || s.date <= filters.to)).flatMap(entry => {
     const s = entry.session;
-    const fields = [entry.theme, s.activity, ...(s.activities || []), s.notes, ...(s.mobilityExercises || []), ...(s.completedExercises || []), ...(s.videos || []).map(v => v.label), s.injury?.bodyArea, s.injury?.note, ...(s.importedWorkouts || []).map(w => w.activity)].filter((v): v is string => Boolean(v));
+    const fields = [entry.theme, s.activity, ...(s.activities || []), s.notes, ...(s.mobilityExercises || []), ...(s.completedExercises || []), ...(s.videos || []).map(v => v.label), s.injury?.bodyArea, s.injury?.note, ...(s.illness?.reported?['Sick unwell illness',s.illness.rested?'Rested instead of working out':'',s.illness.note]:[]), ...(s.importedWorkouts || []).map(w => w.activity)].filter((v): v is string => Boolean(v));
     const text = fold(fields.join(' '));
     if (!terms.every(term => text.includes(term))) return [];
     const bodyExcerpt=filters.bodyOnly?[s.injury?.bodyArea,s.injury?.note].filter(Boolean).join(' · '):'';

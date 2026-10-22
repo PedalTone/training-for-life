@@ -343,3 +343,8 @@ Today add-ons move into the selected group at the top immediately; selection and
 Today → Log starts with Perceived effort (Easy, Medium, Hard), followed by
 notes and attachments. Manual duration/distance/extra metrics inputs are removed;
 previously recorded values and GPS recording remain available in saved records.
+
+Check-ins includes a separate non-injury Illness check-in: Sick / unwell, an
+optional note and Rested instead of working out. Save rest day + Backup records
+that decision without completing a workout. History flags, journal and backups
+retain the illness; sick rest days are excluded from the completed training mix.

@@ -1,3 +1,5 @@
+New public release — 2026.10.22 1457: Add non-injury illness check-in, optional sick/rest day, History flag and journal note; sick rest days do not count as completed workouts.
+
 New public release — 2026.10.22 1451: Put perceived effort (Easy, Medium, Hard) first in Today Log and remove manual duration/distance/additional metric fields; retain saved values and GPS recording.
 
 New public release — 2026.10.22 1448: Restore immediate selected-first Add-ons ordering while retaining explicit checkbox association, checked-state updates and larger touch targets.
@@ -138,9 +140,9 @@ New public release — 2026.10.11 1853: Share workout images with Photo, Route a
 
 # Training for Life release labels
 
-Release decision: **New public release** — `2026.10.22 1451` simplifies Today Log around perceived effort.
+Release decision: **New public release** — `2026.10.22 1457` records illness separately from injury.
 
-App, notes, tests, worker and deployment use `2026.10.22 1451`.
+App, notes, tests, worker and deployment use `2026.10.22 1457`.
 
 New public release — 2026.10.10 2045: Saved run/bike route maps, embedded city/state labels, segmented GPS paths and route backups.
 

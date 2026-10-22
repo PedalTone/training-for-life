@@ -1,3 +1,4 @@
+import {isIllnessRest} from "./illness.ts";
 import type { Session } from './page';
 export type ProgressEntry = {session:Session;key:string;theme:string};
 const workoutTypes: [string,string][] = [['strength','Strength'],['endurance','Endurance'],['speed','Speed'],['aerobic','Easy aerobic'],['mobility','Mobility'],['rest','Recovery']];
@@ -11,7 +12,7 @@ const day = (date:string) => Date.parse(`${date}T12:00:00Z`) / 86400000;
 export function localProgress(entries:ProgressEntry[], today:string, weeks:number, library:string[]) {
  const past=entries.filter(e=>e.session.date<=today).sort((a,b)=>b.session.date.localeCompare(a.session.date));
  const period=past.filter(e=>day(today)-day(e.session.date)<weeks*7);
- const finished=period.filter(e=>e.session.status==='completed'||e.session.status==='rest'||Boolean(e.session.completedAt));
+ const finished=period.filter(e=>!isIllnessRest(e.session)&&(e.session.status==='completed'||e.session.status==='rest'||Boolean(e.session.completedAt)));
  const counts=new Map<string,number>();
  for(const e of finished) counts.set(e.key,(counts.get(e.key)||0)+1);
  const exerciseCounts=new Map<string,number>();

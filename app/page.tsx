@@ -1,4 +1,5 @@
 "use client";
+import {normalizeIllness,isIllnessRest,finalizedDay,type Illness} from "./illness";
 import {VideoCompletion} from "./video-completion";
 import {ShareWorkoutButton} from "./share-workout-button";
 
@@ -52,7 +53,7 @@ export type Session = {
   id: string; date: string; activity: string; activities?: string[]; duration: string; distance: string; effort: Effort;
   plannedKey?: string; plannedTheme?: string; planOverride?: boolean;
   pace?: string; calories?: string; startTime?: string; detailSource?: string;
-  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; injury: Injury; videos: Video[]; workoutPhoto?: string; workoutPhotos?: string[]; workoutScreenshots?: WorkoutScreenshot[];
+  notes: string; mobilityExercises: string[]; completedExercises: string[]; status: Status; illness?:Illness; injury: Injury; videos: Video[]; workoutPhoto?: string; workoutPhotos?: string[]; workoutScreenshots?: WorkoutScreenshot[];
   importedWorkouts?: ScreenshotWorkout[];
   gpsWorkouts?: GpsWorkout[];
   updatedAt: string; completedAt?: string;
@@ -183,7 +184,7 @@ function normalizeSession(saved: Session): Session {
   const activities = saved.activities ?? (saved.activity ? [saved.activity] : []);
   const completedExercises = saved.completedExercises ?? [];
   const mobilityExercises = saved.mobilityExercises ?? completedExercises;
-  return { ...saved, workoutPhotos: workoutPhotos(saved), workoutPhoto: workoutPhotos(saved)[0], workoutScreenshots: Array.isArray(saved.workoutScreenshots)?saved.workoutScreenshots.filter(item=>item?.id&&typeof item.imageData==='string'&&item.imageData.startsWith('data:image/')).slice(0,6):undefined, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: (saved.videos ?? []).map(video=>sanitizeVideoTraining(stripVideoGuide(video))), planOverride: typeof saved.planOverride === "boolean" ? saved.planOverride : undefined, injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
+  return { ...saved, illness:normalizeIllness(saved.illness), workoutPhotos: workoutPhotos(saved), workoutPhoto: workoutPhotos(saved)[0], workoutScreenshots: Array.isArray(saved.workoutScreenshots)?saved.workoutScreenshots.filter(item=>item?.id&&typeof item.imageData==='string'&&item.imageData.startsWith('data:image/')).slice(0,6):undefined, activity: activities.join(" + "), activities, mobilityExercises, completedExercises, videos: (saved.videos ?? []).map(video=>sanitizeVideoTraining(stripVideoGuide(video))), planOverride: typeof saved.planOverride === "boolean" ? saved.planOverride : undefined, injury: { impact: injury.impact ?? "", bodyArea: injury.bodyArea ?? "", note: injury.note ?? "", reported } };
 }
 function weekDates(date: Date) {
   const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() + 6) % 7));
@@ -227,9 +228,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.22 1451";
+const APP_VERSION = "2026.10.22 1457";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Minor fix", changes: ["Today’s Log starts with perceived effort: Easy, Medium or Hard. Manual duration, distance and additional metric fields are removed; existing records and GPS tracking stay intact."] },
+  { version: APP_VERSION, category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
+  { version: "2026.10.22 1451", category: "Minor fix", changes: ["Today’s Log starts with perceived effort: Easy, Medium or Hard. Manual duration, distance and additional metric fields are removed; existing records and GPS tracking stay intact."] },
   { version: "2026.10.22 1448", category: "Minor fix", changes: ["Selected add-ons move to the top immediately again, with the improved checkbox labels and touch targets retained."] },
   { version: "2026.10.22 1433", category: "Major fix", changes: ["Add-on rows stay steady while you choose exercises, with larger checkbox targets and explicit labels. Saved selections appear first when you reopen Today."] },
   { version: "2026.10.20 2050", category: "New feature", changes: ["Mark each workout video completed directly on the day. Its status is saved in the journal and backups, while repeat workouts start unchecked."] },
@@ -238,7 +240,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.20 0939", category: "Minor fix", changes: ["One visible Start timer link in Add-ons opens the speaking timer for any exercise, without repeated links in exercise details or the picker."] },
   { version: "2026.10.19 2245", category: "Minor fix", changes: ["Repeat any completed video exercise set with its recorded weight, units, reps or time and warm-up status. The new set stays unchecked until completed, while original results and reusable video plans stay intact."] },
   { version: "2026.10.19 1932", category: "Minor fix", changes: ["Today shows the full add-on library without selecting exercises automatically. Add sets directly to each video exercise, or log exercises manually when a video has no plan. Added sets keep existing results and leave the reusable video plan unchanged."] },
-  { version: "2026.10.19 1306", category: "Minor fix", changes: ["Walk is available in the tracker alongside Run and Bike, with walking pace in saved recordings, the journal and sharing. Plan and Progress keep their existing workout categories."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -332,6 +333,7 @@ async function saveBackup(sessions: Session[], libraryExercises: LibraryExercise
 
 type ResolvedStatus = "unassigned" | "planned" | "in-progress" | "complete";
 function resolveSessionStatus(session: Session | undefined, planKey: string, date?: Date, today?: Date): ResolvedStatus {
+  if(isIllnessRest(session))return "planned";
   if (session?.status === "completed" || session?.completedAt) return "complete";
   const hasRecordedWork = Boolean(session && (session.activity || session.duration || session.distance || session.notes || session.workoutPhoto || session.workoutScreenshots?.length || session.mobilityExercises.length || session.completedExercises.length || session.videos.length));
   if (hasRecordedWork) return "in-progress";
@@ -339,6 +341,7 @@ function resolveSessionStatus(session: Session | undefined, planKey: string, dat
   return "unassigned";
 }
 function stateFor(session: Session | undefined, planKey: string, date?: Date, today?: Date) {
+  if(isIllnessRest(session))return "illness-rest";
   if (hasReportedInjury(session)) return "protected";
   if (session?.injury?.impact === "modified") return "modified";
   const resolved = resolveSessionStatus(session, planKey, date, today);
@@ -359,7 +362,7 @@ function MonthStatusMark({ symbol }: { symbol: string }) {
   return <>{Array.from(symbol).map((mark, index) => <span key={index} className={mark === "✓" ? "month-complete-mark" : mark === "⚑" ? "month-body-mark" : undefined}>{mark}</span>)}</>;
 }
 
-function stateLabel(state: string) { return state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Body consideration" : state === "partial" ? "In progress" : state === "planned" ? "Planned" : state === "skipped" ? "Skipped" : "Unassigned"; }
+function stateLabel(state: string) { return state === "illness-rest" ? "Sick / rested" : state === "completed" ? "Complete" : state === "modified" ? "Adapted" : state === "protected" ? "Body consideration" : state === "partial" ? "In progress" : state === "planned" ? "Planned" : state === "skipped" ? "Skipped" : "Unassigned"; }
 
 function MovementMark({ exerciseId, name, graphicData }: { exerciseId?: string; name: string; graphicData?: string }) {
   if (graphicData) return <img className="exercise-icon" src={graphicData} alt="" aria-hidden="true"/>;
@@ -487,7 +490,7 @@ export default function Home() {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLabelEdited = useRef(false);
   const currentDayPlan = scheduleForDate(activeDate, activeSchedule, scheduleHistory)[activeDate.getDay()];
-  const sessionIsBlank = !session.planOverride && !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.workoutPhoto && !session.workoutScreenshots?.length && !session.detailSource;
+  const sessionIsBlank = !session.planOverride && !session.activity && !session.duration && !session.distance && !session.notes && !session.mobilityExercises.length && !session.completedExercises.length && !session.videos.length && !session.workoutPhoto && !session.workoutScreenshots?.length && !session.detailSource && !session.illness?.reported;
   // A blank current-day session follows the current Settings mapping. This
   // also prevents the initial default schedule from winning a race with the
   // user's saved mapping during startup; recorded history remains anchored to
@@ -737,7 +740,7 @@ export default function Home() {
     const hasWorkoutData = Boolean(session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length || session.workoutPhoto);
     // A completed recovery day is still a completed record. Keep the plan
     // type as Recovery while using the same completion state everywhere.
-    const current = { ...sessionRef.current, status: "completed" as const, completedAt: now, updatedAt: now };
+    const current = finalizedDay(sessionRef.current,now);
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
     try {
       await saveBackup(allSessions, libraryExercises, futureVideos, insightReports, fitnessGoals, scheduleKeys, customWorkouts, scheduleHistory);
@@ -893,7 +896,7 @@ export default function Home() {
           <div className="hero-topline"><span>{activeDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span></div>
           <h2>{plan.theme}</h2><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/>
         </section>
-        {activeFinished&&<div className="workout-lock-banner"><div><strong>Saved workout · Locked</strong><small role="status">{finishBackupState || "Tap Edit to make changes."}</small></div><button type="button" onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div>}
+        {activeFinished&&<div className="workout-lock-banner"><div><strong>{isIllnessRest(session)?"Saved sick / rest day · Locked":"Saved workout · Locked"}</strong><small role="status">{finishBackupState || "Tap Edit to make changes."}</small></div><button type="button" onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div>}
         {!activeFinished&&session.completedAt&&<p className="workout-editing-note">Editing saved workout · Save changes to lock it again.</p>}
         <div className="today-section-tabs" role="tablist" aria-label="Today sections">{([['workout','Workout'],['log','Log'],['check-ins','Check-ins']] as const).map(([key,label],index) => <button key={key} id={`today-tab-${key}`} role="tab" aria-controls={`today-panel-${key}`} aria-selected={todaySection === key} onClick={() => setTodaySection(key)} onKeyDown={(event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); const keys = ['workout','log','check-ins'] as const; const next = keys[(index + (event.key === 'ArrowRight' ? 1 : 2)) % 3]; setTodaySection(next); document.getElementById(`today-tab-${next}`)?.focus(); } }}>{label}</button>)}</div>
         {gps.draft && todaySection !== "workout" && <button className="today-tracking-status" onClick={() => setTodaySection("workout")}>{gps.draft.activity} · {gps.autoPaused ? "Auto-paused" : gps.running ? "Recording" : gps.pending ? "Connecting" : "Paused"} · Open tracker</button>}
@@ -925,9 +928,10 @@ export default function Home() {
         <section id="today-panel-check-ins" role="tabpanel" aria-labelledby="today-tab-check-ins" hidden={todaySection !== "check-ins"} className="today-section-panel"><fieldset className="workout-edit-fields" disabled={workoutReadOnly}>
             <section className={`today-body-check ${injuryReported ? "active" : ""}`}><h3>Body check-in</h3><p>How did your body feel today?</p><div className="today-body-options"><button onClick={clearInjury} aria-pressed={!injuryReported}>✓ No concerns</button><button onClick={() => { if (!injuryReported) handleInjuryControl(); }} aria-pressed={injuryReported}>⚑ Add a concern</button></div>{injuryReported && <><div className="sheet-options injury-options">{[["stopped", "Stopped early"], ["prevented", "Couldn’t start"]].map(([value, label]) => <button key={value} className={session.injury.impact === value ? "selected" : ""} onClick={() => updateInjury({ ...session.injury, reported: true, impact: session.injury.impact === value ? "" : value as Injury["impact"] })}>{label}</button>)}</div><input aria-label="Body area to be mindful of" value={session.injury.bodyArea} onChange={(e) => updateInjury({ ...session.injury, reported: true, bodyArea: e.target.value })} placeholder="Area to be mindful of (optional)"/><textarea aria-label="Body check-in note" value={session.injury.note} onChange={(e) => updateInjury({ ...session.injury, reported: true, note: e.target.value })} placeholder="Add a note about what you noticed…" rows={3}/><button className="text-button" onClick={clearInjury}>Clear body check-in</button></>}</section>
 
+        <section className="today-illness-check"><h3>Illness check-in</h3><p>For illness unrelated to a workout injury, such as a cold or flu.</p><label><input type="checkbox" checked={session.illness?.reported===true} onChange={event=>update({illness:{...sessionRef.current.illness,reported:event.target.checked,rested:false,note:sessionRef.current.illness?.note||''}},true)}/> Sick / unwell</label>{session.illness?.reported&&<><label><input type="checkbox" checked={session.illness.rested===true} onChange={event=>update({illness:{...sessionRef.current.illness!,rested:event.target.checked}},true)}/> Rested instead of working out</label><label className="today-note-label">Illness note (optional)<textarea aria-label="Illness note" value={session.illness.note} maxLength={3000} onChange={event=>update({illness:{...sessionRef.current.illness!,note:event.target.value}})} placeholder="For example: flu, bad cold, stayed home to rest" rows={3}/></label></>}</section>
         <NutritionCard key={activeKey} date={activeKey} expanded readOnly={workoutReadOnly}/>
         </fieldset></section>
-<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/> : <><p className="today-save-state" role="status">{saveState}</p><div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div></>}</div>
+<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/> : <><p className="today-save-state" role="status">{saveState}</p><div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (isIllnessRest(session)?"Save rest day + Backup":session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div></>}</div>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}
@@ -1100,8 +1104,8 @@ function HistoryView({ memory, filters, onFilters, now, sessions, activeSchedule
     <HistorySearchPanel entries={sessions.map(session => ({ session, theme: historicalPlan(session, scheduleForDate(dateFromKey(session.date), activeSchedule, scheduleHistory), dateFromKey(session.date)).theme }))} filters={filters} onChange={onFilters} today={dateKey(now)} onOpen={date => onOpenDate(dateFromKey(date))}/>
     {!searching && <>
     <section className="history-browse-controls" aria-label="Browse workout weeks"><strong aria-live="polite">{range}</strong><div><button type="button" onClick={()=>browseWeeks(-1)} aria-label="Earlier weeks"><span aria-hidden="true">‹</span> Earlier</button><button type="button" onClick={()=>browseWeeks(1)} disabled={currentPeriod&&position.atEnd} aria-label="Later weeks">Later <span aria-hidden="true">›</span></button><button type="button" className="history-back-current" onClick={backToThisWeek} disabled={currentPeriod&&position.atEnd}>Back to this week</button></div><small>12 weeks</small></section>
-    <div className="history-timeline-window" ref={timeline} onScroll={syncPosition} tabIndex={0} role="region" aria-label="Scrollable weekly workout history" aria-description="Scroll weeks or use the Earlier and Later buttons."><section className="multi-week">{weekBlocks.map((days) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{dateKey(days[0]) === dateKey(weekDates(now)[0]) ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.filter((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); return resolveSessionStatus(saved,plan.key,date,now)==="complete"; }).length} / {days.length} complete</b></div><div className="scan-days">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key} ${dateKey(date)===dateKey(now)?"history-today":""}`} title={`${plan.theme} · ${stateLabel(state)}${hasReportedInjury(saved) ? " · Body consideration" : ""}`} onClick={() => onOpenDate(date)}><span className="history-day-icon" style={{color:historyWorkoutColor(plan.key)}} aria-hidden="true"><HistoryWorkoutIcon workoutKey={plan.key}/></span><strong>{date.getDate()}</strong><small>{plan.short}</small>{dateKey(date)===dateKey(now)&&<em className="history-today-label">TODAY</em>}<span className="history-status-row"><i className={resolveSessionStatus(saved,plan.key,date,now)==="complete"?"history-complete":"history-neutral"} aria-label={resolveSessionStatus(saved,plan.key,date,now)==="complete"?"Complete":stateLabel(state)}>{resolveSessionStatus(saved,plan.key,date,now)==="complete"?"✓":stateSymbol(state).replace("⚑","•")}</i>{hasReportedInjury(saved)&&<b className="history-body-flag" aria-label="Body note">⚑</b>}</span></button>; })}</div></div>)}</section></div>
-    <div className="history-status-legend"><span><b className="history-complete">✓</b> Complete</span><span><b className="history-body-flag">⚑</b> Body note</span><span><b>•</b> Planned</span></div>
+    <div className="history-timeline-window" ref={timeline} onScroll={syncPosition} tabIndex={0} role="region" aria-label="Scrollable weekly workout history" aria-description="Scroll weeks or use the Earlier and Later buttons."><section className="multi-week">{weekBlocks.map((days) => <div className="week-scan" key={dateKey(days[0])}><div className="scan-heading"><span>{dateKey(days[0]) === dateKey(weekDates(now)[0]) ? "THIS WEEK" : `WEEK OF ${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}`}</span><b>{days.filter((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); return resolveSessionStatus(saved,plan.key,date,now)==="complete"; }).length} / {days.length} complete</b></div><div className="scan-days">{days.map((date) => { const saved = map.get(dateKey(date)); const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date); const state = stateFor(saved, plan.key, date, now); return <button key={dateKey(date)} className={`${state} ${plan.key} ${dateKey(date)===dateKey(now)?"history-today":""}`} title={`${plan.theme} · ${stateLabel(state)}${hasReportedInjury(saved) ? " · Body consideration" : ""}${saved?.illness?.reported?" · Sick / unwell":""}`} onClick={() => onOpenDate(date)}><span className="history-day-icon" style={{color:historyWorkoutColor(plan.key)}} aria-hidden="true"><HistoryWorkoutIcon workoutKey={plan.key}/></span><strong>{date.getDate()}</strong><small>{plan.short}</small>{dateKey(date)===dateKey(now)&&<em className="history-today-label">TODAY</em>}<span className="history-status-row"><i className={resolveSessionStatus(saved,plan.key,date,now)==="complete"?"history-complete":"history-neutral"} aria-label={resolveSessionStatus(saved,plan.key,date,now)==="complete"?"Complete":stateLabel(state)}>{resolveSessionStatus(saved,plan.key,date,now)==="complete"?"✓":stateSymbol(state).replace("⚑","•")}</i>{hasReportedInjury(saved)&&<b className="history-body-flag" aria-label="Body note">⚑</b>}{saved?.illness?.reported&&<b className="history-illness-flag" aria-label="Sick / unwell">⚑</b>}</span></button>; })}</div></div>)}</section></div>
+    <div className="history-status-legend"><span><b className="history-complete">✓</b> Complete</span><span><b className="history-body-flag">⚑</b> Body note</span><span><b className="history-illness-flag">⚑</b> Sick / unwell</span><span><b>•</b> Planned</span></div>
     <details className="history-color-key"><summary>Workout colors</summary><div>{Object.entries(historyWorkoutColors).map(([key,color])=><span key={key}><i style={{background:color}} aria-hidden="true"/>{({strength:'Strength',mobility:'Mobility',aerobic:'Easy aerobic',speed:'Speed',endurance:'Endurance',rest:'Recovery'} as Record<string,string>)[key]}</span>)}</div></details>
     <NutritionHistory onOpenDate={onOpenDate}/>
     </>}

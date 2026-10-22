@@ -81,3 +81,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] Add-on selection: touch checkbox and label on Push-Ups and neighboring/long/custom rows in varied order, repeated check/uncheck and completion. Selected exercises move immediately to the top, deselected ones return to library order; no wrong selection or swipe navigation. Verify full library, selected-only backup, reload and completed lock.
 
 - [ ] Today Log: Perceived effort is first, with Easy/Medium/Hard. No manual duration/distance/More metrics/pace/calories/start-time fields. Notes/photos/screenshots retained; legacy metrics survive effort edits, backup/reload; GPS unchanged.
+
+- [ ] Illness: Check-ins Sick/unwell is independent of injury; optional rested day saves/backs up/locks without workout completion, remains searchable and flagged in History/journal, excluded from Progress completed totals. Note/clear/Edit/reload and simultaneous injury flags preserved. Normal workouts/recovery unchanged.

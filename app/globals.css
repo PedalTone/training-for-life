@@ -1924,3 +1924,11 @@ label.video-completion { cursor:pointer; }
 
 /* Reserve completion-action width so selection never changes neighboring row heights. */
 .today-addon-row .today-addon-done { flex:0 0 88px; width:88px; }
+
+.today-illness-check { border-top:1px solid #d9d1c5; margin-top:20px; padding-top:20px; }
+.today-illness-check p { font-size:16px; line-height:1.5; color:#596875; }
+.today-illness-check > label:not(.today-note-label) { display:flex; gap:12px; align-items:center; min-height:48px; font-size:16px; }
+.today-illness-check input[type=checkbox] { width:22px; height:22px; flex:none; accent-color:#8b5c16; }
+.history-illness-flag { color:#8b5c16; }
+
+.journal-status.illness-rest { color:#8b5c16; }
