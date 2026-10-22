@@ -24,7 +24,10 @@ D07/D08 PASS retained recorded values and existing tests. D03–D06/D09/D11 N/A:
 GPS/maps/Plan/videos/sharing behavior unchanged. Duplicate review PASS: duration,
 distance and More metrics inputs removed from Log; one effort control group,
 notes/attachment controls retained, no extra Save/Edit/status blocks.
-Publication verification pending.
+Published frontend `6a754314144e8f3da74f469f720dfb348ae619d6` via successful
+Pages run `39835226238`. Exact live JS/CSS/worker/release verified; effort-first,
+removed-fields, preserved-metrics, backup/reload/lock/iPhone fixture passes on
+public app. No API changes or Sites deployment. No required work remains.
 
 ## Previous change — immediate selected-first Add-ons
 
