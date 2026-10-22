@@ -15,7 +15,7 @@ import { HistoryWorkoutIcon } from "./history-workout-icon";
 import { workoutPhotos } from "./workout-photos";
 import { stripVideoGuide, stripSessionGuides } from "./video-cleanup";
 import { findPriorWorkoutNotes, appendPriorWorkoutNotes, findRepeatWorkout, repeatWorkoutSetup } from "./prior-workout-notes";
-import { addonChoices, stableAddonChoices, setAddonSelection } from "./addon-selection";
+import { addonChoices, setAddonSelection } from "./addon-selection";
 import { GpsTracker, useGpsTracker } from "./gps-tracker";
 import { correctedGpsActivities } from "./gps-edit";
 import { gpsTime, type GpsWorkout } from "./gps-math";
@@ -227,9 +227,10 @@ async function prepareExerciseReference(file: File) {
 
 const DB_NAME = "training-for-life";
 const STORE = "sessions";
-const APP_VERSION = "2026.10.22 1433";
+const APP_VERSION = "2026.10.22 1448";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Add-on rows stay steady while you choose exercises, with larger checkbox targets and explicit labels. Saved selections appear first when you reopen Today."] },
+  { version: APP_VERSION, category: "Minor fix", changes: ["Selected add-ons move to the top immediately again, with the improved checkbox labels and touch targets retained."] },
+  { version: "2026.10.22 1433", category: "Major fix", changes: ["Add-on rows stay steady while you choose exercises, with larger checkbox targets and explicit labels. Saved selections appear first when you reopen Today."] },
   { version: "2026.10.20 2050", category: "New feature", changes: ["Mark each workout video completed directly on the day. Its status is saved in the journal and backups, while repeat workouts start unchecked."] },
   { version: "2026.10.20 1711", category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
   { version: "2026.10.20 1411", category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.19 1932", category: "Minor fix", changes: ["Today shows the full add-on library without selecting exercises automatically. Add sets directly to each video exercise, or log exercises manually when a video has no plan. Added sets keep existing results and leave the reusable video plan unchanged."] },
   { version: "2026.10.19 1306", category: "Minor fix", changes: ["Walk is available in the tracker alongside Run and Bike, with walking pace in saved recordings, the journal and sharing. Plan and Progress keep their existing workout categories."] },
   { version: "2026.10.19 1300", category: "Minor fix", changes: ["Added Walk GPS activity and walking pace in minutes per mile or kilometer in tracking, saved logs and sharing."] },
-  { version: "2026.10.19 1256", category: "Major fix", changes: ["Tracking now detects small walking steps after an auto-paused stop and resumes even when GPS speed is missing or stuck at zero. Manual Pause stays manual, with safeguards against GPS noise and stale fixes."] },
 ];
 function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -947,13 +947,12 @@ export default function Home() {
 
 function TodayAddonRows({session,libraryExercises,readOnly,onSelect,onComplete}:{session:Session;libraryExercises:LibraryExercise[];readOnly:boolean;onSelect:(name:string,checked:boolean)=>void;onComplete:(name:string)=>void}) {
  const available=libraryExercises.map(item=>item.name);
- const [initialOrder,setInitialOrder]=useState<string[]|null>(null);
- const choices=initialOrder?stableAddonChoices(initialOrder,session.mobilityExercises,available):addonChoices(session.mobilityExercises,available);
+ const choices=addonChoices(session.mobilityExercises,available);
  const prefix=useId();
  return <>{choices.map(name=>{
   const exercise=libraryExercises.find(item=>item.name===name),selected=session.mobilityExercises.includes(name),done=session.completedExercises.includes(name),id=`${prefix}-${encodeURIComponent(name)}`;
   return <div className={`today-addon-row${selected?' selected':' suggested'}`} key={name}>
-   <label htmlFor={id}><span className="today-addon-checkbox-target"><input id={id} type="checkbox" aria-label={`Select ${name}`} disabled={readOnly} checked={selected} onChange={event=>{setInitialOrder(choices);onSelect(name,event.currentTarget.checked);}}/></span><span>{name}<small style={selected?{visibility:"hidden"}:undefined} aria-hidden={selected}>Select to add</small></span></label>
+   <label htmlFor={id}><span className="today-addon-checkbox-target"><input id={id} type="checkbox" aria-label={`Select ${name}`} disabled={readOnly} checked={selected} onChange={event=>onSelect(name,event.currentTarget.checked)}/></span><span>{name}<small style={selected?{visibility:"hidden"}:undefined} aria-hidden={selected}>Select to add</small></span></label>
    <button type="button" className="today-addon-done" style={!selected?{visibility:"hidden"}:undefined} aria-hidden={!selected} disabled={readOnly||!selected} aria-label={`${done?'Unmark':'Mark'} ${name} completed`} aria-pressed={done} onClick={()=>onComplete(name)}>{done?'✓ Done':'Mark done'}</button>
    <details><summary>Details</summary><div className="today-addon-detail"><MovementMark exerciseId={exercise?.id} name={name} graphicData={exercise?.graphicData}/><p>{exercise?.equipment||'Supporting exercise'}</p></div></details>
   </div>;

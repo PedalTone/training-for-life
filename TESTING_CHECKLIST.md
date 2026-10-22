@@ -78,4 +78,4 @@ Review duplicate functions and buttons for every app change.
 
 - [ ] Video completed checkbox works with/without a plan; separate per-video status survives reload, backup/restore and journal. Playing/adding does not complete; finish locks and Edit permits correction. Repeat/add-to-today starts unchecked, templates unchanged.
 
-- [ ] Add-on selection: touch checkbox and label on Push-Ups and neighboring/long/custom rows in varied order, repeated check/uncheck and completion. No reordering while picking, wrong selection or swipe navigation; reopening groups saved choices first. Verify full library, selected-only backup, reload and completed lock.
+- [ ] Add-on selection: touch checkbox and label on Push-Ups and neighboring/long/custom rows in varied order, repeated check/uncheck and completion. Selected exercises move immediately to the top, deselected ones return to library order; no wrong selection or swipe navigation. Verify full library, selected-only backup, reload and completed lock.

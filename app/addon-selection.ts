@@ -16,10 +16,3 @@ export function setAddonSelection(current: { mobilityExercises: string[]; comple
     completedExercises: selected ? current.completedExercises.filter(item => item !== name) : [...current.completedExercises],
   };
 }
-
-// Freeze existing row positions while the learner makes choices. Reopening groups
-// saved choices first; new library items can still appear without hiding rows.
-export function stableAddonChoices(initial:string[],selected:string[],available:string[]) {
- const current=addonChoices(selected,available),allowed=new Set(current);
- return [...new Set([...initial.filter(name=>allowed.has(name)),...current])];
-}

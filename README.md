@@ -338,5 +338,4 @@ plan. The journal and backups retain the explicit status. Playback alone does
 not complete it; adding/repeating a video starts unchecked. Finished workouts
 require Edit to change the status.
 
-Today add-on rows stay in place while selecting exercises. Saved choices group
-first when Today is reopened; selection and Mark done remain separate actions.
+Today add-ons move into the selected group at the top immediately; selection and Mark done remain separate actions.

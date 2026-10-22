@@ -4,7 +4,27 @@ Updated October 22, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — stable Add-ons selection
+## Current change — immediate selected-first Add-ons
+
+Release **2026.10.22 1448** restores immediate selected-first ordering per user
+request. Removes frozen row-order state/helper, retaining explicit checkbox/label
+association, checked-state setter, 44px hit areas, reserved row dimensions, latest
+session completion updates and label/swipe exclusion. No storage/schema change.
+
+npm test, npm run build:pages and all 208 tests pass. External Chrome touch fixture
+/tmp/check-addon-top.cjs verifies exact checkbox/label selections (Push-Ups and
+neighbors), immediate top grouping, deselect/library order, completion, backup,
+reload, selected-first reopening, Edit/relock and six-view navigation. Inspected
+/tmp/addon-top-{375,393,440}.png: readable names, 44px targets, no overflow.
+Physical iPhone Safari/VoiceOver remains device-only. Existing 10 typecheck
+diagnostics unchanged; typecheck not rerun for this ordering-only follow-up.
+D01 PASS release checks; D02/D10/D12 PASS fixture/layout/backup/locks;
+D07/D08 PASS preserved selected/completed values and regression tests;
+D03–D06/D09/D11 N/A unchanged GPS/maps/Plan/videos/sharing. Duplicate review PASS:
+one row renderer and shared setter retained, obsolete frozen-order helper removed;
+no additional controls or save/status/Edit blocks. Publication verification pending.
+
+## Previous change — stable Add-ons selection
 
 Release **2026.10.22 1433** stops inline Add-ons from reordering under the user's
 finger. TodayAddonRows freezes current row order on the first checkbox action;
