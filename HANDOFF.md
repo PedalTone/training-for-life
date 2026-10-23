@@ -40,7 +40,11 @@ Source recovery: the selected original project folder is an incomplete older cop
 (empty app/.git directories). It was left intact. Current source and this work are
 preserved in `source-recovered-2026-10-23` beneath it. Use that recovered checkout
 for future development. Temporary checkout: /private/tmp/t4l-tracker-fix-20261023.
-Publication verification pending.
+Published frontend `d50d6d6874ecbdd62b973955a200f4067a6b04d2` via successful
+Pages run `39949388207`. Exact live JS/CSS/worker/release verified; full-screen,
+auto-paused/resumed stop, stalled storage/native cleanup failure, retry and
+single-watch/single-recording fixture passes on public app. Physical iPhone field
+confirmation still needed. No Sites deployment. No required implementation remains.
 
 ## Previous change — non-injury illness check-in
 
