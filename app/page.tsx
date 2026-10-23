@@ -1,4 +1,5 @@
 "use client";
+import {withSessionStore} from "./session-store";
 import {normalizeIllness,isIllnessRest,finalizedDay,type Illness} from "./illness";
 import {VideoCompletion} from "./video-completion";
 import {ShareWorkoutButton} from "./share-workout-button";
@@ -226,11 +227,10 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const DB_NAME = "training-for-life";
-const STORE = "sessions";
-const APP_VERSION = "2026.10.22 1457";
+const APP_VERSION = "2026.10.23 0751";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
+  { version: "2026.10.22 1457", category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
   { version: "2026.10.22 1451", category: "Minor fix", changes: ["Today’s Log starts with perceived effort: Easy, Medium or Hard. Manual duration, distance and additional metric fields are removed; existing records and GPS tracking stay intact."] },
   { version: "2026.10.22 1448", category: "Minor fix", changes: ["Selected add-ons move to the top immediately again, with the improved checkbox labels and touch targets retained."] },
   { version: "2026.10.22 1433", category: "Major fix", changes: ["Add-on rows stay steady while you choose exercises, with larger checkbox targets and explicit labels. Saved selections appear first when you reopen Today."] },
@@ -239,23 +239,9 @@ const RECENT_RELEASES = [
   { version: "2026.10.20 1411", category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
   { version: "2026.10.20 0939", category: "Minor fix", changes: ["One visible Start timer link in Add-ons opens the speaking timer for any exercise, without repeated links in exercise details or the picker."] },
   { version: "2026.10.19 2245", category: "Minor fix", changes: ["Repeat any completed video exercise set with its recorded weight, units, reps or time and warm-up status. The new set stays unchecked until completed, while original results and reusable video plans stay intact."] },
-  { version: "2026.10.19 1932", category: "Minor fix", changes: ["Today shows the full add-on library without selecting exercises automatically. Add sets directly to each video exercise, or log exercises manually when a video has no plan. Added sets keep existing results and leave the reusable video plan unchanged."] },
 ];
-function withStore<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = () => { if (!request.result.objectStoreNames.contains(STORE)) request.result.createObjectStore(STORE, { keyPath: "id" }); };
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      const database = request.result;
-      const transaction = database.transaction(STORE, mode);
-      const operation = action(transaction.objectStore(STORE));
-      transaction.oncomplete = () => { database.close(); resolve(operation.result); };
-      transaction.onabort = () => { database.close(); reject(transaction.error || new Error("Workout storage transaction failed.")); };
-      transaction.onerror = () => { /* onabort reports failed writes without claiming they were saved. */ };
-    };
-  });
-}
+const withStore=withSessionStore;
+
 const saveSession = (session: Session) => withStore("readwrite", (store) => store.put(session));
 const getSession = async (id: string) => {
   const saved = await withStore<Session | undefined>("readonly", (store) => store.get(id));
@@ -686,7 +672,7 @@ export default function Home() {
       start = null;
       const target = event.target instanceof Element ? event.target : null;
       if (event.touches.length !== 1 || journalDate || showMobilityPicker ||
-          !target?.closest(".app-shell") || target.closest('button, input, label, textarea, select, a, iframe, video, [contenteditable], [role="dialog"], .bottom-nav, .splash-release-notes, .gps-route-map')) return;
+          !target?.closest(".app-shell") || target.closest('button, input, label, textarea, select, a, iframe, video, [contenteditable], [role="dialog"], .bottom-nav, .splash-release-notes, .gps-route-map, .gps-fullscreen')) return;
       const touch = event.touches[0];
       if (touch.clientX < 24 || touch.clientX > window.innerWidth - 24) return;
       for (let node: Element | null = target; node; node = node.parentElement) {
@@ -819,7 +805,7 @@ export default function Home() {
   const gps = useGpsTracker(async (date, workout, change) => {
     if(saveTimer.current)clearTimeout(saveTimer.current);
     let saved: Session | undefined;
-    try { saved = await getSession(date); } catch { const raw = localStorage.getItem(`t4l:${date}`); saved = raw ? JSON.parse(raw) : undefined; }
+    if(sessionRef.current.id!==date)try { saved = await getSession(date); } catch { const raw = localStorage.getItem(`t4l:${date}`); saved = raw ? JSON.parse(raw) : undefined; }
     const dayPlan = scheduleForDate(dateFromKey(date), activeSchedule, scheduleHistory)[dateFromKey(date).getDay()];
     const current = sessionRef.current.id === date ? sessionRef.current : saved ? normalizeSession(saved) : emptySession(date, dayPlan.key === "rest", dayPlan);
     const existing = current.gpsWorkouts || [];

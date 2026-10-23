@@ -1,14 +1,14 @@
 'use client';
 import {memo,useEffect,useRef,useState} from 'react';
 import {cleanRoute,mercator,type GpsRoute} from './gps-route';
-function RouteMap({route,onLabel,showPlace=true}:{route?:GpsRoute;onLabel?:(label:string)=>void;showPlace?:boolean}) {
+function RouteMap({route,onLabel,showPlace=true,height:requestedHeight}:{route?:GpsRoute;onLabel?:(label:string)=>void;showPlace?:boolean;height?:number}) {
  const host=useRef<HTMLDivElement>(null);const [width,setWidth]=useState(360);const [zoomOffset,setZoomOffset]=useState(0);const [failed,setFailed]=useState(false);const [editing,setEditing]=useState(false);const [label,setLabel]=useState(route?.locationLabel||'');
  useEffect(()=>{setLabel(route?.locationLabel||'');},[route?.locationLabel]);
  useEffect(()=>{if(!host.current)return;const observer=new ResizeObserver(([entry])=>{if(entry.contentRect.width>0)setWidth(Math.max(80,entry.contentRect.width));});observer.observe(host.current);return()=>observer.disconnect();},[Boolean(route?.segments?.length)]);
  const clean=cleanRoute(route);const segments=clean?.segments||[];const points=segments.flat();
  if(!points.length)return <p className="gps-caption">Route unavailable for this workout. New GPS recordings save their route.</p>;
  const origin=mercator(points[0])[0];const project=(point:[number,number])=>{const [x,y]=mercator(point);return [x-Math.round(x-origin),y];};
- const projected=points.map(project);const xs=projected.map(p=>p[0]),ys=projected.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);const height=Math.max(340,200+Math.ceil((showPlace?route?.locationLabel?.length||0:0)/30)*20);
+ const projected=points.map(project);const xs=projected.map(p=>p[0]),ys=projected.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);const height=requestedHeight??Math.max(340,200+Math.ceil((showPlace?route?.locationLabel?.length||0:0)/30)*20);
  const fit=Math.max(1,Math.min(17,Math.floor(Math.log2(Math.min((width-70)/Math.max(maxX-minX,1e-7),(height-(showPlace?150:70))/Math.max(maxY-minY,1e-7))/256))));const zoom=Math.max(1,Math.min(18,fit+zoomOffset));const scale=256*2**zoom;const centerX=(minX+maxX)/2,centerY=(minY+maxY)/2;const left=centerX*scale-width/2,top=centerY*scale-height/2;
  const screen=(p:[number,number])=>{const [x,y]=project(p);return [x*scale-left,y*scale-top];};const tiles=[];for(let x=Math.floor(left/256);x<=Math.floor((left+width)/256);x++)for(let y=Math.floor(top/256);y<=Math.floor((top+height)/256);y++)if(y>=0&&y<2**zoom)tiles.push({x,y,url:`https://tile.openstreetmap.org/${zoom}/${((x%2**zoom)+2**zoom)%2**zoom}/${y}.png`});
  const start=screen(points[0]),end=screen(points.at(-1)!);

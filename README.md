@@ -15,7 +15,7 @@ system, interaction rules and D01–D12 feature acceptance matrix. Apply it with
 the pre-ship checklist; record visual evidence separately from automated checks.
 Review DESIGN_STANDARDS.md for every app change, including functional fixes, data/storage changes, refactors, dependencies, documentation and deployment changes.
 
-- Project folder: `/Users/thomasmorris/Documents/ChatGPT/Fitness Plan`
+- Project folder: `/Users/thomasmorris/Documents/ChatGPT/Fitness Plan/source-recovered-2026-10-23`
 - GitHub: https://github.com/PedalTone/training-for-life
 - Public frontend: https://pedaltone.github.io/training-for-life/app/
 - Separate API service: https://training-4-life.tommy-tritone.chatgpt.site
@@ -348,3 +348,7 @@ Check-ins includes a separate non-injury Illness check-in: Sick / unwell, an
 optional note and Rested instead of working out. Save rest day + Backup records
 that decision without completing a workout. History flags, journal and backups
 retain the illness; sick rest days are excluded from the completed training mix.
+
+Tracker **Full screen** shows the map above live metrics and tracking controls.
+**Exit full screen** returns without restarting tracking. Stop & save bounds stalled
+device storage and uses the existing fallback; failed saves keep a retryable draft.

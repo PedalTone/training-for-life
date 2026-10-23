@@ -1,10 +1,48 @@
 # Training for Life — development handoff
 
-Updated October 22, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 23, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — non-injury illness check-in
+## Current change — tracker Stop/save recovery and full screen
+
+Release **2026.10.23 0751** avoids the redundant IndexedDB read for active GPS
+saves. Shared withSessionStore bounds opens/transactions to five seconds, rejects
+blocked opens, aborts timed-out transactions and closes late connections so existing
+localStorage fallback runs rather than wedging Save. Native clearWatch errors
+cannot strand saving=true; generation invalidation still rejects late fixes.
+A failed finish retains its recording ID for retries to prevent duplicate intervals.
+
+Full screen uses the same tracker hook/controls/map, with map above metrics and
+Pause/Stop controls. It uses the available viewport, safe-area padding, Exit/Escape,
+focus return/trapping, hides app navigation/footer and excludes swipe navigation.
+Entry/exit does not restart GPS or change totals. Saved summaries remain in normal
+view; full screen displays the latest saved totals and offers Record another.
+
+Both builds/npm test and all 215 tests pass, including stalled-open/transaction,
+late-close/abort and active-save-with-stalled-read regressions. Typecheck retains
+10 existing diagnostics; no new tracker/storage/map errors. External Chrome fixture
+/private/tmp/check-tracker-focus.cjs verifies auto-paused stop; resumed stop with
+stalled IndexedDB and throwing clearWatch; both-store failure retains draft and
+retry saves one interval; full-screen pre-start/active entry/exit retains one watch;
+map/metrics/actions fit 375x667, 393x852 and 440x956. Screenshots
+/private/tmp/tracker-focus-{375,393,440}.png inspected. Map tiles/places and GPS
+were mocked; physical iPhone auto-pause/Stop/native storage/VoiceOver remain device
+checks. These tests reproduce failure mechanisms, not the exact original walk.
+
+D01 PASS release checks; D02–D05 PASS fixture/render/route/save tests;
+D07/D08/D10/D12 PASS existing regressions and preserved stored sessions/fallback;
+D06/D09/D11 N/A unchanged Plan/video/sharing UI. Duplicate review PASS: one set
+of tracker controls/map, CSS reordering for full screen; one shared storage helper,
+no parallel save path, existing localStorage fallback retained. No schema/API change.
+
+Source recovery: the selected original project folder is an incomplete older copy
+(empty app/.git directories). It was left intact. Current source and this work are
+preserved in `source-recovered-2026-10-23` beneath it. Use that recovered checkout
+for future development. Temporary checkout: /private/tmp/t4l-tracker-fix-20261023.
+Publication verification pending.
+
+## Previous change — non-injury illness check-in
 
 Release **2026.10.22 1457** adds Illness check-in under Check-ins: Sick / unwell,
 optional Rested instead of working out and note. Independent optional illness
@@ -32,7 +70,9 @@ videos/share output (illness details are not included in sharing data).
 Duplicate review PASS: one illness flag and optional rest choice; independent
 body concern controls retained; shared finalization/normalization/rest predicate,
 existing save/backup/Edit flow reused without competing save/status blocks.
-Publication verification pending.
+Published frontend `ff31d34f730bde599079234a9f8c0890b2131bf6` via Pages run
+`39836190550`; live illness/rest/History/Progress/backup/reload fixture verified
+October 23 before the tracker release.
 
 ## Previous change — simplified Today Log
 

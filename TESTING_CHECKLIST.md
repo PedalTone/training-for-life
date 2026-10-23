@@ -83,3 +83,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] Today Log: Perceived effort is first, with Easy/Medium/Hard. No manual duration/distance/More metrics/pace/calories/start-time fields. Notes/photos/screenshots retained; legacy metrics survive effort edits, backup/reload; GPS unchanged.
 
 - [ ] Illness: Check-ins Sick/unwell is independent of injury; optional rested day saves/backs up/locks without workout completion, remains searchable and flagged in History/journal, excluded from Progress completed totals. Note/clear/Edit/reload and simultaneous injury flags preserved. Normal workouts/recovery unchanged.
+
+- [ ] Tracker: Stop & save while auto-paused and after movement resumes; stalled/blocked IndexedDB and native clearWatch failure do not wedge saving. All storage failure retains draft and enables retry with one recording ID. Full screen before/during/after tracking shows map then metrics/controls, fits short iPhone heights/safe areas, supports Exit/Escape/focus return, and never starts another watch.
