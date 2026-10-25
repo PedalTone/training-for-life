@@ -25,7 +25,14 @@ PASS date/save/retention/lock tests and iPhone renders; D08 PASS preserved recor
 classification/totals; D04/D06/D09/D11 N/A unchanged. Physical iPhone still needs
 confirmation. Duplicate review PASS: one off-day summary in its own dated context,
 existing controls/map reused, one navigation action, no extra persistence flow.
-Publication verification pending below.
+Published frontend bceec05833fcc2696ec31187c0afe839e0ad151a via successful
+Pages run 40161146923. Public JS/CSS/service worker exactly match the tested
+2026.10.25 0013 build. Live external Chrome passes both cross-date cases and
+all four recovery modes (mirror loss, receipt recovery, failed-save reload/retry,
+explicit deletion). Public Home/Today/Plan/History/Progress/Settings smoke checks also pass. Final typecheck still has the same ten existing diagnostics,
+none in GPS/recovery/session-store. No Sites/API deployment or phone-data reset.
+Original iPhone data recovery remains unconfirmed; asked the user to check prior
+History dates because the observed zero-totals case can be an off-day save.
 
 ## Previous change — retain stopped GPS recordings
 
