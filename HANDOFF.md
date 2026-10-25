@@ -31,7 +31,11 @@ PASS existing edit/deletion, history, metrics, data retention and recovery tests
 D06/D09/D11 N/A unchanged planning/video/sharing behavior. Duplicate review PASS:
 one shared map and weather fetch, no second GPS watch; buttons and pinch are
 intentional accessible alternatives, Follow me and Fit route serve distinct views.
-Publication pending; no API changes, migrations or personal-data resets.
+Published frontend e04786a472470dd0612245591acb58e815668e10 via successful
+Pages run 40221172768. Live JS/CSS/service worker match the tested release exactly.
+The live tracker weather/gesture/follow/save fixture and all six navigation tabs
+pass in isolated external Chrome. Cross-date browser checks also pass locally.
+No API changes, migrations or personal-data resets.
 
 ## Previous change — saved recording shown on its actual date
 
