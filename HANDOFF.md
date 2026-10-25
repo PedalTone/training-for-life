@@ -4,7 +4,36 @@ Updated October 25, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — saved recording shown on its actual date
+## Current change — tracker weather and map controls
+
+Release **2026.10.25 1420** adds temperature/humidity above the full-screen map,
+using the existing reliable GPS fix and rounded Open-Meteo coordinates. Refresh
+is every 15 minutes; missing/failed readings stay unavailable. Miles use °F and
+kilometers °C. Home and tracker share the weather fetch/parser. Maps support
+fractional two-finger pinch, drag, +/−, and Fit route. Live tracking starts Following
+at zoom 16; zoom retains centering, dragging pauses follow, and Follow me recenters.
+One map component and GPS watch remain across full-screen transitions.
+
+Validation: all 228 Node tests, npm test, both builds and diff check pass. Typecheck
+retains ten existing diagnostics, none in changed tracker/map/weather modules.
+External Chrome /private/tmp/check-tracker-map.cjs passes real CDP touch pinch,
+drag/follow/centering, weather success/failure/refresh and approximate coordinates,
+one GPS watch, Stop/save and 375/393/440 phone layouts. Inspected all three
+/private/tmp/tracker-map-*.png renders: weather above map, readable controls and
+Stop/save visible. Tile images/weather/GPS are mocked in these fixtures.
+/private/tmp/check-tracker-focus-25.cjs passes auto-pause/resume, stalled storage,
+native cleanup failure and retry; check-gps-recovery.cjs passes all four modes.
+Physical iPhone Safari gestures, safe areas and outdoor GPS still need device evidence.
+
+D01/D02 PASS release wiring and unchanged navigation/Today regression suites;
+D03/D05 PASS external Chrome gestures/weather/layout/save tests; D04/D07/D08/D10/D12
+PASS existing edit/deletion, history, metrics, data retention and recovery tests;
+D06/D09/D11 N/A unchanged planning/video/sharing behavior. Duplicate review PASS:
+one shared map and weather fetch, no second GPS watch; buttons and pinch are
+intentional accessible alternatives, Follow me and Fit route serve distinct views.
+Publication pending; no API changes, migrations or personal-data resets.
+
+## Previous change — saved recording shown on its actual date
 
 Release **2026.10.25 0013** follows the user's clarification that the app stayed
 open and displayed zero totals. Confirmed an earlier-date mechanism: a ready

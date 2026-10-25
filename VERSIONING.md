@@ -1,3 +1,5 @@
+New public release — 2026.10.25 1420: Full-screen tracker temperature/humidity, two-finger map zoom and adjustable live Follow me centering.
+
 New public release — 2026.10.25 0013: Start previously prepared trackers on the selected workout day; retain visible totals and a View saved workout link when an older paused recording saves to another date.
 
 New public release — 2026.10.24 2356: Prevent stale background saves from overwriting stopped GPS recordings; keep a second session copy and recover the last stopped recording for retry after reload.

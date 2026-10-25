@@ -1,3 +1,4 @@
+import {TrackerWeather} from './tracker-weather';
 import {readGpsRecovery,writeGpsRecovery,clearGpsRecovery} from './gps-recovery';
 import {appendRoute,cleanRoute,locateRoute,type GpsRoute} from './gps-route';
 import {GpsRouteMap} from './gps-route-map';
@@ -9,6 +10,7 @@ type Draft={date:string;activity:GpsActivity;startedAt:string;seconds:number;met
 const key='t4l:gps-draft';
 export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'edit'|'route'|'delete')=>Promise<GpsWorkout|void>,recoveryReady=true,findSaved?:(date:string,id:string)=>Promise<GpsWorkout|undefined>) {
  const [draft,setDraft]=useState<Draft|null>(null);const ref=useRef<Draft|null>(null);const [running,setRunning]=useState(false);const [pending,setPending]=useState(false);const [saving,setSaving]=useState(false);const savingRef=useRef(false);const [notice,setNotice]=useState('');const [saved,setSaved]=useState<GpsWorkout|null>(null);const [savedDate,setSavedDate]=useState<string|null>(null);const [speed,setSpeed]=useState<number|null>(null);const [held,setHeld]=useState(false);const [unit,setUnit]=useState<'mi'|'km'>('mi');
+ const [position,setPosition]=useState<GpsPoint|null>(null);
  const [autoPaused,setAutoPaused]=useState(false);const motion=useRef(newAutoPauseState());const resumeMotion=useRef(newGpsResumeState());const [autoPauseEnabled,setAutoPauseEnabledState]=useState(()=>{try{return localStorage.getItem('t4l:gps-auto-pause')!=='false';}catch{return true;}});const autoEnabled=useRef(autoPauseEnabled);
  const watch=useRef<number|null>(null);const generation=useRef(0);const stationarySince=useRef<number|null>(null);const routeEdits=useRef(new Map<string,number>());const savedRef=useRef<GpsWorkout|null>(null);const onSaveRef=useRef(onSave);onSaveRef.current=onSave;const last=useRef<GpsPoint|null>(null);const clock=useRef<number|null>(null);const fixAt=useRef(0);const signalTimestamp=useRef<number|undefined>(undefined);
  const saveQueue=useRef<Promise<unknown>>(Promise.resolve());const pendingFinish=useRef<GpsWorkout|null>(null);
@@ -40,7 +42,7 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
  function prepare(date:string,activity:GpsActivity) {
   if(clock.current!==null||watch.current!==null||savingRef.current||ref.current)return;
   persist({date,activity,startedAt:new Date().toISOString(),seconds:0,meters:0,maxSpeed:0,gaps:0,ready:true});
-  setSaved(null);savedRef.current=null;setSpeed(null);setHeld(false);setNotice('Ready for your next workout. Tap Start timer when you begin.');
+  setSaved(null);savedRef.current=null;setPosition(null);setSpeed(null);setHeld(false);setNotice('Ready for your next workout. Tap Start timer when you begin.');
  }
  function start(date:string,activity:GpsActivity) {
   if(clock.current!==null||watch.current!==null||savingRef.current)return;
@@ -55,7 +57,7 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
    const point={latitude:position.coords.latitude,longitude:position.coords.longitude,accuracy:position.coords.accuracy,timestamp:position.timestamp,speed:position.coords.speed};
    const step=gpsStep(last.current,point,ref.current.activity,signalTimestamp.current);
    if(!step.accepted){motion.current={...motion.current,lowSince:null,lastAt:null};resumeMotion.current=newGpsResumeState();setHeld(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'GPS signal is weak. Timer continues; showing the last known pace or speed.');return;}
-   setPending(false);
+   setPosition(point);setPending(false);
    const now=Date.now();const nativeSpeed=point.speed!==null&&Number.isFinite(point.speed)&&point.speed>=0&&point.speed<=(ref.current.activity==='Bike'?55:20)?point.speed:null;
    const resume=motion.current.paused?gpsResumeStep(resumeMotion.current,point,now,ref.current.activity):null;
    if(resume)resumeMotion.current=resume.state;
@@ -125,7 +127,7 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
   catch{if(receipt?.workout.id===workout.id)try{writeGpsRecovery(receipt.date,receipt.workout);}catch{}setNotice('Could not delete recording. Try again.');return false;}
   finally{savingRef.current=false;setSaving(false);}
  };
- return {autoPaused,autoPauseEnabled,setAutoPauseEnabled,changeActivity,updateSavedWorkout,deleteSavedWorkout,setRouteLabel,updateSavedLabel,draft,saved,savedDate,running,pending,saving,notice,speed,held,unit,setUnit,prepare,start,pause:()=>{stop();setNotice('Timer paused. Tap Resume when ready.');},finish,discard:()=>{stop();const id=ref.current?.recordingId;if(id)try{clearGpsRecovery(id);}catch{setNotice('Could not discard tracking. Your totals are kept.');return;}persist(null);setSaved(null);setNotice("Unsaved GPS tracking discarded. Saved workouts are unchanged.");}};
+ return {position,autoPaused,autoPauseEnabled,setAutoPauseEnabled,changeActivity,updateSavedWorkout,deleteSavedWorkout,setRouteLabel,updateSavedLabel,draft,saved,savedDate,running,pending,saving,notice,speed,held,unit,setUnit,prepare,start,pause:()=>{stop();setNotice('Timer paused. Tap Resume when ready.');},finish,discard:()=>{stop();const id=ref.current?.recordingId;if(id)try{clearGpsRecovery(id);}catch{setNotice('Could not discard tracking. Your totals are kept.');return;}persist(null);setSaved(null);setPosition(null);setNotice("Unsaved GPS tracking discarded. Saved workouts are unchanged.");}};
 }
 function TrackerIcon({name}:{name:'play'|'pause'|'stop'|'edit'|'plus'|'trash'}) {
  return <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{name==='play'?<path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none"/>:name==='pause'?<><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/></>:name==='stop'?<rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/>:name==='trash'?<><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></>:name==='plus'?<path d="M12 5v14M5 12h14"/>:<><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14Z"/></>}</svg>;
@@ -169,6 +171,6 @@ export function GpsTracker({tracker,date,savedWorkouts=[],readOnly=false,onEditW
  {recordings.length>0&&<section className="gps-recordings" aria-label="Saved recordings"><h3>Saved recordings <span>{recordings.length}</span></h3><p>Saved for this day. Use Edit to correct a recording.</p>{readOnly&&onEditWorkout&&<button type="button" className="gps-unlock-edit" onClick={onEditWorkout}><TrackerIcon name="edit"/>Edit workout to change recordings</button>}{(t.running||t.pending)&&<p>Pause the timer to edit saved recordings.</p>}
  <ol>{recordings.map((item,index)=>{const distance=gpsUnits(item.meters,item.seconds,t.unit).distance;return <li key={item.id} className={editingId===item.id?'gps-editing':undefined}><div className="gps-recording-row"><span className="gps-saved-check" aria-label="Saved">✓</span><div><strong>{index+1}. {item.activity}</strong><small>{new Date(item.startedAt).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})} · {distance} {t.unit} · {gpsTime(item.seconds)}</small><small className="gps-saved-average">{gpsUsesPace(item.activity)?`Avg Pace: ${gpsPace(item.seconds?item.meters/item.seconds:null,t.unit)} min/${t.unit==='mi'?'mile':'km'}`:`Average speed: ${gpsUnits(item.meters,item.seconds,t.unit).average} ${t.unit==='mi'?'mph':'km/h'}`}</small></div><button type="button" className="gps-edit-recording" aria-label={`Edit recording ${index+1}: ${item.activity}`} disabled={t.saving||t.running||t.pending||readOnly||Boolean(editingId)} onClick={()=>setEditingId(item.id)}><TrackerIcon name="edit"/><span>Edit</span></button></div>{editingId===item.id&&!readOnly&&<RecordingEditor key={`${date}-${item.id}`} workout={item} unit={t.unit} onDelete={async()=>{const deleted=await t.deleteSavedWorkout(date,item);if(deleted)setEditingId(null);return deleted;}} onCancel={()=>setEditingId(null)} onSave={async next=>{const saved=await t.updateSavedWorkout(date,next);if(saved)setEditingId(null);return saved;}}/>}</li>;})}</ol></section>}
  {another&&<div className="gps-actions gps-saved-actions"><button type="button" className="gps-record-another" disabled={t.saving||readOnly||Boolean(editingId)} onClick={()=>t.prepare(date,(completed||offDateSaved)!.activity)}><TrackerIcon name="plus"/><span>Record another workout</span></button></div>}
- <div className="gps-tracker-map">{data?.route?<GpsRouteMap route={data.route} height={fullscreen?Math.max(130,screenHeight-390):undefined} showPlace={!t.draft&&!fullscreen} onLabel={t.draft||t.saving||readOnly||fullscreen?undefined:labelHandler}/>:fullscreen&&<div className="gps-map-waiting">Your map appears with the first reliable GPS fix.</div>}</div>{t.notice&&<p role="status">{t.notice}</p>}
+ <div className="gps-tracker-map">{fullscreen&&<TrackerWeather position={t.position} unit={t.unit}/>} {data?.route?<GpsRouteMap key={data.startedAt} route={data.route} live={Boolean(t.draft&&!t.draft.ready)} position={t.draft?t.position:null} height={fullscreen?Math.max(150,screenHeight-455):undefined} showPlace={!t.draft&&!fullscreen} onLabel={t.draft||t.saving||readOnly||fullscreen?undefined:labelHandler}/>:fullscreen&&<div className="gps-map-waiting">Your map appears with the first reliable GPS fix.</div>}</div>{t.notice&&<p role="status">{t.notice}</p>}
  </div></details>;
 }

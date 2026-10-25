@@ -89,3 +89,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] GPS save retention: delayed older autosave cannot overwrite Stop/save; queued autosave rechecks freshness; second copy restores the recording when IndexedDB is missing; missing primary/fallback restores the last stopped receipt with exact totals/route/ID; failed save plus reload retries one recording; explicit deletion/discard never resurrects; notes and backup remain intact.
 
 - [ ] Prepared GPS draft from a prior day starts on the selected day and keeps its selected activity. Previously started paused tracking keeps its actual date; an off-day save remains open with exact totals, no zero live metrics, and a working View saved workout link.
+
+- [ ] Tracker weather/map: temperature and humidity above full-screen map; °F/°C follow units; missing/error/timeout values never become zero; 15-minute refresh and no second GPS watch. Real touch pinch and +/− adjust zoom while Following keeps location centered; drag pauses follow, Follow me recenters, Fit route shows all points. Full-screen toggles and gestures retain recording; Stop/save and saved route editing still work.

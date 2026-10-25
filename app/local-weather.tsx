@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { weatherKind, type WeatherKind } from "./weather-kind";
+import { type WeatherKind } from "./weather-kind";
+import {fetchCurrentWeather} from "./current-weather";
 const labels: Record<WeatherKind,string> = {sun:"Clear skies",moon:"Clear night",cloud:"Cloudy",rain:"Rain",snow:"Snow",fog:"Fog",storm:"Thunderstorms"};
 const preference = "t4l:local-weather-enabled";
 export function useLocalWeather() {
@@ -25,12 +26,7 @@ export function useLocalWeather() {
         controller.signal.addEventListener("abort",stopRequest,{once:true});
         const timeout = window.setTimeout(stopRequest,10000);
         try {
-          const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code,is_day`, {signal:request.signal,cache:"no-store"});
-          if (!response.ok) throw new Error("Weather unavailable");
-          const data = await response.json();
-          const current = data.current;
-          if (!current || !Number.isInteger(current.weather_code) || ![0,1].includes(current.is_day)) throw new Error("Invalid weather");
-          const next = weatherKind(current.weather_code,current.is_day);
+          const {kind:next} = await fetchCurrentWeather(Number(latitude),Number(longitude),request.signal);
           if (!next) throw new Error("Unknown weather");
           if (!stopped) { setKind(next); setStatus(labels[next]); }
         } catch { if (!stopped) { setKind(null); setStatus("Weather unavailable. The sun is decorative."); } }

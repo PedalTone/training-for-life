@@ -128,6 +128,13 @@ coordinates are stored. The opt-in preference persists separately; turn it off o
 Conditions refresh every 30 minutes while Home is open. Errors show an explicit
 unavailable message with a decorative sun. Weather does not change workout plans.
 
+Full-screen tracking also shows temperature and humidity above the map, using the
+existing reliable GPS fix (no second location request). It sends the same rounded
+coordinates to Open-Meteo, refreshes every 15 minutes while open, and shows
+unavailable values when weather cannot load. Miles use °F; kilometers use °C.
+Pinch or +/− adjusts zoom. Following keeps the latest position centered; dragging
+pauses following, Follow me recenters at street zoom, and Fit route shows the route.
+
 ## iPhone GPS workouts
 
 Today’s Workout tab has a prominent cream GPS feature card with a navy runner,
