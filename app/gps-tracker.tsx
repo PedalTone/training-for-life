@@ -84,7 +84,15 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
   },error=>{
    if(token!==generation.current)return;
    if(error.code===1){stop();setNotice('Location permission denied. Allow location in Safari settings to track.');}
-   else{motion.current={...motion.current,lowSince:null,lastAt:null};resumeMotion.current=newGpsResumeState();setHeld(true);setPending(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'Waiting for GPS. Timer continues; showing the last known pace or speed.');}
+   else{
+    // iOS can deliver a transient POSITION_UNAVAILABLE/timeout after returning
+    // from Camera or Photos. End that native watch so the action becomes an
+    // honest, tappable Resume timer instead of a stuck Pause/Waiting state.
+    // stop() preserves the accumulated draft and invalidates late callbacks.
+    stop();
+    setHeld(true);
+    setNotice(motion.current.paused?'Auto-paused. GPS was unavailable; tap Resume timer to try again.':'GPS was unavailable; tap Resume timer to try again.');
+   }
   },{enableHighAccuracy:true,maximumAge:0,timeout:15000});}
   catch{stop();setNotice('Could not start GPS. Your totals are paused; try again.');}
  }

@@ -134,6 +134,9 @@ coordinates to Open-Meteo, refreshes every 15 minutes while open, and shows
 unavailable values when weather cannot load. Miles use °F; kilometers use °C.
 Pinch or +/− adjusts zoom. Following keeps the latest position centered; dragging
 pauses following, Follow me recenters at street zoom, and Fit route shows the route.
+If iOS reports a temporary GPS error after returning from Camera or Photos, the
+tracker preserves the current draft and offers Resume timer again instead of
+leaving a failed watch in a waiting state.
 
 ## iPhone GPS workouts
 

@@ -227,9 +227,10 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.10.25 1420";
+const APP_VERSION = "2026.10.25 1515";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me. Drag to explore; tap Follow me to recenter."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
+  { version: "2026.10.25 1420", category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me."] },
   { version: "2026.10.25 0013", category: "Major fix", changes: ["Previously prepared trackers start on the selected workout day. If an older recording saves to another date, its time and distance stay visible with a View saved workout link instead of zero totals."] },
   { version: "2026.10.24 2356", category: "Major fix", changes: ["Protect stopped GPS recordings from older background saves. Keep a second saved copy and recover the last stopped recording for retry after reopening the app."] },
   { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.22 1448", category: "Minor fix", changes: ["Selected add-ons move to the top immediately again, with the improved checkbox labels and touch targets retained."] },
   { version: "2026.10.22 1433", category: "Major fix", changes: ["Add-on rows stay steady while you choose exercises, with larger checkbox targets and explicit labels. Saved selections appear first when you reopen Today."] },
   { version: "2026.10.20 2050", category: "New feature", changes: ["Mark each workout video completed directly on the day. Its status is saved in the journal and backups, while repeat workouts start unchecked."] },
-  { version: "2026.10.20 1711", category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
 ];
 const withStore=withSessionStore;
 
