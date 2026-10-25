@@ -32,3 +32,9 @@ test('Walk is selectable and saved walks show pace rather than biking speed',()=
  const ready=render([]);assert.match(ready,/<option[^>]*>Walk<\/option>/);
  const html=render([{...workout,activity:'Walk'}]);assert.match(html,/Edit recording 1: Walk/);assert.match(html,/Avg Pace: 10:00 min\/mile/);assert.doesNotMatch(html,/Average speed:/);
 });
+
+test('a recording saved to another date stays visibly retained with totals and a dated navigation action',()=>{
+ const html=render([],{saved:workout,savedDate:'2026-10-17'},{onViewSaved(){}});
+ assert.match(html,/Recording saved on another day/);assert.match(html,/Saved for 2026-10-17/);assert.match(html,/1\.00 mi · 00:10:00/);assert.match(html,/View saved workout/);
+ assert.doesNotMatch(html,/Edit recording 1: Run/);assert.doesNotMatch(html,/class="gps-metrics"/);assert.match(html,/<details[^>]*open/);
+});

@@ -142,7 +142,7 @@ matching cannot decide whether two functions are semantically equivalent.
 A tap must produce immediate, honest feedback. Distinguish ready, active, paused,
 auto-paused, saving, saved, failed and locked states. Never show success until
 persistence succeeds. Disable duplicate submissions while saving and provide a
-retry without destroying input after failure. GPS saves serialize background writes, keep a second session copy when available, and retain a stopped-recording receipt for reload recovery until the saved ID is confirmed. Explicit deletion/discard must clear that receipt. Avoid rerender-driven focus loss,
+retry without destroying input after failure. GPS saves serialize background writes, keep a second session copy when available, and retain a stopped-recording receipt for reload recovery until the saved ID is confirmed. Explicit deletion/discard must clear that receipt. Prepared trackers adopt the selected date when started; already recorded tracking keeps its original date, and an off-day save shows its totals and a dated navigation action rather than an empty tracker. Avoid rerender-driven focus loss,
 scroll jumps and layout changes during typing.
 
 Today has one saved/locked banner and Edit action above its internal tabs;

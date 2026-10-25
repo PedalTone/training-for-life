@@ -227,9 +227,10 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.10.24 2356";
+const APP_VERSION = "2026.10.25 0013";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Protect stopped GPS recordings from older background saves. Keep a second saved copy and recover the last stopped recording for retry after reopening the app."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Previously prepared trackers start on the selected workout day. If an older recording saves to another date, its time and distance stay visible with a View saved workout link instead of zero totals."] },
+  { version: "2026.10.24 2356", category: "Major fix", changes: ["Protect stopped GPS recordings from older background saves. Keep a second saved copy and recover the last stopped recording for retry after reopening the app."] },
   { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
   { version: "2026.10.22 1457", category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
   { version: "2026.10.22 1451", category: "Minor fix", changes: ["Today’s Log starts with perceived effort: Easy, Medium or Hard. Manual duration, distance and additional metric fields are removed; existing records and GPS tracking stay intact."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.20 2050", category: "New feature", changes: ["Mark each workout video completed directly on the day. Its status is saved in the journal and backups, while repeat workouts start unchecked."] },
   { version: "2026.10.20 1711", category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
   { version: "2026.10.20 1411", category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
-  { version: "2026.10.20 0939", category: "Minor fix", changes: ["One visible Start timer link in Add-ons opens the speaking timer for any exercise, without repeated links in exercise details or the picker."] },
 ];
 const withStore=withSessionStore;
 
@@ -892,7 +892,7 @@ export default function Home() {
             <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
             <div className="panel-body"><fieldset className="workout-edit-fields" disabled={workoutReadOnly}><div className="day-workout-override"><label><span>Workout for this day</span><select value={plan.key} onChange={(event) => setDayWorkoutType(event.target.value)}>{workoutOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><div><small>{session.planOverride ? "One-day change · weekly plan stays the same" : "Following your weekly plan"}</small>{session.planOverride && <button onClick={restoreWeeklyWorkoutType}>Use weekly plan</button>}</div></div><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></fieldset></div>
           </details>
-        <GpsTracker tracker={gps} onEditWorkout={()=>beginWorkoutEdit(activeDate)} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
+        <GpsTracker tracker={gps} onViewSaved={date=>{setActiveDate(dateFromKey(date));setTodaySection("workout");}} onEditWorkout={()=>beginWorkoutEdit(activeDate)} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
         <section className="today-addons"><div className="today-section-title"><h3>Add-ons</h3><button onClick={openMobilityPicker} disabled={workoutReadOnly}>＋ Add / edit</button></div>
         <div className="today-addon-tools"><p className="today-addon-count">{session.mobilityExercises.length} selected · {session.completedExercises.filter(name => session.mobilityExercises.includes(name)).length} completed</p><a className="today-addon-timer" href="https://pedaltone.github.io/speaking-timer/?work=60&duration=60&rest=0&rounds=1&autostart=1" target="_blank" rel="noreferrer">Start timer ↗</a></div>
         {loaded&&<TodayAddonRows key={activeKey} session={session} libraryExercises={libraryExercises} readOnly={workoutReadOnly} onSelect={selectAddon} onComplete={toggleExercise}/>}

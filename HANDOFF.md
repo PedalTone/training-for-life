@@ -1,10 +1,33 @@
 # Training for Life — development handoff
 
-Updated October 24, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 25, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — retain stopped GPS recordings
+## Current change — saved recording shown on its actual date
+
+Release **2026.10.25 0013** follows the user's clarification that the app stayed
+open and displayed zero totals. Confirmed an earlier-date mechanism: a ready
+tracker retained its preparation date when started later; a genuine older paused
+recording saved correctly to its original date but then disappeared from the
+current day's tracker UI. This is a reproduced mechanism, not proof of the user's
+specific incident. Ready drafts now adopt the selected day at Start, retaining
+activity. Already recorded drafts keep their true date; off-day save remains open
+with exact totals, no zero live metrics, and View saved workout navigates to it.
+Same recording, controls and route map; no invented duplicate in today's history.
+
+External Chrome /private/tmp/check-gps-dates.cjs passes both cross-date cases,
+activity retention, exact 1800 seconds/2200 meters, and navigation to the actual
+saved day. Inspected /private/tmp/gps-other-date-{375,393,440}.png: readable dated
+summary and clear 44px action; no competing zero metrics or duplicate Edit/Save.
+All 223 regressions, npm test and both builds pass. D01/D02/D03/D05/D07/D10/D12
+PASS date/save/retention/lock tests and iPhone renders; D08 PASS preserved recorded
+classification/totals; D04/D06/D09/D11 N/A unchanged. Physical iPhone still needs
+confirmation. Duplicate review PASS: one off-day summary in its own dated context,
+existing controls/map reused, one navigation action, no extra persistence flow.
+Publication verification pending below.
+
+## Previous change — retain stopped GPS recordings
 
 Release **2026.10.24 2356** serializes session writes, including fallback, and
 rechecks queued autosave freshness at execution so older snapshots cannot finish
@@ -38,7 +61,7 @@ and recovered notice (/private/tmp/gps-recovered-paused.png): readable controls,
 no horizontal overflow, existing safe-area layout. GPS/map tiles mocked; physical
 iPhone GPS/storage/backgrounding remain unverified. Duplicate review PASS: one
 shared session writer/fallback, same tracker Stop/save/retry controls, no extra
-Save/status/Edit controls. Frontend publication verification pending below.
+Save/status/Edit controls. Frontend 6cfe1bed1948e071267ccf243cb0616219f851fc deployed successfully in Pages run 40160083051. Initial direct public checks timed out; superseded by the following date-display release.
 
 ## Previous change — tracker Stop/save recovery and full screen
 
