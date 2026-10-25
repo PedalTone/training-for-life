@@ -85,3 +85,5 @@ Review duplicate functions and buttons for every app change.
 - [ ] Illness: Check-ins Sick/unwell is independent of injury; optional rested day saves/backs up/locks without workout completion, remains searchable and flagged in History/journal, excluded from Progress completed totals. Note/clear/Edit/reload and simultaneous injury flags preserved. Normal workouts/recovery unchanged.
 
 - [ ] Tracker: Stop & save while auto-paused and after movement resumes; stalled/blocked IndexedDB and native clearWatch failure do not wedge saving. All storage failure retains draft and enables retry with one recording ID. Full screen before/during/after tracking shows map then metrics/controls, fits short iPhone heights/safe areas, supports Exit/Escape/focus return, and never starts another watch.
+
+- [ ] GPS save retention: delayed older autosave cannot overwrite Stop/save; queued autosave rechecks freshness; second copy restores the recording when IndexedDB is missing; missing primary/fallback restores the last stopped receipt with exact totals/route/ID; failed save plus reload retries one recording; explicit deletion/discard never resurrects; notes and backup remain intact.

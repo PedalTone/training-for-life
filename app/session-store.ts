@@ -23,3 +23,24 @@ export function withSessionStore<T>(mode:IDBTransactionMode,action:(store:IDBObj
   }catch(error){fail(error);}
  });
 }
+
+// Serialize the complete write (including fallback) so an older pending autosave
+// cannot finish after Stop & save and replace its recording with an old snapshot.
+export function createSessionWriter<T extends {id:string;gpsWorkouts?:unknown[]}>(write:(session:T)=>Promise<unknown>,storage:()=>Storage=()=>localStorage) {
+ const queues=new Map<string,Promise<void>>();
+ return (session:T,isCurrent:()=>boolean=()=>true):Promise<void>=>{
+  const snapshot=JSON.stringify(session);
+  const pending=(queues.get(session.id)||Promise.resolve()).catch(()=>{}).then(async()=>{
+   if(!isCurrent())return;
+   let mirrored=false;
+   const mirror=()=>{const target=storage();target.setItem(`t4l:${session.id}`,snapshot);if(target.getItem(`t4l:${session.id}`)!==snapshot)throw new Error('Workout backup could not be verified.');mirrored=true;};
+   // Keep an independent durable copy of recorded GPS sessions even when IDB
+   // works. A failed mirror must not prevent a working IndexedDB save.
+   if(session.gpsWorkouts!==undefined)try{mirror();}catch{}
+   try{await write(JSON.parse(snapshot) as T);}catch(error){if(!mirrored)mirror();}
+  });
+  queues.set(session.id,pending);
+  void pending.finally(()=>{if(queues.get(session.id)===pending)queues.delete(session.id);}).catch(()=>{});
+  return pending;
+ };
+}

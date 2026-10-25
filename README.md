@@ -352,3 +352,5 @@ retain the illness; sick rest days are excluded from the completed training mix.
 Tracker **Full screen** shows the map above live metrics and tracking controls.
 **Exit full screen** returns without restarting tracking. Stop & save bounds stalled
 device storage and uses the existing fallback; failed saves keep a retryable draft.
+
+GPS save protection: session writes run in order, and queued autosaves recheck that their editor snapshot is current. GPS sessions are also mirrored to the existing localStorage fallback when available. Stop keeps a separate last-save recovery receipt until a later load confirms the recording exists; if absent, the tracker restores paused totals with the same recording ID for retry. This protects future saves and any receipt retained by this release; it cannot reconstruct data already absent from all iPhone storage.

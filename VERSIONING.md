@@ -1,3 +1,5 @@
+New public release — 2026.10.24 2356: Prevent stale background saves from overwriting stopped GPS recordings; keep a second session copy and recover the last stopped recording for retry after reload.
+
 New public release — 2026.10.23 0751: Bound stalled storage operations and preserve retryable GPS saves after auto-pause; add full-screen tracker with map above metrics and essential controls.
 
 New public release — 2026.10.22 1457: Add non-injury illness check-in, optional sick/rest day, History flag and journal note; sick rest days do not count as completed workouts.

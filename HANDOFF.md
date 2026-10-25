@@ -1,10 +1,46 @@
 # Training for Life — development handoff
 
-Updated October 23, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
+Updated October 24, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
 
-## Current change — tracker Stop/save recovery and full screen
+## Current change — retain stopped GPS recordings
+
+Release **2026.10.24 2356** serializes session writes, including fallback, and
+rechecks queued autosave freshness at execution so older snapshots cannot finish
+after Stop/save and overwrite its recording. GPS sessions get a verified readable
+localStorage mirror when available; IndexedDB alone still works when localStorage
+is unavailable. Both failures reject and retain the paused draft. Reads consult
+the existing fallback even when IndexedDB fails.
+
+Stop writes a separate last-save receipt before saving and preserves its recording
+ID in the draft for retries after reload. A subsequent loaded session checks that
+ID; if absent, the tracker restores paused exact totals/route for Stop/save retry.
+Confirmed records clear the receipt. Edits update it; explicit delete/discard clear
+it and reject if that clear fails, preventing recovery from undoing deletion.
+No schema migration, API change, new controls or data-clearing operation.
+
+All 222 Node regressions pass; npm test and both builds pass. Typecheck retains
+the same ten existing diagnostics, with none in changed GPS/storage modules.
+External Chrome fixtures /private/tmp/check-gps-recovery.cjs and
+/private/tmp/check-tracker-focus-24.cjs pass: second-copy reload after IDB loss,
+receipt recovery after both session copies are deliberately removed, failed save
+plus reload/retry with one ID, exact 1800 seconds/2200 meters/route, retained notes,
+explicit deletion without resurrection, auto-pause/resume Stop, stalled IDB/native
+cleanup failure, full-screen transitions and one watch. Fixture GPS/map requests
+are simulated; they do not reproduce the user's exact iPhone incident or recover
+its data. New safeguards cannot recreate data already absent from all stores.
+
+D01 PASS release wiring; D02/D03/D05/D07/D08/D10/D12 PASS save/route/lock/data
+regressions and external Chrome fixtures. D04/D06/D09/D11 N/A unchanged weather,
+Plan, videos and sharing. Inspected iPhone 375/393/440 renders, saved summaries
+and recovered notice (/private/tmp/gps-recovered-paused.png): readable controls,
+no horizontal overflow, existing safe-area layout. GPS/map tiles mocked; physical
+iPhone GPS/storage/backgrounding remain unverified. Duplicate review PASS: one
+shared session writer/fallback, same tracker Stop/save/retry controls, no extra
+Save/status/Edit controls. Frontend publication verification pending below.
+
+## Previous change — tracker Stop/save recovery and full screen
 
 Release **2026.10.23 0751** avoids the redundant IndexedDB read for active GPS
 saves. Shared withSessionStore bounds opens/transactions to five seconds, rejects

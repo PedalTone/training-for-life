@@ -1,5 +1,5 @@
 "use client";
-import {withSessionStore} from "./session-store";
+import {withSessionStore,createSessionWriter} from "./session-store";
 import {normalizeIllness,isIllnessRest,finalizedDay,type Illness} from "./illness";
 import {VideoCompletion} from "./video-completion";
 import {ShareWorkoutButton} from "./share-workout-button";
@@ -227,9 +227,10 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.10.23 0751";
+const APP_VERSION = "2026.10.24 2356";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
+  { version: APP_VERSION, category: "Major fix", changes: ["Protect stopped GPS recordings from older background saves. Keep a second saved copy and recover the last stopped recording for retry after reopening the app."] },
+  { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
   { version: "2026.10.22 1457", category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
   { version: "2026.10.22 1451", category: "Minor fix", changes: ["Today’s Log starts with perceived effort: Easy, Medium or Hard. Manual duration, distance and additional metric fields are removed; existing records and GPS tracking stay intact."] },
   { version: "2026.10.22 1448", category: "Minor fix", changes: ["Selected add-ons move to the top immediately again, with the improved checkbox labels and touch targets retained."] },
@@ -238,13 +239,12 @@ const RECENT_RELEASES = [
   { version: "2026.10.20 1711", category: "New feature", changes: ["Remove an exercise from today’s YouTube workout plan when you skip it. Confirm removal of its logged sets; other exercises and the reusable Settings plan stay unchanged."] },
   { version: "2026.10.20 1411", category: "Minor fix", changes: ["The shared Add-ons timer link is now prominent blue so it is easier to find."] },
   { version: "2026.10.20 0939", category: "Minor fix", changes: ["One visible Start timer link in Add-ons opens the speaking timer for any exercise, without repeated links in exercise details or the picker."] },
-  { version: "2026.10.19 2245", category: "Minor fix", changes: ["Repeat any completed video exercise set with its recorded weight, units, reps or time and warm-up status. The new set stays unchecked until completed, while original results and reusable video plans stay intact."] },
 ];
 const withStore=withSessionStore;
 
-const saveSession = (session: Session) => withStore("readwrite", (store) => store.put(session));
+const saveSession = createSessionWriter<Session>(session => withStore("readwrite", store => store.put(session)));
 const getSession = async (id: string) => {
-  const saved = await withStore<Session | undefined>("readonly", (store) => store.get(id));
+  const saved = await withStore<Session | undefined>("readonly", (store) => store.get(id)).catch(() => undefined);
   let fallback: Session | undefined;
   try { const raw = localStorage.getItem(`t4l:${id}`); if (raw) fallback = JSON.parse(raw); } catch { /* Keep the indexed record if fallback storage cannot be read. */ }
   if (!fallback?.date || fallback.date !== id) return saved;
@@ -526,7 +526,7 @@ export default function Home() {
     saveTimer.current = setTimeout(() => {
       if(finishingRef.current||sessionRef.current!==session||workoutIsLocked(sessionRef.current,editingDateRef.current))return;
       const next = { ...session, updatedAt: new Date().toISOString() };
-      saveSession(next).then(() => setSaveState("Saved on this device")).catch(() => { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(next)); setSaveState("Saved on this device"); });
+      saveSession(next, () => sessionRef.current === session).then(() => { if(sessionRef.current === session)setSaveState("Saved on this device"); }).catch(() => setSaveState("Could not save. Keep this page open and try again."));
     }, 400);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [session, loaded, activeKey, editingDate]);
@@ -821,11 +821,11 @@ export default function Home() {
     const next = { ...current, gpsWorkouts:workouts, activity:current.activity || workout.activity, activities:current.activities?.length ? current.activities : [workout.activity], duration:!current.duration || ((current.gpsWorkouts?.length || 0)>0 && current.duration===gpsTime((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.seconds,0))) ? (workouts.length?gpsTime(seconds):'') : current.duration, distance:!current.distance || ((current.gpsWorkouts?.length || 0)>0 && current.distance===`${((current.gpsWorkouts || []).reduce((sum,item)=>sum+item.meters,0)/1609.344).toFixed(2)} mi`) ? (workouts.length?`${(meters/1609.344).toFixed(2)} mi`:'') : current.distance, startTime:current.startTime || new Date(workout.startedAt).toLocaleTimeString("en-US", {hour:"2-digit",minute:"2-digit",hour12:false}), updatedAt:new Date().toISOString() };
     if(change === 'delete' && existing[0] && current.startTime===new Date(existing[0].startedAt).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:false}))next.startTime=workouts[0]?new Date(workouts[0].startedAt).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:false}):'';
     if(change === 'edit'||change === 'delete')Object.assign(next,correctedGpsActivities(current.activity,current.activities,existing,workouts));
-    try { await saveSession(next); } catch { localStorage.setItem(`t4l:${date}`,JSON.stringify(next)); }
+    await saveSession(next);
     if(sessionRef.current.id===date){ sessionRef.current=next;setSession(next); }
     setHistory(items=>[next,...items.filter(item=>item.id!==date)].sort((a,b)=>b.date.localeCompare(a.date)));
     return updatedWorkout;
-  });
+  }, loaded, async (date, id) => (await getSession(date))?.gpsWorkouts?.find(item => item.id === id));
   const activeIsToday = activeKey === dateKey(today);
   const weekMap = new Map(history.map((item) => [item.date, item]));
   // The open Today session is the freshest source for its date. Include it in

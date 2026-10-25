@@ -1,12 +1,13 @@
+import {readGpsRecovery,writeGpsRecovery,clearGpsRecovery} from './gps-recovery';
 import {appendRoute,cleanRoute,locateRoute,type GpsRoute} from './gps-route';
 import {GpsRouteMap} from './gps-route-map';
 import {autoPauseStep,newAutoPauseState} from './gps-auto-pause';
 import {editGpsWorkout,gpsEditDistance} from './gps-edit';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {gpsStep,gpsTime,gpsUnits,gpsPace,gpsResumeStep,newGpsResumeState,GPS_ACTIVITIES,isGpsActivity,gpsUsesPace,type GpsActivity,type GpsPoint,type GpsWorkout} from './gps-math';
-type Draft={date:string;activity:GpsActivity;startedAt:string;seconds:number;meters:number;maxSpeed:number;gaps:number;route?:GpsRoute;ready?:boolean};
+type Draft={date:string;activity:GpsActivity;startedAt:string;seconds:number;meters:number;maxSpeed:number;gaps:number;route?:GpsRoute;ready?:boolean;recordingId?:string};
 const key='t4l:gps-draft';
-export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'edit'|'route'|'delete')=>Promise<GpsWorkout|void>) {
+export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'edit'|'route'|'delete')=>Promise<GpsWorkout|void>,recoveryReady=true,findSaved?:(date:string,id:string)=>Promise<GpsWorkout|undefined>) {
  const [draft,setDraft]=useState<Draft|null>(null);const ref=useRef<Draft|null>(null);const [running,setRunning]=useState(false);const [pending,setPending]=useState(false);const [saving,setSaving]=useState(false);const savingRef=useRef(false);const [notice,setNotice]=useState('');const [saved,setSaved]=useState<GpsWorkout|null>(null);const [savedDate,setSavedDate]=useState<string|null>(null);const [speed,setSpeed]=useState<number|null>(null);const [held,setHeld]=useState(false);const [unit,setUnit]=useState<'mi'|'km'>('mi');
  const [autoPaused,setAutoPaused]=useState(false);const motion=useRef(newAutoPauseState());const resumeMotion=useRef(newGpsResumeState());const [autoPauseEnabled,setAutoPauseEnabledState]=useState(()=>{try{return localStorage.getItem('t4l:gps-auto-pause')!=='false';}catch{return true;}});const autoEnabled=useRef(autoPauseEnabled);
  const watch=useRef<number|null>(null);const generation=useRef(0);const stationarySince=useRef<number|null>(null);const routeEdits=useRef(new Map<string,number>());const savedRef=useRef<GpsWorkout|null>(null);const onSaveRef=useRef(onSave);onSaveRef.current=onSave;const last=useRef<GpsPoint|null>(null);const clock=useRef<number|null>(null);const fixAt=useRef(0);const signalTimestamp=useRef<number|undefined>(undefined);
@@ -16,6 +17,25 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
  const nowAge=()=>Date.now()-fixAt.current;
  const stop=()=>{generation.current++;motion.current=newAutoPauseState();resumeMotion.current=newGpsResumeState();setAutoPaused(false);if(watch.current!==null){const id=watch.current;watch.current=null;try{navigator.geolocation.clearWatch(id);}catch{/* Invalidate callbacks even if the native watch cleanup fails. */}}if(clock.current!==null&&ref.current){persist({...ref.current,seconds:ref.current.seconds+Math.max(0,(Date.now()-clock.current)/1000)});}clock.current=null;last.current=null;signalTimestamp.current=undefined;setSpeed(null);setHeld(false);stationarySince.current=null;setRunning(false);setPending(false);};
  useEffect(()=>{try{const raw=localStorage.getItem(key);if(raw){const d=JSON.parse(raw);if(/^\d{4}-\d{2}-\d{2}$/.test(d.date)&&isGpsActivity(d.activity)&&Number.isFinite(Date.parse(d.startedAt))&&['seconds','meters','maxSpeed','gaps'].every(k=>Number.isFinite(d[k])&&d[k]>=0)){d.route=cleanRoute(d.route);ref.current=d;setDraft(d);setNotice('Recovered paused tracking. Resume or save your totals.');}}}catch{};const visibility=()=>{if(document.hidden&&(watch.current!==null||clock.current!==null)){stop();setNotice('Tracking paused while the app was hidden. Resume when ready.');}};document.addEventListener('visibilitychange',visibility);const interval=window.setInterval(()=>{if(clock.current!==null&&ref.current){const now=Date.now();persist({...ref.current,seconds:ref.current.seconds+Math.max(0,(now-clock.current)/1000)},Math.floor(now/1000)%5===0);clock.current=now;if(now-fixAt.current>5000)setHeld(true);}else if(watch.current!==null&&nowAge()>5000)setHeld(true);},1000);return()=>{stop();clearInterval(interval);document.removeEventListener('visibilitychange',visibility);};},[]);
+ // Keep the last stopped recording until a subsequent load confirms it exists.
+ // This also protects a reload between a completed save and its UI update.
+ const recoveryChecked=useRef(false);
+ useEffect(()=>{
+  if(!recoveryReady||recoveryChecked.current)return;
+  recoveryChecked.current=true;
+  if(ref.current)return;
+  const receipt=readGpsRecovery();if(!receipt)return;
+  void (async()=>{
+   let confirmed:GpsWorkout|undefined;
+   try{confirmed=await findSaved?.(receipt.date,receipt.workout.id);}catch{}
+   if(ref.current)return;
+   if(confirmed){setSaved(confirmed);savedRef.current=confirmed;setSavedDate(receipt.date);try{clearGpsRecovery(confirmed.id);}catch{}return;}
+   const w=receipt.workout;
+   persist({date:receipt.date,activity:w.activity,startedAt:w.startedAt,seconds:w.seconds,meters:w.meters,maxSpeed:w.maxSpeed,gaps:w.gaps,route:w.route,recordingId:w.id});
+   pendingFinish.current=w;
+   setNotice('Recovered your stopped recording. Your time, distance and route are kept. Tap Stop & save to try again.');
+  })();
+ },[recoveryReady]);
  useEffect(()=>{if(!running)return;let cancelled=false;let lock:{release:()=>Promise<void>}|undefined;const wake=navigator as Navigator & {wakeLock?:{request:(type:string)=>Promise<{release:()=>Promise<void>}>}};wake.wakeLock?.request('screen').then(result=>{if(cancelled)void result.release();else lock=result;}).catch(()=>{});return()=>{cancelled=true;void lock?.release();};},[running]);
  function prepare(date:string,activity:GpsActivity) {
   if(clock.current!==null||watch.current!==null||savingRef.current||ref.current)return;
@@ -70,7 +90,8 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
   if(!ref.current||ref.current.ready||savingRef.current)return;
   savingRef.current=true;setSaving(true);stop();setNotice('Timer stopped. Saving your workout…');
   try{
-   const d=ref.current!;const result:GpsWorkout=pendingFinish.current||{id:crypto.randomUUID(),activity:d.activity,startedAt:d.startedAt,endedAt:new Date().toISOString(),seconds:d.seconds,meters:d.meters,maxSpeed:d.maxSpeed,gaps:d.gaps,route:d.route};pendingFinish.current=result;
+   const d=ref.current!;const result:GpsWorkout=pendingFinish.current||{id:d.recordingId||crypto.randomUUID(),activity:d.activity,startedAt:d.startedAt,endedAt:new Date().toISOString(),seconds:d.seconds,meters:d.meters,maxSpeed:d.maxSpeed,gaps:d.gaps,route:d.route};pendingFinish.current=result;persist({...d,recordingId:result.id});
+   try{writeGpsRecovery(d.date,result);}catch{/* The paused draft remains until the session write succeeds. */}
    await saveWorkout(d.date,result);setSaved(result);savedRef.current=result;setSavedDate(d.date);pendingFinish.current=null;persist(null);setNotice('Workout saved. Record another workout when you are ready.');
    // Place lookup must never delay the stop button or the next interval.
    if(result.route&&!result.route.locationLabel){const revision=routeEdits.current.get(result.id)||0;void locateRoute(result.route).then(async route=>{
@@ -92,18 +113,19 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
  const updateSavedWorkout=async(date:string,workout:GpsWorkout)=>{
   if(savingRef.current||clock.current!==null||watch.current!==null)return false;
   savingRef.current=true;setSaving(true);
-  try{const updated=(await saveWorkout(date,workout,'edit'))||workout;if(savedRef.current?.id===workout.id){setSaved(updated);savedRef.current=updated;}setNotice('Recording updated.');return true;}
+  try{const updated=(await saveWorkout(date,workout,'edit'))||workout;if(savedRef.current?.id===workout.id){setSaved(updated);savedRef.current=updated;}if(readGpsRecovery()?.workout.id===workout.id)try{writeGpsRecovery(date,updated);}catch{}setNotice('Recording updated.');return true;}
   catch{setNotice('Could not save changes. Your recording is unchanged. Try again.');return false;}
   finally{savingRef.current=false;setSaving(false);}
  };
  const deleteSavedWorkout=async(date:string,workout:GpsWorkout)=>{
   if(savingRef.current||clock.current!==null||watch.current!==null)return false;
   savingRef.current=true;setSaving(true);
-  try{await saveWorkout(date,workout,'delete');routeEdits.current.set(workout.id,(routeEdits.current.get(workout.id)||0)+1);if(savedRef.current?.id===workout.id){setSaved(null);savedRef.current=null;setSavedDate(null);}setNotice('Recording deleted.');return true;}
-  catch{setNotice('Could not delete recording. Try again.');return false;}
+  const receipt=readGpsRecovery();
+  try{clearGpsRecovery(workout.id);await saveWorkout(date,workout,'delete');routeEdits.current.set(workout.id,(routeEdits.current.get(workout.id)||0)+1);if(savedRef.current?.id===workout.id){setSaved(null);savedRef.current=null;setSavedDate(null);}setNotice('Recording deleted.');return true;}
+  catch{if(receipt?.workout.id===workout.id)try{writeGpsRecovery(receipt.date,receipt.workout);}catch{}setNotice('Could not delete recording. Try again.');return false;}
   finally{savingRef.current=false;setSaving(false);}
  };
- return {autoPaused,autoPauseEnabled,setAutoPauseEnabled,changeActivity,updateSavedWorkout,deleteSavedWorkout,setRouteLabel,updateSavedLabel,draft,saved,savedDate,running,pending,saving,notice,speed,held,unit,setUnit,prepare,start,pause:()=>{stop();setNotice('Timer paused. Tap Resume when ready.');},finish,discard:()=>{stop();persist(null);setSaved(null);setNotice("Unsaved GPS tracking discarded. Saved workouts are unchanged.");}};
+ return {autoPaused,autoPauseEnabled,setAutoPauseEnabled,changeActivity,updateSavedWorkout,deleteSavedWorkout,setRouteLabel,updateSavedLabel,draft,saved,savedDate,running,pending,saving,notice,speed,held,unit,setUnit,prepare,start,pause:()=>{stop();setNotice('Timer paused. Tap Resume when ready.');},finish,discard:()=>{stop();const id=ref.current?.recordingId;if(id)try{clearGpsRecovery(id);}catch{setNotice('Could not discard tracking. Your totals are kept.');return;}persist(null);setSaved(null);setNotice("Unsaved GPS tracking discarded. Saved workouts are unchanged.");}};
 }
 function TrackerIcon({name}:{name:'play'|'pause'|'stop'|'edit'|'plus'|'trash'}) {
  return <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{name==='play'?<path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none"/>:name==='pause'?<><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/></>:name==='stop'?<rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/>:name==='trash'?<><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></>:name==='plus'?<path d="M12 5v14M5 12h14"/>:<><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14Z"/></>}</svg>;
