@@ -229,7 +229,7 @@ async function prepareExerciseReference(file: File) {
 
 const APP_VERSION = "2026.10.27 0859";
 const RECENT_RELEASES = [
-  { version: APP_VERSION, category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Tap Lap for each split, then Stop & save once; the saved workout keeps total GPS distance, time, pace and every lap split together."] },
+  { version: APP_VERSION, category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
   { version: "2026.10.25 1420", category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me."] },
   { version: "2026.10.25 0013", category: "Major fix", changes: ["Previously prepared trackers start on the selected workout day. If an older recording saves to another date, its time and distance stay visible with a View saved workout link instead of zero totals."] },

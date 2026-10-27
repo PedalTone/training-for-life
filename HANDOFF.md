@@ -3,11 +3,12 @@
 ## Current change — GPS Track laps
 
 Release candidate **2026.10.27 0859** adds optional Track laps mode inside the
-existing GPS tracker. The user enables it before Start, taps Lap for each split,
-and taps Stop & save once. Splits use the same GPS-measured distance and pace as
-the ordinary tracker; no fixed 400-meter assumption is used. One saved workout
-retains total time/distance/pace plus lap number, split time, split distance and
-split pace data. Ordinary endurance mode remains unchanged.
+existing GPS tracker. The user enables it before Start; Start begins a repeat,
+Pause saves that repeat and starts recovery, Resume begins the next repeat, and
+Stop & save saves the final repeat. Splits use the same GPS-measured distance and
+pace as the ordinary tracker; no fixed 400-meter assumption is used. One saved
+workout retains total time/distance/pace plus repeat number, split time, split
+distance and split pace data. Ordinary endurance mode remains unchanged.
 
 All npm tests (including 228 regressions), GPS tests and Pages build pass; diff
 check passes. The code is ready for the external iPhone verification of Track
