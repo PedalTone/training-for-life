@@ -1951,7 +1951,8 @@ label.video-completion { cursor:pointer; }
 .today-tabs-page .gps-fullscreen .gps-metrics dd { font-size:26px; margin:4px 0; }
 .gps-fullscreen .gps-inline-pace { display:block; }
 .gps-fullscreen .gps-metrics dd small { font-size:14px; }
-.gps-fullscreen .gps-actions { margin:4px 0; }
+.gps-fullscreen .gps-actions { margin:4px 0; position:sticky; bottom:0; z-index:5; margin:8px -12px 0; padding:8px 12px max(8px,env(safe-area-inset-bottom)); background:#fffaf2; border-top:1px solid #d9d1c5; box-shadow:0 -6px 16px rgba(32,52,73,.08); }
+.gps-fullscreen .gps-actions .gps-stop { min-height:52px; font-weight:800; }
 .gps-fullscreen .gps-body > p { margin:8px 0; font-size:16px; }
 .gps-map-waiting { min-height:160px; display:grid; place-items:center; padding:16px; background:#f3ecdf; border-radius:12px; font-size:16px; }
 
