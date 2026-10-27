@@ -137,6 +137,9 @@ pauses following, Follow me recenters at street zoom, and Fit route shows the ro
 If iOS reports a temporary GPS error after returning from Camera or Photos, the
 tracker preserves the current draft and offers Resume timer again instead of
 leaving a failed watch in a waiting state.
+Track laps is optional: enable it before starting, tap Lap at each GPS-measured
+split, and stop once at the end. The saved workout retains the total and its lap
+times, distances and paces together; it does not assume a fixed 400-meter length.
 
 ## iPhone GPS workouts
 

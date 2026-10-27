@@ -166,3 +166,5 @@ New public release — 2026.10.11 1706: Face Pulls and Dead Hang remain display-
 
 New public release — 2026.10.11 1815: Featured-day Plan with a seven-day selector and overview; Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball options with shared Home/Today/Plan artwork; Speed shows track running.
 New public release — 2026.10.25 1515: Recover cleanly from transient GPS errors after returning from Camera or Photos; keep the stopped totals and expose a reliable Resume timer retry.
+New public release — 2026.10.27 0859: Add optional GPS Track laps mode so one continuous workout records each Lap split while preserving total distance, time and pace.
+

@@ -1,5 +1,19 @@
 # Training for Life — development handoff
 
+## Current change — GPS Track laps
+
+Release candidate **2026.10.27 0859** adds optional Track laps mode inside the
+existing GPS tracker. The user enables it before Start, taps Lap for each split,
+and taps Stop & save once. Splits use the same GPS-measured distance and pace as
+the ordinary tracker; no fixed 400-meter assumption is used. One saved workout
+retains total time/distance/pace plus lap number, split time, split distance and
+split pace data. Ordinary endurance mode remains unchanged.
+
+All npm tests (including 228 regressions), GPS tests and Pages build pass; diff
+check passes. The code is ready for the external iPhone verification of Track
+laps, pause/resume, reload/recovery and backup display. Publication pending.
+
+
 Updated October 25, 2026. Read README.md, VERSIONING.md and AGENTS.md first.
 
 New-chat starting point: [Development starting 20 Oct 2026](HANDOFF-2026-10-20.md).
