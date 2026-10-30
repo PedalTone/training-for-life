@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.10.27 0859";
+const APP_VERSION = "2026.10.29 2235";
 const RECENT_RELEASES = [
+  { version: APP_VERSION, category: "Major fix", changes: ["Full-screen GPS tracking requests portrait orientation and gives clear portrait guidance when the device is held sideways. Full-screen action buttons also have larger touch targets."] },
   { version: APP_VERSION, category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
   { version: "2026.10.25 1420", category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
   { version: "2026.10.22 1457", category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
   { version: "2026.10.22 1451", category: "Minor fix", changes: ["Today’s Log starts with perceived effort: Easy, Medium or Hard. Manual duration, distance and additional metric fields are removed; existing records and GPS tracking stay intact."] },
-  { version: "2026.10.22 1448", category: "Minor fix", changes: ["Selected add-ons move to the top immediately again, with the improved checkbox labels and touch targets retained."] },
   { version: "2026.10.22 1433", category: "Major fix", changes: ["Add-on rows stay steady while you choose exercises, with larger checkbox targets and explicit labels. Saved selections appear first when you reopen Today."] },
 ];
 const withStore=withSessionStore;

@@ -168,3 +168,5 @@ New public release — 2026.10.11 1815: Featured-day Plan with a seven-day selec
 New public release — 2026.10.25 1515: Recover cleanly from transient GPS errors after returning from Camera or Photos; keep the stopped totals and expose a reliable Resume timer retry.
 New public release — 2026.10.27 0859: Add optional GPS Track laps mode so one continuous workout records each Lap split while preserving total distance, time and pace.
 
+New public release — 2026.10.29 2235: Lock full-screen GPS tracking to portrait where supported, show portrait guidance otherwise, and enlarge full-screen tracker touch targets.
+
