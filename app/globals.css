@@ -1695,9 +1695,9 @@ main { width: min(1080px, 100%); margin: 0 auto; }
   .approved-splash .home-today { padding-block: 16px; }
   .approved-splash .home-today-body { margin-top: 10px; }
   .approved-splash .home-today-footer { margin-top: 10px; padding-top: 10px; }
-  .approved-splash .home-destinations { gap: 8px; }
-  .approved-splash .home-destinations button { padding-block: 8px; }
-  .approved-splash .home-nav-art { height: 48px; }
+  .approved-splash .home-destinations { gap: 14px; }
+  .approved-splash .home-destinations button { padding-block: 14px; }
+  .approved-splash .home-nav-art { height: 56px; }
   .approved-splash .home-weather-settings { margin-top: 10px; }
 }
 
