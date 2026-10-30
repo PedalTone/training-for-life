@@ -1956,6 +1956,9 @@ label.video-completion { cursor:pointer; }
 .gps-fullscreen .gps-actions .gps-stop { min-height:60px; min-width:160px; font-weight:800; }
 .gps-fullscreen .gps-body > p { margin:8px 0; font-size:16px; }
 .gps-map-waiting { min-height:160px; display:grid; place-items:center; padding:16px; background:#f3ecdf; border-radius:12px; font-size:16px; }
+@media (orientation: landscape) {
+  .gps-fullscreen::before { content:'Turn your phone upright'; position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:24px; background:#fffaf2; color:#203449; font-size:22px; font-weight:800; text-align:center; }
+}
 
 .gps-weather { display:grid; grid-template-columns:1fr 1fr; gap:2px 16px; padding:0 4px 8px; color:#203449; }
 .gps-weather > div { display:flex; align-items:baseline; justify-content:space-between; gap:6px; }
