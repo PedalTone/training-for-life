@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.01 1406";
+const APP_VERSION = "2026.11.01 1410";
 const RECENT_RELEASES = [
+  { version: "2026.11.01 1410", category: "Major fix", changes: ["Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave the workout looking unfinished in History."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight."] },
   { version: APP_VERSION, category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
@@ -252,7 +253,9 @@ const getSession = async (id: string) => {
   const indexedTime = Date.parse(saved.updatedAt || "") || 0;
   const fallbackTime = Date.parse(fallback.updatedAt || "") || 0;
   const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || []), ...(item.gpsWorkouts || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
-  return fallbackTime > indexedTime || (fallbackTime === indexedTime && richness(fallback) > richness(saved)) ? fallback : saved;
+  const savedComplete = saved.status === "completed" || Boolean(saved.completedAt);
+  const fallbackComplete = fallback.status === "completed" || Boolean(fallback.completedAt);
+  return (fallbackComplete && !savedComplete) || (!savedComplete && !fallbackComplete && (fallbackTime > indexedTime || (fallbackTime === indexedTime && richness(fallback) > richness(saved)))) ? fallback : saved;
 };
 const getAllSessions = () => withStore<Session[]>("readwrite", (store) => {
   const cursor = store.openCursor();
@@ -289,7 +292,9 @@ async function loadAllSessions() {
     if (!existing) { merged.set(item.id, item); continue; }
     const itemTime = Date.parse(item.updatedAt || "") || 0;
     const existingTime = Date.parse(existing.updatedAt || "") || 0;
-    if (itemTime > existingTime || (itemTime === existingTime && richness(item) > richness(existing))) merged.set(item.id, item);
+    const existingComplete = existing.status === "completed" || Boolean(existing.completedAt);
+    const itemComplete = item.status === "completed" || Boolean(item.completedAt);
+    if ((itemComplete && !existingComplete) || (!existingComplete && !itemComplete && (itemTime > existingTime || (itemTime === existingTime && richness(item) > richness(existing))))) merged.set(item.id, item);
   }
   return [...merged.values()].sort((a, b) => b.date.localeCompare(a.date));
 }
