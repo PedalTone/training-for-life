@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.01 1400";
+const APP_VERSION = "2026.11.01 1406";
 const RECENT_RELEASES = [
+  { version: APP_VERSION, category: "Major fix", changes: ["Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave the workout looking unfinished in History."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight."] },
   { version: APP_VERSION, category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Full-screen GPS tracking requests portrait orientation and gives clear portrait guidance when the device is held sideways. Full-screen action buttons also have larger touch targets."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.25 0013", category: "Major fix", changes: ["Previously prepared trackers start on the selected workout day. If an older recording saves to another date, its time and distance stay visible with a View saved workout link instead of zero totals."] },
   { version: "2026.10.24 2356", category: "Major fix", changes: ["Protect stopped GPS recordings from older background saves. Keep a second saved copy and recover the last stopped recording for retry after reopening the app."] },
   { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
-  { version: "2026.10.22 1457", category: "New feature", changes: ["Record being sick or unwell separately from an injury in Check-ins. Mark a sick/rest day, keep an optional note, and see an illness flag in History without counting rest as a completed workout."] },
 ];
 const withStore=withSessionStore;
 
@@ -741,15 +741,22 @@ export default function Home() {
     // type as Recovery while using the same completion state everywhere.
     const current = finalizedDay(sessionRef.current,now);
     const allSessions = [...history.filter((item) => item.id !== current.id), current].sort((a, b) => b.date.localeCompare(a.date));
-    try {
-      await saveBackup(allSessions, libraryExercises, futureVideos, insightReports, fitnessGoals, scheduleKeys, customWorkouts, scheduleHistory);
-      try { await saveSession(current); } catch { localStorage.setItem(`t4l:${activeKey}`, JSON.stringify(current)); }
+    let daySaved = false;
+    try { await saveSession(current); daySaved = true; } catch { try { localStorage.setItem(`t4l:${current.date}`, JSON.stringify(current)); daySaved = true; } catch {} }
+    if (daySaved) {
       sessionRef.current=current;setSession(current); setHistory(allSessions);
       editingDateRef.current=null;setEditingDate(null);
-      setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete + saved");
-      setFinishBackupState("✓ Day recorded + backup saved");
-    } catch (error) { setFinishBackupState(error instanceof DOMException && error.name === "AbortError" ? "" : "Try Finish + Backup Again"); }
-    finally { finishingRef.current=false;setFinishing(false); }
+      setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete");
+      try {
+        await saveBackup(allSessions, libraryExercises, futureVideos, insightReports, fitnessGoals, scheduleKeys, customWorkouts, scheduleHistory);
+        setFinishBackupState("✓ Day recorded + backup saved");
+      } catch (error) {
+        setFinishBackupState(error instanceof DOMException && error.name === "AbortError" ? "✓ Day recorded · backup skipped" : "✓ Day recorded · backup needs retry");
+      }
+    } else {
+      setFinishBackupState("Could not save this day. Try again.");
+    }
+    finishingRef.current=false;setFinishing(false);
   };
   const attachVideo = async () => {
     if(!canEditSession())return;

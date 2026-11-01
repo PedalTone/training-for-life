@@ -174,3 +174,5 @@ New public release — 2026.10.29 2239: Increase the height and vertical spacing
 
 New public release — 2026.11.01 1400: Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight.
 
+New public release — 2026.11.01 1406: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
+
