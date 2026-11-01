@@ -170,3 +170,7 @@ New public release — 2026.10.27 0859: Add optional GPS Track laps mode so one 
 
 New public release — 2026.10.29 2235: Lock full-screen GPS tracking to portrait where supported, show portrait guidance otherwise, and enlarge full-screen tracker touch targets.
 
+New public release — 2026.10.29 2239: Increase the height and vertical spacing of home navigation buttons on tall iPhone screens.
+
+New public release — 2026.11.01 1400: Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight.
+
