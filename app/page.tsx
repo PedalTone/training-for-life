@@ -227,20 +227,17 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.01 2008";
+const APP_VERSION = "2026.11.02 0829";
 const RECENT_RELEASES = [
-  { version: "2026.11.01 2008", category: "Release", changes: ["Current release timestamp."] },
+  { version: "2026.11.02 0829", category: "Major fix", changes: ["Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day."] },
+  { version: "2026.11.01 2008", category: "Major fix", changes: ["Current release timestamp."] },
   { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
   { version: "2026.11.01 1410", category: "Major fix", changes: ["Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout."] },
-  { version: APP_VERSION, category: "Major fix", changes: ["Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave the workout looking unfinished in History."] },
-  { version: APP_VERSION, category: "Major fix", changes: ["Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight."] },
-  { version: APP_VERSION, category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
-  { version: APP_VERSION, category: "Major fix", changes: ["Full-screen GPS tracking requests portrait orientation and gives clear portrait guidance when the device is held sideways. Full-screen action buttons also have larger touch targets."] },
-  { version: APP_VERSION, category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
-  { version: APP_VERSION, category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
+  { version: "2026.10.29 2239", category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
+  { version: "2026.10.29 2235", category: "Major fix", changes: ["Full-screen GPS tracking requests portrait orientation and gives clear portrait guidance when the device is held sideways. Full-screen action buttons also have larger touch targets."] },
+  { version: "2026.10.27 0859", category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
+  { version: "2026.10.25 0013", category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
   { version: "2026.10.25 1420", category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me."] },
-  { version: "2026.10.25 0013", category: "Major fix", changes: ["Previously prepared trackers start on the selected workout day. If an older recording saves to another date, its time and distance stay visible with a View saved workout link instead of zero totals."] },
-  { version: "2026.10.24 2356", category: "Major fix", changes: ["Protect stopped GPS recordings from older background saves. Keep a second saved copy and recover the last stopped recording for retry after reopening the app."] },
   { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
 ];
 const withStore=withSessionStore;
@@ -743,7 +740,19 @@ export default function Home() {
       document.removeEventListener("touchend", end); document.removeEventListener("touchcancel", cancel);
     };
   }, [enteredApp, tab, journalDate, showMobilityPicker]);
-  const openJournal = (date: Date) => { if(finishingRef.current)return; setJournalDate(dateKey(date)); scrollToTop(); };
+  const openJournal = (date: Date) => {
+    if (finishingRef.current) return;
+    const key = dateKey(date);
+    setJournalDate(key);
+    // Refresh the selected day before rendering its journal so History cannot
+    // remain on a stale Safari snapshot while the editor reads a newer record.
+    loadAllSessions().then(items => {
+      const selected = items.find(item => item.id === key);
+      if (!selected) return;
+      setHistory(current => [selected, ...current.filter(item => item.id !== key)].sort((a, b) => b.date.localeCompare(a.date)));
+    }).catch(() => { /* Keep the visible history if storage refresh is unavailable. */ });
+    scrollToTop();
+  };
   const openPlanDate = (date: Date) => { if (dateKey(date) <= dateKey(today)) openJournal(date); else openDate(date); };
   const openDate = (date: Date) => { if(finishingRef.current)return;setJournalDate(null); setActiveDate(date); setTab("today"); scrollToTop(); };
   const beginWorkoutEdit=(date:Date)=>{
