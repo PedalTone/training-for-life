@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.01 1414";
+const APP_VERSION = "2026.11.01 2008";
 const RECENT_RELEASES = [
+  { version: "2026.11.01 2008", category: "Release", changes: ["Current release timestamp."] },
   { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
   { version: "2026.11.01 1410", category: "Major fix", changes: ["Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave the workout looking unfinished in History."] },
