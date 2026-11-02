@@ -1,4 +1,6 @@
-New public release — 2026.11.01 1410: Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout.
+New public release — 2026.11.01 1414: Synchronize History with the completed session loaded by the editor when an older day is reopened.
+
+New public release — 2026.11.01 1414: Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout.
 
 New public release — 2026.10.25 1420: Full-screen tracker temperature/humidity, two-finger map zoom and adjustable live Follow me centering.
 
@@ -176,5 +178,5 @@ New public release — 2026.10.29 2239: Increase the height and vertical spacing
 
 New public release — 2026.11.01 1400: Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight.
 
-New public release — 2026.11.01 1410: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
+New public release — 2026.11.01 1414: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
 

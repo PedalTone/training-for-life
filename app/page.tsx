@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.01 1410";
+const APP_VERSION = "2026.11.01 1414";
 const RECENT_RELEASES = [
+  { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
   { version: "2026.11.01 1410", category: "Major fix", changes: ["Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave the workout looking unfinished in History."] },
   { version: APP_VERSION, category: "Major fix", changes: ["Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight."] },
@@ -548,6 +549,20 @@ export default function Home() {
     }, 400);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [session, loaded, activeKey, editingDate]);
+  // Keep calendar/history state synchronized with the session currently loaded in the editor.
+  // This matters when opening an older day: the editor can resolve a completed record after
+  // History has already rendered an older in-memory snapshot of that same date.
+  useEffect(() => {
+    if (!loaded || !session?.date) return;
+    setHistory(items => {
+      const existing = items.find(item => item.id === session.id);
+      if (existing === session) return items;
+      const existingComplete = Boolean(existing && (existing.status === "completed" || existing.completedAt));
+      const sessionComplete = session.status === "completed" || Boolean(session.completedAt);
+      if (existing && existingComplete && !sessionComplete) return items;
+      return [session, ...items.filter(item => item.id !== session.id)].sort((a, b) => b.date.localeCompare(a.date));
+    });
+  }, [loaded, session.id, session.date, session.status, session.completedAt, session.updatedAt]);
   // Refresh the shared history for dated views, including Today’s repeat setup. Keeping the
   // session object out of this dependency list avoids an older IndexedDB
   // snapshot racing a just-finished Today save and briefly masking completion.
