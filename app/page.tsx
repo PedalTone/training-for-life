@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.02 1912";
+const APP_VERSION = "2026.11.02 1950";
 const RECENT_RELEASES = [
+  { version: "2026.11.02 1950", category: "Major fix", changes: ["Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save."] },
   { version: "2026.11.02 1912", category: "New feature", changes: ["Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability."] },
   { version: "2026.11.02 0829", category: "Major fix", changes: ["Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day."] },
   { version: "2026.11.01 2008", category: "Major fix", changes: ["Current release timestamp."] },
@@ -237,7 +238,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.29 2239", category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
   { version: "2026.10.29 2235", category: "Major fix", changes: ["Full-screen GPS tracking requests portrait orientation and gives clear portrait guidance when the device is held sideways. Full-screen action buttons also have larger touch targets."] },
   { version: "2026.10.27 0859", category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
-  { version: "2026.10.25 0013", category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
   { version: "2026.10.25 1420", category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me."] },
 ];
 const withStore=withSessionStore;
