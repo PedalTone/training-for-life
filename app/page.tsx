@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.02 2001";
+const APP_VERSION = "2026.11.02 2006";
 const RECENT_RELEASES = [
+  { version: "2026.11.02 2006", category: "Major fix", changes: ["Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions."] },
   { version: "2026.11.02 2001", category: "Major fix", changes: ["Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering."] },
   { version: "2026.11.02 1950", category: "Major fix", changes: ["Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save."] },
   { version: "2026.11.02 1912", category: "New feature", changes: ["Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.01 1410", category: "Major fix", changes: ["Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout."] },
   { version: "2026.10.29 2239", category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
   { version: "2026.10.29 2235", category: "Major fix", changes: ["Full-screen GPS tracking requests portrait orientation and gives clear portrait guidance when the device is held sideways. Full-screen action buttons also have larger touch targets."] },
-  { version: "2026.10.27 0859", category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
 ];
 const withStore=withSessionStore;
 
