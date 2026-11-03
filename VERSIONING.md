@@ -1,12 +1,14 @@
-New public release — 2026.11.02 0829: Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day.
+New public release — 2026.11.02 1912: Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability.
+
+New public release — 2026.11.02 1912: Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day.
 
 Historical release — 2026.11.01 1406: Completion is saved before optional backup.
 
-New public release — 2026.11.02 0829: Current release timestamp.
+New public release — 2026.11.02 1912: Current release timestamp.
 
-New public release — 2026.11.02 0829: Synchronize History with the completed session loaded by the editor when an older day is reopened.
+New public release — 2026.11.02 1912: Synchronize History with the completed session loaded by the editor when an older day is reopened.
 
-New public release — 2026.11.02 0829: Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout.
+New public release — 2026.11.02 1912: Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout.
 
 New public release — 2026.10.25 1420: Full-screen tracker temperature/humidity, two-finger map zoom and adjustable live Follow me centering.
 
@@ -184,5 +186,5 @@ New public release — 2026.10.29 2239: Increase the height and vertical spacing
 
 New public release — 2026.11.01 1400: Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight.
 
-New public release — 2026.11.02 0829: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
+New public release — 2026.11.02 1912: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
 

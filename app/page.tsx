@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.02 0829";
+const APP_VERSION = "2026.11.02 1912";
 const RECENT_RELEASES = [
+  { version: "2026.11.02 1912", category: "New feature", changes: ["Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability."] },
   { version: "2026.11.02 0829", category: "Major fix", changes: ["Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day."] },
   { version: "2026.11.01 2008", category: "Major fix", changes: ["Current release timestamp."] },
   { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.10.27 0859", category: "New feature", changes: ["Choose Track laps before starting a GPS workout. Start each repeat, pause for recovery, resume the next repeat, and Stop & save the final one; the saved workout keeps total GPS distance, time, pace and every repeat together."] },
   { version: "2026.10.25 0013", category: "Major fix", changes: ["Returning from Camera or Photos can cause a temporary GPS error. The tracker now keeps your totals, clears the failed watch, and gives you a reliable Resume timer retry."] },
   { version: "2026.10.25 1420", category: "New feature", changes: ["See temperature and humidity above the full-screen tracker map. Pinch to zoom, use + and −, and keep your position centered with Follow me."] },
-  { version: "2026.10.23 0751", category: "Major fix", changes: ["Stop & save recovers from stalled device storage and retains unsaved GPS totals for retry. Full screen shows just the tracker map, metrics and controls without restarting your recording."] },
 ];
 const withStore=withSessionStore;
 

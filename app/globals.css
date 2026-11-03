@@ -1979,3 +1979,18 @@ label.video-completion { cursor:pointer; }
 .gps-lap-mode small, .gps-lap-summary { color:#596875; font-size:12px; }
 .today-tabs-page .gps-actions .gps-lap { background:#145dcc; border-color:#145dcc; color:#fffaf2; display:grid; gap:1px; }
 .gps-lap small { font-size:12px; font-weight:500; }
+.gps-lap-live { display:flex; flex-direction:column; gap:12px; padding:8px 0 4px; }
+.gps-lap-heading { display:flex; justify-content:space-between; align-items:center; color:#203449; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:14px; }
+.gps-lap-heading b { color:#ad4e20; font-size:13px; }
+.gps-lap-pace, .gps-lap-secondary section, .gps-lap-average { background:#fffaf2; border:1px solid #e0d5c5; border-radius:18px; padding:14px 16px; text-align:center; }
+.gps-lap-pace { padding:22px 12px; }
+.gps-lap-live dt { color:#596875; font:700 14px var(--sans); text-transform:uppercase; letter-spacing:.08em; }
+.gps-lap-pace dd { color:#203449; font:800 clamp(64px,18vw,112px)/.95 var(--sans); letter-spacing:-.06em; margin:12px 0 0; font-variant-numeric:tabular-nums; }
+.gps-lap-pace dd small { display:block; font-size:20px; letter-spacing:0; margin-top:8px; }
+.gps-lap-secondary { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.gps-lap-secondary dd, .gps-lap-average dd { color:#203449; font:800 30px/1.1 var(--sans); margin:8px 0 0; font-variant-numeric:tabular-nums; }
+.gps-lap-average dd small { font-size:16px; }
+.gps-lap-map-hidden { display:none !important; }
+.gps-fullscreen .gps-lap-live { min-height:calc(100dvh - 118px); justify-content:space-evenly; }
+.gps-fullscreen .gps-lap-pace { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.gps-fullscreen .gps-lap-pace dd { font-size:clamp(76px,22vw,132px); }
