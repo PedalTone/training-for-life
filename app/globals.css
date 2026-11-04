@@ -2000,3 +2000,21 @@ label.video-completion { cursor:pointer; }
 .gps-lap-results li { display:grid; grid-template-columns:1.2fr 1fr 1fr 1.2fr; gap:6px; color:#203449; font-size:14px; padding:7px 0; border-top:1px solid #e0d5c5; }
 .gps-lap-results li span { text-align:right; }
 .gps-lap-overall { display:block; color:#596875; font-size:13px; margin-top:6px; }
+/* Touch and full-screen interaction correction: visual press effects must not move hit targets. */
+button, summary { touch-action: manipulation; }
+.app-shell button:not(:disabled):active { transform: none !important; scale: none !important; }
+.today-tabs-page .gps-card.gps-fullscreen:has(.gps-lap-live) { overflow: hidden; }
+.today-tabs-page .gps-fullscreen:has(.gps-lap-live) > .gps-body { height:100%; min-height:0; overflow:hidden; }
+.gps-fullscreen:has(.gps-lap-live) .gps-view-toggle { flex:0 0 auto; padding-block:2px 4px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-view-toggle strong { font-size:15px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-view-toggle button { min-height:40px; padding:7px 10px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-live { min-height:0; flex:1 1 auto; justify-content:space-between; gap:6px; overflow:hidden; padding:2px 0 6px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-pace { flex:1 1 auto; min-height:0; padding:10px 8px; justify-content:center; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-pace dd { font-size:clamp(62px,18vw,108px); margin-top:5px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-pace dd small { font-size:18px; margin-top:3px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-secondary section { padding:8px 10px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-secondary dd { font-size:24px; margin-top:3px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-average { padding:8px 10px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-average dd { font-size:25px; margin-top:3px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-actions { flex:0 0 auto; margin-top:0; }
+.gps-fullscreen:has(.gps-lap-live) .gps-actions button { min-height:64px; }
