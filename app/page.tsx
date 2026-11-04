@@ -227,8 +227,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.03 2219";
+const APP_VERSION = "2026.11.04 0803";
 const RECENT_RELEASES = [
+  { version: "2026.11.04 0803", category: "Major fix", changes: ["Close the full-screen GPS layer after Stop & Save so Today tabs, including Log, remain tappable."] },
   { version: "2026.11.03 2219", category: "Major fix", changes: ["Lock lap full screen to the iPhone viewport with no scrolling and align visual button states with their actual touch targets."] },
   { version: "2026.11.02 2006", category: "Major fix", changes: ["Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions."] },
   { version: "2026.11.02 2001", category: "Major fix", changes: ["Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering."] },
@@ -238,7 +239,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.01 2008", category: "Major fix", changes: ["Current release timestamp."] },
   { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
   { version: "2026.11.01 1410", category: "Major fix", changes: ["Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout."] },
-  { version: "2026.10.29 2239", category: "Minor fix", changes: ["Give the iPhone home navigation buttons more height and vertical spacing on tall screens so Plan, History, Progress and Settings are easier to scan and tap."] },
 ];
 const withStore=withSessionStore;
 

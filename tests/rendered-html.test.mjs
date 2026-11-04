@@ -62,7 +62,7 @@ test("What’s new groups exactly ten categorized dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 10);
-  assert.match(releaseBlock, /2026\.10\.29 2239/);
+  assert.match(releaseBlock, /2026\.11\.02 2006/);
   assert.equal((releaseBlock.match(/category: "(?:(?:Major|Minor) fix|New feature)"/g) ?? []).length, 10);
   assert.doesNotMatch(releaseBlock, /2026\.10\.11 1324/);
   assert.doesNotMatch(releaseBlock, /2026\.10\.10 2045/);

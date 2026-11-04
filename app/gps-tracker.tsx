@@ -111,7 +111,7 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
   try{
    const d=ref.current!;const finalLaps=d.lapMode&&d.meters>lapStart.current.meters?[...(d.laps||[]),{number:(d.laps||[]).length+1,meters:d.meters-lapStart.current.meters,seconds:d.seconds-lapStart.current.seconds,startedAt:lapStart.current.at||d.startedAt,endedAt:new Date().toISOString()}]:d.laps;const result:GpsWorkout=pendingFinish.current||{id:d.recordingId||crypto.randomUUID(),activity:d.activity,startedAt:d.startedAt,endedAt:new Date().toISOString(),seconds:d.seconds,meters:d.meters,maxSpeed:d.maxSpeed,gaps:d.gaps,route:d.route,laps:finalLaps};pendingFinish.current=result;persist({...d,laps:finalLaps,recordingId:result.id});
    try{writeGpsRecovery(d.date,result);}catch{/* The paused draft remains until the session write succeeds. */}
-   await saveWorkout(d.date,result);setSaved(result);savedRef.current=result;setSavedDate(d.date);pendingFinish.current=null;persist(null);setNotice('Workout saved. Record another workout when you are ready.');
+   await saveWorkout(d.date,result);setSaved(result);savedRef.current=result;setSavedDate(d.date);pendingFinish.current=null;persist(null);setFullscreen(false);setNotice('Workout saved. Record another workout when you are ready.');
    // Place lookup must never delay the stop button or the next interval.
    if(result.route&&!result.route.locationLabel){const revision=routeEdits.current.get(result.id)||0;void locateRoute(result.route).then(async route=>{
     if(!route.locationLabel||(routeEdits.current.get(result.id)||0)!==revision)return;
