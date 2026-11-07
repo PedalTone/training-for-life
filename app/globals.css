@@ -2029,3 +2029,15 @@ button, summary { touch-action: manipulation; }
 .wind-dot.tailwind { background:#2f7d4b; box-shadow:0 0 0 3px #dcefe2; }
 .wind-dot.headwind { background:#b53b31; box-shadow:0 0 0 3px #f5dcd8; }
 .wind-dot.crosswind { background:#b88325; box-shadow:0 0 0 3px #f4e8c9; }
+.gps-weather { display:flex; align-items:center; gap:0; padding:7px 12px; border:1px solid rgba(112,132,170,.35); border-radius:18px; background:linear-gradient(110deg,#1d2b48,#273653); color:#fffaf2; overflow:hidden; }
+.gps-weather-cell { min-width:0; min-height:36px; padding:0 14px; display:flex; align-items:center; gap:8px; border-right:1px solid rgba(255,250,242,.58); white-space:nowrap; }
+.gps-weather-cell:first-child { padding-left:2px; }
+.gps-temperature span { font-size:25px; line-height:1; }
+.gps-weather-cell span:not(.gps-wind-glyph) { color:#fffaf2; font-size:14px; }
+.gps-weather-cell strong { font-size:17px; font-weight:800; }
+.gps-wind { position:relative; flex:1 1 auto; padding-right:24px; background:rgba(157,100,57,.42); border-radius:14px; border-right:0; margin-left:8px; }
+.gps-wind-glyph { color:#fffaf2; font-size:30px; line-height:1; transform:rotate(-12deg); }
+.gps-wind small { position:absolute; left:48px; bottom:0; color:#fffaf2; font-size:11px; opacity:.9; }
+.gps-wind .wind-dot { margin-left:auto; flex:0 0 11px; }
+.gps-weather-source { display:none; }
+@media(max-width:480px) { .gps-weather { padding-inline:8px; } .gps-weather-cell { padding-inline:8px; gap:5px; } .gps-temperature span { font-size:21px; } .gps-weather-cell strong { font-size:15px; } .gps-weather-cell span:not(.gps-wind-glyph) { font-size:12px; } .gps-wind { margin-left:5px; padding-right:8px; } .gps-wind small { left:38px; font-size:10px; } }
