@@ -21,10 +21,12 @@ export function TrackerWeather({position,unit}:{position:GpsPoint|null;unit:'mi'
   void refresh();const timer=window.setInterval(()=>void refresh(),900000);
   return()=>{stopped=true;request?.abort();window.clearInterval(timer);};
  },[hasPosition]);
+ const windSpeed=weather?.windSpeed===null||weather?.windSpeed===undefined?null:(unit==='mi'?weather.windSpeed*0.621371:weather.windSpeed); const windDirection=weather?.windDirection===null||weather?.windDirection===undefined?null:weather.windDirection; const heading=position?.heading; const relative=heading!==undefined&&heading!==null&&windDirection!==null?((windDirection-(heading+180)+540)%360)-180:null; const windState=relative===null?'':Math.abs(relative)<=60?'tailwind':Math.abs(relative)>=120?'headwind':'crosswind'; const windLabel=relative===null?'':windState==='tailwind'?'Tailwind':windState==='headwind'?'Headwind':'Crosswind';
  const temperature=weather?Math.round(unit==='mi'?weather.temperatureC*9/5+32:weather.temperatureC):null;
  return <div className="gps-weather" aria-label="Current weather">
   <div><span>Temperature</span><strong>{temperature===null?'—':`${temperature}°${unit==='mi'?'F':'C'}`}</strong></div>
   <div><span>Humidity</span><strong>{weather?`${Math.round(weather.humidity)}%`:'—'}</strong></div>
+  <div className="gps-wind"><span>Wind</span><strong>{windSpeed===null?'—':`${Math.round(windSpeed)} ${unit==='mi'?'mph':'km/h'}`} {windLabel&&<i className={`wind-dot ${windState}`} aria-label={windLabel}/>}</strong><small>{windDirection===null?'':`${Math.round(windDirection)}° · ${windLabel||'Waiting for heading'}`}</small></div>
   <small>{status||<><a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a> · {updated?.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</>}</small>
  </div>;
 }

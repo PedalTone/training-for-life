@@ -2021,3 +2021,11 @@ button, summary { touch-action: manipulation; }
 .history-day-icons { display:flex; align-items:center; justify-content:center; gap:2px; min-height:28px; }
 .history-day-icons-2 .history-day-icon { width:21px; height:26px; }
 .history-day-icons-2 .history-day-icon svg { width:21px; height:21px; }
+.gps-weather { grid-template-columns:1fr 1fr; }
+.gps-weather .gps-wind { grid-column:1/-1; display:grid; grid-template-columns:auto 1fr; gap:0 10px; align-items:baseline; }
+.gps-weather .gps-wind > strong { justify-self:end; }
+.gps-weather .gps-wind > small { grid-column:1/-1; color:#596875; font-size:12px; }
+.wind-dot { display:inline-block; width:10px; height:10px; margin-left:6px; border-radius:50%; vertical-align:middle; }
+.wind-dot.tailwind { background:#2f7d4b; box-shadow:0 0 0 3px #dcefe2; }
+.wind-dot.headwind { background:#b53b31; box-shadow:0 0 0 3px #f5dcd8; }
+.wind-dot.crosswind { background:#b88325; box-shadow:0 0 0 3px #f4e8c9; }

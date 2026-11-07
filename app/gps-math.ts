@@ -1,5 +1,5 @@
 import type { GpsRoute } from './gps-route';
-export type GpsPoint = {latitude:number;longitude:number;accuracy:number;timestamp:number;speed:number|null};
+export type GpsPoint = {latitude:number;longitude:number;accuracy:number;timestamp:number;speed:number|null;heading?:number};
 export type GpsLap = {number:number;meters:number;seconds:number;startedAt:string;endedAt:string};
 export const GPS_ACTIVITIES=['Run','Walk','Bike'] as const;
 export type GpsActivity=typeof GPS_ACTIVITIES[number];

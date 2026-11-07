@@ -237,8 +237,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.07 0838";
+const APP_VERSION = "2026.11.07 1043";
 const RECENT_RELEASES = [
+  { version: "2026.11.07 1043", category: "Major fix", changes: ["Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking."] },
   { version: "2026.11.07 0838", category: "New feature", changes: ["Choose a second major workout for the same day and show paired workout icons in History instead of treating the second workout as an add-on."] },
   { version: "2026.11.04 0803", category: "Major fix", changes: ["Close the full-screen GPS layer after Stop & Save so Today tabs, including Log, remain tappable."] },
   { version: "2026.11.03 2219", category: "Major fix", changes: ["Lock lap full screen to the iPhone viewport with no scrolling and align visual button states with their actual touch targets."] },
@@ -247,7 +248,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.02 1950", category: "Major fix", changes: ["Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save."] },
   { version: "2026.11.02 1912", category: "New feature", changes: ["Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability."] },
   { version: "2026.11.02 0829", category: "Major fix", changes: ["Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day."] },
-  { version: "2026.11.01 2008", category: "Major fix", changes: ["Current release timestamp."] },
   { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
 ];
 const withStore=withSessionStore;

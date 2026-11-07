@@ -57,7 +57,7 @@ export function useGpsTracker(onSave:(date:string,workout:GpsWorkout,change?:'ed
   pendingFinish.current=null;setRunning(true);setPending(true);setNotice('Timer started. Waiting for GPS; distance begins with a reliable fix.');last.current=null;signalTimestamp.current=undefined;
   try{watch.current=navigator.geolocation.watchPosition(position=>{
    if(token!==generation.current||!ref.current)return;
-   const point={latitude:position.coords.latitude,longitude:position.coords.longitude,accuracy:position.coords.accuracy,timestamp:position.timestamp,speed:position.coords.speed};
+   const point={latitude:position.coords.latitude,longitude:position.coords.longitude,accuracy:position.coords.accuracy,timestamp:position.timestamp,speed:position.coords.speed,heading:position.coords.heading};
    const step=gpsStep(last.current,point,ref.current.activity,signalTimestamp.current);
    if(!step.accepted){motion.current={...motion.current,lowSince:null,lastAt:null};resumeMotion.current=newGpsResumeState();setHeld(true);setNotice(motion.current.paused?'Auto-paused. Waiting for reliable GPS before resuming.':'GPS signal is weak. Timer continues; showing the last known pace or speed.');return;}
    setPosition(point);setPending(false);
