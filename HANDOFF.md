@@ -1,5 +1,34 @@
 # Training for Life — development handoff
 
+## Current release — Today buttons and saved Edit position (2026.11.07 1254)
+
+Reproduced Manage opening a disclosure below the usable phone viewport: primary
+field at y=889–935 on 440×956, behind the fixed footer, with no scrolling/focus.
+Manage/Open now share a handler that opens Workout and its disclosure, then
+scrolls/focuses the primary or secondary selector after render. Repeated taps,
+Log/Check-ins entry and Add second are supported. Saved days show View workout;
+viewing retains the lock. One Edit banner sits directly beneath the picture,
+before the summary; Manage/Add return after Edit. Summary actions are >=44px.
+
+Verification: npm test (2 design + 55 GPS/storage + 13 rendered checks), Pages
+build and diff check PASS. External Chrome 156 with isolated contexts and actual
+center touch events: scripts/check-today-actions.mjs PASS at 375×667, 393×852,
+440×956. Checks focus/visible controls, repeated/from-tab taps, second workout,
+save/Edit/re-save/reload/relock, notes/secondary selection in backup, cancellation
+of optional backup, and all navigation destinations. Inspected actual fresh,
+Manage and saved phone renders at /private/tmp/t4l-today-{375,393,440}-*.png.
+Designly composition/visual QA applied: clear top Edit, single saved banner,
+readable targets, visible focused selector, no horizontal overflow. Physical
+iPhone Safari/native keyboard/VoiceOver remain device checks.
+
+D01/D02 PASS release wiring and navigation/Today behavior; D06/D07/D08/D12 PASS
+adjacent navigation smoke and unchanged regression checks; D10 PASS retained
+notes/backup/edit locking. D03/D04/D05/D09/D11 N/A unchanged tracker/map/video/
+sharing internals. Duplicate review PASS: one shared navigation handler, one
+top Edit; Manage is the section entry, Open is each workout's contextual entry,
+secondary/Add target the second selector. No data schema/storage changes.
+Publication: candidate tested; GitHub Pages/live asset verification pending.
+
 ## Current change — GPS Track laps
 
 Release candidate **2026.10.27 0859** adds optional Track laps mode inside the

@@ -145,8 +145,12 @@ persistence succeeds. Disable duplicate submissions while saving and provide a
 retry without destroying input after failure. GPS saves serialize background writes, keep a second session copy when available, and retain a stopped-recording receipt for reload recovery until the saved ID is confirmed. Explicit deletion/discard must clear that receipt. Prepared trackers adopt the selected date when started; already recorded tracking keeps its original date, and an off-day save shows its totals and a dated navigation action rather than an empty tracker. Avoid rerender-driven focus loss,
 scroll jumps and layout changes during typing.
 
-Today has one saved/locked banner and Edit action above its internal tabs;
-do not duplicate saved status or Edit in the footer. The finished footer keeps
+Today has one saved/locked banner and Edit action directly beneath its workout
+picture, before the Today’s workouts summary and internal tabs. Manage and Open
+workout bring their destination controls into view and move focus; Add a second
+major workout targets that selector. Saved days show View workout and retain the
+lock until the top Edit is chosen; hide management/add actions while locked.
+Do not duplicate saved status or Edit in the footer. The finished footer keeps
 Share workout. Completed workouts stay locked until Edit is explicitly chosen; saving edits or
 reloading locks again. Viewing and sharing remain available. Journal Edit workout
 is prominent and directly above Share workout. The shared Today/journal Share

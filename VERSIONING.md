@@ -1,3 +1,5 @@
+New public release — 2026.11.07 1254: Bring Today Manage/Open workout controls into view with focus, and place saved-workout Edit directly beneath the picture.
+
 New public release — 2026.11.07 1208: Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging.
 
 New public release — 2026.11.07 1208: Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status.

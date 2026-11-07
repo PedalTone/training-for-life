@@ -237,8 +237,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.07 1208";
+const APP_VERSION = "2026.11.07 1254";
 const RECENT_RELEASES = [
+  { version: "2026.11.07 1254", category: "Major fix", changes: ["Make Today Manage and Open workout scroll to and focus the workout controls. Place saved-workout Edit directly beneath the picture, above Today’s workouts."] },
   { version: "2026.11.07 1208", category: "Major fix", changes: ["Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging."] },
   { version: "2026.11.07 1115", category: "Minor fix", changes: ["Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status."] },
   { version: "2026.11.07 1043", category: "Major fix", changes: ["Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking."] },
@@ -248,7 +249,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.02 2006", category: "Major fix", changes: ["Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions."] },
   { version: "2026.11.02 2001", category: "Major fix", changes: ["Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering."] },
   { version: "2026.11.02 1950", category: "Major fix", changes: ["Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save."] },
-  { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
 ];
 const withStore=withSessionStore;
 
@@ -924,6 +924,18 @@ export default function Home() {
     finally { setAddingPhotos(false); }
   };
   const togglePanel = (panel: "workout", open: boolean) => setOpenPanel(open ? panel : null);
+  const openWorkoutControls = (workout: "primary" | "secondary" = "primary") => {
+    if (!loaded || finishingRef.current) return;
+    setTodaySection("workout");
+    setOpenPanel("workout");
+    // Wait for the tab/disclosure to render before moving focus and scrolling.
+    // Opening an offscreen disclosure alone gives no visible feedback on iPhone.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const target = workoutReadOnly ? document.getElementById("today-workout-details") : document.querySelector<HTMLSelectElement>(workout === "secondary" ? ".day-workout-override label:nth-child(2) select" : ".day-workout-override select");
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    }));
+  };
 
   // Completion and body concerns are independent: a flag must not hide the
   // finished state or invite another backup of an already completed workout.
@@ -944,15 +956,22 @@ export default function Home() {
           <div className="hero-topline"><span>{activeDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span></div>
           <h2>{plan.theme}</h2><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/>
         </section>
-        <section className="today-workout-summary" aria-labelledby="today-workouts-heading"><div className="today-workout-summary-heading"><div><span className="kicker">TODAY’S PLAN</span><h2 id="today-workouts-heading">Today’s workouts</h2></div><button type="button" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>Manage</button></div><div className="today-workout-cards"><article className="today-workout-card primary"><span className="today-workout-number">1</span><div><strong>{plan.theme}</strong><small>{session.activities?.[0] || "Choose an activity"}</small></div><button type="button" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>{activeFinished ? "View workout" : "Open workout"} →</button></article>{session.secondaryPlanKey && planForKey(session.secondaryPlanKey) && <article className="today-workout-card secondary"><span className="today-workout-number">2</span><div><strong>{planForKey(session.secondaryPlanKey)!.theme}</strong><small>Second major workout</small></div><button type="button" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>Open workout →</button></article>} {!session.secondaryPlanKey && <button type="button" className="today-add-major" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>＋ Add a second major workout</button>}</div></section>
         {activeFinished&&<div className="workout-lock-banner"><div><strong>{isIllnessRest(session)?"Saved sick / rest day · Locked":"Saved workout · Locked"}</strong><small role="status">{finishBackupState || "Tap Edit to make changes."}</small></div><button type="button" onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div>}
         {!activeFinished&&session.completedAt&&<p className="workout-editing-note">Editing saved workout · Save changes to lock it again.</p>}
+        <section className="today-workout-summary" aria-labelledby="today-workouts-heading">
+          <div className="today-workout-summary-heading"><div><span className="kicker">TODAY’S PLAN</span><h2 id="today-workouts-heading">Today’s workouts</h2></div>{!activeFinished && <button type="button" disabled={!loaded||finishing} onClick={() => openWorkoutControls()}>Manage</button>}</div>
+          <div className="today-workout-cards">
+            <article className="today-workout-card primary"><span className="today-workout-number">1</span><div><strong>{plan.theme}</strong><small>{session.activities?.[0] || "Choose an activity"}</small></div><button type="button" disabled={!loaded||finishing} onClick={() => openWorkoutControls()}>{activeFinished ? "View workout" : "Open workout"} →</button></article>
+            {session.secondaryPlanKey && planForKey(session.secondaryPlanKey) && <article className="today-workout-card secondary"><span className="today-workout-number">2</span><div><strong>{planForKey(session.secondaryPlanKey)!.theme}</strong><small>Second major workout</small></div><button type="button" disabled={!loaded||finishing} onClick={() => openWorkoutControls("secondary")}>{activeFinished ? "View workout" : "Open workout"} →</button></article>}
+            {!activeFinished && !session.secondaryPlanKey && <button type="button" disabled={!loaded||finishing} className="today-add-major" onClick={() => openWorkoutControls("secondary")}>＋ Add a second major workout</button>}
+          </div>
+        </section>
         <div className="today-section-tabs" role="tablist" aria-label="Today sections">{([['workout','Workout'],['log','Log'],['check-ins','Check-ins']] as const).map(([key,label],index) => <button key={key} id={`today-tab-${key}`} role="tab" aria-controls={`today-panel-${key}`} aria-selected={todaySection === key} onClick={() => setTodaySection(key)} onKeyDown={(event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); const keys = ['workout','log','check-ins'] as const; const next = keys[(index + (event.key === 'ArrowRight' ? 1 : 2)) % 3]; setTodaySection(next); document.getElementById(`today-tab-${next}`)?.focus(); } }}>{label}</button>)}</div>
         {gps.draft && todaySection !== "workout" && <button className="today-tracking-status" onClick={() => setTodaySection("workout")}>{gps.draft.activity} · {gps.autoPaused ? "Auto-paused" : gps.running ? "Recording" : gps.pending ? "Connecting" : "Paused"} · Open tracker</button>}
         <section id="today-panel-workout" role="tabpanel" aria-labelledby="today-tab-workout" hidden={todaySection !== "workout"} className="today-section-panel">
 {repeatSource ? <details className="repeat-workout" key={`${activeKey}-${plan.key}-${plan.theme}`}><summary><span aria-hidden="true">↻</span><b>Repeat prior workout</b><span aria-hidden="true">＋</span></summary><div><p>{plan.theme} · {dateFromKey(repeatSource.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p><p>Reuse the format, add-ons, videos and notes. Your current entries stay; past results and checkmarks stay in history.</p><button type="button" onClick={repeatPriorWorkout} disabled={!loaded||workoutReadOnly}>Use this workout setup</button>{repeatNotice && <p role="status">{repeatNotice}</p>}</div></details> : <details className="repeat-workout"><summary><span aria-hidden="true">↻</span><b>Repeat prior workout</b></summary><p>No earlier {plan.theme} workout setup yet.</p></details>}
 <details className="surface-card compact-panel activity-card" open={openPanel === "workout"} onToggle={(e) => togglePanel("workout", e.currentTarget.open)}>
-            <summary><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
+            <summary id="today-workout-details"><span className="panel-icon">{plan.icon}</span><span><b>Main workout</b><small>{session.activity || "Choose format or equipment"}</small></span><i>＋</i></summary>
             <div className="panel-body"><fieldset className="workout-edit-fields" disabled={workoutReadOnly}><div className="day-workout-override"><label><span>Primary workout</span><select value={plan.key} onChange={(event) => setDayWorkoutType(event.target.value)}>{workoutOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><label><span>Second major workout</span><select value={session.secondaryPlanKey || ""} onChange={(event) => event.target.value ? setSecondaryWorkoutType(event.target.value) : restoreSecondaryWorkoutType()}><option value="">None</option>{workoutOptions.filter(option => option.key !== plan.key && option.key !== "rest").map(option => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label><div><small>{session.secondaryPlanKey ? "Two major workouts planned for today" : session.planOverride ? "One-day change · weekly plan stays the same" : "Following your weekly plan"}</small>{session.planOverride && <button onClick={restoreWeeklyWorkoutType}>Use weekly plan</button>}</div></div><div className="activity-grid">{plan.activities.map((activity) => { const selected = (session.activities ?? (session.activity ? [session.activity] : [])).includes(activity); return <button key={activity} className={selected ? "selected" : ""} aria-pressed={selected} onClick={() => toggleActivity(activity)}><span>{selected ? "✓" : plan.icon}</span>{activity}</button>; })}</div></fieldset></div>
           </details>
         <GpsTracker tracker={gps} onViewSaved={date=>{setActiveDate(dateFromKey(date));setTodaySection("workout");}} onEditWorkout={()=>beginWorkoutEdit(activeDate)} readOnly={workoutReadOnly} date={activeKey} savedWorkouts={session.gpsWorkouts}/>
