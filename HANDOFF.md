@@ -27,12 +27,15 @@ notes/backup/edit locking. D03/D04/D05/D09/D11 N/A unchanged tracker/map/video/
 sharing internals. Duplicate review PASS: one shared navigation handler, one
 top Edit; Manage is the section entry, Open is each workout's contextual entry,
 secondary/Add target the second selector. No data schema/storage changes.
-Publication: frontend commit 640890d is tested. Pages run 42398579435 timed out
-in syncing_files; its same-run retry failed on duplicate github-pages artifacts.
-A fresh workflow at the same SHA still returns an empty Pages status for that
-cancelled deployment ID. Publish the identical tested frontend from this new
-documentation commit so Pages receives a new deployment ID. Keep release 1254
-for this deployment repair; verify live assets and interactions before refresh.
+Published release 2026.11.07 1254 from 21f7f40 via successful Pages run
+42399845542. Public JS index-CxRVUJYA.js, CSS index-LEVte1TU.css and service
+worker match the tested build byte-for-byte. The complete external Chrome
+regression also PASSes on the live URL at all three iPhone sizes, including
+Home's displayed version. Inspected live saved/Edit renders. Safe to refresh.
+The first Pages run 42398579435 timed out syncing_files; its rerun conflicted
+on duplicate artifacts, and dispatching the same SHA reused an empty cancelled
+deployment status. A documentation-only commit supplied a fresh deployment ID
+and succeeded. No application changes or new label were needed for this repair.
 
 ## Current change — GPS Track laps
 
