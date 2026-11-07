@@ -2018,3 +2018,6 @@ button, summary { touch-action: manipulation; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-average dd { font-size:25px; margin-top:3px; }
 .gps-fullscreen:has(.gps-lap-live) .gps-actions { flex:0 0 auto; margin-top:0; }
 .gps-fullscreen:has(.gps-lap-live) .gps-actions button { min-height:64px; }
+.history-day-icons { display:flex; align-items:center; justify-content:center; gap:2px; min-height:28px; }
+.history-day-icons-2 .history-day-icon { width:21px; height:26px; }
+.history-day-icons-2 .history-day-icon svg { width:21px; height:21px; }
