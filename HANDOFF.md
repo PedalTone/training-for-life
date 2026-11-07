@@ -27,7 +27,12 @@ notes/backup/edit locking. D03/D04/D05/D09/D11 N/A unchanged tracker/map/video/
 sharing internals. Duplicate review PASS: one shared navigation handler, one
 top Edit; Manage is the section entry, Open is each workout's contextual entry,
 secondary/Add target the second selector. No data schema/storage changes.
-Publication: candidate tested; GitHub Pages/live asset verification pending.
+Publication: frontend commit 640890d is tested. Pages run 42398579435 timed out
+in syncing_files; its same-run retry failed on duplicate github-pages artifacts.
+A fresh workflow at the same SHA still returns an empty Pages status for that
+cancelled deployment ID. Publish the identical tested frontend from this new
+documentation commit so Pages receives a new deployment ID. Keep release 1254
+for this deployment repair; verify live assets and interactions before refresh.
 
 ## Current change — GPS Track laps
 
