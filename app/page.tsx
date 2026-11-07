@@ -237,8 +237,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.07 1115";
+const APP_VERSION = "2026.11.07 1208";
 const RECENT_RELEASES = [
+  { version: "2026.11.07 1208", category: "Major fix", changes: ["Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging."] },
   { version: "2026.11.07 1115", category: "Minor fix", changes: ["Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status."] },
   { version: "2026.11.07 1043", category: "Major fix", changes: ["Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking."] },
   { version: "2026.11.07 0838", category: "New feature", changes: ["Choose a second major workout for the same day and show paired workout icons in History instead of treating the second workout as an add-on."] },
@@ -247,7 +248,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.02 2006", category: "Major fix", changes: ["Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions."] },
   { version: "2026.11.02 2001", category: "Major fix", changes: ["Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering."] },
   { version: "2026.11.02 1950", category: "Major fix", changes: ["Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save."] },
-  { version: "2026.11.02 1912", category: "New feature", changes: ["Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability."] },
   { version: "2026.11.01 1414", category: "Major fix", changes: ["Synchronize History with the completed session loaded by the editor when an older day is reopened."] },
 ];
 const withStore=withSessionStore;
@@ -944,6 +944,7 @@ export default function Home() {
           <div className="hero-topline"><span>{activeDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span></div>
           <h2>{plan.theme}</h2><div className="today-terrain" aria-hidden="true" data-workout-type={plan.key} style={adventureBackgroundFor(plan.key)}/>
         </section>
+        <section className="today-workout-summary" aria-labelledby="today-workouts-heading"><div className="today-workout-summary-heading"><div><span className="kicker">TODAY’S PLAN</span><h2 id="today-workouts-heading">Today’s workouts</h2></div><button type="button" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>Manage</button></div><div className="today-workout-cards"><article className="today-workout-card primary"><span className="today-workout-number">1</span><div><strong>{plan.theme}</strong><small>{session.activities?.[0] || "Choose an activity"}</small></div><button type="button" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>{activeFinished ? "View workout" : "Open workout"} →</button></article>{session.secondaryPlanKey && planForKey(session.secondaryPlanKey) && <article className="today-workout-card secondary"><span className="today-workout-number">2</span><div><strong>{planForKey(session.secondaryPlanKey)!.theme}</strong><small>Second major workout</small></div><button type="button" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>Open workout →</button></article>} {!session.secondaryPlanKey && <button type="button" className="today-add-major" onClick={() => { setOpenPanel("workout"); setTodaySection("workout"); }}>＋ Add a second major workout</button>}</div></section>
         {activeFinished&&<div className="workout-lock-banner"><div><strong>{isIllnessRest(session)?"Saved sick / rest day · Locked":"Saved workout · Locked"}</strong><small role="status">{finishBackupState || "Tap Edit to make changes."}</small></div><button type="button" onClick={()=>beginWorkoutEdit(activeDate)}>Edit</button></div>}
         {!activeFinished&&session.completedAt&&<p className="workout-editing-note">Editing saved workout · Save changes to lock it again.</p>}
         <div className="today-section-tabs" role="tablist" aria-label="Today sections">{([['workout','Workout'],['log','Log'],['check-ins','Check-ins']] as const).map(([key,label],index) => <button key={key} id={`today-tab-${key}`} role="tab" aria-controls={`today-panel-${key}`} aria-selected={todaySection === key} onClick={() => setTodaySection(key)} onKeyDown={(event) => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); const keys = ['workout','log','check-ins'] as const; const next = keys[(index + (event.key === 'ArrowRight' ? 1 : 2)) % 3]; setTodaySection(next); document.getElementById(`today-tab-${next}`)?.focus(); } }}>{label}</button>)}</div>

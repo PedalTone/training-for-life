@@ -1,30 +1,32 @@
-New public release — 2026.11.07 1115: Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status.
+New public release — 2026.11.07 1208: Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging.
 
-New public release — 2026.11.07 1115: Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking.
+New public release — 2026.11.07 1208: Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status.
 
-New public release — 2026.11.07 1115: Choose a second major workout for the same day and show paired workout icons in History instead of treating the second workout as an add-on.
+New public release — 2026.11.07 1208: Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking.
 
-New public release — 2026.11.07 1115: Close the full-screen GPS layer after Stop & Save so Today tabs, including Log, remain tappable.
+New public release — 2026.11.07 1208: Choose a second major workout for the same day and show paired workout icons in History instead of treating the second workout as an add-on.
 
-New public release — 2026.11.07 1115: Lock lap full screen to the iPhone viewport with no scrolling and align visual button states with their actual touch targets.
+New public release — 2026.11.07 1208: Close the full-screen GPS layer after Stop & Save so Today tabs, including Log, remain tappable.
 
-New public release — 2026.11.07 1115: Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions.
+New public release — 2026.11.07 1208: Lock lap full screen to the iPhone viewport with no scrolling and align visual button states with their actual touch targets.
 
-New public release — 2026.11.07 1115: Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering.
+New public release — 2026.11.07 1208: Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions.
 
-New public release — 2026.11.07 1115: Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save.
+New public release — 2026.11.07 1208: Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering.
 
-New public release — 2026.11.07 1115: Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability.
+New public release — 2026.11.07 1208: Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save.
 
-New public release — 2026.11.07 1115: Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day.
+New public release — 2026.11.07 1208: Track-lap full screen removes the map and emphasizes smoothed current pace, lap time, distance and average pace for sprint readability.
+
+New public release — 2026.11.07 1208: Refresh the selected journal record before rendering it, preventing stale Safari History data from masking the saved day.
 
 Historical release — 2026.11.01 1406: Completion is saved before optional backup.
 
-New public release — 2026.11.07 1115: Current release timestamp.
+New public release — 2026.11.07 1208: Current release timestamp.
 
-New public release — 2026.11.07 1115: Synchronize History with the completed session loaded by the editor when an older day is reopened.
+New public release — 2026.11.07 1208: Synchronize History with the completed session loaded by the editor when an older day is reopened.
 
-New public release — 2026.11.07 1115: Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout.
+New public release — 2026.11.07 1208: Keep a completed day authoritative when duplicate browser records disagree, so History cannot show an unfinished copy over a completed workout.
 
 New public release — 2026.10.25 1420: Full-screen tracker temperature/humidity, two-finger map zoom and adjustable live Follow me centering.
 
@@ -202,5 +204,5 @@ New public release — 2026.10.29 2239: Increase the height and vertical spacing
 
 New public release — 2026.11.01 1400: Refresh the Eastern Time calendar date after midnight so Today, History and completion status stay aligned when the app remains open overnight.
 
-New public release — 2026.11.07 1115: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
+New public release — 2026.11.07 1208: Record a day as complete before attempting the optional backup, so a cancelled or interrupted backup cannot leave History showing the workout as unfinished.
 

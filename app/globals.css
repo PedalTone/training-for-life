@@ -2041,3 +2041,16 @@ button, summary { touch-action: manipulation; }
 .gps-wind .wind-dot { margin-left:auto; flex:0 0 11px; }
 .gps-weather-source { display:none; }
 @media(max-width:480px) { .gps-weather { padding-inline:8px; } .gps-weather-cell { padding-inline:8px; gap:5px; } .gps-temperature span { font-size:21px; } .gps-weather-cell strong { font-size:15px; } .gps-weather-cell span:not(.gps-wind-glyph) { font-size:12px; } .gps-wind { margin-left:5px; padding-right:8px; } .gps-wind small { left:38px; font-size:10px; } }
+.today-workout-summary { margin:18px 0; padding:16px; border:1px solid #d9d1c5; border-radius:18px; background:#fffaf2; }
+.today-workout-summary-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.today-workout-summary-heading h2 { margin:3px 0 0; color:#203449; font-size:24px; }
+.today-workout-summary-heading button { min-height:42px; padding:8px 13px; border:1px solid #d9d1c5; border-radius:10px; background:#203449; color:#fffaf2; font-size:15px; font-weight:750; }
+.today-workout-cards { display:grid; gap:10px; margin-top:13px; }
+.today-workout-card { display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:10px; align-items:center; padding:13px; border:1px solid #d9d1c5; border-left:4px solid #b94b17; border-radius:13px; background:#fff; }
+.today-workout-card.secondary { border-left-color:#315f9e; }
+.today-workout-number { width:27px; height:27px; display:grid; place-items:center; border-radius:50%; background:#f1dfd4; color:#974016; font-weight:800; }
+.today-workout-card.secondary .today-workout-number { background:#dce7f4; color:#315f9e; }
+.today-workout-card strong,.today-workout-card small { display:block; }.today-workout-card strong { color:#203449; font-size:17px; }.today-workout-card small { margin-top:2px; color:#596875; font-size:14px; }
+.today-workout-card button { min-height:42px; padding:8px 10px; border:0; border-radius:9px; background:#f3ecdf; color:#974016; font-size:14px; font-weight:750; white-space:nowrap; }
+.today-add-major { min-height:48px; border:1px dashed #b94b17; border-radius:11px; background:#fffaf2; color:#974016; font-weight:750; font-size:16px; }
+@media(max-width:420px){.today-workout-card{grid-template-columns:30px minmax(0,1fr);}.today-workout-card button{grid-column:2;justify-self:start;}.today-workout-summary-heading h2{font-size:21px;}}
