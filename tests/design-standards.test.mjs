@@ -25,8 +25,18 @@ test('design report links remain valid and project guidance requires its review'
 test('design documentation checks run in both npm test and GitHub release checks',async()=>{
  const {scripts}=JSON.parse(await read('package.json'));
  assert.equal(scripts['test:design'],'node --test tests/design-standards.test.mjs');
- assert.match(scripts.test,/npm run test:design\s*&&/);
+ assert.equal(scripts['test:regression'],'node --experimental-strip-types --test tests/*.test.mjs');
+ assert.match(scripts.test,/npm run build\s*&&\s*npm run test:regression/);
+ assert.match(scripts.test,/npm run test:captions-helper/);
+ assert.equal(scripts['test:captions-helper'],'python3 tests/video-caption-fallback.test.py');
+ assert.equal(scripts['verify:release'],'node scripts/check-release-readiness.mjs');
+ for(const path of ['AGENTS.md','README.md','TESTING_CHECKLIST.md','DESIGN_STANDARDS.md']){
+  const text=await read(path);
+  assert.match(text,/RELEASE_VERIFICATION\.md/,`${path} must retain the critical-feature evidence gate`);
+ }
  const workflow=await read('.github/workflows/deploy-pages.yml');
- assert.match(workflow,/run: npm run test:design/);
- assert.ok(workflow.indexOf('run: npm run test:design')<workflow.indexOf('run: npm run build:pages'));
+ assert.match(workflow,/run: npm test/);
+ assert.match(workflow,/run: npm run verify:release/);
+ assert.ok(workflow.indexOf('run: npm test')<workflow.indexOf('run: npm run build:pages'));
+ assert.ok(workflow.indexOf('run: npm run verify:release')<workflow.indexOf('uses: actions/upload-pages-artifact'));
 });

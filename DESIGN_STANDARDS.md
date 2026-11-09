@@ -235,6 +235,13 @@ No new UI is rendered or visually approved solely for this documentation change.
 
 ## Regression workflow and signoff
 
+The [critical-feature inventory](TESTING_CHECKLIST.md) is mandatory for every
+new public version, including unchanged capabilities. Record all CF outcomes
+and evidence in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md); every CF item
+must be PASS. The D01–D12 visual applicability matrix supplements that inventory
+and never exempts a critical behavior from testing. Missing evidence, failed
+regressions and untested items block release through `npm run verify:release`.
+
 1. Read this report and identify applicable D01–D12 rows before editing.
 2. Preserve approved copy, data meanings, artwork and unaffected regions; inspect
    current diff and computed styles. Avoid copying superseded CSS defaults.

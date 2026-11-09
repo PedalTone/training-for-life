@@ -1,5 +1,41 @@
 # Training for Life — development handoff
 
+## Current internal change — mandatory 48-feature release gate (November 9)
+
+User explicitly requires every critical feature tested before every new public
+version. TESTING_CHECKLIST.md now owns CF01–CF48, each with behavior, existing
+coverage, required browser/device evidence and seven full cross-feature journeys.
+RELEASE_VERIFICATION.md records candidate-specific status/evidence; all CF items
+must PASS. Unchanged/N/A is not a substitute. AGENTS/README/design standards
+require this gate and honest data/device evidence. Inventory distinguishes actual
+capabilities from discussed future work and external Grok transfer automation.
+
+npm test now builds vinext and runs every tests/*.test.mjs, then the Python
+caption helper tests; Pages CI uses that full command instead of the GPS subset.
+scripts/check-release-readiness.mjs checks APP_VERSION, every unique CF row,
+overall PASS and automated/browser/device/backup evidence. It runs before Pages
+artifact upload; missing/failed/blocked/untested or stale sign-offs stop release.
+The validator checks completeness, not the truth of manual attestations.
+
+Verification: focused policy/guard tests 8/8 PASS; Python helper 3/3 PASS; Pages
+build and diff check PASS. New full npm test: 240 Node tests, 239 PASS, 1 FAIL.
+Known blocker CF42: tests/daily-journal.test.mjs:33 / assertion :43 — getSession
+chooses the less complete indexed copy when both copies have completedAt and
+equal updatedAt, masking richer fallback notes/videos/status. The broader suite
+exposed this existing problem; it was omitted from the old 76-test command.
+Do not weaken or skip it. No runtime/data fix is made by this policy task.
+Logs: /private/tmp/t4l-critical-features-full.log, /private/tmp/t4l-release-gate.log.
+The release guard correctly rejects the initial incomplete report (exit 1).
+
+Next public release is BLOCKED until CF42 is resolved and all CF evidence is
+completed for that candidate. Version 0758 predates this policy and is not
+retrospectively certified. No UI/runtime/storage changes or new public label;
+the tested Pages assets remain index-BYHhEaRk.js / index-DHh5l69U.css. No refresh
+needed. Commit policy/test changes with CI skip to avoid an uncertified app
+deployment. D01–D12 N/A for this internal-only change; this is not CF sign-off.
+Duplicate review: one canonical inventory, one evidence record, one validator;
+focused diagnostic commands retained but never treated as a release baseline.
+
 ## Current release — track splits and Finish (2026.11.09 0758)
 
 User reported missing track splits and disabled Finish Workout + Backup. Found:

@@ -1,3 +1,5 @@
+No new release — 2026.11.09: Establish the 48-feature mandatory regression inventory, full-suite CI and evidence-based release gate. Retain public version 2026.11.09 0758; policy/test changes only, no application deployment or retroactive certification.
+
 New public release — 2026.11.09 0758: Preserve every repeat and recovery, show their table in Today and History, and let Finish + Backup safely save pending GPS tracking first.
 
 New public release — 2026.11.07 1254: Bring Today Manage/Open workout controls into view with focus, and place saved-workout Edit directly beneath the picture.

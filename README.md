@@ -82,14 +82,21 @@ git diff --check
 ```
 
 `npm run build:pages` writes `gh-pages-dist/` (app under `app/`).
-`npm test` runs the design-documentation integration checks, vinext build and
-`tests/rendered-html.test.mjs`; it does not
-include every test file. On a Node version supporting TypeScript stripping,
-additional focused tests can be run with:
+`npm test` builds vinext and runs every `tests/*.test.mjs` with TypeScript
+stripping, including the design-documentation, GPS, storage, journal, planning,
+video, strength, nutrition, sharing and cache suites. Newly added Node test files
+are included automatically. Focused commands such as `npm run test:gps` remain
+available for diagnosis but do not satisfy the release baseline. Other targeted
+checks can still be run directly:
 
 ```sh
 node --experimental-strip-types --test tests/insight-validation.test.mjs tests/training-insights.test.mjs tests/service-worker.test.mjs tests/video-cleanup.test.mjs tests/nutrition.test.mjs
 ```
+
+The caption-helper Python tests also run through `npm test`; use
+`npm run test:captions-helper` for a focused helper check. The Node suite retains
+compatibility coverage for legacy backend/data code without implying those
+retired UI features are available in the current app.
 
 `npm run lint` and `npx tsc --noEmit` are additional diagnostics. Earlier runs
 failed; see HANDOFF.md and investigate current output before claiming they pass.
@@ -97,6 +104,18 @@ Inspect the rendered app at iPhone sizes, including safe areas, and walk through
 changed interactions. Tablet and desktop visual testing is not required. Automated assertions alone do not verify layout quality.
 
 ## Publish requested frontend changes
+
+Before every new public version, execute all 48 critical features and complete
+the mandatory cross-feature journeys in
+[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md). Record candidate-specific results
+and evidence in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Every CF item
+must be PASS. `npm run verify:release` blocks missing, failed, untested or
+stale-version sign-offs. GitHub Pages runs the full Node suite and this gate
+before uploading the release. Automated evidence alone does not certify browser
+or physical iPhone behavior. The initial report deliberately records incomplete
+coverage and the existing store-loader test failure; it does not retroactively
+certify the already-published version. Documentation/test-only work keeps the
+current label and must not deploy an uncertified new app version.
 
 The configured remote is named `github`. Pushing a tested commit to its `main`
 branch triggers `.github/workflows/deploy-pages.yml`. Confirm the exact diff,

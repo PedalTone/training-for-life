@@ -41,6 +41,30 @@ The user grants standing permission to publish tested app changes whenever they
 ask for a change (reaffirmed October 10, 2026). Complete verification and publish
 requested changes without asking again.
 
+## Mandatory critical-feature gate for every public version
+
+User instruction November 9, 2026: maintain and test the complete critical
+feature inventory in [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) before every
+new public version. Test every CF item, including unchanged functionality, and
+record candidate-specific results/evidence in
+[RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Every CF item must be PASS;
+FAIL, BLOCKED, UNTESTED, missing evidence and "unchanged/N/A" block publication.
+D01–D12 design N/A classifications do not waive CF behavioral regression checks.
+Never treat an automated test count, green build or visible label as proof of
+persisted data or of a physical iPhone test. Run `npm test` (all Node suites and
+the caption-helper tests), the Pages build, both external-browser scenarios,
+the remaining inventory smoke checks, and `npm run verify:release`. Review
+actual saved records and backups. Fix or explicitly resolve failing cases before
+creating a new public release; do not weaken assertions to obtain a pass. Update
+the inventory/sign-off whenever a critical feature is added.
+
+Standing publication permission does not waive this gate. If required native
+device evidence is unavailable, record the gap and obtain that evidence before
+announcing a release. Verify exact public assets and the live workflow before
+telling the user to refresh. Documentation/test/policy-only changes keep the
+current label and may be committed without deploying an uncertified app; use a
+CI-skip commit for such work when appropriate.
+
 ## Design regression standard
 
 Review DESIGN_STANDARDS.md for every app change, including functional fixes, data/storage changes, refactors, dependencies, documentation and deployment changes.
