@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-## Current release candidate — track splits and Finish (2026.11.09 0758)
+## Current release — track splits and Finish (2026.11.09 0758)
 
 User reported missing track splits and disabled Finish Workout + Backup. Found:
 prepare reset draft lapMode=false while stale UI state could show checked;
@@ -43,7 +43,15 @@ review PASS one lap state helper, one shared result table (old fullscreen-only
 list removed), one GPS stop writer; separate Stop versus Finish intentionally
 save a recording versus finish the whole day. Old schemas remain compatible.
 Physical iPhone GPS/touch/background behavior still needs field confirmation.
-Publication and exact public asset/interaction verification pending.
+Published frontend 5f351c2 via successful Pages run 42621371833. Public
+index-BYHhEaRk.js, index-DHh5l69U.css and service worker match the tested build
+byte-for-byte; live version 2026.11.09 0758 confirmed. Complete track fixture
+also PASSes against the public URL at all three phone sizes. Ordinary non-lap
+endurance pause/resume excludes its break, saves correct totals, and the full
+Home/Today/Plan/History/Progress/Settings journey PASSes on the live release.
+Inspected live table/recovery/results renders. Safe to refresh. The current
+reported iPhone workout's raw data still requires a current phone backup to
+determine whether its individual boundaries survived; no recovery is claimed.
 
 ## Current release — Today buttons and saved Edit position (2026.11.07 1254)
 

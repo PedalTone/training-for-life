@@ -53,9 +53,22 @@ async function check(width,height,preparedOnly=false){
   await cdp('Page.navigate',{url:process.env.APP_URL||'http://127.0.0.1:5174/training-for-life/app/'});
   await wait("document.querySelector('.today-save-state')?.textContent==='Saved on this device'");
   await tap('.gps-card > summary');
-  await tap('.gps-lap-mode input');await tap('.gps-start');
-  assert.equal((await draft()).lapMode,true);
+  if(preparedOnly!=='ordinary')await tap('.gps-lap-mode input');await tap('.gps-start');
+  assert.equal((await draft()).lapMode,preparedOnly!=='ordinary');
   assert.equal(await evaluate('window.__watches()'),1);
+  if(preparedOnly==='ordinary'){
+   await evaluate('window.__move(1000,300)');await tap('.gps-pause');
+   await evaluate('window.__advance(60)');await tap('.gps-start');await evaluate('window.__move(500,150)');
+   await tap('.gps-stop');await wait("Boolean(document.querySelector('.gps-recordings'))&&!document.querySelector('.gps-stop')");
+   assert.equal(await evaluate("Boolean(document.querySelector('.gps-splits-results'))"),false);
+   await tap('.finish-button');await wait("Boolean(document.querySelector('.workout-lock-banner'))");
+   const workout=await evaluate("window.__backup.sessions.find(s=>s.date==='2026-11-09').gpsWorkouts[0]");
+   assert.ok(Math.abs(workout.seconds-450)<.01);assert.ok(Math.abs(workout.meters-1500)<.1);assert.equal(workout.laps.length,0);
+   for(const index of [3,4,5,6,2]){await tap(`.bottom-nav button:nth-child(${index})`);assert.equal(await evaluate(`document.querySelector('.bottom-nav button:nth-child(${index})').getAttribute('aria-current')`),'page');}
+   await tap('.bottom-nav .home-nav');await wait("Boolean(document.querySelector('.splash-version'))");
+   assert.deepEqual(errors,[]);socket.removeEventListener('message',onMessage);
+   console.log('PASS ordinary endurance pause/resume/save and complete Home/Today/Plan/History/Progress/Settings journey.');return;
+  }
   if(preparedOnly){
    // A timed repeat without usable distance must still be recorded.
    await evaluate('window.__stationary(10.4)');assert.equal(await evaluate("Boolean(document.querySelector('.gps-pause'))"),true,'Auto-pause stays off in lap mode');await tap('.gps-stop');
@@ -146,4 +159,5 @@ async function check(width,height,preparedOnly=false){
 try{
  for(const [width,height] of [[375,667],[393,852],[440,956]])await check(width,height);
  await check(440,956,true);
+ await check(440,956,'ordinary');
 }finally{socket.close();}
