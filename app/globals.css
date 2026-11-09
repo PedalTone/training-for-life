@@ -2054,3 +2054,18 @@ button, summary { touch-action: manipulation; }
 .today-workout-card button { min-height:44px; padding:8px 10px; border:0; border-radius:9px; background:#f3ecdf; color:#974016; font-size:16px; font-weight:750; white-space:nowrap; }
 .today-add-major { min-height:48px; border:1px dashed #b94b17; border-radius:11px; background:#fffaf2; color:#974016; font-weight:750; font-size:16px; }
 @media(max-width:420px){.today-workout-card{grid-template-columns:30px minmax(0,1fr);}.today-workout-card button{grid-column:2;justify-self:start;}.today-workout-summary-heading h2{font-size:21px;}}
+
+.gps-splits-results { margin:16px 0 8px; color:#203449; }
+.gps-splits-results h4 { margin:0 0 10px; font-size:18px; }
+.gps-splits-results table { width:100%; table-layout:fixed; border-collapse:collapse; font-size:16px; font-variant-numeric:tabular-nums; }
+.gps-splits-results caption { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.gps-splits-results th,.gps-splits-results td { padding:12px 5px; border-bottom:1px solid #d9d1c5; text-align:right; overflow-wrap:anywhere; }
+.gps-splits-results th:first-child { text-align:left; width:30%; overflow-wrap:normal; }
+.gps-splits-results th:not(:first-child) { width:23.333%; }
+.gps-splits-results thead th { vertical-align:top; font-size:14px; font-weight:750; }
+.gps-splits-results thead small { display:block; font-size:12px; color:#596875; }
+.gps-splits-results tbody th { font-size:15px; font-weight:700; }
+.gps-splits-results .gps-recovery-row { background:#f3ecdf; color:#596875; }
+.gps-splits-note { margin:10px 0 0; font-size:14px; line-height:1.45; color:#596875; }
+.gps-recordings:focus { outline:2px solid #315f9e; outline-offset:4px; }
+.gps-recordings .gps-splits-results { margin-inline:0; }

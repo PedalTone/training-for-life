@@ -145,6 +145,18 @@ persistence succeeds. Disable duplicate submissions while saving and provide a
 retry without destroying input after failure. GPS saves serialize background writes, keep a second session copy when available, and retain a stopped-recording receipt for reload recovery until the saved ID is confirmed. Explicit deletion/discard must clear that receipt. Prepared trackers adopt the selected date when started; already recorded tracking keeps its original date, and an off-day save shows its totals and a dated navigation action rather than an empty tracker. Avoid rerender-driven focus loss,
 scroll jumps and layout changes during typing.
 
+Track laps uses one authoritative mode, chosen before Start. Pause completes the
+repeat and begins timed recovery; Resume begins the next repeat. Background/GPS
+interruption pauses the current repeat without resetting its saved boundary.
+Stop saves the final repeat, including timed efforts with no usable GPS distance.
+Today and History share one visible table: repeat/recovery, time (tenths), GPS
+meters, and average pace. Recovery has time only because explicit pause freezes
+distance; unavailable measurements show a dash. Older recovery gaps inferred
+from split timestamps are labeled estimated. Never invent missing old splits.
+Finish + Backup saves a same-day active/paused GPS draft first; a failed GPS save
+retains the draft and prevents day completion. A merely prepared tracker does
+not disable Finish or create a phantom recording. Saving still locks the day.
+
 Today has one saved/locked banner and Edit action directly beneath its workout
 picture, before the Today’s workouts summary and internal tabs. Manage and Open
 workout bring their destination controls into view and move focus; Add a second

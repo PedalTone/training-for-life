@@ -237,8 +237,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.07 1254";
+const APP_VERSION = "2026.11.09 0758";
 const RECENT_RELEASES = [
+  { version: "2026.11.09 0758", category: "Major fix", changes: ["Keep repeat boundaries and recovery times through pause, resume, reload and save. Show a readable repeats/recovery table in Today and History with time, meters and average pace.", "Finish Workout + Backup now saves pending GPS tracking first instead of staying grayed out. Failed saves keep the recording available for retry."] },
   { version: "2026.11.07 1254", category: "Major fix", changes: ["Make Today Manage and Open workout scroll to and focus the workout controls. Place saved-workout Edit directly beneath the picture, above Today’s workouts."] },
   { version: "2026.11.07 1208", category: "Major fix", changes: ["Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging."] },
   { version: "2026.11.07 1115", category: "Minor fix", changes: ["Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status."] },
@@ -248,7 +249,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.03 2219", category: "Major fix", changes: ["Lock lap full screen to the iPhone viewport with no scrolling and align visual button states with their actual touch targets."] },
   { version: "2026.11.02 2006", category: "Major fix", changes: ["Separate current pace, split pace, and overall average pace on the lap screen using the report’s time-over-distance definitions."] },
   { version: "2026.11.02 2001", category: "Major fix", changes: ["Use an 8-second cumulative-distance pace window, stabilized five-second display rounding, and stricter GPS accuracy and spike filtering."] },
-  { version: "2026.11.02 1950", category: "Major fix", changes: ["Smooth live lap pace, show pace for Walk mode, and display saved repeat statistics after Stop & Save."] },
 ];
 const withStore=withSessionStore;
 
@@ -776,6 +776,11 @@ export default function Home() {
     if(!canEditSession()||addingPhotos||attachingVideo||attachingScreenshot)return;
     finishingRef.current=true;setFinishing(true);
     if(saveTimer.current)clearTimeout(saveTimer.current);
+    if(gps.draft?.date===sessionRef.current.date&&!gps.draft.ready){
+      setFinishBackupState("Saving GPS recording…");
+      const recording=await gps.finish();
+      if(!recording){setFinishBackupState("Try again · GPS recording not saved");finishingRef.current=false;setFinishing(false);return;}
+    }
     setFinishBackupState("Choose backup location…");
     const now = new Date().toISOString();
     const hasWorkoutData = Boolean(session.activity || session.duration || session.distance || session.notes || session.mobilityExercises.length || session.completedExercises.length || session.videos.length || session.workoutPhoto);
@@ -786,6 +791,7 @@ export default function Home() {
     let daySaved = false;
     try { await saveSession(current); daySaved = true; } catch { try { localStorage.setItem(`t4l:${current.date}`, JSON.stringify(current)); daySaved = true; } catch {} }
     if (daySaved) {
+      if(gps.draft?.ready&&gps.draft.date===current.date)gps.clearPreparation(current.date);
       sessionRef.current=current;setSession(current); setHistory(allSessions);
       editingDateRef.current=null;setEditingDate(null);
       setSaveState(plan.key === "rest" ? "Recovery day honored" : "Workout complete");
@@ -999,7 +1005,7 @@ export default function Home() {
         <section className="today-illness-check"><h3>Illness check-in</h3><p>For illness unrelated to a workout injury, such as a cold or flu.</p><label><input type="checkbox" checked={session.illness?.reported===true} onChange={event=>update({illness:{...sessionRef.current.illness,reported:event.target.checked,rested:false,note:sessionRef.current.illness?.note||''}},true)}/> Sick / unwell</label>{session.illness?.reported&&<><label><input type="checkbox" checked={session.illness.rested===true} onChange={event=>update({illness:{...sessionRef.current.illness!,rested:event.target.checked}},true)}/> Rested instead of working out</label><label className="today-note-label">Illness note (optional)<textarea aria-label="Illness note" value={session.illness.note} maxLength={3000} onChange={event=>update({illness:{...sessionRef.current.illness!,note:event.target.value}})} placeholder="For example: flu, bad cold, stayed home to rest" rows={3}/></label></>}</section>
         <NutritionCard key={activeKey} date={activeKey} expanded readOnly={workoutReadOnly}/>
         </fieldset></section>
-<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/> : <><p className="today-save-state" role="status">{saveState}</p><div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||Boolean(gps.draft && gps.draft.date===activeKey) || gps.saving} title={gps.draft && gps.draft.date===activeKey ? "Stop and save GPS totals before finishing the workout" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (isIllnessRest(session)?"Save rest day + Backup":session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div></>}</div>
+<div className={`finish-zone primary-finish today-finish ${activeFinished ? "finished" : ""}`}>{activeFinished ? <ShareWorkoutButton onClick={() => setShareData(toShareCardData(session, plan))}/> : <><p className="today-save-state" role="status">{saveState}</p><div className="finish-actions"><button disabled={finishing||addingPhotos||attachingVideo||attachingScreenshot||gps.saving} title={gps.draft && !gps.draft.ready && gps.draft.date===activeKey ? "Saves your GPS recording before finishing and backing up the day" : undefined} onClick={finishAndBackup} className={`finish-button ${finishBackupState.startsWith("Try") ? "error" : ""}`}><span>↓</span>{finishBackupState || (gps.draft&&!gps.draft.ready&&gps.draft.date===activeKey?"Stop tracker + Finish + Backup":isIllnessRest(session)?"Save rest day + Backup":session.completedAt?"Save changes + Backup":"Finish Workout + Backup")}<span>→</span></button></div></>}</div>
       </div>}
 
       {showMobilityPicker && <MobilityPicker exercises={libraryExercises} selected={mobilityDraft} completed={session.completedExercises} sessions={history} currentDate={activeKey} toggleExercise={toggleMobilityDraft} toggleCompleted={toggleExercise} onDone={applyMobilityDraft} onCancel={() => setShowMobilityPicker(false)}/>}

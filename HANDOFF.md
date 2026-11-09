@@ -1,5 +1,50 @@
 # Training for Life — development handoff
 
+## Current release candidate — track splits and Finish (2026.11.09 0758)
+
+User reported missing track splits and disabled Finish Workout + Backup. Found:
+prepare reset draft lapMode=false while stale UI state could show checked;
+paused-mode changes updated UI without changing the active draft; repeat start
+was reset on every Resume and not durable; Pause captured split time before the
+last clock fraction; no recovery duration was stored; History omitted laps; the
+only detailed result block required full screen; hook finish called an undefined
+setFullscreen after successful persistence. Finish was disabled for any draft,
+including unused preparation. Exact current iPhone data is not available here;
+these are reproduced code mechanisms, not proof all reported splits were lost.
+
+Fix: authoritative pre-start mode, durable repeat/recovery progress, precise
+Pause/Stop boundaries, timestamped recovery rows, zero-distance timed efforts,
+idempotent finalization, stable recording ID/stop timestamp through failure and
+reload. Resume after interruption continues its repeat; explicit recovery starts
+the next. Shared GpsSplitsTable shows tenths, meters and pace in Today/History,
+with unavailable recovery distance/pace; legacy gaps are labeled estimated.
+Existing totals-only recordings never gain invented splits. Stop closes full
+screen in the component after success and brings saved results into view.
+Finish now saves same-day GPS first, then finalizes/backs up; failure preserves
+the draft and leaves Finish retryable. Ready-only preparation creates no record.
+
+Evidence: npm test PASS (2 design + 61 GPS/storage/render + 13 HTML checks);
+Pages build/diff check PASS. External Chrome scripts/check-gps-laps.mjs PASS at
+375×667, 393×852, 440×956: mile/800/800/400/400/400/400/mile, eight repeats and
+seven recoveries; mid-repeat reload; full-screen stop; direct Finish; failed
+dual-store save + reload + one-ID retry; precise original stop timestamp;
+backup/reload/History table; one watch; no auto-pause; zero-GPS effort and
+Record another/unused-preparation Finish. Inspected /private/tmp/t4l-laps-*
+live, recovery, results and History PNGs. Narrow labels fixed after inspection.
+Typecheck retains 10 established diagnostics outside changed GPS modules;
+normalized nullable native heading resolves older tracker diagnostics.
+
+Designly composition/QA: PASS clear alternating repeat/recovery rows, legible
+16px measurements, headers/units, semantic table, no horizontal scrolling and
+visible tracker controls. D01/D02/D03/D05/D07/D10/D12 PASS affected tests,
+retention/lock/backup and adjacent flows; D04/D06/D08/D09/D11 N/A unchanged
+record editing, planning, progress calculations, videos, sharing. Duplicate
+review PASS one lap state helper, one shared result table (old fullscreen-only
+list removed), one GPS stop writer; separate Stop versus Finish intentionally
+save a recording versus finish the whole day. Old schemas remain compatible.
+Physical iPhone GPS/touch/background behavior still needs field confirmation.
+Publication and exact public asset/interaction verification pending.
+
 ## Current release — Today buttons and saved Edit position (2026.11.07 1254)
 
 Reproduced Manage opening a disclosure below the usable phone viewport: primary

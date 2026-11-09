@@ -33,6 +33,17 @@ test('Walk is selectable and saved walks show pace rather than biking speed',()=
  const html=render([{...workout,activity:'Walk'}]);assert.match(html,/Edit recording 1: Walk/);assert.match(html,/Avg Pace: 10:00 min\/mile/);assert.doesNotMatch(html,/Average speed:/);
 });
 
+test('saved mixed-distance lap recordings show a table in normal view, including recovery and tenths',()=>{
+ const laps=[{number:1,seconds:107.6,meters:400,startedAt:'2026-10-18T12:00:00Z',endedAt:'2026-10-18T12:01:47.600Z'},
+ {number:2,seconds:214,meters:800,startedAt:'2026-10-18T12:03:47.600Z',endedAt:'2026-10-18T12:07:21.600Z'}];
+ for(const activity of ['Run','Walk']){
+  const html=render([{...workout,activity,lapMode:true,laps}]);
+  assert.match(html,/Repeats &amp; recovery/);assert.match(html,/<table>/);assert.match(html,/Repeat 1/);assert.match(html,/Repeat 2/);
+  assert.match(html,/Recovery/);assert.match(html,/1:47\.6/);assert.match(html,/2:00\.0/);assert.match(html,/400/);assert.match(html,/800/);
+  assert.match(html,/Older recovery times are estimated/);assert.doesNotMatch(html,/gps-lap-live/);
+ }
+});
+
 test('a recording saved to another date stays visibly retained with totals and a dated navigation action',()=>{
  const html=render([],{saved:workout,savedDate:'2026-10-17'},{onViewSaved(){}});
  assert.match(html,/Recording saved on another day/);assert.match(html,/Saved for 2026-10-17/);assert.match(html,/1\.00 mi · 00:10:00/);assert.match(html,/View saved workout/);

@@ -1,3 +1,5 @@
+New public release — 2026.11.09 0758: Preserve every repeat and recovery, show their table in Today and History, and let Finish + Backup safely save pending GPS tracking first.
+
 New public release — 2026.11.07 1254: Bring Today Manage/Open workout controls into view with focus, and place saved-workout Edit directly beneath the picture.
 
 New public release — 2026.11.07 1208: Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging.

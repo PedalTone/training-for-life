@@ -143,6 +143,17 @@ repeat, and Stop & save saves the final repeat. The saved workout retains the
 total and every GPS-measured repeat with time, distance and pace; it does not
 assume a fixed 400-meter length.
 
+Today and History show a **Repeats & recovery** table with variable GPS-measured
+distances in meters, time to tenths and average pace. Recovery rows time explicit
+pauses without counting recovery distance. Existing splits are displayed too;
+older recovery times derived from timestamps are labeled estimated. Missing
+split boundaries cannot be reconstructed from overall totals alone. Repeat
+boundaries survive background pause/reload; Resume continues an interrupted
+repeat, or starts a new repeat after explicit recovery. Choose Track laps before
+Start. Finish Workout + Backup can save a same-day running/paused GPS recording
+first; save failure keeps it retryable and does not complete the day. An unused
+prepared tracker does not block finishing or create a recording.
+
 ## iPhone GPS workouts
 
 Today’s Workout tab has a prominent cream GPS feature card with a navy runner,
