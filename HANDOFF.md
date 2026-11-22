@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-## Current candidate — lap recovery results, 2026.11.22 1655
+## Current release — lap recovery results, 2026.11.22 1655
 
 Full-screen recovery reuses the current cards: completed Repeat N time is large
 and precise to tenths, last repeat average pace is clearly labeled/enlarged,
@@ -18,7 +18,14 @@ D02/D07 PASS; other design surfaces N/A. Existing controls/cards reused.
 Implementation uses a clean temporary clone at /private/tmp/t4l-lap-pause-release:
 the existing synced checkout's fetch failed on a duplicate invalid Git ref
 (refs/heads/codex/plan-picture-removal 2). That checkout, the original pending GPS
-work and all workout backups are preserved. Deployment/live verification remains.
+work and all workout backups are preserved.
+
+Published commit 438b0e7033d2c132b579443b59d72d6b0cbb238f passed targeted
+CI and deployment 45075049914. Live JS index-BFMuG1rh.js, CSS index-DW3WASXs.css
+and worker match the tested local build byte-for-byte. A live 440x956 lap
+workflow passes eight repeats/seven rests, frozen paused metrics/reload/Resume,
+Stop, backup and History. Evidence: live-assets.json and live-browser.txt in the
+release evidence folder. The user can refresh to this version.
 
 ## Change-focused testing — user clarification November 22
 

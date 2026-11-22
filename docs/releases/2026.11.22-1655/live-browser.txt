@@ -1,0 +1,1 @@
+PASS 440×956: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table.

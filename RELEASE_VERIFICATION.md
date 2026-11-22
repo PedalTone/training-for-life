@@ -23,3 +23,12 @@ surfaces). Duplicate review PASS: existing cards and actions reused; split time
 uses the same formatter as the saved table. No workout data/schema migration.
 Publication itself will be recorded in HANDOFF.md after successful deployment,
 byte comparison and affected live smoke. Physical follow-up remains optional.
+
+## Verified live release
+
+[Deployment 45075049914](https://github.com/PedalTone/training-for-life/actions/runs/45075049914)
+succeeded for 438b0e7033d2c132b579443b59d72d6b0cbb238f. Public JS/CSS/worker
+match the tested build byte-for-byte. The affected live lap scenario passes at
+440x956, including frozen repeat values during rest/reload and correct next-repeat
+Resume, save, backup and History. See this release's live-assets.json and
+live-browser.txt. Physical iPhone feedback remains a post-deployment recommendation.
