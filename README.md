@@ -414,3 +414,9 @@ Prepared (not yet started) trackers adopt the selected date on Start. Previously
 In full-screen Track laps, Pause shows the completed repeat’s time (tenths) and
 average pace alongside its separately counting recovery timer. Resume restores
 the live pace display for the next repeat.
+
+Saved repeat tables in Today and History end with total running (or walking/
+riding) time, total recovery/rest time and total workout duration (their sum).
+Warm-up/cool-down repeats are included. Subtotals are rounded once to tenths,
+and the displayed duration adds those subtotals; original measurements stay saved.
+Older timestamp-inferred rest remains labeled estimated.

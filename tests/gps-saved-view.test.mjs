@@ -40,6 +40,10 @@ test('saved mixed-distance lap recordings show a table in normal view, including
   const html=render([{...workout,activity,lapMode:true,laps}]);
   assert.match(html,/Repeats &amp; recovery/);assert.match(html,/<table>/);assert.match(html,/Repeat 1/);assert.match(html,/Repeat 2/);
   assert.match(html,/Recovery/);assert.match(html,/1:47\.6/);assert.match(html,/2:00\.0/);assert.match(html,/400/);assert.match(html,/800/);
+  const footer=html.match(/<tfoot[\s\S]*?<\/tfoot>/)?.[0];assert.ok(footer);
+  assert.match(footer,/Total (?:running|walking) time/);assert.match(footer,/5:21\.6/);
+  assert.match(footer,/Total rest time \(estimated\)/);assert.match(footer,/2:00\.0/);
+  assert.match(footer,/Total workout duration/);assert.match(footer,/7:21\.6/);
   assert.match(html,/Older recovery times are estimated/);assert.doesNotMatch(html,/gps-lap-live/);
  }
 });
@@ -48,4 +52,16 @@ test('a recording saved to another date stays visibly retained with totals and a
  const html=render([],{saved:workout,savedDate:'2026-10-17'},{onViewSaved(){}});
  assert.match(html,/Recording saved on another day/);assert.match(html,/Saved for 2026-10-17/);assert.match(html,/1\.00 mi · 00:10:00/);assert.match(html,/View saved workout/);
  assert.doesNotMatch(html,/Edit recording 1: Run/);assert.doesNotMatch(html,/class="gps-metrics"/);assert.match(html,/<details[^>]*open/);
+});
+
+test('single no-distance repeat has zero rest and a labeled activity total without inventing splits',()=>{
+ const laps=[{number:1,seconds:10.4,meters:0,startedAt:'2026-10-18T12:00:00Z',endedAt:'2026-10-18T12:00:10.400Z'}];
+ for(const [activity,label] of [['Run','running'],['Walk','walking'],['Bike','riding']]){
+  const html=render([{...workout,activity,lapMode:true,laps,recoveries:[]}]);
+  const footer=html.match(/<tfoot[\s\S]*?<\/tfoot>/)[0];
+  assert.match(footer,new RegExp('Total '+label+' time'));
+  assert.equal((footer.match(/0:10\.4/g)||[]).length,2);assert.match(footer,/0:00\.0/);
+  assert.doesNotMatch(footer,/estimated/);
+ }
+ assert.doesNotMatch(render([{...workout,lapMode:true,laps:[]}]),/<tfoot/);
 });

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {beginRepeat,endRepeat,currentRepeat,gpsSegments,splitTime} from '../app/gps-laps.ts';
+import {beginRepeat,endRepeat,currentRepeat,gpsSegments,splitTime,splitTotals} from '../app/gps-laps.ts';
 import {readGpsRecovery} from '../app/gps-recovery.ts';
 
 const origin=Date.parse('2026-11-09T12:00:00Z');
@@ -67,4 +67,26 @@ test('last-save receipt and JSON backup retain lap mode, repeats and recovery du
  assert.deepEqual(reload(readGpsRecovery({getItem:()=>JSON.stringify(record)}).workout),workout);
  assert.deepEqual(reload(record).workout.laps,workout.laps);
  assert.equal(splitTime(573.9),'9:33.9');assert.equal(splitTime(59.96),'1:00.0');assert.equal(splitTime(3601.2),'1:00:01.2');
+});
+
+
+test('split totals include all repeats and recovery, without changing original measurements',()=>{
+ const rows=[{kind:'repeat',number:1,seconds:573.9,meters:1609.344},{kind:'recovery',number:1,seconds:182.9,meters:null},{kind:'repeat',number:2,seconds:220,meters:800},{kind:'recovery',number:2,seconds:187.4,meters:null},{kind:'repeat',number:3,seconds:610.2,meters:1609.344}];
+ const before=structuredClone(rows);
+ assert.deepEqual(splitTotals(rows),{activeSeconds:1404.1,restSeconds:370.3,totalSeconds:1774.4,estimatedRest:false});
+ assert.equal(splitTime(splitTotals(rows).totalSeconds),'29:34.4');
+ assert.deepEqual(rows,before);
+});
+test('display totals round each subtotal once and the grand total adds displayed values',()=>{
+ const tiny=[{kind:'repeat',number:1,seconds:.14,meters:1},{kind:'repeat',number:2,seconds:.14,meters:1}];
+ assert.equal(splitTime(splitTotals(tiny).activeSeconds),'0:00.3');
+ const rounded=splitTotals([{kind:'repeat',number:1,seconds:1.44,meters:5},{kind:'recovery',number:1,seconds:1.44,meters:null}]);
+ assert.deepEqual(rounded,{activeSeconds:1.4,restSeconds:1.4,totalSeconds:2.8,estimatedRest:false});
+ assert.deepEqual(splitTotals([]),{activeSeconds:0,restSeconds:0,totalSeconds:0,estimatedRest:false});
+});
+test('rest totals respect explicit empty recoveries and mark older inferred time as estimated',()=>{
+ const laps=[{number:1,seconds:100,meters:400,startedAt:at(0),endedAt:at(100)},{number:2,seconds:210,meters:800,startedAt:at(160),endedAt:at(370)}];
+ assert.deepEqual(splitTotals(gpsSegments({laps})),{activeSeconds:310,restSeconds:60,totalSeconds:370,estimatedRest:true});
+ assert.deepEqual(splitTotals(gpsSegments({laps,recoveries:[]})),{activeSeconds:310,restSeconds:0,totalSeconds:310,estimatedRest:false});
+ assert.equal(splitTime(splitTotals([{kind:'repeat',number:1,seconds:3600.4,meters:0},{kind:'recovery',number:1,seconds:15,meters:null}]).totalSeconds),'1:00:15.4');
 });

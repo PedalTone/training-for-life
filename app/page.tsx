@@ -237,8 +237,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.22 1655";
+const APP_VERSION = "2026.11.22 1703";
 const RECENT_RELEASES = [
+  { version: "2026.11.22 1703", category: "New feature", changes: ["Saved repeat tables now finish with total running time, total rest time and total workout duration in Today and History. Warm-up and cool-down repeats are included; older estimated rest stays labeled."] },
   { version: "2026.11.22 1655", category: "Minor fix", changes: ["After Pause in full-screen Track laps, see the repeat you just finished: time to tenths and average pace. Recovery time counts separately; Resume returns to live pace for the next repeat."] },
   { version: "2026.11.22 0705", category: "Major fix", changes: ["Simplify Plan by removing its large picture while keeping day selection and weekly planning.", "Keep History and the workout editor consistent when saved browser copies differ, and restore valid workout backups reliably."] },
   { version: "2026.11.09 0758", category: "Major fix", changes: ["Keep repeat boundaries and recovery times through pause, resume, reload and save. Show a readable repeats/recovery table in Today and History with time, meters and average pace.", "Finish Workout + Backup now saves pending GPS tracking first instead of staying grayed out. Failed saves keep the recording available for retry."] },
@@ -248,7 +249,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.07 1043", category: "Major fix", changes: ["Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking."] },
   { version: "2026.11.07 0838", category: "New feature", changes: ["Choose a second major workout for the same day and show paired workout icons in History instead of treating the second workout as an add-on."] },
   { version: "2026.11.04 0803", category: "Major fix", changes: ["Close the full-screen GPS layer after Stop & Save so Today tabs, including Log, remain tappable."] },
-  { version: "2026.11.03 2219", category: "Major fix", changes: ["Lock lap full screen to the iPhone viewport with no scrolling and align visual button states with their actual touch targets."] },
 ];
 const withStore=withSessionStore;
 

@@ -1,10 +1,12 @@
 import {gpsPace,gpsUsesPace,type GpsWorkout} from './gps-math';
-import {gpsSegments,splitTime} from './gps-laps';
+import {gpsSegments,splitTime,splitTotals} from './gps-laps';
 
 export function GpsSplitsTable({workout,unit='mi'}:{workout:GpsWorkout;unit?:'mi'|'km'}) {
  const rows=gpsSegments(workout);
  if(!rows.length)return workout.lapMode?<p className="gps-splits-note">No repeat splits were saved for this recording. Only its overall totals are available.</p>:null;
  const usesPace=gpsUsesPace(workout.activity);
+ const totals=splitTotals(rows);
+ const activeLabel=workout.activity==='Run'?'Total running time':workout.activity==='Walk'?'Total walking time':'Total riding time';
  return <section className="gps-splits-results" aria-label="Repeats and recovery">
   <h4>Repeats &amp; recovery</h4>
   <table>
@@ -15,6 +17,11 @@ export function GpsSplitsTable({workout,unit='mi'}:{workout:GpsWorkout;unit?:'mi
     <td>{splitTime(row.seconds)}</td><td>{row.meters===null?'—':Math.round(row.meters).toLocaleString('en-US')}</td>
     <td>{row.kind==='recovery'||!row.meters||!row.seconds?'—':usesPace?gpsPace(row.meters/row.seconds,unit):(row.meters/row.seconds*3600/(unit==='mi'?1609.344:1000)).toFixed(1)}</td>
    </tr>)}</tbody>
+   <tfoot className="gps-split-totals">
+    <tr><th scope="row" colSpan={2}>{activeLabel}</th><td colSpan={2}>{splitTime(totals.activeSeconds)}</td></tr>
+    <tr><th scope="row" colSpan={2}>Total rest time{totals.estimatedRest?' (estimated)':''}</th><td colSpan={2}>{splitTime(totals.restSeconds)}</td></tr>
+    <tr className="gps-workout-total"><th scope="row" colSpan={2}>Total workout duration</th><td colSpan={2}>{splitTime(totals.totalSeconds)}</td></tr>
+   </tfoot>
   </table>
   {rows.some(row=>row.kind==='recovery')&&<p className="gps-splits-note">Recovery is timed while paused; distance and pace are not tracked.{rows.some(row=>row.estimated)?' Older recovery times are estimated from saved split timestamps.':''}</p>}
  </section>;

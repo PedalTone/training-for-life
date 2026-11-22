@@ -1,5 +1,20 @@
 # Training for Life — development handoff
 
+## Current candidate — split-table time totals, 2026.11.22 1703
+
+Saved split tables now end with total running time (walking/riding labels for
+those activities), total rest time and combined workout duration. All repeats,
+including warm-up/cool-down, count. Shared splitTotals sums raw segment times,
+rounds each subtotal once to tenths and sums the displayed subtotals. Legacy
+inferred rest remains labeled estimated. No persisted record/schema change.
+
+Affected CF24/34/48: 53 selected tests and both builds pass. Focused browser
+checks at 375/393/440 verify 33:53.3 running + 20:52.2 rest = 54:45.5 duration,
+Today/History/reload consistency, exact eight-repeat/seven-recovery backup data,
+zero distance, no duplicate paused-stop effort and hour-long time fit. Screenshots
+inspected; evidence in docs/releases/2026.11.22-1703/. Saved table uses one footer;
+D02/D03/D07 PASS; unrelated design rows N/A. Deployment/live proof remains.
+
 ## Current release — lap recovery results, 2026.11.22 1655
 
 Full-screen recovery reuses the current cards: completed Repeat N time is large

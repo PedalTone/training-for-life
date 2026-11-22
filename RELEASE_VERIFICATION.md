@@ -1,34 +1,23 @@
 # Critical-feature release verification
 
-Candidate version: 2026.11.22 1655
+Candidate version: 2026.11.22 1703
 Overall decision: PASS
-Affected features: CF17, CF18, CF22, CF28, CF48
-Scope rationale: Full-screen lap recovery display changes completed-repeat time and pace labels; verify Pause/Resume/Stop state, fit/hit targets and version delivery. Distance/GPS algorithms and saved data models are unchanged.
-Automated evidence: npm run test:release passes 45 selected tests and server build; Pages build and diff check pass. See docs/releases/2026.11.22-1655/automated.txt and pages.txt.
-Browser evidence: LAPS_ONLY=1 external Chrome scenario passes at 375x667, 393x852, 440x956. Seven recovery displays preserve exact last-repeat time and min/mile average while recovery advances; reload and Resume work. Zero-distance and hour-long repeats fit. See docs/releases/2026.11.22-1655/browser.txt and recovery screenshots.
-Device follow-up: After deployment, recommend checking the paused repeat display during an ordinary iPhone track workout. Physical testing is not a deployment prerequisite.
-Data/backup evidence: Eight variable repeats and seven recoveries retain exact seconds/meters through failed-save retry, reload, backup and Today/History tables. Stop during recovery adds no duplicate split. All data is synthetic and isolated.
+Affected features: CF24, CF34, CF48
+Scope rationale: The shared saved split table gains running/rest/workout duration footer rows in Today and History. Verify totals, legacy estimates, rounding, reload/backup and phone table layout; recording and GPS algorithms are unchanged.
+Automated evidence: npm run test:release passes 53 selected tests and server build. Pages build and diff check pass. See docs/releases/2026.11.22-1703/automated.txt and pages.txt.
+Browser evidence: Focused external Chrome lap scenario passes at 375x667, 393x852 and 440x956. Today, reloaded Today and History all show running 33:53.3, rest 20:52.2 and duration 54:45.5; footer fits. Zero-distance and hour-long cases pass; final screenshots inspected. See docs/releases/2026.11.22-1703/browser.txt and PNGs.
+Device follow-up: After deployment, recommend checking the three totals in the next saved iPhone track workout; physical testing is not a publication prerequisite.
+Data/backup evidence: Eight repeats and seven recoveries retain exact seconds/meters through backup, failed-save retry and reload; Today/History totals agree. No saved record/model changes; summaries are derived from the displayed segments, including older estimated recovery. Tests verify source data is unchanged.
 
 | Feature | Result | Evidence |
 | --- | --- | --- |
-| CF17 | PASS | Selected pace/lap tests plus browser exact finished time and per-repeat average pace (distinct 400/800/mile values); unavailable pace for zero distance. |
-| CF18 | PASS | Browser center taps Pause/Resume/Stop, interrupted reload, stopped-save retry and no duplicate recording. |
-| CF22 | PASS | All seven pauses freeze completed time/pace while rest advances. First recovery survives reload; Resume switches back to Current pace for the next repeat. |
-| CF28 | PASS | External Chrome at 375/393/440 widths: no scroll/clipped metrics, visible center-hit controls; hour-long and no-GPS repeat cases fit. Actual paused screenshots inspected. |
-| CF48 | PASS | New Eastern release timestamp, ten notes and matching worker/query labels; selected tests and build pass. Exact deployment/live verification is required after push. |
+| CF24 | PASS | Unit cases cover mixed repeats, subtotals rounded once, reconciled grand total, empty/rest-free/legacy estimated recovery, zero distance and hours. Browser verifies matching three-row footer and unchanged eight repeats/seven rest intervals. |
+| CF34 | PASS | Shared table renders correct activity labels, times and legacy estimate labels; actual Today and History footer values match before/after reload at three phone sizes. |
+| CF48 | PASS | New Eastern version and matching ten notes/worker/query labels; selected tests and builds pass. Deployment and exact live proof follow publication. |
 
-Design: D03 PASS (clear finished time/pace and separate recovery timer), D02/D07
-PASS for affected save/History exit; other D rows N/A (no changes to those
-surfaces). Duplicate review PASS: existing cards and actions reused; split time
-uses the same formatter as the saved table. No workout data/schema migration.
-Publication itself will be recorded in HANDOFF.md after successful deployment,
-byte comparison and affected live smoke. Physical follow-up remains optional.
-
-## Verified live release
-
-[Deployment 45075049914](https://github.com/PedalTone/training-for-life/actions/runs/45075049914)
-succeeded for 438b0e7033d2c132b579443b59d72d6b0cbb238f. Public JS/CSS/worker
-match the tested build byte-for-byte. The affected live lap scenario passes at
-440x956, including frozen repeat values during rest/reload and correct next-repeat
-Resume, save, backup and History. See this release's live-assets.json and
-live-browser.txt. Physical iPhone feedback remains a post-deployment recommendation.
+Design review: D02/D03/D07 PASS for saved tracker/Today and History summaries.
+Other D rows N/A (surfaces unchanged). Footer reuses the existing table with
+clear labels and navy combined total; wider time column keeps hour-long values
+readable. Duplicate review PASS: one shared footer per recording, no new actions.
+Original split records remain unchanged. Display subtotals round once to tenths;
+combined duration adds those displayed subtotals. Physical feedback is follow-up.

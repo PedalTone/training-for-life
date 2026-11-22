@@ -152,7 +152,9 @@ with a separate running recovery timer. Resume returns the hero to live pace. Ba
 interruption pauses the current repeat without resetting its saved boundary.
 Stop saves the final repeat, including timed efforts with no usable GPS distance.
 Today and History share one visible table: repeat/recovery, time (tenths), GPS
-meters, and average pace. Recovery has time only because explicit pause freezes
+meters, and average pace. A footer summarizes total running/exercise time, total
+rest time, and their combined workout duration. Include warm-up/cool-down repeats
+and label inferred rest as estimated. Recovery has time only because explicit pause freezes
 distance; unavailable measurements show a dash. Older recovery gaps inferred
 from split timestamps are labeled estimated. Never invent missing old splits.
 Finish + Backup saves a same-day active/paused GPS draft first; a failed GPS save

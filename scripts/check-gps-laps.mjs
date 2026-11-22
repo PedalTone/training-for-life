@@ -106,6 +106,12 @@ async function check(width,height,preparedOnly=false){
    assert.equal(completedFit.clipped,false);assert.ok(completedFit.bottom<=height&&completedFit.overflow<=2,JSON.stringify(completedFit));await screenshot(preparedOnly==='long'?'long-recovery':'zero-recovery');await tap('.gps-stop');
    await wait("Boolean(document.querySelector('.gps-recordings'))&&!document.querySelector('.gps-stop')");
    assert.match(await evaluate("document.querySelector('.gps-splits-results').textContent"),preparedOnly==='long'?/1:00:00.4/:/0:10.4/);
+   if(preparedOnly==='long')assert.equal(await evaluate("(()=>{const r=document.createRange();r.selectNodeContents(document.querySelector('.gps-splits-results tbody tr:first-child td'));return r.getClientRects().length;})()"),1,'Hour-long split time stays on one line');
+   const expectedTotal=preparedOnly==='long'?'1:00:15.4':'0:25.4';
+   assert.deepEqual(await evaluate("[...document.querySelectorAll('.gps-splits-results tfoot td')].map(e=>e.textContent)"),[expectedTime,'0:15.0',expectedTotal]);
+   assert.equal(await evaluate("[...document.querySelectorAll('.gps-splits-results tfoot td')].some(e=>e.scrollWidth>e.clientWidth+1)"),false);
+   await evaluate("document.querySelector('.gps-split-totals').scrollIntoView({block:'center',behavior:'instant'})");await delay(250);await screenshot(preparedOnly==='long'?'long-totals':'zero-totals');
+
    await tap('.gps-record-another');
    assert.equal((await draft()).ready,true);assert.equal((await draft()).lapMode,true);
    await tap('.gps-lap-mode input');assert.equal((await draft()).lapMode,false);
@@ -186,6 +192,11 @@ async function check(width,height,preparedOnly=false){
   workout.laps.forEach((lap,i)=>{assert.ok(Math.abs(lap.meters-distances[i])<.1);assert.ok(Math.abs(lap.seconds-times[i])<.01);});
   workout.recoveries.forEach((rest,i)=>assert.ok(Math.abs(rest.seconds-rests[i])<.01));
   assert.ok(Math.abs(workout.seconds-times.reduce((a,b)=>a+b,0))<.01);
+  const footerValues=()=>evaluate("[...document.querySelectorAll('.gps-splits-results tfoot td')].map(e=>e.textContent)");
+  assert.deepEqual(await footerValues(),['33:53.3','20:52.2','54:45.5']);
+  await evaluate("document.querySelector('.gps-split-totals').scrollIntoView({block:'center',behavior:'instant'})");
+  const footerFit=await evaluate("(()=>{const f=document.querySelector('.gps-split-totals'),r=f.getBoundingClientRect();return {left:r.left,right:r.right,overflow:[...f.querySelectorAll('th,td')].some(e=>e.scrollWidth>e.clientWidth+1)};})()");
+  assert.ok(footerFit.left>=0&&footerFit.right<=width&&!footerFit.overflow,JSON.stringify(footerFit));await screenshot('totals');
   const rows=await evaluate("[...document.querySelectorAll('.gps-splits-results tbody tr')].map(r=>r.textContent)");
   assert.equal(rows.length,15);assert.ok(rows[1].includes('Recovery'));assert.match(rows[0],/1,609/);
   await evaluate("document.querySelector('.gps-splits-results').scrollIntoView({block:'start',behavior:'instant'})");await screenshot('results');
@@ -194,13 +205,16 @@ async function check(width,height,preparedOnly=false){
   const doc=await evaluate('window.__documentId');await cdp('Page.reload',{ignoreCache:true});
   await wait(`window.__documentId!==${JSON.stringify(doc)}&&Boolean(document.querySelector('.workout-lock-banner'))`);
   assert.equal(await evaluate("document.querySelectorAll('.gps-splits-results tbody tr').length"),15);
+  assert.deepEqual(await footerValues(),['33:53.3','20:52.2','54:45.5']);
   await tap('.bottom-nav button:nth-child(4)');await wait("Boolean(document.querySelector('.history-today'))");
   await tap('.history-today');await wait("Boolean(document.querySelector('.daily-journal .gps-splits-results'))");
   assert.equal(await evaluate("document.querySelectorAll('.daily-journal .gps-splits-results tbody tr').length"),15);
+  assert.deepEqual(await footerValues(),['33:53.3','20:52.2','54:45.5']);
+  await evaluate("document.querySelector('.gps-split-totals').scrollIntoView({block:'center',behavior:'instant'})");await screenshot('history-totals');
   await evaluate("document.querySelector('.gps-splits-results').scrollIntoView({block:'start',behavior:'instant'})");await screenshot('history');
   assert.deepEqual(errors,[],'No uncaught save/full-screen errors');
   socket.removeEventListener('message',onMessage);
-  console.log(`PASS ${width}×${height}: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table${width===375?', failed-save retry with one ID':''}.`);
+  console.log(`PASS ${width}×${height}: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table with matching running/rest/workout footer totals${width===375?', failed-save retry with one ID':''}.`);
  }finally{await call('Target.disposeBrowserContext',{browserContextId});}
 }
 try{

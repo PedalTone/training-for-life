@@ -81,3 +81,13 @@ export function splitTime(seconds:number) {
  const whole=Math.floor(tenths/10),hours=Math.floor(whole/3600);
  return `${hours?hours+':':''}${hours?String(Math.floor(whole%3600/60)).padStart(2,'0'):Math.floor(whole/60)}:${String(whole%60).padStart(2,'0')}.${tenths%10}`;
 }
+
+// Display totals use the same tenths precision as the table. Round each subtotal
+// once, then add them so the three displayed totals always reconcile. Raw saved
+// split measurements are unchanged, including older inferred recovery intervals.
+export function splitTotals(rows:GpsSegment[]) {
+ let active=0,rest=0;
+ for(const row of rows){if(row.kind==='repeat')active+=row.seconds;else rest+=row.seconds;}
+ const activeTenths=Math.round(active*10),restTenths=Math.round(rest*10);
+ return {activeSeconds:activeTenths/10,restSeconds:restTenths/10,totalSeconds:(activeTenths+restTenths)/10,estimatedRest:rows.some(row=>row.kind==='recovery'&&row.estimated)};
+}
