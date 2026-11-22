@@ -1,5 +1,25 @@
 # Training for Life — development handoff
 
+## Current candidate — lap recovery results, 2026.11.22 1655
+
+Full-screen recovery reuses the current cards: completed Repeat N time is large
+and precise to tenths, last repeat average pace is clearly labeled/enlarged,
+recovery time advances separately, and Resume restores live pace. The repeat
+summary uses the saved split and existing shared splitTime formatter; no GPS,
+recording or storage algorithm changes. Larger time strings fit short phones.
+
+Affected CF17/18/22/28/48 only: 45 selected tests and both builds pass. The
+LAPS_ONLY browser scenario checks eight repeats/seven rests at 375/393/440 widths,
+frozen completed values across advancing rest/reload, next-repeat reset, Stop,
+failed-save retry, backup/History arrays, zero GPS and hour-long fit. Screenshots
+were inspected; evidence is in docs/releases/2026.11.22-1655/. D03 and adjacent
+D02/D07 PASS; other design surfaces N/A. Existing controls/cards reused.
+
+Implementation uses a clean temporary clone at /private/tmp/t4l-lap-pause-release:
+the existing synced checkout's fetch failed on a duplicate invalid Git ref
+(refs/heads/codex/plan-picture-removal 2). That checkout, the original pending GPS
+work and all workout backups are preserved. Deployment/live verification remains.
+
 ## Change-focused testing — user clarification November 22
 
 Keep the full feature inventory; choose affected features and dependencies, and

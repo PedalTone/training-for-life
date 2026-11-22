@@ -96,9 +96,16 @@ async function check(width,height,preparedOnly=false){
   }
   if(preparedOnly){
    // A timed repeat without usable distance must still be recorded.
-   await evaluate('window.__stationary(10.4)');assert.equal(await evaluate("Boolean(document.querySelector('.gps-pause'))"),true,'Auto-pause stays off in lap mode');await tap('.gps-stop');
+   await evaluate(preparedOnly==='long'?'window.__advance(3600.4)':'window.__stationary(10.4)');assert.equal(await evaluate("Boolean(document.querySelector('.gps-pause'))"),true,'Auto-pause stays off in lap mode');await tap('.gps-view-toggle button');await tap('.gps-pause');
+   const expectedTime=preparedOnly==='long'?'1:00:00.4':'0:10.4';
+   assert.equal(await evaluate("document.querySelector('.gps-lap-completed dd').textContent"),expectedTime);
+   assert.match(await evaluate("document.querySelector('.gps-lap-average dd').textContent"),/—/);
+   await evaluate('window.__advance(15)');
+   assert.equal(await evaluate("document.querySelector('.gps-lap-completed dd').textContent"),expectedTime);
+   const completedFit=await evaluate("(()=>{const e=document.querySelector('.gps-lap-completed dd'),r=e.getBoundingClientRect(),b=document.querySelector('.gps-stop').getBoundingClientRect();return {clipped:e.scrollWidth>e.clientWidth+1,bottom:b.bottom,overflow:document.querySelector('.gps-body').scrollHeight-document.querySelector('.gps-body').clientHeight};})()");
+   assert.equal(completedFit.clipped,false);assert.ok(completedFit.bottom<=height&&completedFit.overflow<=2,JSON.stringify(completedFit));await screenshot(preparedOnly==='long'?'long-recovery':'zero-recovery');await tap('.gps-stop');
    await wait("Boolean(document.querySelector('.gps-recordings'))&&!document.querySelector('.gps-stop')");
-   assert.match(await evaluate("document.querySelector('.gps-splits-results').textContent"),/0:10.4/);
+   assert.match(await evaluate("document.querySelector('.gps-splits-results').textContent"),preparedOnly==='long'?/1:00:00.4/:/0:10.4/);
    await tap('.gps-record-another');
    assert.equal((await draft()).ready,true);assert.equal((await draft()).lapMode,true);
    await tap('.gps-lap-mode input');assert.equal((await draft()).lapMode,false);
@@ -108,13 +115,15 @@ async function check(width,height,preparedOnly=false){
    assert.equal(await draft(),null,'Finishing dismisses only the unused preparation');
    const saved=await evaluate("window.__backup.sessions.find(s=>s.date==='2026-11-09')");
    assert.equal(saved.gpsWorkouts.length,1);assert.equal(saved.gpsWorkouts[0].laps.length,1);
-   console.log('PASS zero-distance timed repeat and ready-draft Finish; no phantom recording.');
+   console.log(`PASS ${preparedOnly==='long'?'hour-long':'zero-distance'} repeat: frozen recovery time, unavailable pace, no clipping or duplicate split; ready-draft Finish adds no phantom recording.`);
    return;
   }
   await tap('.gps-view-toggle button');
   const distances=[1609.344,800,800,400,400,400,400,1609.344];
   const times=[573.9,220,210,107.6,106.4,105.8,99.4,610.2];
   const rests=[182.9,187.4,228.1,130.3,177.8,145.6,200.1];
+  const expectedTimes=['9:33.9','3:40.0','3:30.0','1:47.6','1:46.4','1:45.8','1:39.4'];
+  const expectedPaces=['9:34','7:23','7:02','7:13','7:08','7:06','6:40'];
   for(let i=0;i<distances.length;i++){
    if(i===1){
     await evaluate(`window.__move(400,110)`);await reload();
@@ -126,12 +135,25 @@ async function check(width,height,preparedOnly=false){
     await tap('.gps-pause');
     const paused=await draft();assert.equal(paused.laps.length,i+1);
     assert.ok(Math.abs(paused.laps[i].seconds-times[i])<.01);
+    const completedTime=()=>evaluate("document.querySelector('.gps-lap-completed dd').textContent");
+    const completedPace=()=>evaluate("document.querySelector('.gps-lap-average dd').textContent.trim()");
+    assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
+    assert.match(await evaluate("document.querySelector('.gps-lap-completed dt').textContent"),new RegExp('Repeat '+(i+1)+' time'));
     await evaluate(`window.__advance(${rests[i]})`);
+    assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
+    assert.notEqual(await evaluate("document.querySelector('.gps-lap-secondary section:first-child dd').textContent"),'00:00:00');
     if(i===0){
      assert.match(await evaluate("document.querySelector('.gps-lap-heading').textContent"),/RECOVERY/);
+     const fit=await evaluate("(()=>{const t=document.querySelector('.gps-lap-completed dd'),p=document.querySelector('.gps-lap-average dd'),b=document.querySelector('.gps-stop').getBoundingClientRect(),r=document.querySelector('.gps-body');return {clipped:t.scrollWidth>t.clientWidth+1||p.scrollWidth>p.clientWidth+1,bottom:b.bottom,overflow:r.scrollHeight-r.clientHeight};})()");
+     assert.equal(fit.clipped,false);assert.ok(fit.bottom<=height&&fit.overflow<=2,JSON.stringify(fit));
      await screenshot('recovery');
+     await reload();await tap('.gps-view-toggle button');
+     assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
+
     }
     await tap('.gps-start');
+    assert.equal(await evaluate("Boolean(document.querySelector('.gps-lap-completed'))"),false);
+    assert.equal(await evaluate("document.querySelector('.gps-lap-pace dt').textContent"),'Current pace');
    }
   }
   assert.equal(await evaluate('window.__watches()'),1,'Only one active GPS watch');
@@ -178,12 +200,12 @@ async function check(width,height,preparedOnly=false){
   await evaluate("document.querySelector('.gps-splits-results').scrollIntoView({block:'start',behavior:'instant'})");await screenshot('history');
   assert.deepEqual(errors,[],'No uncaught save/full-screen errors');
   socket.removeEventListener('message',onMessage);
-  console.log(`PASS ${width}×${height}: 8 variable repeats, 7 recoveries, mid-repeat reload, full-screen Stop, Finish/backup, reload and History table${width===375?', failed-save retry with one ID':''}.`);
+  console.log(`PASS ${width}×${height}: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table${width===375?', failed-save retry with one ID':''}.`);
  }finally{await call('Target.disposeBrowserContext',{browserContextId});}
 }
 try{
  for(const [width,height] of [[375,667],[393,852],[440,956]])await check(width,height);
  await check(440,956,true);
- await check(440,956,'ordinary');
- await check(440,956,'extended');
+ await check(375,667,'long');
+ if(process.env.LAPS_ONLY!=='1'){await check(440,956,'ordinary');await check(440,956,'extended');}
 }finally{socket.close();}

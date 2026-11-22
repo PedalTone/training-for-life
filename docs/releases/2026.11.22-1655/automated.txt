@@ -1,0 +1,104 @@
+
+> site-creator-vinext-starter@0.1.0 test:release
+> npm run build && node scripts/test-release.mjs
+
+
+> site-creator-vinext-starter@0.1.0 build
+> WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build
+
+
+  vinext build  (Vite 8.0.13)
+
+(node:47605) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1/5] analyze client references...
+[2Ktransforming...✓ 223 modules transformed.
+rendering chunks...
+✓ built in 571ms
+[2/5] analyze server references...
+[2Ktransforming...✓ 124 modules transformed.
+rendering chunks...
+✓ built in 133ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 221 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 340ms
+[4/5] build client environment...
+[2Ktransforming...✓ 165 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 334ms
+[5/5] build ssr environment...
+[2Ktransforming...✓ 130 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 274ms
+[0m
+  Route (app)
+  ─ ? /
+
+  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+Affected features: CF17, CF18, CF22, CF28, CF48; 7 Node test files.
+✔ design report links remain valid and project guidance requires its review (7.100417ms)
+✔ design documentation checks run in both npm test and GitHub release checks (2.124667ms)
+✔ mixed mile/800/400 repeats and recoveries survive every boundary and total exactly (2.0785ms)
+✔ background/reload Resume preserves the whole open repeat instead of restarting its boundary (0.18475ms)
+✔ Stop during recovery creates no duplicate repeat and poor GPS still records real repeat time (0.446333ms)
+✔ old saved splits show timestamp-derived recovery, while totals-only records gain no invented splits (0.178542ms)
+✔ last-save receipt and JSON backup retain lap mode, repeats and recovery durations (0.260167ms)
+✔ GPS distance and display units use meters and active seconds (0.951041ms)
+✔ GPS rejects weak fixes, stale timestamps and implausible jumps; gaps never bridge missing route (0.155541ms)
+✔ jitter contributes no distance and negative or missing device speed falls back to route estimate (0.073417ms)
+✔ regular stationary fixes do not become a signal gap and out-of-order callbacks are ignored (0.06025ms)
+✔ pace handles miles, kilometers, second carry and missing movement (0.087958ms)
+✔ moving coordinates override a zero device-speed reading (0.053666ms)
+✔ saved recordings replace live metrics and setup, immediately and after reload (18.538917ms)
+✔ preparing another interval restores setup while preserving saved summaries (2.206417ms)
+✔ mixed saved activities retain distinct units and completed lock affordance (1.56225ms)
+✔ Walk is selectable and saved walks show pace rather than biking speed (2.736583ms)
+✔ saved mixed-distance lap recordings show a table in normal view, including recovery and tenths (6.054084ms)
+✔ a recording saved to another date stays visibly retained with totals and a dated navigation action (0.728625ms)
+✔ complete version-matched feature evidence permits pre-publication sign-off (1.93475ms)
+✔ missing/duplicate feature rows and an empty inventory block publication (0.336542ms)
+✔ failed, blocked, untested or unchanged critical features cannot pass as N/A (0.201625ms)
+✔ stale candidate version and missing overall approval block publication (0.089916ms)
+✔ placeholder or absent automated/browser/backup evidence blocks publication (0.20525ms)
+✔ physical-only checks are recorded recommendations rather than release blockers (0.093083ms)
+✔ the full feature inventory stays intact while verification covers the declared scope (14.43675ms)
+✔ unaffected features need no fresh verification, while affected gaps still block (0.291917ms)
+✔ release tests follow affected feature coverage rather than running the full inventory (0.247667ms)
+(node:47615) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ server-renders the dated release and a discreet What’s new control (87.361625ms)
+✔ splash uses the supplied textured background only on the opening screen (1.353084ms)
+✔ all entered tabs share the texture while Home buttons float (0.831667ms)
+✔ What’s new groups exactly ten categorized dated releases (0.72925ms)
+✔ Plan shortcut opens weekly mapping and leaves room above navigation (1.066458ms)
+✔ new home-screen icon is referenced by both iPhone and PWA metadata (0.585292ms)
+✔ Progress recommendations show their full text in auto-sizing cards (0.693875ms)
+✔ protects screenshot extraction with the personal access code (5.672584ms)
+✔ counts all seven History days and does not override completed Recovery styling (0.773416ms)
+✔ History labels only the actual current calendar week as This Week (0.40725ms)
+✔ one-day workout changes are the authoritative Plan and History type (0.653375ms)
+✔ Weekly workout mapping follows the app's Monday-through-Sunday order (0.322292ms)
+✔ add-on exercise titles are explicitly editable and rename saved selections (0.388417ms)
+✔ online navigation bypasses stale HTTP HTML cache (1.366ms)
+✔ offline navigation still returns the saved page (1.683083ms)
+✔ current weather bypasses the service worker and its location URL cache (0.34575ms)
+✔ map and place requests bypass worker caching of location URLs (0.316375ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 45
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 156.72825

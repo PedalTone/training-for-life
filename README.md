@@ -410,3 +410,7 @@ device storage and uses the existing fallback; failed saves keep a retryable dra
 GPS save protection: session writes run in order, and queued autosaves recheck that their editor snapshot is current. GPS sessions are also mirrored to the existing localStorage fallback when available. Stop keeps a separate last-save recovery receipt until a later load confirms the recording exists; if absent, the tracker restores paused totals with the same recording ID for retry. This protects future saves and any receipt retained by this release; it cannot reconstruct data already absent from all iPhone storage.
 
 Prepared (not yet started) trackers adopt the selected date on Start. Previously recorded paused tracking retains its original day; if saved while another day is displayed, its retained time/distance and View saved workout remain visible. This prevents an off-day save from appearing deleted.
+
+In full-screen Track laps, Pause shows the completed repeat’s time (tenths) and
+average pace alongside its separately counting recovery timer. Resume restores
+the live pace display for the next repeat.

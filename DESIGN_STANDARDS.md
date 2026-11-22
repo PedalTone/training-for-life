@@ -146,7 +146,9 @@ retry without destroying input after failure. GPS saves serialize background wri
 scroll jumps and layout changes during typing.
 
 Track laps uses one authoritative mode, chosen before Start. Pause completes the
-repeat and begins timed recovery; Resume begins the next repeat. Background/GPS
+repeat and begins timed recovery; Resume begins the next repeat. In full-screen
+recovery, show the completed repeat’s frozen time to tenths and average pace,
+with a separate running recovery timer. Resume returns the hero to live pace. Background/GPS
 interruption pauses the current repeat without resetting its saved boundary.
 Stop saves the final repeat, including timed efforts with no usable GPS distance.
 Today and History share one visible table: repeat/recovery, time (tenths), GPS

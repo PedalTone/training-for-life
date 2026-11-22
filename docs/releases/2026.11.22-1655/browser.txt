@@ -1,0 +1,5 @@
+PASS 375×667: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table, failed-save retry with one ID.
+PASS 393×852: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table.
+PASS 440×956: 8 variable repeats, 7 recoveries, frozen completed time/pace through recovery and reload, Resume returns to live pace, full-screen Stop, Finish/backup and History table.
+PASS zero-distance repeat: frozen recovery time, unavailable pace, no clipping or duplicate split; ready-draft Finish adds no phantom recording.
+PASS hour-long repeat: frozen recovery time, unavailable pace, no clipping or duplicate split; ready-draft Finish adds no phantom recording.
