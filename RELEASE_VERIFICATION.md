@@ -4,7 +4,7 @@ Candidate version: 2026.11.22 0705
 Overall decision: PASS
 Affected features: CF15, CF31, CF33, CF34, CF42, CF43, CF48
 Scope rationale: Plan picture removal affects weekly planning; the saved-copy fix affects editor/History loading; the restore fix affects backups. Release-policy and delivery changes affect publication. Browser checks exercised those flows and their saved-day dependencies. Saved-day loading also affects Today save/lock state, History and journal. Other rows below retain actual completed supplemental results, not mandatory new tests.
-Automated evidence: npm test passes all 242 Node tests and 3 Python caption tests, including restore and release-policy regressions. Server and Pages builds pass; git diff --check passes. See docs/releases/2026.11.22-0705/automated.txt and pages.txt.
+Automated evidence: Focused GitHub CI passes 85 tests in 16 selected Node files for CF15/31/33/34/42/43/48, plus server/Pages build and release gate. See docs/releases/2026.11.22-0705/targeted-ci.txt. Earlier 242 Node/3 Python broad results are retained as supplemental evidence, not a required rerun.
 Browser evidence: External isolated Chrome: Today and Plan at 375x667, 393x852, 440x956; full baseline/expanded GPS suite; expanded critical-feature restore/video/set/media/illness/planning/sharing/offline journeys. See docs/releases/2026.11.22-0705/{today,plan,gps,critical}.txt and scripts/check-{today-actions,gps-laps,critical-features}.mjs.
 Device follow-up: After deployment, recommend installed iPhone update/offline retention, touch/safe areas/portrait, Camera-resume GPS, outdoor known-distance pace, VoiceOver and native Files/share checks. No physical-device pass is claimed. These recommendations do not block deployment per the user's November 21 clarification.
 Data/backup evidence: The expanded browser suite imports a populated schema-1 backup via Settings, checks History/editor, exports and compares GPS/splits/rests/routes, photos/screenshots, videos/plans/results, nutrition, goals, library and dated mappings. It also verifies conflicting stores, failed-save retry and offline retention. All restore data is synthetic and isolated from personal logs.
@@ -102,3 +102,11 @@ restore write per record; no redundant controls introduced.
 After successful Pages deployment, record the exact commit/run/public-asset
 comparison and live workflow results in HANDOFF.md. Only then tell the user to
 refresh. Physical checks remain recommendations for subsequent feedback.
+
+## Verified publication
+
+GitHub Pages deployment [45072584015](https://github.com/PedalTone/training-for-life/actions/runs/45072584015)
+succeeded for 1b8406560b51628ff204cf4831abf6a8ed870571. Public JS/CSS/worker
+match the tested local build byte-for-byte (live-assets.json). Affected live
+backup/record reconciliation, Plan and Today flows pass (live-data.txt,
+live-plan.txt, live-today.txt). No new physical-iPhone pass is claimed.

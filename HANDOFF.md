@@ -28,7 +28,11 @@ media/video/set/illness/nutrition/planning/sharing/offline smoke pass. Durable
 logs and feature sign-off are in RELEASE_VERIFICATION.md and docs/releases/.
 Deployment 45021554307 succeeded for 8d068ded9f1622be0745faa27268a7323d26beaf.
 Public JS/CSS/worker match the tested local files byte-for-byte.
-The November 22 testing-policy update below is being verified separately.
+The focused policy update 1b8406560b51628ff204cf4831abf6a8ed870571 deployed
+successfully in run 45072584015. Its selected CI suite passes 85 tests in 16
+files, Pages build and gate. Public assets still match byte-for-byte; affected
+live backup/record loading, Today and three-size Plan checks pass. Evidence is
+in docs/releases/2026.11.22-0705/. The user may refresh to 2026.11.22 0705.
 
 Initial workflow 45021126040 passed the full suite, build and gate twice. Its
 first deployment could not yet see the package; retry found two same-name
@@ -36,7 +40,7 @@ packages. Delivery repair separates build/deploy jobs, uses unique build-attempt
 names propagated through a job output, and waits for the exact package. A
 deploy-only retry reuses that original build output. No runtime/asset change.
 
-## Separate release candidate — Plan picture removal, November 21
+## Previous preparation — Plan picture removal, November 21
 
 Branch `codex/plan-picture-removal` starts at a481281 and contains only the Plan
 picture removal and the saved-day loader correction required by the full test
@@ -59,7 +63,7 @@ local HTTP server and temporary cloudflared process remaining available.
 The full remaining feature/native/backup-restore sign-off is still outstanding.
 No new production version or production deployment is claimed.
 
-## Current internal change — mandatory 48-feature release gate (November 9)
+## Previous internal policy — full-feature gate, November 9 (superseded)
 
 User explicitly requires every critical feature tested before every new public
 version. TESTING_CHECKLIST.md now owns CF01–CF48, each with behavior, existing
@@ -95,7 +99,7 @@ deployment. D01–D12 N/A for this internal-only change; this is not CF sign-off
 Duplicate review: one canonical inventory, one evidence record, one validator;
 focused diagnostic commands retained but never treated as a release baseline.
 
-## Current release — track splits and Finish (2026.11.09 0758)
+## Previous release — track splits and Finish (2026.11.09 0758)
 
 User reported missing track splits and disabled Finish Workout + Backup. Found:
 prepare reset draft lapMode=false while stale UI state could show checked;
@@ -2367,3 +2371,8 @@ and extract only `input_text`/`output_text`/`text` content relevant to the quest
 Keep tool arguments, image payloads, credentials, and unrelated personal data
 out of handoff documents. Specific older attachments may need separate recovery;
 the app's current code and public assets are already in this project.
+
+Local verification environment note (November 22): a redundant vinext rebuild
+stalled in client-reference analysis and was stopped. The clean GitHub build is
+the final targeted build/test evidence. A restored `node_modules 2` symlink is
+untracked and was preserved; do not publish generated dependency folders.

@@ -1,0 +1,4 @@
+PASS CF43/44: invalid backup rejected; populated schema-1 backup restored through Settings file input and automatic reload.
+PASS CF11/12/14/24/34/37/40/42/43: real journal, splits, photos, illness/body flags, set results and complete exported backup match restored fixture.
+PASS CF42: older complete fallback beats newer partial indexed copy; History and editor agree after reload.
+PASS affected saved-day and backup-restore browser smoke.

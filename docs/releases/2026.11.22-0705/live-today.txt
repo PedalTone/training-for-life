@@ -1,0 +1,6 @@
+Release 2026.11.22 0705
+PASS 375×667: native center taps, Manage/Open/Add, focus/scroll, saved Edit order, view lock, edit/re-save/reload, backup, navigation.
+Release 2026.11.22 0705
+PASS 393×852: native center taps, Manage/Open/Add, focus/scroll, saved Edit order, view lock, edit/re-save/reload, backup, navigation.
+Release 2026.11.22 0705
+PASS 440×956: native center taps, Manage/Open/Add, focus/scroll, saved Edit order, view lock, edit/re-save/reload, backup, navigation.

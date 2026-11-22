@@ -1,0 +1,3 @@
+PASS 375x667: no Plan graphic, seven day previews, Next week mapping, Open workout and overflow.
+PASS 393x852: no Plan graphic, seven day previews, Next week mapping, Open workout and overflow.
+PASS 440x956: no Plan graphic, seven day previews, Next week mapping, Open workout and overflow.
