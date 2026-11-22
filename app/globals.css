@@ -1535,7 +1535,6 @@ main { width: min(1080px, 100%); margin: 0 auto; }
 .plan-day-strip button[aria-current="date"] { box-shadow: 0 0 0 2px #bc4c1240; }
 .plan-day-strip i.completed, .plan-state.completed { color: #287047; }.plan-day-strip i.skipped, .plan-state.skipped { color: #aa3636; }
 .plan-featured.surface-card { overflow: hidden; padding: 0; margin: 0 0 20px; border-left: 0; border-radius: 20px; background: #fffaf1; }
-.plan-featured-art { width: 100%; aspect-ratio: 2 / 1; background-repeat: no-repeat; }
 .plan-featured-copy { padding: 18px 20px 20px; }.plan-featured-date { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: #ad4512; }
 .plan-featured-copy h2 { font: 32px/1.12 var(--heading-font); margin: 0 0 10px; color: var(--ink); }
 .plan-featured-status { margin: 0 0 12px; color: var(--muted); font-size: 16px; line-height: 1.45; }

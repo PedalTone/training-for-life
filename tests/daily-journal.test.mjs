@@ -34,7 +34,7 @@ test('editor loader uses richer or newer fallback records without masking newer 
  const { readFile } = await import('node:fs/promises');
  const ts = require('typescript');
  const page = await readFile('app/page.tsx','utf8');
- const block=page.slice(page.indexOf('const getSession = async'),page.indexOf('const getAllSessions ='));
+ const block=page.slice(page.indexOf('function preferredSession('),page.indexOf('const getAllSessions ='));
  const js=ts.transpile(block,{target:ts.ScriptTarget.ES2022});
  const fallback={...source,updatedAt:'2026-10-08T12:00:00Z'};
  globalThis.localStorage={getItem:()=>JSON.stringify(fallback)};
@@ -43,6 +43,14 @@ test('editor loader uses richer or newer fallback records without masking newer 
  assert.deepEqual(await make({...source,notes:'',status:'partial',videos:[],updatedAt:fallback.updatedAt})(source.id),fallback);
  const newer={...source,notes:'Newer edit',updatedAt:'2026-10-09T12:00:00Z'};
  assert.deepEqual(await make(newer)(source.id),newer);
+ const recording={id:'track',laps:[{meters:829,seconds:200,prescribedMeters:800}]};
+ const preferred={...source,gpsWorkouts:[recording],updatedAt:'2026-10-10T12:00:00Z'};
+ globalThis.localStorage={getItem:()=>JSON.stringify(preferred)};
+ assert.deepEqual(await make({...newer,gpsWorkouts:[{...recording,laps:[{meters:829,seconds:200}]}]})(source.id),preferred);
+ const deleted={...preferred,gpsWorkouts:[],updatedAt:'2026-10-11T12:00:00Z'};
+ assert.deepEqual(await make(deleted)(source.id),deleted);
+ const partial={...deleted,status:'partial',completedAt:undefined};
+ assert.deepEqual(await make(partial)(source.id),preferred);
 });
 
 test('Today keeps completion independent of body flags, including legacy completed timestamps',async()=>{

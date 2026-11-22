@@ -253,18 +253,24 @@ const RECENT_RELEASES = [
 const withStore=withSessionStore;
 
 const saveSession = createSessionWriter<Session>(session => withStore("readwrite", store => store.put(session)));
+function preferredSession(primary: Session, fallback: Session) {
+  const complete = (item: Session) => item.status === "completed" || Boolean(item.completedAt);
+  if (complete(primary) !== complete(fallback)) return complete(fallback) ? fallback : primary;
+  const primaryTime = Date.parse(primary.updatedAt || "") || 0;
+  const fallbackTime = Date.parse(fallback.updatedAt || "") || 0;
+  if (primaryTime !== fallbackTime) return fallbackTime > primaryTime ? fallback : primary;
+  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories,
+    ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || []),
+    ...(item.gpsWorkouts || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
+  return richness(fallback) > richness(primary) ? fallback : primary;
+}
 const getSession = async (id: string) => {
   const saved = await withStore<Session | undefined>("readonly", (store) => store.get(id)).catch(() => undefined);
   let fallback: Session | undefined;
   try { const raw = localStorage.getItem(`t4l:${id}`); if (raw) fallback = JSON.parse(raw); } catch { /* Keep the indexed record if fallback storage cannot be read. */ }
   if (!fallback?.date || fallback.date !== id) return saved;
   if (!saved) return fallback;
-  const indexedTime = Date.parse(saved.updatedAt || "") || 0;
-  const fallbackTime = Date.parse(fallback.updatedAt || "") || 0;
-  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || []), ...(item.gpsWorkouts || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
-  const savedComplete = saved.status === "completed" || Boolean(saved.completedAt);
-  const fallbackComplete = fallback.status === "completed" || Boolean(fallback.completedAt);
-  return (fallbackComplete && !savedComplete) || (!savedComplete && !fallbackComplete && (fallbackTime > indexedTime || (fallbackTime === indexedTime && richness(fallback) > richness(saved)))) ? fallback : saved;
+  return preferredSession(saved, fallback);
 };
 const getAllSessions = () => withStore<Session[]>("readwrite", (store) => {
   const cursor = store.openCursor();
@@ -290,20 +296,12 @@ async function loadAllSessions() {
     } catch { return []; }
   });
   // A session can exist in both stores after an older browser/app version or
-  // a failed IndexedDB write. Prefer the record with the most recent update,
-  // and use the richer record when timestamps are missing or identical. This
-  // prevents an empty/rest placeholder in IndexedDB from masking a populated
-  // workout saved in the legacy localStorage fallback.
-  const richness = (item: Session) => [item.activity, item.duration, item.distance, item.notes, item.pace, item.calories, ...(item.activities || []), ...(item.mobilityExercises || []), ...(item.completedExercises || []), ...(item.videos || []), ...(item.gpsWorkouts || [])].filter(Boolean).length + (item.status === "completed" ? 10 : 0) + (hasReportedInjury(item) ? 5 : 0);
+  // a failed IndexedDB write. Use the same whole-record rule as the editor so
+  // History, GPS recovery and backups see the same saved day.
   const merged = new Map<string, Session>();
   for (const item of [...indexed, ...legacy].map(normalizeSession)) {
     const existing = merged.get(item.id);
-    if (!existing) { merged.set(item.id, item); continue; }
-    const itemTime = Date.parse(item.updatedAt || "") || 0;
-    const existingTime = Date.parse(existing.updatedAt || "") || 0;
-    const existingComplete = existing.status === "completed" || Boolean(existing.completedAt);
-    const itemComplete = item.status === "completed" || Boolean(item.completedAt);
-    if ((itemComplete && !existingComplete) || (!existingComplete && !itemComplete && (itemTime > existingTime || (itemTime === existingTime && richness(item) > richness(existing))))) merged.set(item.id, item);
+    merged.set(item.id, existing ? preferredSession(existing, item) : item);
   }
   return [...merged.values()].sort((a, b) => b.date.localeCompare(a.date));
 }
@@ -1110,7 +1108,7 @@ function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate
   const entries = days.map((date) => {
     const saved = map.get(dateKey(date));
     const plan = historicalPlan(saved, scheduleForDate(date, activeSchedule, scheduleHistory), date);
-    return { date, saved, plan, state: stateFor(saved, plan.key, date, today), isToday: dateKey(date) === dateKey(today), scene: adventureSceneFor(plan.key) };
+    return { date, saved, plan, state: stateFor(saved, plan.key, date, today), isToday: dateKey(date) === dateKey(today) };
   });
   const featured = entries.find(entry => dateKey(entry.date) === selectedDate) || entries.find(entry => entry.isToday) || entries[0];
   return <div className="subpage week-page featured-week-page">
@@ -1127,7 +1125,6 @@ function WeekView({ today, sessions, activeSchedule, scheduleHistory, onOpenDate
 
     <nav className="plan-day-strip" aria-label="Choose a day to preview">{entries.map(({ date, plan, state, isToday }) => <button type="button" key={dateKey(date)} aria-pressed={dateKey(date) === dateKey(featured.date)} aria-current={isToday ? "date" : undefined} aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}: ${plan.theme}. ${stateLabel(state)}${isToday ? ". Today" : ""}`} onClick={() => setSelectedDate(dateKey(date))}><span>{plan.short}</span><b>{date.getDate()}</b><i className={state} aria-hidden="true">{state === "completed" ? "✓" : state === "skipped" ? "−" : "○"}</i></button>)}</nav>
     <section ref={featuredRef} className="plan-featured surface-card" aria-label="Selected day workout">
-      <div className="plan-featured-art" role="img" aria-label={featured.scene.name} data-workout-type={featured.plan.key} style={adventureBackgroundFor(featured.plan.key)}/>
       <div className="plan-featured-copy"><p className="plan-featured-date">{featured.date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}{featured.isToday ? " · Today" : ""}</p><h2>{featured.plan.theme}</h2><p className="plan-featured-status">{featured.saved?.activity || featured.plan.guidance}</p><span className={`plan-state ${featured.state}`}>{featured.state === "completed" ? "✓ " : ""}{stateLabel(featured.state)}</span><button type="button" className="plan-open-workout" onClick={() => onOpenDate(featured.date)}>Open workout <span aria-hidden="true">→</span></button></div>
     </section>
     <section className="plan-week-overview" aria-labelledby="plan-overview-heading"><h2 id="plan-overview-heading">Your week</h2>{entries.map(({ date, plan, state, isToday }) => <button type="button" key={dateKey(date)} aria-pressed={dateKey(date) === dateKey(featured.date)} aria-label={`Preview ${plan.short} ${date.getDate()}: ${plan.theme}. ${stateLabel(state)}`} onClick={() => { setSelectedDate(dateKey(date)); featuredRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}><span className="plan-overview-day">{plan.short}<small>{date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</small></span><strong>{plan.theme}{isToday && <small>Today</small>}</strong><span className={`plan-state ${state}`}><i aria-hidden="true">{state === "completed" ? "✓" : state === "skipped" ? "−" : "○"}</i><span>{stateLabel(state)}</span></span></button>)}</section>

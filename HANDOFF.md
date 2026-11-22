@@ -1,5 +1,28 @@
 # Training for Life — development handoff
 
+## Separate release candidate — Plan picture removal, November 21
+
+Branch `codex/plan-picture-removal` starts at a481281 and contains only the Plan
+picture removal and the saved-day loader correction required by the full test
+suite. The pending GPS distance, diagnostics, prescribed-distance and exercise/
+rest summary changes stay in `source-recovered-2026-10-23`.
+
+Fresh locked dependencies resolved the local dependency loader failures.
+`npm test` passes 240 Node tests and 3 Python caption tests. Both build paths
+pass. External Chrome passes Plan day selection/Open workout/Next week, Today
+Edit/locking/backups and the complete lap save/reload/History scenario at
+375×667, 393×852 and 440×956. Evidence is in `/private/tmp/t4l-plan-isolated-*.log`.
+D06 PASS for Plan, D02/D07/D10/D12 scoped data/save checks PASS. Other D rows
+N/A for the picture removal. Duplicate review PASS with the existing card.
+
+Temporary iPhone preview uses an isolated origin at
+https://cite-indication-fuzzy-shaw.trycloudflare.com/training-for-life/app/ .
+Its JavaScript was compared byte-for-byte with the tested build. This is a
+preview, not a GitHub Pages production release. The link depends on the Mac's
+local HTTP server and temporary cloudflared process remaining available.
+The full remaining feature/native/backup-restore sign-off is still outstanding.
+No new production version or production deployment is claimed.
+
 ## Current internal change — mandatory 48-feature release gate (November 9)
 
 User explicitly requires every critical feature tested before every new public

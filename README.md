@@ -2,7 +2,7 @@
 
 An iPhone-friendly fitness planner and workout log, with a Home screen, Today,
 Plan, History, Progress, and Settings. The app supports recurring schedules,
-one-day changes, mobility exercises, videos, photos, backup/restore, local screenshot attachments, GPS route maps and social share images. Plan uses This week/Next week underline tabs. This week has a seven-day selector, one featured workout picture and a compact overview. Next week contains Monday–Sunday workout mapping; changes save automatically from next Monday and repeat weekly, retaining this week and logged workouts. Dated mappings are included in backups; older backups remain supported. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today, Plan and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
+one-day changes, mobility exercises, videos, photos, backup/restore, local screenshot attachments, GPS route maps and social share images. Plan uses This week/Next week underline tabs. This week has a seven-day selector, a compact workout summary and a compact overview. Next week contains Monday–Sunday workout mapping; changes save automatically from next Monday and repeat weekly, retaining this week and logged workouts. Dated mappings are included in backups; older backups remain supported. Yoga, Pilates, Swimming, Pickleball, Tennis and Basketball are available in weekly mapping and one-day changes, with matching artwork on Home, Today and the journal. Today uses Workout, Log and Check-ins tabs. Nutrition is in Check-ins, with quick Yes/No answers,
 with notes via typing or the phone keyboard’s dictation.
 
 ## Continue development

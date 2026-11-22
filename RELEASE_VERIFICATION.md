@@ -2,8 +2,8 @@
 
 Candidate version: 2026.11.09 0758
 Overall decision: BLOCKED
-Automated evidence: November 9 npm test run: 240 Node tests, 239 pass, 1 existing store-reconciliation failure; /private/tmp/t4l-critical-features-full.log. All 8 focused policy/guard tests pass; all 3 Python caption-helper tests pass separately. Pages build and git diff --check pass. Release guard exits 1 as required for this incomplete report.
-Browser evidence: UNTESTED for the full CF inventory; earlier track/Today smoke is partial coverage only.
+Automated evidence: November 21 separate Plan candidate: npm test passes 240 Node and 3 Python tests; server/Pages builds and diff check pass. /private/tmp/t4l-plan-isolated-tests.log and /private/tmp/t4l-plan-isolated-build.log.
+Browser evidence: Plan, Today and GPS lap smoke pass at 375/393/440 widths in external Chrome. Full feature sign-off is still pending. /private/tmp/t4l-plan-isolated-{browser,today,laps}.log.
 Device evidence: UNTESTED for this full inventory; no new physical iPhone certification is claimed.
 Data/backup evidence: UNTESTED for the full cross-feature restore scenario.
 
@@ -63,7 +63,7 @@ candidate tests. Record failures as failures; do not remove their tests.
 | CF39 | UNTESTED | Plan/lexicon tests exist; candidate reviewed draft/save/template isolation required. |
 | CF40 | UNTESTED | Session strength tests exist; full actual-set/repeat/remove-last/backup workflow required. |
 | CF41 | UNTESTED | Sharing data/map tests exist; actual template/format PNGs and native export evidence required. |
-| CF42 | FAIL | Existing tests/daily-journal.test.mjs:33 fails: with equal timestamps and completedAt in both stores, the loader chooses the less complete IndexedDB copy instead of the richer fallback. Investigate and fix before another public release; do not weaken the assertion. |
+| CF42 | BLOCKED | The loader failure is fixed and the complete unit suite passes. Editor and History share the copy-selection rule. Further browser conflicting-store/quota and full restore checks remain for release sign-off. |
 | CF43 | UNTESTED | Several data-family unit roundtrips exist; complete populated backup/restore comparison required. |
 | CF44 | UNTESTED | Settings/library/restore/return workflow required. |
 | CF45 | UNTESTED | Actual assessment-folder link/new-tab/return/storage check required. |
