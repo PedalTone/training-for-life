@@ -1,0 +1,385 @@
+
+> site-creator-vinext-starter@0.1.0 test
+> npm run build && npm run test:regression && npm run test:captions-helper
+
+
+> site-creator-vinext-starter@0.1.0 build
+> WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build
+
+
+  vinext build  (Vite 8.0.13)
+
+(node:15555) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1/5] analyze client references...
+[2Ktransforming...✓ 223 modules transformed.
+rendering chunks...
+✓ built in 437ms
+[2/5] analyze server references...
+[2Ktransforming...✓ 124 modules transformed.
+rendering chunks...
+✓ built in 137ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 221 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 402ms
+[4/5] build client environment...
+[2Ktransforming...✓ 165 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 420ms
+[5/5] build ssr environment...
+[2Ktransforming...✓ 130 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 274ms
+[0m
+  Route (app)
+  ─ ? /
+
+  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+
+> site-creator-vinext-starter@0.1.0 test:regression
+> node --experimental-strip-types --test tests/*.test.mjs
+
+✔ the full library is visible without becoming selected or entering backup data (0.866083ms)
+✔ explicit selection and removal preserve other choices and completion history (0.133625ms)
+✔ chosen examples appear once and renamed or unavailable examples are not invented (0.076375ms)
+✔ selection immediately groups exact chosen exercises first, including Push-Ups (0.067208ms)
+✔ explicit checkbox state is idempotent and preserves other completion records (0.130916ms)
+✔ every standard workout resolves to its distinct illustrated setting (1.084ms)
+✔ a changed workout key immediately selects different artwork; custom types remain supported (0.194209ms)
+✔ endurance and mobility select their standalone artwork (0.291208ms)
+✔ strength and aerobic use their approved text-free standalone assets (0.16ms)
+✔ new activities and existing custom names share distinct artwork (0.814667ms)
+✔ journal renders all saved daily fields and nutrition without mutating records (49.027ms)
+✔ an unrecorded day hides empty sections and malformed video links cannot create embeds (2.202417ms)
+✔ editor loader uses richer or newer fallback records without masking newer indexed data (417.104792ms)
+✔ Today keeps completion independent of body flags, including legacy completed timestamps (14.40175ms)
+✔ workout summary lists explicit add-ons and excludes display-only examples (3.306917ms)
+✔ journal retains locally attached screenshots without extraction or changing metrics (1.956708ms)
+✔ design report links remain valid and project guidance requires its review (59.1965ms)
+✔ design documentation checks run in both npm test and GitHub release checks (6.84175ms)
+✔ All shows all 39 categorized videos on first render and after returning from a category (0.51425ms)
+✔ uncategorized includes missing/unknown categories and video identity matches URL variants (0.18625ms)
+✔ four seconds of consecutive near-zero evidence pauses; shorter stops and slow motion do not (0.515708ms)
+✔ resume threshold and real displacement prevent stop/start chatter from near-zero drift (0.108292ms)
+✔ missing, stale, inaccurate, null or out-of-order GPS never establishes a stop (0.091375ms)
+✔ weak signal interrupts the low-motion countdown; fresh evidence must start again (0.061917ms)
+✔ unknown GPS cannot resume an auto-paused timer; opt-out resumes only auto-paused state (0.074583ms)
+✔ continuous movement and threshold fluctuations clear the stop countdown (0.058125ms)
+✔ classification-only correction preserves exact measurements, route, timestamps and identity (0.978166ms)
+✔ explicit distance/duration corrections use selected units and retain original recorded route (0.089833ms)
+✔ invalid edits never silently save empty, negative or malformed measurements (0.157125ms)
+✔ mixed-session corrections retain other activities and manual titles (0.134958ms)
+✔ Run recordings can be corrected to Walk without losing exact totals, route or identity (0.099ms)
+✔ mixed mile/800/400 repeats and recoveries survive every boundary and total exactly (7.041541ms)
+✔ background/reload Resume preserves the whole open repeat instead of restarting its boundary (0.14375ms)
+✔ Stop during recovery creates no duplicate repeat and poor GPS still records real repeat time (0.099041ms)
+✔ old saved splits show timestamp-derived recovery, while totals-only records gain no invented splits (1.093792ms)
+✔ last-save receipt and JSON backup retain lap mode, repeats and recovery durations (0.927958ms)
+✔ pinch preserves a free-map anchor at the same screen position (1.593375ms)
+✔ follow pinch retains GPS center while changing zoom (3.158959ms)
+✔ drag moves map under the finger and keeps latitude in bounds (0.141916ms)
+✔ GPS distance and display units use meters and active seconds (0.979584ms)
+✔ GPS rejects weak fixes, stale timestamps and implausible jumps; gaps never bridge missing route (0.200459ms)
+✔ jitter contributes no distance and negative or missing device speed falls back to route estimate (0.0815ms)
+✔ regular stationary fixes do not become a signal gap and out-of-order callbacks are ignored (0.059625ms)
+✔ pace handles miles, kilometers, second carry and missing movement (0.090333ms)
+✔ moving coordinates override a zero device-speed reading (0.055ms)
+(node:15627) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ stopped recording recovery preserves exact totals, route, date and retry identity (0.886208ms)
+✔ invalid or unavailable recovery never replaces existing tracking data (0.159125ms)
+✔ explicit deletion clears only its recovery copy and rejects silent removal failures (0.41825ms)
+✔ small walking steps resume after a two-minute stop with native speed missing, zero or positive (2.196667ms)
+✔ slow walking and biking both resume from progressive coordinate movement (0.1695ms)
+✔ GPS noise, speed-only spikes and a single coordinate jump never resume (0.107541ms)
+✔ weak, stale, out-of-order fixes and missing GPS reset movement evidence (0.0925ms)
+✔ stationary time never dilutes later walking speed and the movement window stays bounded (0.222084ms)
+✔ route preserves pause/gap segments, coordinates, labels and backup JSON (0.879916ms)
+✔ sampling includes origin and finish; out-and-back labels retain crossings (0.203792ms)
+✔ long routes thin interior points but preserve segment endpoints (0.72625ms)
+✔ GPS save preserves manual totals, setup and completion and records all summary fields for backup (92.274667ms)
+✔ GPS fills empty totals, accumulates later recordings and preserves subsequent manual edits (40.191584ms)
+✔ editing a saved route replaces it without adding distance or duplicate recordings (10.008875ms)
+✔ place-label enrichment preserves interval recording order (7.12775ms)
+✔ correcting a recording updates auto totals/activity without duplicates, route loss or manual data loss (8.7635ms)
+✔ finished workouts reject recording edits until explicitly unlocked; route enrichment preserves the lock (4.096ms)
+✔ deleting one interval recalculates automatic totals and keeps other recordings and notes (18.712958ms)
+✔ deleting retains manual fields and completed lock; missing or locked recordings cannot be deleted (7.839625ms)
+✔ late route enrichment never restores a deleted recording (3.977333ms)
+✔ active GPS saves do not wait for a stalled storage read (2.685ms)
+✔ saved recordings replace live metrics and setup, immediately and after reload (79.81275ms)
+✔ preparing another interval restores setup while preserving saved summaries (21.375333ms)
+✔ mixed saved activities retain distinct units and completed lock affordance (2.58875ms)
+✔ Walk is selectable and saved walks show pace rather than biking speed (2.768125ms)
+✔ saved mixed-distance lap recordings show a table in normal view, including recovery and tenths (6.256875ms)
+✔ a recording saved to another date stays visibly retained with totals and a dated navigation action (0.926792ms)
+✔ weather accepts zero and subzero readings without inventing missing values (0.515834ms)
+✔ weather shares only rounded coordinates and honors cancellation and HTTP errors (0.352209ms)
+✔ search covers saved details, combines words and ignores case/accents (20.775959ms)
+✔ historical themes remain distinct, dates are inclusive and future records excluded (4.087792ms)
+✔ matching excerpts include the search hit and never mutate source records (0.268833ms)
+✔ Body notes only composes with query, type and dates and preserves note excerpt (0.163292ms)
+✔ 12 Monday-to-Sunday weeks are contiguous across month/year and DST boundaries (7.098459ms)
+✔ arrows shift three weeks and never move the timeline beyond the actual current week (0.1465ms)
+✔ workout colors are consistent across Strength and Mobility variants and do not recolor statuses (0.084125ms)
+✔ illness normalizes separately and old records do not gain an illness (0.724041ms)
+✔ saving sick rest day preserves records without claiming completion and follows Edit lock (0.107125ms)
+✔ illness rest is searchable and excluded from completed mix while ordinary recovery remains (7.240958ms)
+✔ accepts complete reports including empty optional lists (0.441667ms)
+✔ rejects incomplete reports that would crash Progress rendering (0.105ms)
+✔ balance uses completed days, excludes future and respects inclusive 28-day window (7.865375ms)
+✔ comparisons separate strength themes and activities and require completed records (0.150041ms)
+✔ revisit uses completed exercises across all history, not selections, and leaves source untouched (0.472708ms)
+✔ 4, 8 and 12 weeks rank completed exercises within each window, once per day (0.178958ms)
+✔ training mix measures share of all completed days including recovery, not the largest type (0.536666ms)
+✔ missing historical types remain visible and percentages update with the selected window (0.178083ms)
+✔ empty periods have zero shares and legacy completion agrees with History (0.089958ms)
+✔ nutrition schedule handles every weekday and split weekend meals (1.5735ms)
+✔ unanswered, No and optional fast remain distinct through backup roundtrip (0.427334ms)
+✔ restore merges dates and fields without losing unrelated records (0.11075ms)
+✔ invalid dates and answers are rejected rather than silently erasing records (0.147291ms)
+✔ storage restores old backups safely and preserves workout storage (0.176667ms)
+✔ selects most recent earlier matching workout with notes regardless of history order (34.044125ms)
+✔ respects workout overrides, custom types and different strength themes (0.228125ms)
+✔ copy preserves current notes and repeated copies do not duplicate text (0.401542ms)
+✔ complete version-matched feature evidence permits pre-publication sign-off (6.733084ms)
+✔ missing/duplicate feature rows and an empty inventory block publication (0.361ms)
+✔ failed, blocked, untested or unchanged critical features cannot pass as N/A (0.169959ms)
+✔ stale candidate version and missing overall approval block publication (0.109375ms)
+✔ placeholder or absent automated/browser/backup evidence blocks publication (0.225583ms)
+✔ physical-only checks are recorded recommendations rather than release blockers (0.103791ms)
+✔ all established critical features have unique inventory and verification entries (27.374ms)
+(node:15647) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ server-renders the dated release and a discreet What’s new control (293.938125ms)
+✔ splash uses the supplied textured background only on the opening screen (19.103084ms)
+✔ all entered tabs share the texture while Home buttons float (7.512792ms)
+✔ What’s new groups exactly ten categorized dated releases (6.071958ms)
+✔ Plan shortcut opens weekly mapping and leaves room above navigation (3.709917ms)
+✔ new home-screen icon is referenced by both iPhone and PWA metadata (2.16125ms)
+✔ Progress recommendations show their full text in auto-sizing cards (2.225041ms)
+✔ protects screenshot extraction with the personal access code (6.649875ms)
+✔ counts all seven History days and does not override completed Recovery styling (3.139167ms)
+✔ History labels only the actual current calendar week as This Week (2.58025ms)
+✔ one-day workout changes are the authoritative Plan and History type (2.136209ms)
+✔ Weekly workout mapping follows the app's Monday-through-Sunday order (1.685916ms)
+✔ add-on exercise titles are explicitly editable and rename saved selections (3.212542ms)
+✔ repeat selects the latest earlier matching workout with reusable setup (7.707791ms)
+✔ repeat copies only setup fields, never results or completion, and does not mutate source (0.237792ms)
+✔ repeat preserves existing setup and results and repeated application adds no duplicates (0.103833ms)
+✔ online navigation bypasses stale HTTP HTML cache (1.155167ms)
+✔ offline navigation still returns the saved page (1.122542ms)
+✔ current weather bypasses the service worker and its location URL cache (0.375333ms)
+✔ map and place requests bypass worker caching of location URLs (0.323125ms)
+✔ stalled database open rejects rather than leaving Save pending; late open is closed (23.86275ms)
+✔ stalled transaction aborts before fallback and cannot report late success (23.759209ms)
+✔ blocked and failed opens reject, successful transactions resolve and close (0.283ms)
+✔ pending old autosave cannot finish after a GPS save, even with a delayed database open (0.371666ms)
+✔ an autosave queued during Stop/save checks freshness when it actually writes (0.6705ms)
+✔ GPS success keeps a readable second copy; either store alone can save; both failing rejects (1.538875ms)
+✔ a failed save does not block later retries or saves for another date (0.393916ms)
+✔ Settings restore passes each record alone to the serialized session writer (292.890083ms)
+✔ GPS run derives only supported totals and respects saved metrics (1.229542ms)
+✔ walking/hiking GPS and multiple recordings preserve separate route segments (0.110833ms)
+✔ strength includes only completed exercises, no invented sets/reps/heart rate/volume (0.111125ms)
+✔ missing optional metrics and long actual values remain faithful (0.071208ms)
+✔ privacy hides areas around endpoints and never connects pauses or removed sections (0.387042ms)
+✔ projection handles date-line crossings and ignores invalid GPS coordinates (0.106166ms)
+✔ export dimensions are exact for all three formats (0.061417ms)
+✔ bikes use mph and mixed workouts calculate each activity separately (0.14225ms)
+✔ share duration uses readable hours and minutes (0.059791ms)
+✔ corrected Run to Bike classification switches sharing pace to speed (0.115459ms)
+✔ Walk tracking shares minutes per mile, including mixed walking and biking days (0.129375ms)
+✔ map fits separate segments in every export viewport with visible endpoints (2.157417ms)
+✔ dateline crossing uses nearby wrapped tiles, not a world-wide map (0.117416ms)
+✔ deliberate horizontal swipes navigate in either direction (1.007625ms)
+✔ short, diagonal, vertical and slow gestures do not navigate (0.283792ms)
+✔ AI direction prompt requires category-specific evidence before decrease (22.992709ms)
+✔ every supplied exercise phrase produces one reviewable movement with its own explicit dose (202.300125ms)
+✔ specific press, swing, clean, snatch and squat variants stay distinct (1.027333ms)
+✔ left/right, loading, position and per-side dose are preserved without inferring weights or totals (3.515792ms)
+✔ aliases and abbreviations normalize while compounds own their component words (1.136583ms)
+✔ ordinary speech and technique/position/programming terms do not create exercise rows (0.612417ms)
+✔ EMOM and AMRAP stay in notes instead of becoming rest, sets or per-exercise work (0.561291ms)
+✔ generic presses and named complexes do not imply stricter technique or a hidden rep scheme (0.413959ms)
+✔ negation and name boundaries protect the plan from false prescriptions (0.561875ms)
+✔ lexicon names survive save/repeat without changing dated results or source transcript cues (0.405041ms)
+✔ the default request explicitly chooses the website and reuses only its scoped transcript (27.559625ms)
+✔ website failures retain the blocked-site message and never fall back automatically (0.633084ms)
+✔ explicit YouTube fallback is a separate request and does not satisfy a later website request (1.814208ms)
+✔ a website request rejects a substituted YouTube source from the network or cache (0.399792ms)
+✔ the old unscoped caption cache is ignored without deleting it or workout data (0.168542ms)
+✔ the full transcript is returned and cached verbatim, including its final words (0.612166ms)
+✔ unavailable service, invalid payloads and invalid URLs are never cached (1.198541ms)
+✔ cancelling an in-flight request prevents a late response from being cached (0.228666ms)
+✔ slow requests are aborted once and expose a retry/manual-fallback message (5.781417ms)
+✔ storage restrictions and corrupt cache cannot prevent transcript fetching (1.001542ms)
+✔ transcript cache stays bounded and preserves the most recently fetched usable transcript (1.890666ms)
+✔ an explicit YouTube choice also rejects website-source substitution (0.167125ms)
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 200 }
+caption metadata { playability: undefined, reason: undefined, hasCaptions: true }
+caption upstream { path: '/api/timedtext', status: 200 }
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 200 }
+caption metadata { playability: undefined, reason: undefined, hasCaptions: true }
+caption upstream { path: '/api/timedtext', status: 200 }
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 200 }
+caption metadata { playability: undefined, reason: undefined, hasCaptions: true }
+caption upstream { path: '/api/timedtext', status: 200 }
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (abcdefghijk)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 200 }
+caption metadata { playability: undefined, reason: undefined, hasCaptions: true }
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (xxxxxxxxxx0)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (xxxxxxxxxx1)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (xxxxxxxxxx2)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (xxxxxxxxxx3)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (xxxxxxxxxx4)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 403 }
+caption upstream { path: '/watch', status: 403 }
+caption retrieval unavailable {
+  detail: '[YoutubeTranscript] 🚨 The video is no longer available (xxxxxxxxxx5)'
+}
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 200 }
+caption metadata { playability: undefined, reason: undefined, hasCaptions: true }
+caption upstream { path: '/api/timedtext', status: 200 }
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/youtubei/v1/player', status: 200 }
+caption metadata { playability: undefined, reason: undefined, hasCaptions: true }
+caption upstream { path: '/api/timedtext', status: 200 }
+caption upstream { path: '/transcript', status: 403 }
+caption upstream { path: '/transcript', status: 200 }
+✔ only exact YouTube hosts and IDs are accepted (0.624292ms)
+✔ primary parser rejects unrelated pages and extracts only identified caption content (0.569167ms)
+✔ blocked primary falls back to actual YouTube caption text (90.978417ms)
+✔ invalid URL/origin/method/body causes no outbound requests (1.50775ms)
+✔ success has exact CORS and caches captions; cache hit makes no upstream request (1.591417ms)
+✔ empty caption responses are errors and never cached or mistaken for success (1.060666ms)
+✔ same video requests are cooled down after a failed retrieval (0.871791ms)
+✔ unsafe metadata URLs cannot become an arbitrary proxy (0.457209ms)
+✔ nested primary caption rows remain complete and oversized primary text is refused (0.719584ms)
+✔ chunked incoming bodies stop at 2KB without a source request (0.279917ms)
+✔ different videos share one per-IP request limit (8.86875ms)
+✔ a disabled hosted cache does not prevent retrieval (0.4675ms)
+✔ edge-compatible manual redirect mode refuses redirects without following them (0.244125ms)
+✔ website-only retrieval never silently falls back after a blocked site (0.140083ms)
+✔ explicit YouTube fallback skips the website and returns the entire supplied track (0.265542ms)
+✔ website-specific requests reject a cached response from another source (0.293667ms)
+✔ website retrieval uses only the exact recommended domain without credentials or other services (0.531542ms)
+✔ removes legacy guide metadata while preserving video playback fields (0.814708ms)
+✔ cleans historical sessions without changing workout data or dates (0.118083ms)
+✔ video completion persists independently of plans and results and sanitizes strictly (1.925375ms)
+✔ reuse clears video completion without mutating original or its plan (0.201333ms)
+✔ repeat setup resets new video completion and preserves an already logged current video (0.6455ms)
+✔ the transcript handoff canonicalizes supported YouTube links without tracking parameters (0.683916ms)
+✔ the website handoff posts only the canonical video URL to the exact free website (0.256833ms)
+✔ invalid video links never create or submit a form and submission failures clean up (0.088667ms)
+✔ session draft restore preserves full transcript and plan without changing their source (3.651709ms)
+✔ temporary draft clearing only removes the matching video and leaves saved workout data alone (0.135292ms)
+✔ session draft storage bounds transcript and total serialized size while preserving an existing draft (1.353667ms)
+✔ malformed session storage cannot restore invalid identities or oversized transcripts (0.640667ms)
+✔ invalid plan data restores only the transcript stage and untrusted extra fields are omitted (0.159083ms)
+✔ unavailable or quota-limited storage never prevents opening or reviewing a plan (0.237708ms)
+✔ review summaries keep units readable, indicate varied targets and never invent set counts (0.240334ms)
+✔ dated removal drops only chosen exercise/results without mutating template or retained IDs (1.098334ms)
+✔ last dated exercise can be removed and results do not survive sanitization (0.116209ms)
+✔ session exercise log exposes per-exercise Add set and manual logging with no plan (7.920459ms)
+✔ saved read-only and library template views cannot add session sets (1.685875ms)
+✔ Repeat set appears only on completed editable session sets (3.064583ms)
+✔ remove exercise is available only in editable dated session logs (2.006709ms)
+✔ caption cleanup removes timestamps, tags and rolling duplicates without losing instructions (1.013209ms)
+✔ explicit sets, reps and rest are kept, ordered; work time does not come from rest (29.269333ms)
+✔ unknown instructions stay unspecified and circuit rounds do not silently become sets (1.795291ms)
+✔ named reps stay local to the exercise and negated movements are not prescribed (2.199583ms)
+✔ validation refuses missing names, duplicate IDs, oversized plans and malformed results (0.604792ms)
+✔ reusing a video or repeating a workout clears results but preserves its plan and source history (0.452792ms)
+✔ strength comparisons use completed non-warm-up actual reps, one best set/day and matching load (7.744791ms)
+✔ plain timestamps do not become reps and reversed rest cues do not become work (0.946541ms)
+✔ explicit completion uses specified targets, preserves shorter actuals and never guesses range/unknown reps (0.205333ms)
+✔ video duration and cues for the next exercise are not assigned to the current movement (0.318208ms)
+✔ explicit workout protocol replaces introductory examples and shares only stated per-exercise work (2.092583ms)
+✔ shared protocol timing needs a matching exercise count and scope needs explicit workout markers (2.052375ms)
+✔ unsupported shared set protocols and later exact targets remain available to draft extraction (2.312583ms)
+✔ caption links and fallback commands use only a canonical validated YouTube ID (0.570084ms)
+✔ changed working weight is compared at matching reps, unit and setup (0.953375ms)
+✔ extra session sets preserve recorded IDs/results and do not modify the reusable plan (1.073584ms)
+✔ manual video logging starts without captions, supports more sets and roundtrips (2.1315ms)
+✔ repeat copies the chosen completed set, not the last set, and leaves completion unchecked (0.566417ms)
+✔ repeat retains bodyweight, time and warm-up details without inventing a completed effort (0.236542ms)
+✔ current weather distinguishes clear days and nights (0.97025ms)
+✔ WMO conditions include frozen precipitation and storms (0.996084ms)
+✔ unknown or malformed codes are never shown as sunny weather (0.286916ms)
+✔ next week begins on Monday from Saturday, Sunday and Monday, including month/year boundaries (1.770084ms)
+✔ saving next week preserves this week, previous history and Sunday; starts Monday and repeats (7.876709ms)
+✔ revising future plan and reloading never promotes it into this week (0.404041ms)
+✔ following Monday adopts saved week and permits planning another week without rewriting it (0.253166ms)
+✔ legacy schedules and pre-snapshot history retain their baseline (1.06ms)
+✔ workout backup includes dated mappings alongside existing keys and session data (47.983083ms)
+✔ completed and legacy completedAt records lock on load; drafts and planned rest stay editable (0.410209ms)
+✔ Edit unlocks only the requested date without removing completion; saving/reload locks again (0.110041ms)
+✔ legacy photo and gallery roundtrip retain images without mutating source (0.720125ms)
+ℹ tests 242
+ℹ suites 0
+ℹ pass 242
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 752.632541
+
+> site-creator-vinext-starter@0.1.0 test:captions-helper
+> python3 tests/video-caption-fallback.test.py
+
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.005s
+
+OK
+Import this transcript into the video’s workout plan: /var/folders/g7/ngyl3c2s6mg__4lgl1gfqlcw0000gn/T/tmpse7imyrx/abcdefghijk.txt
+Import this transcript into the video’s workout plan: /var/folders/g7/ngyl3c2s6mg__4lgl1gfqlcw0000gn/T/tmppxzucd2_/abcdefghijk.txt
+Reusing cached captions: /var/folders/g7/ngyl3c2s6mg__4lgl1gfqlcw0000gn/T/tmppxzucd2_/abcdefghijk.txt

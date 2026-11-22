@@ -9,7 +9,7 @@ const report=`Candidate version: ${version}
 Overall decision: PASS
 Automated evidence: Candidate run log and successful build recorded.
 Browser evidence: Candidate phone screenshots and workflow results recorded.
-Device evidence: Dated device confirmations and any justified carry-forward are recorded.
+Device follow-up: After deployment, recommend physical iPhone touch, GPS and installed-update checks; not claimed tested.
 Data/backup evidence: Candidate saved JSON compared before/after isolated restore.
 | CF01 | PASS | Fake-clock rollover and saved-date payload comparison passed; report/date.log. |
 | CF02 | PASS | All six sections and center touch targets passed; report/navigation.log. |`;
@@ -29,12 +29,18 @@ test('stale candidate version and missing overall approval block publication',()
  assert.match(errors({version:'2026.11.11 1000'}).join('\n'),/exactly match APP_VERSION/);
  assert.match(errors({report:report.replace('Overall decision: PASS','Overall decision: BLOCKED')}).join('\n'),/Overall decision must be PASS/);
 });
-test('placeholder or absent browser/device/backup evidence is not certification',()=>{
- for(const name of ['Automated evidence','Browser evidence','Device evidence','Data/backup evidence']){
+test('placeholder or absent automated/browser/backup evidence blocks publication',()=>{
+ for(const name of ['Automated evidence','Browser evidence','Data/backup evidence']){
   assert.match(errors({report:report.replace(new RegExp(`^${name}:.*$`,'m'),`${name}: UNTESTED`)}).join('\n'),/missing or unverified/);
  }
  assert.match(errors({report:report.replace(/\| CF01 \| PASS \|.*$/m,'| CF01 | PASS | TODO |')}).join('\n'),/CF01: concrete test evidence/);
 });
+
+test('physical-only checks are recorded recommendations rather than release blockers',()=>{
+ assert.deepEqual(errors({report:report+'\nDevice evidence: UNTESTED on physical iPhone.'}),[]);
+ assert.match(errors({report:report.replace(/^Device follow-up:.*$/m,'')}).join('\n'),/Device follow-up must list/);
+});
+
 test('all established critical features have unique inventory and verification entries',async()=>{
  const checklist=await readFile(new URL('../TESTING_CHECKLIST.md',import.meta.url),'utf8');
  const initial=await readFile(new URL('../RELEASE_VERIFICATION.md',import.meta.url),'utf8');

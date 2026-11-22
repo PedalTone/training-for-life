@@ -1,5 +1,22 @@
 # Training for Life — development handoff
 
+## Release prepared — 2026.11.22 0705
+
+Isolated Plan release adds the picture removal, consistent whole-record selection
+for editor/History, and a valid-backup restore fix. Restore used map(saveSession),
+which passed an array index as the writer's freshness callback; an explicit
+one-argument wrapper fixes it. New direct restore regression passes. GPS distance,
+diagnostics, prescribed-distance and exercise/rest-total work remains preserved
+outside this candidate in source-recovered-2026-10-23.
+
+User clarified that physical-only checks follow deployment and do not block it.
+All automated/browser feature checks remain mandatory; simulations are labeled.
+242 Node + 3 Python tests, both builds, three-size Today/Plan, eight-repeat/seven-
+rest workflows, GPS map/weather/resume/edit/delete, full backup restore/export,
+media/video/set/illness/nutrition/planning/sharing/offline smoke pass. Durable
+logs and feature sign-off are in RELEASE_VERIFICATION.md and docs/releases/.
+Publication and exact live asset/workflow verification are the remaining steps.
+
 ## Separate release candidate — Plan picture removal, November 21
 
 Branch `codex/plan-picture-removal` starts at a481281 and contains only the Plan

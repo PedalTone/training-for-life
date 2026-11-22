@@ -36,3 +36,21 @@ test('a failed save does not block later retries or saves for another date',asyn
  let failing=true;const writes=[];const save=createSessionWriter(async item=>{if(failing)throw Error('Failed');writes.push(item);},()=>{throw Error('No fallback');});
  await assert.rejects(save({id:'day'}));failing=false;await save({id:'day',gpsWorkouts:[]});await save({id:'another'});assert.equal(writes.length,2);
 });
+
+
+test('Settings restore passes each record alone to the serialized session writer',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {default:ts}=await import('typescript');
+ const source=await readFile(new URL('../app/page.tsx',import.meta.url),'utf8');
+ const start=source.indexOf('async function restoreData(file: File)');
+ const end=source.indexOf('\n  return <div className="subpage more-page"',start);
+ assert.ok(start>0&&end>start,'Restore handler is available');
+ const js=ts.transpile(source.slice(start,end),{target:ts.ScriptTarget.ES2022});
+ const writes=[],notices=[],records=[{id:'2026-11-08'},{id:'2026-11-09'}];
+ const storage=new Map();
+ const writer=createSessionWriter(async record=>writes.push(record),()=>({setItem:(k,v)=>storage.set(k,v),getItem:k=>storage.get(k)}));
+ const restore=new Function('normalizeSession','saveSession','setHistory','setNotice','window','restoreNutrition',js+';return restoreData;')(x=>x,writer,x=>assert.deepEqual(x,records),x=>notices.push(x),{setTimeout(){}},()=>{});
+ await restore({text:async()=>JSON.stringify({schemaVersion:1,sessions:records})});
+ assert.deepEqual(writes,records);
+ assert.match(notices.at(-1),/Restored 2 workouts/);
+});

@@ -52,15 +52,18 @@ FAIL, BLOCKED, UNTESTED, missing evidence and "unchanged/N/A" block publication.
 D01–D12 design N/A classifications do not waive CF behavioral regression checks.
 Never treat an automated test count, green build or visible label as proof of
 persisted data or of a physical iPhone test. Run `npm test` (all Node suites and
-the caption-helper tests), the Pages build, both external-browser scenarios,
+the caption-helper tests), the Pages build, the external-browser scenarios,
 the remaining inventory smoke checks, and `npm run verify:release`. Review
 actual saved records and backups. Fix or explicitly resolve failing cases before
 creating a new public release; do not weaken assertions to obtain a pass. Update
 the inventory/sign-off whenever a critical feature is added.
 
-Standing publication permission does not waive this gate. If required native
-device evidence is unavailable, record the gap and obtain that evidence before
-announcing a release. Verify exact public assets and the live workflow before
+User clarification November 21, 2026: physical iPhone testing is recommended
+after deployment and never blocks deployment. Keep all automated and available
+external-browser critical-feature checks before publication. Record physical-only
+checks honestly as post-deployment recommendations, never as simulated passes.
+A known functional failure still blocks publication. Verify exact public assets
+and the live workflow before
 telling the user to refresh. Documentation/test/policy-only changes keep the
 current label and may be committed without deploying an uncertified app; use a
 CI-skip commit for such work when appropriate.

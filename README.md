@@ -106,16 +106,31 @@ changed interactions. Tablet and desktop visual testing is not required. Automat
 ## Publish requested frontend changes
 
 Before every new public version, execute all 48 critical features and complete
-the mandatory cross-feature journeys in
-[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md). Record candidate-specific results
-and evidence in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Every CF item
-must be PASS. `npm run verify:release` blocks missing, failed, untested or
-stale-version sign-offs. GitHub Pages runs the full Node suite and this gate
-before uploading the release. Automated evidence alone does not certify browser
-or physical iPhone behavior. The initial report deliberately records incomplete
-coverage and the existing store-loader test failure; it does not retroactively
-certify the already-published version. Documentation/test-only work keeps the
-current label and must not deploy an uncertified new app version.
+the cross-feature journeys in [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md).
+Record automated and browser results in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md).
+Every CF item must pass its available automated/browser checks. Physical-only
+iPhone checks are post-deployment recommendations, not publication blockers
+(user clarification November 21). Do not claim simulations are physical tests.
+Known failures and missing automated/browser evidence still block publication.
+
+Run these external Chrome scenarios sequentially with `CHROME_CDP_URL` and
+`APP_URL` pointing to the isolated browser and built app:
+
+```sh
+node scripts/check-today-actions.mjs
+node scripts/check-gps-laps.mjs
+node scripts/check-critical-features.mjs
+npm run verify:release
+```
+
+The expanded suite uses disposable contexts and synthetic data to verify full
+backup restore/export, editor/History consistency, photos/screenshots, illness,
+nutrition, libraries, videos/plans/sets, date/week rollovers, all nine sharing
+formats and offline reload. GPS scenarios simulate positions and weather; do
+not run another test tab concurrently because hiding a tracker pauses it.
+The Pages workflow runs the full automated suite and release evidence gate
+before upload. After deployment, compare the exact public assets and repeat
+the live workflows before announcing the version is live.
 
 The configured remote is named `github`. Pushing a tested commit to its `main`
 branch triggers `.github/workflows/deploy-pages.yml`. Confirm the exact diff,

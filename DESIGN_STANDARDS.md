@@ -240,7 +240,9 @@ new public version, including unchanged capabilities. Record all CF outcomes
 and evidence in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md); every CF item
 must be PASS. The D01–D12 visual applicability matrix supplements that inventory
 and never exempts a critical behavior from testing. Missing evidence, failed
-regressions and untested items block release through `npm run verify:release`.
+regressions and untested automated/browser items block release through
+`npm run verify:release`. Physical-only iPhone checks are honest post-deployment
+recommendations and do not block deployment (user clarification November 21).
 
 1. Read this report and identify applicable D01–D12 rows before editing.
 2. Preserve approved copy, data meanings, artwork and unaffected regions; inspect

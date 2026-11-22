@@ -14,10 +14,12 @@ export function releaseReadinessErrors({version,inventory,report}) {
  if(new Set(ids).size!==ids.length)errors.push('Critical-feature inventory contains duplicate IDs.');
  if(!version||field(report,'Candidate version')!==version)errors.push('Verification version must exactly match APP_VERSION.');
  if(field(report,'Overall decision')!=='PASS')errors.push('Overall decision must be PASS.');
- for(const name of ['Automated evidence','Browser evidence','Device evidence','Data/backup evidence']){
+ for(const name of ['Automated evidence','Browser evidence','Data/backup evidence']){
   const value=field(report,name);
   if(!value||placeholder.test(value))errors.push(`${name} is missing or unverified.`);
  }
+ const deviceFollowUp=field(report,'Device follow-up');
+ if(!deviceFollowUp||placeholder.test(deviceFollowUp))errors.push('Device follow-up must list post-deployment recommendations or dated device results.');
  const rows=[...report.matchAll(/^\|\s*(CF\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]*)\|\s*$/gm)];
  const seen=new Set();
  for(const [,id,result,evidence] of rows){

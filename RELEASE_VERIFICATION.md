@@ -1,77 +1,75 @@
 # Critical-feature release verification
 
-Candidate version: 2026.11.09 0758
-Overall decision: BLOCKED
-Automated evidence: November 21 separate Plan candidate: npm test passes 240 Node and 3 Python tests; server/Pages builds and diff check pass. /private/tmp/t4l-plan-isolated-tests.log and /private/tmp/t4l-plan-isolated-build.log.
-Browser evidence: Plan, Today and GPS lap smoke pass at 375/393/440 widths in external Chrome. Full feature sign-off is still pending. /private/tmp/t4l-plan-isolated-{browser,today,laps}.log.
-Device evidence: UNTESTED for this full inventory; no new physical iPhone certification is claimed.
-Data/backup evidence: UNTESTED for the full cross-feature restore scenario.
+Candidate version: 2026.11.22 0705
+Overall decision: PASS
+Automated evidence: npm test passes all 242 Node tests and 3 Python caption tests, including restore and release-policy regressions. Server and Pages builds pass; git diff --check passes. See docs/releases/2026.11.22-0705/automated.txt and pages.txt.
+Browser evidence: External isolated Chrome: Today and Plan at 375x667, 393x852, 440x956; full baseline/expanded GPS suite; expanded critical-feature restore/video/set/media/illness/planning/sharing/offline journeys. See docs/releases/2026.11.22-0705/{today,plan,gps,critical}.txt and scripts/check-{today-actions,gps-laps,critical-features}.mjs.
+Device follow-up: After deployment, recommend installed iPhone update/offline retention, touch/safe areas/portrait, Camera-resume GPS, outdoor known-distance pace, VoiceOver and native Files/share checks. No physical-device pass is claimed. These recommendations do not block deployment per the user's November 21 clarification.
+Data/backup evidence: The expanded browser suite imports a populated schema-1 backup via Settings, checks History/editor, exports and compares GPS/splits/rests/routes, photos/screenshots, videos/plans/results, nutrition, goals, library and dated mappings. It also verifies conflicting stores, failed-save retry and offline retention. All restore data is synthetic and isolated from personal logs.
 
-This is the initial coverage audit after the user's November 9 instruction.
-Version 0758 was already published before this gate existed; it is **not being
-retrospectively certified**, and this work does not publish a new app version.
-Before the next public version, update Candidate version and replace every
-result with fresh test outcomes and concrete evidence for that candidate.
-Use the requirements and journeys in [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md).
+This is pre-publication sign-off for available automated and browser checks.
+PASS does not claim a physical iPhone field test or an unavailable third-party
+provider's signed-in page was tested. GPS, weather, tile, clipboard and share
+fixtures are identified in the scripts and evidence. Known failures still block
+publication. The earlier public 0758 release is not retrospectively certified.
 
-The evidence column must identify what ran, its result, and where its output,
-screenshot, backup comparison or device confirmation can be checked. A test path
-by itself is not proof. Do not copy PASS from a previous release. Keep any dated
-device evidence that is explicitly carried forward distinguishable from fresh
-candidate tests. Record failures as failures; do not remove their tests.
+All rows below combine the candidate full automated suite with the stated
+browser evidence. The inventory's physical-only portions are post-deployment
+recommendations. Publication itself is verified after deployment; do not announce
+live based on this preflight report alone.
 
-| Feature | Result | Evidence / remaining verification |
+| Feature | Result | Evidence / verification |
 | --- | --- | --- |
-| CF01 | UNTESTED | Node date coverage exists; candidate midnight/older-day workflow not signed off. |
-| CF02 | UNTESTED | Navigation/swipe tests exist; full candidate touch/swipe journey not signed off. |
-| CF03 | UNTESTED | Worker tests exist; installed update/offline/data-retention verification missing. |
-| CF04 | UNTESTED | Weather parser tests exist; full permission/opt-in/refresh workflow missing. |
-| CF05 | UNTESTED | Today script exists; complete mixed-workout and paired-icons smoke required. |
-| CF06 | UNTESTED | Setup/note tests exist; complete candidate reuse workflow required. |
-| CF07 | UNTESTED | Add-on unit tests exist; named-row varied-order touch smoke required. |
-| CF08 | UNTESTED | Full library edit/reference/rename/backup workflow required. |
-| CF09 | UNTESTED | External timer destination and unchanged-selection smoke required. |
-| CF10 | UNTESTED | Long-note/effort/keyboard/reload smoke required. |
-| CF11 | UNTESTED | Multiple media/file-picker/backup smoke required. |
-| CF12 | UNTESTED | Independent injury/completion/History workflow required. |
-| CF13 | UNTESTED | Illness unit tests exist; combined injury/rest/Progress smoke required. |
-| CF14 | UNTESTED | Nutrition unit tests exist; candidate day switch/lock/restore smoke required. |
-| CF15 | UNTESTED | Earlier Today/lap scripts cover some cases; full candidate save/cancel/Edit/backup sign-off required. |
-| CF16 | UNTESTED | GPS units/classification tests exist; full activity/unit and mixed-day smoke required. |
-| CF17 | UNTESTED | Pace math tests exist; current-pace streams and known-distance device evidence required. |
-| CF18 | UNTESTED | Earlier tracker simulation is partial; candidate rapid taps/pending/paused/physical controls required. |
-| CF19 | UNTESTED | Auto-pause unit tests exist; browser streams and outdoor resume verification required. |
-| CF20 | UNTESTED | Draft/recovery tests exist; full Camera/error/foreground/reload sequence required. |
-| CF21 | UNTESTED | Earlier lap script covers prepared/on/off state; new candidate sign-off required. |
-| CF22 | UNTESTED | Earlier mixed-repeat script covers core transitions; candidate/device sign-off required. |
-| CF23 | UNTESTED | Earlier durable-boundary tests exist; fresh candidate mixed-distance workflow required. |
-| CF24 | UNTESTED | Earlier saved-table/backup smoke exists; candidate table/data comparisons required. |
-| CF25 | UNTESTED | Storage/retry tests exist; candidate dual-store failure/reload/one-ID checks required. |
-| CF26 | UNTESTED | Edit/delete unit tests exist; full candidate cancel/fail/delete/reload sequence required. |
-| CF27 | UNTESTED | Prepared/off-date unit checks exist; repeated-recording and midnight workflow required. |
-| CF28 | UNTESTED | Earlier phone renders exist; candidate endurance/lap/focus/portrait checks required. |
-| CF29 | UNTESTED | Camera/route math tests exist; actual pinch/drag/follow/map-edit checks required. |
-| CF30 | UNTESTED | Weather parser tests exist; relative-wind/heading/unit/refresh/device checks required. |
-| CF31 | UNTESTED | Weekly-planning unit tests exist; candidate edit/failure/rollover workflow required. |
-| CF32 | UNTESTED | Artwork/override tests exist; custom/secondary-type persistence smoke required. |
-| CF33 | UNTESTED | History timeline/search tests exist; sparse/legacy/two-icon/filter workflow required. |
-| CF34 | UNTESTED | Journal render tests exist; full saved fixture and edit/return journey required. |
-| CF35 | UNTESTED | Progress/strength unit tests exist; browser windows/percentages/comparisons required. |
-| CF36 | UNTESTED | Library/filter tests exist; actual add/play/filter/delete/return workflow required. |
-| CF37 | UNTESTED | Video completion tests exist; candidate Finish/Edit/History/backup sequence required. |
-| CF38 | UNTESTED | Caption/workflow tests exist; provider/clipboard/import/cache/blocked-site smoke required. |
-| CF39 | UNTESTED | Plan/lexicon tests exist; candidate reviewed draft/save/template isolation required. |
-| CF40 | UNTESTED | Session strength tests exist; full actual-set/repeat/remove-last/backup workflow required. |
-| CF41 | UNTESTED | Sharing data/map tests exist; actual template/format PNGs and native export evidence required. |
-| CF42 | BLOCKED | The loader failure is fixed and the complete unit suite passes. Editor and History share the copy-selection rule. Further browser conflicting-store/quota and full restore checks remain for release sign-off. |
-| CF43 | UNTESTED | Several data-family unit roundtrips exist; complete populated backup/restore comparison required. |
-| CF44 | UNTESTED | Settings/library/restore/return workflow required. |
-| CF45 | UNTESTED | Actual assessment-folder link/new-tab/return/storage check required. |
-| CF46 | UNTESTED | Earlier phone screenshots are partial; full candidate hit-target/accessibility/native evidence required. |
-| CF47 | UNTESTED | Provider unit fallbacks exist; full browser network failure/privacy audit required. |
-| CF48 | UNTESTED | 0758 publication was previously checked; next candidate requires a new preflight, exact deployment/assets proof and live smoke. |
+| CF01 | PASS | History/date unit cases; browser Eastern midnight and Monday adoption preserve the historical fixture. |
+| CF02 | PASS | Navigation/swipe units; Today six-tab navigation and expanded touch swipe Progress to Settings; Home release controls. |
+| CF03 | PASS | Worker unit cases; browser real service worker offline shell reload and online return retain saved records. Installed iPhone update is follow-up. |
+| CF04 | PASS | Weather parser cases; denied Home location permission remains usable; tracker weather uses simulated GPS and weather. |
+| CF05 | PASS | Today Manage/Open/second-major workflows at three sizes; restored mixed Strength/Endurance day has two History icons. |
+| CF06 | PASS | Reuse/notes unit cases; browser repeats prior setup twice without duplicate notes or old result completion. |
+| CF07 | PASS | Add-on unit cases; browser named Push-Ups toggle/reselect immediately orders it first; completion independently stored. |
+| CF08 | PASS | Library browser add/rename/reload; reference photo/instructions survive restore/export; historical library normalization retained. |
+| CF09 | PASS | Browser verifies one shared speaking-timer destination; add-on selections remain independently controlled. |
+| CF10 | PASS | Browser Hard effort and long notes survive Finish, exported backup, Edit and reload; no manual metric fields reintroduced. |
+| CF11 | PASS | Browser restores two photos and screenshot, uploads two photos and screenshot through real input handlers, verifies backups and journal. |
+| CF12 | PASS | Body flags remain independent of completion; browser saved fixture and sick-rest include shoulder concern without losing records. |
+| CF13 | PASS | Illness unit cases; browser sick/rest checkbox, note, Finish, saved rest status and independent body flag persist. |
+| CF14 | PASS | Nutrition unit cases; browser restored food note/export and separate dated check-in persist across day changes/locks. |
+| CF15 | PASS | Today script at 375/393/440: save, canceled optional backup, lock/Edit/resave/reload and backup; lap Finish saves pending GPS first. |
+| CF16 | PASS | GPS classification/units tests; browser Run then edit to Walk, second Bike recording, miles/kilometers and preserved lap-mode separation. |
+| CF17 | PASS | Pace math unit streams cover smoothing, rounding, spike/quality handling and time/distance definitions; browser steady simulated repeats retain per-repeat averages. Outdoor accuracy is follow-up. |
+| CF18 | PASS | GPS saved-view/retry tests; browser full-screen and paused saves, one watch, ready state and immediate saved results across three sizes. |
+| CF19 | PASS | Auto-pause tests; browser stationary six seconds then movement auto-resume; lap repeats never auto-pause. |
+| CF20 | PASS | Recovery/resume tests; browser synthetic visibility hide/foreground and transient GPS error each resume with one watch, plus mid-repeat reload. |
+| CF21 | PASS | Browser initial, Record another, prepared and recovered paths preserve authoritative lap setting; ordinary activity does not inherit laps. |
+| CF22 | PASS | Browser eight variable repeats and seven rests; Pause closes repeat and starts recovery, Resume starts next, Stop saves final effort. |
+| CF23 | PASS | Boundary/recovery unit tests; browser mile/800/400 repeats and rest times survive reload and failed-save retry. |
+| CF24 | PASS | Browser fifteen rows with eight actual repeats/seven recoveries in Today and History; exported JSON agrees; zero-distance effort retained. |
+| CF25 | PASS | Store/save units; browser dual-store failure, stopped receipt reload, retry with same ID and stop time, no premature day completion. |
+| CF26 | PASS | Edit/delete unit cases; browser changes Run to Walk, confirms/cancels deletion of one of two recordings, reload and backup keep Bike. |
+| CF27 | PASS | Prepared/off-date unit cases; browser unused preparation Finish creates no phantom record, second recording stays distinct; date rollover covered. |
+| CF28 | PASS | Three-size lap screen fit assertions/screenshots; ordinary full-screen weather/map, Exit and Stop preserve state; portrait API is device follow-up. |
+| CF29 | PASS | Map camera/route tests; browser actual two-finger touch pinch, +/minus, Following toggle and segmented saved route; map tiles mocked for export. |
+| CF30 | PASS | Weather tests; browser 68F/20C, humidity 54%, wind units and changing heading produce tailwind/headwind/crosswind. Provider response mocked. |
+| CF31 | PASS | Weekly-planning tests; browser no picture, seven previews, Next week mapping, custom future Monday, failed-save rollback, reload and Monday rollover. |
+| CF32 | PASS | Artwork/type tests; Today second major type and one-day selection persist; future custom Hiking type adopted without rewriting old fixture. |
+| CF33 | PASS | History/search tests; browser twelve weeks, two icons, body filter plus note search, completion and actual daily journal. |
+| CF34 | PASS | Journal tests and browser actual saved fixture: dates, notes, images, check-ins, sets, split table, Edit then save/return/reload. |
+| CF35 | PASS | Progress/strength tests; browser all 4/8/12-week controls and restored completed sets; sick-rest excluded by tested progress calculation. |
+| CF36 | PASS | Browser YouTube save with blocked metadata provider, player/close, All/category filter, reload and confirmed library deletion. |
+| CF37 | PASS | Browser explicit completed checkbox, save/backup retention and dated results; repeat setup resets prior completion/results before fresh logging. |
+| CF38 | PASS | Transcript/cache/helper tests; browser correct selected-video POST handoff, denied clipboard, manual transcript and resumable reviewed draft. |
+| CF39 | PASS | Parser/lexicon tests; browser known swing/squat transcript builds reviewed stated sets without weights, Save plan persists library template. |
+| CF40 | PASS | Session/set/removal tests; browser actual weight/reps/completion, Repeat set resets done, skipped exercise cancel/confirm keeps other results and reusable template. |
+| CF41 | PASS | Sharing tests; browser creates nine real PNG previews, validates dimensions, text/font/full-size return and mocked file-share handoff; three representative exports visually inspected. |
+| CF42 | PASS | Loader/session-store tests; browser completed fallback beats newer partial indexed copy, editor and History agree; full restored/exported data compared. Restore map-index/callback defect fixed. |
+| CF43 | PASS | Browser invalid schema rejected; complete populated schema-1 restore/export retains GPS repeats/rests/routes, photos/screenshots, videos/plans/results, nutrition, goals, custom types/mappings and library fields. |
+| CF44 | PASS | Browser Settings sections initially closed; library edits, videos/filter/player, restore and About rendered; removed legacy controls covered by rendered tests. |
+| CF45 | PASS | Browser Progress-only Assessment URL and new-tab target verified; normal storage data survives navigation. Private signed-in Drive display is follow-up. |
+| CF46 | PASS | Three-size center-hit touch assertions and screenshots; expanded browser accessibility tree gives every button a name. Physical safe areas/VoiceOver are follow-up. |
+| CF47 | PASS | Provider failure tests; browser blocked metadata/geocoding and denied location/clipboard remain honest while records and backups survive; export tiles explicitly mocked. |
+| CF48 | PASS | Preflight release label 2026.11.22 0705, ten notes, worker cache/query and tested assets agree. Exact deployment and live workflows must be verified after push and recorded in HANDOFF.md. |
 
-## Pre-publication commands
+## Repeatable commands
 
 ```sh
 npm test
@@ -79,11 +77,24 @@ npm run build:pages
 git diff --check
 node scripts/check-today-actions.mjs
 node scripts/check-gps-laps.mjs
+node scripts/check-critical-features.mjs
 npm run verify:release
 ```
 
-Use an isolated external Chrome instance and the documented CDP ports/overrides
-for browser scripts; never attach test code to the user's normal browser data.
-All required commands, CF results and manual/device evidence must pass before
-publication. Record the final successful deployment commit/run and live asset
-comparison in HANDOFF.md after the release, together with the live smoke result.
+Use CHROME_CDP_URL and APP_URL for an isolated external Chrome and built app.
+Run the browser scenarios sequentially; a competing tab can legitimately pause
+GPS. Plan visual inspection also checked all seven day previews and the current
+or future Open workout destination at each phone size. Temporary screenshots
+are /private/tmp/t4l-plan-no-graphic-{375,393,440}.png and
+/private/tmp/t4l-share-{card,photo,route}-{square,portrait,story}.png.
+
+Design review: D01/D02/D06/D07/D10/D12 PASS for release, save/data truth, Plan
+hierarchy, History consistency, responsive touch controls and regression.
+D03/D04/D05/D08/D09/D11 N/A for runtime changes outside those surfaces; their
+existing functions are covered by the broader feature suite and sharing PNGs.
+Duplicate review: one Plan detail card, one shared store-selection helper, one
+restore write per record; no redundant controls introduced.
+
+After successful Pages deployment, record the exact commit/run/public-asset
+comparison and live workflow results in HANDOFF.md. Only then tell the user to
+refresh. Physical checks remain recommendations for subsequent feedback.

@@ -16,9 +16,12 @@ Do not weaken a test or remove a CF item to get a release through.
 - Run `npm test`: it builds the server and runs **all** `tests/*.test.mjs`, not
   only GPS tests, plus `tests/video-caption-fallback.test.py`. Run
   `npm run build:pages` and `git diff --check` too.
-- Run both external-browser scenarios: `scripts/check-today-actions.mjs` and
-  `scripts/check-gps-laps.mjs`. Perform the additional browser/device checks
-  listed below; these two scripts do not cover the whole app.
+- Run external-browser scenarios sequentially: `scripts/check-today-actions.mjs`,
+  `scripts/check-gps-laps.mjs`, and `scripts/check-critical-features.mjs`. The
+  expanded scenarios verify restore/export, duplicate-store loading, videos/sets,
+  library edits, illness/nutrition, date/week rollover, sharing and offline reload.
+  Use disposable contexts. Run GPS alone so another tab cannot trigger its
+  background-pause behavior. Record remaining physical-only recommendations.
 - For every CF item, include its automated result **and** its functional smoke
   result. For changed features and their dependencies, exercise new, saved,
   locked, editing, failed-save, retry and reload states where applicable.
@@ -28,9 +31,11 @@ Do not weaken a test or remove a CF item to get a release through.
   or restore a test backup over the user's live data.
 - Browser GPS simulation does not certify physical iPhone location, touch,
   backgrounding, portrait APIs, VoiceOver or Files/share behavior. Record actual
-  device evidence for those claims. Dated device evidence may be carried forward
-  only for unchanged native behavior, with the source and reason stated; run the
-  candidate's browser smoke again. Missing required evidence is BLOCKED.
+  device evidence for those claims. Per the user’s November 21 clarification,
+  physical-only checks are post-deployment recommendations and do not block
+  publication. Document them under `Device follow-up`; never claim they passed.
+  All automated and available external-browser checks still run before release;
+  known failures and missing non-device evidence remain blocking.
 - Run `npm run verify:release` before upload/deployment. It rejects missing,
   stale-version, failed or untested feature sign-offs. This checks the evidence
   record's completeness; it cannot independently prove a manual test was run.

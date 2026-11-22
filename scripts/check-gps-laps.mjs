@@ -17,9 +17,10 @@ const mock=`
  window.clearInterval=id=>ticks.has(id)?ticks.delete(id):realClear(id);
  window.__advance=seconds=>{now+=seconds*1000;localStorage.setItem('__clock',String(now));for(const tick of ticks.values())tick();};
  let distance=Number(localStorage.getItem('__distance'))||0,watchId=0;const watches=new Map();
- const fix=()=>({coords:{latitude:40+distance/111194.92664455873,longitude:-74,accuracy:5,speed:3,heading:0},timestamp:now});
+ const fetchReal=window.fetch;window.fetch=(url,...args)=>String(url).includes('api.open-meteo.com')?Promise.resolve(new Response(JSON.stringify({current:{temperature_2m:20,relative_humidity_2m:54,weather_code:0,is_day:1,wind_speed_10m:18,wind_direction_10m:180}}),{headers:{'Content-Type':'application/json'}})):String(url).includes('photon.komoot.io')?Promise.reject(new Error('Place provider blocked')):fetchReal(url,...args);
+ const fix=()=>({coords:{latitude:40+distance/111194.92664455873,longitude:-74,accuracy:5,speed:3,heading:window.__heading??0},timestamp:now});
  Object.defineProperty(navigator,'geolocation',{configurable:true,value:{
-  watchPosition(success){watches.set(++watchId,success);success(fix());return watchId;},
+  watchPosition(success,error){window.__gpsError=error;watches.set(++watchId,success);success(fix());return watchId;},
   clearWatch(id){watches.delete(id);}
  }});
  window.__move=(meters,seconds)=>{const steps=Math.max(1,Math.ceil(seconds/4));for(let i=0;i<steps;i++){window.__advance(seconds/steps);distance+=meters/steps;localStorage.setItem('__distance',String(distance));for(const success of watches.values())success(fix());}};
@@ -53,9 +54,33 @@ async function check(width,height,preparedOnly=false){
   await cdp('Page.navigate',{url:process.env.APP_URL||'http://127.0.0.1:5174/training-for-life/app/'});
   await wait("document.querySelector('.today-save-state')?.textContent==='Saved on this device'");
   await tap('.gps-card > summary');
-  if(preparedOnly!=='ordinary')await tap('.gps-lap-mode input');await tap('.gps-start');
-  assert.equal((await draft()).lapMode,preparedOnly!=='ordinary');
+  if(!['ordinary','extended'].includes(preparedOnly))await tap('.gps-lap-mode input');await tap('.gps-start');
+  assert.equal((await draft()).lapMode,!['ordinary','extended'].includes(preparedOnly));
   assert.equal(await evaluate('window.__watches()'),1);
+
+  if(preparedOnly==='extended'){
+   const select=async(selector,value)=>{await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(100);};
+   await evaluate('window.__move(120,40)');await tap('.gps-view-toggle button');
+   await wait("document.querySelector('.gps-weather')?.textContent.includes('68°F')");assert.match(await evaluate("document.querySelector('.gps-weather').textContent"),/54%/);assert.ok(await evaluate("Boolean(document.querySelector('.wind-dot.tailwind'))"));
+   await evaluate('window.__heading=180;window.__move(10,3)');await wait("Boolean(document.querySelector('.wind-dot.headwind'))");
+   await select('.gps-options label:nth-child(2) select','km');assert.match(await evaluate("document.querySelector('.gps-weather').textContent"),/20°C|18 km/);
+   await evaluate('window.__heading=90;window.__move(10,3)');await wait("Boolean(document.querySelector('.wind-dot.crosswind'))");
+   const map='.gps-route-map';const zoom=Number(await evaluate("document.querySelector('.gps-route-map').dataset.zoom"));await tap('[aria-label="Zoom in"]');assert.ok(Number(await evaluate("document.querySelector('.gps-route-map').dataset.zoom"))>zoom);await tap('[aria-label="Zoom out"]');
+   const r=await evaluate("(()=>{const e=document.querySelector('.gps-route-map');e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2};})()");
+   await cdp('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:0,x:r.x-35,y:r.y},{id:1,x:r.x+35,y:r.y}]});
+   await cdp('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:0,x:r.x-65,y:r.y},{id:1,x:r.x+65,y:r.y}]});await cdp('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(150);assert.ok(Number(await evaluate("document.querySelector('.gps-route-map').dataset.zoom"))>zoom,'Two-finger pinch changes zoom');
+   await tap('.gps-follow');await tap('.gps-follow');assert.equal(await evaluate("document.querySelector('.gps-route-map').dataset.following"),'true');
+   await evaluate('window.__stationary(6)');await wait("document.querySelector('.gps-feature-state').textContent.includes('Auto-paused')");await evaluate('window.__move(20,4)');await wait("Boolean(document.querySelector('.gps-pause'))");
+   await tap('.gps-fullscreen-exit');await evaluate("Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'))");await wait("Boolean(document.querySelector('.gps-start'))");assert.equal(await evaluate('window.__watches()'),0);await tap('.gps-start');assert.equal(await evaluate('window.__watches()'),1);
+   await evaluate("window.__gpsError({code:2,message:'Temporary GPS issue'})");await wait("Boolean(document.querySelector('.gps-start'))");await tap('.gps-start');assert.equal(await evaluate('window.__watches()'),1);
+   await evaluate('window.__move(30,10)');await tap('.gps-view-toggle button');await tap('.gps-stop');await wait("Boolean(document.querySelector('.gps-recordings'))&&!document.querySelector('.gps-stop')");assert.equal(await evaluate("Boolean(document.querySelector('.gps-fullscreen'))"),false);await tap('#today-tab-log');await tap('#today-tab-workout');
+   await tap('.gps-edit-recording');await select('.gps-recording-editor [aria-label="Activity"]','Walk');await tap('.gps-recording-editor button[type="submit"]');await wait("!document.querySelector('.gps-recording-editor')");
+   await tap('.gps-record-another');await select('.gps-options [aria-label="Activity"]','Bike');await tap('.gps-start');await evaluate('window.__move(150,20)');await tap('.gps-stop');await wait("document.querySelectorAll('.gps-recording-row').length===2");
+   await tap('.gps-edit-recording');await delay(500);await tap('.gps-delete-zone > button');await wait("Boolean(document.querySelector('.gps-delete-zone .gps-edit-actions'))");await tap('.gps-delete-zone .gps-edit-actions button:nth-child(2)');assert.equal(await evaluate("document.querySelectorAll('.gps-recording-row').length"),2);await tap('.gps-delete-zone > button');await wait("Boolean(document.querySelector('.gps-delete-zone .gps-edit-actions'))");await tap('.gps-delete-recording');await wait("document.querySelectorAll('.gps-recording-row').length===1");
+   await tap('.finish-button');await wait('Boolean(window.__backup)');const session=await evaluate("window.__backup.sessions.find(s=>s.date==='2026-11-09')");assert.equal(session.gpsWorkouts.length,1);assert.equal(session.gpsWorkouts[0].activity,'Bike');assert.equal(session.gpsWorkouts[0].laps.length,0);const prior=await evaluate('window.__documentId');await cdp('Page.reload',{ignoreCache:true});await wait(`window.__documentId!==${JSON.stringify(prior)}&&Boolean(document.querySelector('.workout-lock-banner'))`);
+   assert.deepEqual(errors,[]);console.log('PASS CF16/18/19/20/26/27/28/29/30/47: Run/Walk/Bike; weather, relative winds and units; pinch/buttons/follow; auto-pause/resume; hidden/foreground and transient GPS error resume; full-screen Stop then Log; second recording/edit/delete/cancel/reload and backup.');return;
+  }
+
   if(preparedOnly==='ordinary'){
    await evaluate('window.__move(1000,300)');await tap('.gps-pause');
    await evaluate('window.__advance(60)');await tap('.gps-start');await evaluate('window.__move(500,150)');
@@ -160,4 +185,5 @@ try{
  for(const [width,height] of [[375,667],[393,852],[440,956]])await check(width,height);
  await check(440,956,true);
  await check(440,956,'ordinary');
+ await check(440,956,'extended');
 }finally{socket.close();}

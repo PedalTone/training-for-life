@@ -1,0 +1,13 @@
+PASS CF43/44: invalid backup rejected; populated schema-1 backup restored through Settings file input and automatic reload.
+PASS CF41: nine actual exported PNG previews (Photo/Route/Card × square/portrait/story), title/text controls and full-size return. Map tiles mocked.
+PASS CF11/12/14/24/34/37/40/42/43: real journal, splits, photos, illness/body flags, set results and complete exported backup match restored fixture.
+PASS CF42: older complete fallback beats newer partial indexed copy; History and editor agree after reload.
+PASS CF37/40: explicit video completion; actual weights/reps, completed-set Repeat and remove-skipped cancel/confirm preserve the other exercise.
+PASS CF06/07/09/10/12/13/14/15/37: repeat setup is idempotent and resets results, named checkbox/order/completion, shared timer, long notes/effort, independent sick-rest/body and nutrition persist.
+PASS CF38/39: exact selected-video transcript POST handoff, denied-clipboard manual fallback, reviewed exercise draft and persistent reusable plan.
+PASS CF08/36/44/47: library add/rename/reload, video player close, filter, metadata-provider failure, save and confirmed delete.
+PASS CF31/32/35/45: text-only Plan, future-effective custom mapping and reload, all Progress windows and Assessment link.
+PASS CF01/31: Eastern midnight and following-Monday rollover update Today; future mapping adopted, earlier day retained; failed mapping save rolls back.
+PASS CF02/04/48: Home navigation, ten release notes and denied weather permission remain usable.
+PASS CF03: actual installed service worker, offline shell reload and online return preserve saved workout records.
+PASS expanded critical-feature browser smoke.
