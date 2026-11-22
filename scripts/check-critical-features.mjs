@@ -36,6 +36,7 @@ await nav(4);assert.equal(await ev("document.querySelectorAll('.history-timeline
 assert.match(await ev("document.querySelector('.daily-journal').textContent"),/Restored complete fixture note/);assert.equal(await ev("document.querySelectorAll('.journal-photo').length"),2);assert.match(await ev("document.querySelector('.daily-journal').textContent"),/Shoulder|Lighter load/);assert.ok(await ev("Boolean(document.querySelector('.gps-splits-results'))"));
 assert.equal(await ev("document.querySelector('.journal-workout-actions').firstElementChild.className"),'journal-edit-workout');
 
+if(!process.env.DATA_ONLY){
 // Render and inspect every supported sharing template and format using mocked map tiles.
 await cdp('Fetch.enable',{patterns:[{urlPattern:'*tile.openstreetmap.org*'}]});
 socket.addEventListener('message',event=>{const m=JSON.parse(event.data);if(m.sessionId===sessionId&&m.method==='Fetch.requestPaused')void cdp('Fetch.fulfillRequest',{requestId:m.params.requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:'image/png'},{name:'Access-Control-Allow-Origin',value:'*'}],body:png.split(',')[1]});});
@@ -56,6 +57,7 @@ await wait("!document.querySelector('.share-primary').disabled");
 await ev("Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>true});Object.defineProperty(navigator,'share',{configurable:true,value:async data=>{window.__sharedFiles=data.files.map(f=>({type:f.type,size:f.size}));}})");await tap('.share-primary');await wait('Boolean(window.__sharedFiles)');assert.equal((await ev('window.__sharedFiles'))[0].type,'image/png');
 await tap('[aria-label="Close share composer"]');
 console.log('PASS CF41: nine actual exported PNG previews (Photo/Route/Card × square/portrait/story), title/text controls and full-size return. Map tiles mocked.');
+}
 
 await tap('.journal-edit-workout');await wait("Boolean(document.querySelector('.finish-button'))");await tap('.finish-button');await wait('Boolean(window.__backup)');
 let exported=await ev('window.__backup');const restored=exported.sessions.find(s=>s.id===session.id);
@@ -67,6 +69,7 @@ console.log('PASS CF11/12/14/24/34/37/40/42/43: real journal, splits, photos, il
 // Conflicting stores: a completed richer fallback must win both editor and History.
 await ev(`(async()=>{const s=${JSON.stringify(session)};localStorage.setItem('t4l:'+s.id,JSON.stringify(s));await new Promise((resolve,reject)=>{const r=indexedDB.open('training-for-life',1);r.onsuccess=()=>{const d=r.result,t=d.transaction('sessions','readwrite');t.objectStore('sessions').put({...s,notes:'',videos:[],status:'partial',completedAt:undefined,updatedAt:'2026-11-09T13:00:00Z'});t.oncomplete=()=>{d.close();resolve();};t.onerror=reject;};});})()`);await reload();await nav(4);await field('input[aria-label="Search your journal"]','Restored complete fixture');await wait("document.querySelectorAll('.journal-search-results button').length===1");await tap('.journal-search-results button');await wait("Boolean(document.querySelector('.daily-journal'))");assert.match(await ev("document.querySelector('.journal-status').textContent"),/Workout complete/);await tap('.journal-edit-workout');await wait("Boolean(document.querySelector('.finish-button'))");await tap('#today-tab-log');assert.equal(await ev("document.querySelector('.today-note-label textarea').value"),session.notes);
 console.log('PASS CF42: older complete fallback beats newer partial indexed copy; History and editor agree after reload.');
+if(!process.env.DATA_ONLY){
 // Start today's fresh day via navigation; test selectors and check-ins.
 await nav(2);const returnToday=await ev("[...document.querySelectorAll('button')].some(e=>e.textContent.trim()==='Return to today')");if(returnToday)await textButton('Return to today');await wait("document.querySelector('.today-save-state')?.textContent==='Saved on this device'");await tap('.today-workout-summary-heading button');await field('.day-workout-override label:first-child select','strength');
 await tap('.repeat-workout > summary');await textButton('Use this workout setup','.repeat-workout');await wait("document.querySelectorAll('.today-addon-row').length>0");
@@ -135,4 +138,6 @@ await cdp('Network.emulateNetworkConditions',{offline:false,latency:0,downloadTh
 console.log('PASS CF03: actual installed service worker, offline shell reload and online return preserve saved workout records.');
 console.log('PASS expanded critical-feature browser smoke.');
 
+}
+if(process.env.DATA_ONLY)console.log('PASS affected saved-day and backup-restore browser smoke.');
 }catch(error){if(ev){await writeFile('/private/tmp/t4l-critical-failure.txt',await ev('document.body.innerText'));if(cdp)await writeFile('/private/tmp/t4l-critical-failure.png',Buffer.from((await cdp('Page.captureScreenshot',{format:'png'})).data,'base64'));}throw error;}finally{await call('Target.disposeBrowserContext',{browserContextId});socket.close();}

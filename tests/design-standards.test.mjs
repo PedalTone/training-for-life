@@ -35,8 +35,9 @@ test('design documentation checks run in both npm test and GitHub release checks
   assert.match(text,/RELEASE_VERIFICATION\.md/,`${path} must retain the critical-feature evidence gate`);
  }
  const workflow=await read('.github/workflows/deploy-pages.yml');
- assert.match(workflow,/run: npm test/);
+ assert.equal(scripts['test:release'],'npm run build && node scripts/test-release.mjs');
+ assert.match(workflow,/run: npm run test:release/);
  assert.match(workflow,/run: npm run verify:release/);
- assert.ok(workflow.indexOf('run: npm test')<workflow.indexOf('run: npm run build:pages'));
+ assert.ok(workflow.indexOf('run: npm run test:release')<workflow.indexOf('run: npm run build:pages'));
  assert.ok(workflow.indexOf('run: npm run verify:release')<workflow.indexOf('uses: actions/upload-pages-artifact'));
 });

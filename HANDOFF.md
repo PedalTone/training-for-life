@@ -1,6 +1,17 @@
 # Training for Life — development handoff
 
-## Release prepared — 2026.11.22 0705
+## Change-focused testing — user clarification November 22
+
+Keep the full feature inventory; choose affected features and dependencies, and
+record the reason. Fresh evidence is required only for the selected features.
+Physical-only checks remain post-deployment recommendations. The gate now
+requires explicit scope, and test:release derives automated test files from that
+scope. Full npm test and broad browser journeys remain optional when warranted.
+Current scope is CF15/31/33/34/42/43/48 for Plan, saved-day/History/journal, backups
+and publication. Earlier broad results are retained as supplemental evidence.
+Process-only changes keep 0705 and the same public app assets.
+
+## Current release — 2026.11.22 0705
 
 Isolated Plan release adds the picture removal, consistent whole-record selection
 for editor/History, and a valid-backup restore fix. Restore used map(saveSession),
@@ -15,7 +26,9 @@ All automated/browser feature checks remain mandatory; simulations are labeled.
 rest workflows, GPS map/weather/resume/edit/delete, full backup restore/export,
 media/video/set/illness/nutrition/planning/sharing/offline smoke pass. Durable
 logs and feature sign-off are in RELEASE_VERIFICATION.md and docs/releases/.
-Publication and exact live asset/workflow verification are the remaining steps.
+Deployment 45021554307 succeeded for 8d068ded9f1622be0745faa27268a7323d26beaf.
+Public JS/CSS/worker match the tested local files byte-for-byte.
+The November 22 testing-policy update below is being verified separately.
 
 Initial workflow 45021126040 passed the full suite, build and gate twice. Its
 first deployment could not yet see the package; retry found two same-name

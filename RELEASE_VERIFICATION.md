@@ -2,21 +2,25 @@
 
 Candidate version: 2026.11.22 0705
 Overall decision: PASS
+Affected features: CF15, CF31, CF33, CF34, CF42, CF43, CF48
+Scope rationale: Plan picture removal affects weekly planning; the saved-copy fix affects editor/History loading; the restore fix affects backups. Release-policy and delivery changes affect publication. Browser checks exercised those flows and their saved-day dependencies. Saved-day loading also affects Today save/lock state, History and journal. Other rows below retain actual completed supplemental results, not mandatory new tests.
 Automated evidence: npm test passes all 242 Node tests and 3 Python caption tests, including restore and release-policy regressions. Server and Pages builds pass; git diff --check passes. See docs/releases/2026.11.22-0705/automated.txt and pages.txt.
 Browser evidence: External isolated Chrome: Today and Plan at 375x667, 393x852, 440x956; full baseline/expanded GPS suite; expanded critical-feature restore/video/set/media/illness/planning/sharing/offline journeys. See docs/releases/2026.11.22-0705/{today,plan,gps,critical}.txt and scripts/check-{today-actions,gps-laps,critical-features}.mjs.
 Device follow-up: After deployment, recommend installed iPhone update/offline retention, touch/safe areas/portrait, Camera-resume GPS, outdoor known-distance pace, VoiceOver and native Files/share checks. No physical-device pass is claimed. These recommendations do not block deployment per the user's November 21 clarification.
 Data/backup evidence: The expanded browser suite imports a populated schema-1 backup via Settings, checks History/editor, exports and compares GPS/splits/rests/routes, photos/screenshots, videos/plans/results, nutrition, goals, library and dated mappings. It also verifies conflicting stores, failed-save retry and offline retention. All restore data is synthetic and isolated from personal logs.
 
-This is pre-publication sign-off for available automated and browser checks.
+This is pre-publication sign-off for the declared affected features. Per the
+November 22 user instruction, the complete inventory is retained and unrelated
+features need no fresh test. The earlier broad run below is supplemental evidence.
 PASS does not claim a physical iPhone field test or an unavailable third-party
 provider's signed-in page was tested. GPS, weather, tile, clipboard and share
 fixtures are identified in the scripts and evidence. Known failures still block
 publication. The earlier public 0758 release is not retrospectively certified.
 
-All rows below combine the candidate full automated suite with the stated
-browser evidence. The inventory's physical-only portions are post-deployment
-recommendations. Publication itself is verified after deployment; do not announce
-live based on this preflight report alone.
+Rows below retain actual results from the earlier supplemental broad run. Only
+the declared affected features need fresh evidence. Physical-only checks remain
+post-deployment recommendations. Exact deployment and affected live behavior
+are verified separately before announcing live.
 
 | Feature | Result | Evidence / verification |
 | --- | --- | --- |
@@ -72,7 +76,7 @@ live based on this preflight report alone.
 ## Repeatable commands
 
 ```sh
-npm test
+npm run test:release
 npm run build:pages
 git diff --check
 node scripts/check-today-actions.mjs

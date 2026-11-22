@@ -1,3 +1,5 @@
+No new release — 2026.11.22: Adopt affected-feature/dependency testing at the user’s request. Keep the full inventory; select automated/browser checks and preserve physical tests as post-deployment recommendations. Public app release remains 2026.11.22 0705.
+
 No new release — 2026.11.22: Repair Pages delivery after immediate artifact lookup returned none and a retry found duplicate names. Separate build/deploy jobs, name packages per build attempt and wait for the exact package. Keep app release 2026.11.22 0705 and its verified assets.
 
 New public release — 2026.11.22 0705: Remove the Plan picture, keep editor and History saved-day selection consistent, and fix restoration of valid workout backups. Physical iPhone checks are post-deployment recommendations; full automated/browser feature verification remains required.

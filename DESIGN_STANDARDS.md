@@ -235,19 +235,17 @@ No new UI is rendered or visually approved solely for this documentation change.
 
 ## Regression workflow and signoff
 
-The [critical-feature inventory](TESTING_CHECKLIST.md) is mandatory for every
-new public version, including unchanged capabilities. Record all CF outcomes
-and evidence in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md); every CF item
-must be PASS. The D01–D12 visual applicability matrix supplements that inventory
-and never exempts a critical behavior from testing. Missing evidence, failed
-regressions and untested automated/browser items block release through
-`npm run verify:release`. Physical-only iPhone checks are honest post-deployment
-recommendations and do not block deployment (user clarification November 21).
+The [critical-feature inventory](TESTING_CHECKLIST.md) is the reference for choosing
+change-specific verification. Record affected features, dependencies, rationale
+and results in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Affected failures
+and missing evidence block release. Unaffected features need no fresh test;
+physical-only checks are post-deployment recommendations. Applicable D01–D12
+checks supplement the selected behavior tests.
 
 1. Read this report and identify applicable D01–D12 rows before editing.
 2. Preserve approved copy, data meanings, artwork and unaffected regions; inspect
    current diff and computed styles. Avoid copying superseded CSS defaults.
-3. Run `npm test` (includes `npm run test:design`) and `npm run build:pages`.
+3. Run `npm run test:release` and `npm run build:pages`.
    Run relevant behavioral suites with Node TypeScript stripping; `npm test`
    does not silently imply every test file ran. Keep typecheck/lint limitations
    separate from build/test outcomes.

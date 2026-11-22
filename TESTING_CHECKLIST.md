@@ -1,53 +1,40 @@
 # Training for Life pre-ship testing checklist
 
-Run this checklist before every patch and release. The goal is to verify the complete user journey, not just that the build succeeds.
+## Change-focused release checks
 
-## Mandatory critical-feature release gate
+Keep the complete feature inventory below as the durable reference. Per the
+user's November 22 clarification, select the features affected by each change
+and their dependencies; do not rerun every feature for every patch.
 
-Established November 9, 2026 at the user's request. This is the current critical
-feature inventory, not a claim that every feature has passed. For **every new
-public version**, test every CF item below, including unchanged features, and
-record the candidate version, result and concrete evidence in
-[RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Use PASS, FAIL, BLOCKED or
-UNTESTED. Every CF item must be PASS before publication. "Unchanged", "builds",
-"test file exists" and "worked in an earlier version" are not passing results.
-Do not weaken a test or remove a CF item to get a release through.
+1. Record `Affected features: CFxx, CFyy` and `Scope rationale` in
+   [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md).
+2. Run `npm run test:release`; it selects automated test files from the affected
+   inventory rows and always checks release/design guidance. Run the Pages build
+   and `git diff --check`. Use full `npm test` when broader changes warrant it.
+3. Run the relevant external-browser workflow and inspect the changed screens.
+   Existing scripts: `scripts/check-today-actions.mjs`, `scripts/check-gps-laps.mjs`,
+   `scripts/check-critical-features.mjs`. Choose scripts relevant to the change;
+   they need not all run. Use isolated synthetic data. Run GPS alone to avoid a
+   competing tab triggering its intentional background pause.
+4. Require fresh PASS/evidence for the affected features. Unaffected features
+   may be omitted from the sign-off, or recorded NOT AFFECTED with a reason.
+   Keep any additional tests actually performed distinguishable from required
+   checks. Never invent a pass from a test filename or a green build.
+5. Review actual persisted records/exported backups when data is affected. Never
+   restore test data over personal logs or reset the user's browser.
+6. Physical-only GPS, Camera, portrait/safe areas, native Files/share and VoiceOver
+   checks are post-deployment recommendations, not blockers. Simulations do not
+   certify physical behavior. Known regressions still block publication.
+7. Run `npm run verify:release`, publish, then verify the successful deployment,
+   exact live JS/CSS/worker and affected live workflow before saying live/refresh.
 
-- Run `npm test`: it builds the server and runs **all** `tests/*.test.mjs`, not
-  only GPS tests, plus `tests/video-caption-fallback.test.py`. Run
-  `npm run build:pages` and `git diff --check` too.
-- Run external-browser scenarios sequentially: `scripts/check-today-actions.mjs`,
-  `scripts/check-gps-laps.mjs`, and `scripts/check-critical-features.mjs`. The
-  expanded scenarios verify restore/export, duplicate-store loading, videos/sets,
-  library edits, illness/nutrition, date/week rollover, sharing and offline reload.
-  Use disposable contexts. Run GPS alone so another tab cannot trigger its
-  background-pause behavior. Record remaining physical-only recommendations.
-- For every CF item, include its automated result **and** its functional smoke
-  result. For changed features and their dependencies, exercise new, saved,
-  locked, editing, failed-save, retry and reload states where applicable.
-- Check the actual persisted record and exported backup, not just visible labels.
-  A checked Track laps box or a saved notification does not prove splits exist.
-- Use isolated test data. Never reset the user's browser, overwrite real logs,
-  or restore a test backup over the user's live data.
-- Browser GPS simulation does not certify physical iPhone location, touch,
-  backgrounding, portrait APIs, VoiceOver or Files/share behavior. Record actual
-  device evidence for those claims. Per the user’s November 21 clarification,
-  physical-only checks are post-deployment recommendations and do not block
-  publication. Document them under `Device follow-up`; never claim they passed.
-  All automated and available external-browser checks still run before release;
-  known failures and missing non-device evidence remain blocking.
-- Run `npm run verify:release` before upload/deployment. It rejects missing,
-  stale-version, failed or untested feature sign-offs. This checks the evidence
-  record's completeness; it cannot independently prove a manual test was run.
-- After deployment succeeds, verify exact live JS/CSS/service-worker assets and
-  repeat the live navigation/save/split smoke. Only then announce "live" and tell
-  the user to refresh. A deployment failure leaves the release incomplete.
-- Add a CF item and a regression case whenever a critical capability is added.
-  Never drop an existing item merely because another feature is being changed.
+Review DESIGN_STANDARDS.md for every app change.
+The [design report](DESIGN_STANDARDS.md) and applicable D01–D12 checks supplement
+this feature inventory. Review duplicate functions and buttons for every app change.
 
 ### Home, dates and daily logging
 
-| ID | Critical feature provided today | Required verification before every public version | Existing automation; additional functional checks |
+| ID | Critical feature provided today | Acceptance checks when affected | Existing automation; additional functional checks |
 | --- | --- | --- | --- |
 | CF01 | Correct current day and historical dates | Eastern date/midnight rollover, month/year/DST transitions, Today versus selected older day, History completion agrees with saved day | `tests/history-timeline.test.mjs`, `tests/rendered-html.test.mjs`; browser fake-clock rollover and older-day edit |
 | CF02 | Home and six-section navigation | Home, Today, Plan, History, Progress, Settings; correct selected tab/artwork; back/return; swipe never steals taps, typing, map or scroll gestures | `tests/adventure-scenes.test.mjs`, `tests/swipe-navigation.test.mjs`; both browser scripts and swipe smoke |
@@ -67,7 +54,7 @@ Do not weaken a test or remove a CF item to get a release through.
 
 ### GPS recording and track repeats
 
-| ID | Critical feature provided today | Required verification before every public version | Existing automation; additional functional checks |
+| ID | Critical feature provided today | Acceptance checks when affected | Existing automation; additional functional checks |
 | --- | --- | --- | --- |
 | CF16 | Run, Walk, Bike and units | All three activities selectable/saved/editable; miles/kilometers; Run/Walk min-per-distance versus Bike speed; mixed records use correct units | `tests/gps-math.test.mjs`, `tests/gps-edit.test.mjs`, `tests/gps-saved-view.test.mjs`, `tests/share-card-data.test.mjs`; browser activity/unit switch |
 | CF17 | Current, split and average pace/speed | Stable believable current pace; split time/distance and total applicable time/distance remain distinct; correct rounding; stationary/weak GPS unavailable; reject jumps/jitter | `tests/gps-math.test.mjs`, `tests/gps-laps.test.mjs`; steady/change/spike/poor-signal browser streams and physical known-distance workout |
@@ -87,7 +74,7 @@ Do not weaken a test or remove a CF item to get a release through.
 
 ### Planning, history and progress
 
-| ID | Critical feature provided today | Required verification before every public version | Existing automation; additional functional checks |
+| ID | Critical feature provided today | Acceptance checks when affected | Existing automation; additional functional checks |
 | --- | --- | --- | --- |
 | CF31 | Weekly planning and future-effective changes | This/Next week, Monday–Sunday, selected workout details and overview without a graphic; mapping applies next Monday/repeats; Sunday/current/past days unchanged; future revisions and reload correct | `tests/weekly-planning.test.mjs`, `tests/rendered-html.test.mjs`; browser plan edit, failure and rollover |
 | CF32 | One-day overrides and additional workout types | Built-in/custom types and strength variants resolve consistently; override changes only chosen day; restore weekly plan; artwork/icons/types preserved in History and Progress | `tests/adventure-scenes.test.mjs`, `tests/weekly-planning.test.mjs`, `tests/rendered-html.test.mjs`; browser override/custom/mixed-type save/reload |
@@ -97,7 +84,7 @@ Do not weaken a test or remove a CF item to get a release through.
 
 ### Videos and strength logging
 
-| ID | Critical feature provided today | Required verification before every public version | Existing automation; additional functional checks |
+| ID | Critical feature provided today | Acceptance checks when affected | Existing automation; additional functional checks |
 | --- | --- | --- | --- |
 | CF36 | YouTube library and playback | Add valid URL/metadata without blocking on lookup failure; in-app player/close and external link; categories/All initial list; add-to-Today/recent videos/deletion without unintended duplication | `tests/future-video-list.test.mjs`, `tests/video-cleanup.test.mjs`; external browser add/play/close/filter/reload/delete smoke |
 | CF37 | Explicit video completion | Playing/adding never completes; checkbox retained in Today/History/backup; finished-day lock; repeat/add starts unchecked while preserving existing same-day results | `tests/video-completion.test.mjs`, `tests/repeat-workout.test.mjs`; browser checkbox, Finish/Edit and reload |
@@ -107,7 +94,7 @@ Do not weaken a test or remove a CF item to get a release through.
 
 ### Sharing, persistence, settings and publication
 
-| ID | Critical feature provided today | Required verification before every public version | Existing automation; additional functional checks |
+| ID | Critical feature provided today | Acceptance checks when affected | Existing automation; additional functional checks |
 | --- | --- | --- | --- |
 | CF41 | Workout sharing and image export | Today/journal composer; Photo/Route/Card, square/portrait/story; correct units/artwork; editable title/text/font/size/position; full-size preview; route privacy; no private notes/check-ins or editing guides in export | `tests/share-card-data.test.mjs`, `tests/share-route-map.test.mjs`; render actual PNGs for each template/format, inspect and test native share/download |
 | CF42 | Durable records and store reconciliation | IndexedDB/fallback freshness/richness/completion agree; legacy and current data load; stale autosave cannot replace new data; empty/partial copies never mask trustworthy records; no unrelated deletion | `tests/session-store.test.mjs`, `tests/daily-journal.test.mjs`, `tests/gps-save.test.mjs`; browser conflicting-store fixtures, blocked/quota failures and reload |
@@ -118,9 +105,9 @@ Do not weaken a test or remove a CF item to get a release through.
 | CF47 | External services and privacy/failure handling | Maps/geocoding/weather/YouTube/transcript/timer/Drive failures do not destroy recordings or falsely report success; no unexpected data sharing or requests before intended action | Existing GPS/weather/caption/share tests; browser blocked/offline providers, cancellation and request inspection |
 | CF48 | Exact release delivery and update truth | New Eastern timestamp, ten dated notes, worker/cache and live assets match tested commit; Pages succeeds; API deployed separately if changed; installed update retains data; refresh only after live proof | `tests/rendered-html.test.mjs`, `tests/service-worker.test.mjs`, `npm run verify:release`; workflow/asset comparison and live navigation/save/table smoke |
 
-### Mandatory cross-feature scenarios
+### Cross-feature scenarios to select when affected
 
-In addition to the inventory, run these complete journeys for each candidate:
+Choose the journeys touched by the change or its shared dependencies:
 
 1. New date → choose two major workouts → add-ons and effort/notes → Finish →
    cancel backup → verify completed History → Edit → save/backup → reload.

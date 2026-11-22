@@ -41,32 +41,28 @@ The user grants standing permission to publish tested app changes whenever they
 ask for a change (reaffirmed October 10, 2026). Complete verification and publish
 requested changes without asking again.
 
-## Mandatory critical-feature gate for every public version
+## Change-focused verification before publication
 
-User instruction November 9, 2026: maintain and test the complete critical
-feature inventory in [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) before every
-new public version. Test every CF item, including unchanged functionality, and
-record candidate-specific results/evidence in
-[RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Every CF item must be PASS;
-FAIL, BLOCKED, UNTESTED, missing evidence and "unchanged/N/A" block publication.
-D01–D12 design N/A classifications do not waive CF behavioral regression checks.
-Never treat an automated test count, green build or visible label as proof of
-persisted data or of a physical iPhone test. Run `npm test` (all Node suites and
-the caption-helper tests), the Pages build, the external-browser scenarios,
-the remaining inventory smoke checks, and `npm run verify:release`. Review
-actual saved records and backups. Fix or explicitly resolve failing cases before
-creating a new public release; do not weaken assertions to obtain a pass. Update
-the inventory/sign-off whenever a critical feature is added.
+User clarification November 22, 2026: keep the complete critical-feature inventory
+as a reference; test the features affected by a change and their dependencies,
+not every feature after every change. Declare `Affected features` and a `Scope
+rationale` in RELEASE_VERIFICATION.md. Only declared features require fresh PASS
+evidence. Broader checks are appropriate when shared changes justify them.
 
-User clarification November 21, 2026: physical iPhone testing is recommended
-after deployment and never blocks deployment. Keep all automated and available
-external-browser critical-feature checks before publication. Record physical-only
-checks honestly as post-deployment recommendations, never as simulated passes.
-A known functional failure still blocks publication. Verify exact public assets
-and the live workflow before
-telling the user to refresh. Documentation/test/policy-only changes keep the
-current label and may be committed without deploying an uncertified app; use a
-CI-skip commit for such work when appropriate.
+Run `npm run test:release`, the Pages build, relevant external-browser workflows
+and `npm run verify:release`. The targeted runner derives test files from the
+selected inventory rows; it also checks release/design guidance. The full
+`npm test` remains available for broad regressions and diagnosis, not mandatory
+for every patch. Inspect saved records/backups when persistence is affected.
+Never weaken assertions or conceal an affected failure to obtain a pass.
+
+Physical-only iPhone checks are post-deployment recommendations and never block
+publication (November 21 clarification). Record those recommendations honestly;
+never call browser simulation a physical test. Missing affected-feature evidence
+or a known regression blocks release. Standing publication permission remains
+in force. Verify exact public assets and the live affected workflow before
+announcing live or telling the user to refresh. Policy/test/delivery-only repairs
+keep the existing public release label.
 
 ## Design regression standard
 

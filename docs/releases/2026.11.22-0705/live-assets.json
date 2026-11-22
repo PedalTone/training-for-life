@@ -1,0 +1,18 @@
+{
+  "version": "2026.11.22 0705",
+  "exactLocalAssetMatch": true,
+  "assets": {
+    "javascript": {
+      "url": "https://pedaltone.github.io/training-for-life/app/assets/index-C_9NCeJg.js",
+      "sha256": "3e5d159d45933fc11e91b4f45d6665f6cf9b106ffb2c565e4789969718d9ae59"
+    },
+    "styles": {
+      "url": "https://pedaltone.github.io/training-for-life/app/assets/index-DFS3fBED.css",
+      "sha256": "5376398d4a6e0f0323b7c1d87e953f51210261db926f9f68f94cd99d892f133f"
+    },
+    "worker": {
+      "url": "https://pedaltone.github.io/training-for-life/app/service-worker.js",
+      "sha256": "291bd1b3d882a0b48e1e86bb57216c5ac429a0b83b7818a147fdb3570655e790"
+    }
+  }
+}

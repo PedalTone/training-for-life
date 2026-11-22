@@ -18,7 +18,8 @@
     "test:gps": "node --experimental-strip-types --test tests/gps-*.test.mjs tests/session-store.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "dev:codex": "vite --config vite.codex.config.ts --host 127.0.0.1 --port 5174"
+    "dev:codex": "vite --config vite.codex.config.ts --host 127.0.0.1 --port 5174",
+    "test:release": "npm run build && node scripts/test-release.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

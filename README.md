@@ -73,11 +73,11 @@ Open `http://127.0.0.1:5174/training-for-life/app/`.
 This preview disables HMR for the Codex built-in browser and does not provide the worker API routes. For the vinext/server path,
 use `npm run dev` and the URL printed by the command.
 
-Primary checks:
+Primary checks for the declared affected features:
 
 ```sh
 npm run build:pages
-npm test
+npm run test:release
 git diff --check
 ```
 
@@ -105,32 +105,26 @@ changed interactions. Tablet and desktop visual testing is not required. Automat
 
 ## Publish requested frontend changes
 
-Before every new public version, execute all 48 critical features and complete
-the cross-feature journeys in [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md).
-Record automated and browser results in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md).
-Every CF item must pass its available automated/browser checks. Physical-only
-iPhone checks are post-deployment recommendations, not publication blockers
-(user clarification November 21). Do not claim simulations are physical tests.
-Known failures and missing automated/browser evidence still block publication.
-
-Run these external Chrome scenarios sequentially with `CHROME_CDP_URL` and
-`APP_URL` pointing to the isolated browser and built app:
+Use the complete [feature inventory](TESTING_CHECKLIST.md) to select the features
+changed by this patch and their dependencies. Record affected IDs, rationale and
+evidence in [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md). Run:
 
 ```sh
-node scripts/check-today-actions.mjs
-node scripts/check-gps-laps.mjs
-node scripts/check-critical-features.mjs
+npm run test:release
+npm run build:pages
 npm run verify:release
 ```
 
-The expanded suite uses disposable contexts and synthetic data to verify full
-backup restore/export, editor/History consistency, photos/screenshots, illness,
-nutrition, libraries, videos/plans/sets, date/week rollovers, all nine sharing
-formats and offline reload. GPS scenarios simulate positions and weather; do
-not run another test tab concurrently because hiding a tracker pauses it.
-The Pages workflow runs the full automated suite and release evidence gate
-before upload. After deployment, compare the exact public assets and repeat
-the live workflows before announcing the version is live.
+The targeted runner selects Node test files from the declared inventory rows.
+Full `npm test` remains available for broad changes or diagnosis. Choose relevant
+external-browser workflows; all browser scripts do not need to run after every
+change. `check-today-actions`, `check-gps-laps` and `check-critical-features` use
+isolated synthetic data. Keep GPS testing separate from competing tabs.
+
+Missing affected-feature evidence and known regressions block publication.
+Physical-only iPhone checks are recommended after deployment and never block it.
+After successful deployment, compare exact live assets and repeat the affected
+live workflows before announcing the version is live.
 
 The configured remote is named `github`. Pushing a tested commit to its `main`
 branch triggers `.github/workflows/deploy-pages.yml`. Confirm the exact diff,
