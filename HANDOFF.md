@@ -17,6 +17,12 @@ media/video/set/illness/nutrition/planning/sharing/offline smoke pass. Durable
 logs and feature sign-off are in RELEASE_VERIFICATION.md and docs/releases/.
 Publication and exact live asset/workflow verification are the remaining steps.
 
+Initial workflow 45021126040 passed the full suite, build and gate twice. Its
+first deployment could not yet see the package; retry found two same-name
+packages. Delivery repair separates build/deploy jobs, uses unique build-attempt
+names propagated through a job output, and waits for the exact package. A
+deploy-only retry reuses that original build output. No runtime/asset change.
+
 ## Separate release candidate — Plan picture removal, November 21
 
 Branch `codex/plan-picture-removal` starts at a481281 and contains only the Plan

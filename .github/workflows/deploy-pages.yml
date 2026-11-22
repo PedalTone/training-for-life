@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -17,9 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      artifact_name: ${{ steps.artifact-name.outputs.value }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,8 +31,41 @@ jobs:
       - run: npm run build:pages
       - run: npm run verify:release
       - uses: actions/configure-pages@v5
+      - id: artifact-name
+        name: Name this build's Pages package
+        run: echo "value=github-pages-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v3
         with:
+          name: ${{ steps.artifact-name.outputs.value }}
           path: gh-pages-dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Wait until the tested Pages package is available
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PAGES_RUN_ID: ${{ github.run_id }}
+          PAGES_ARTIFACT: ${{ needs.build.outputs.artifact_name }}
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if gh api "repos/$GH_REPO/actions/runs/$PAGES_RUN_ID/artifacts" \
+              --jq ".artifacts[] | select(.name == \"$PAGES_ARTIFACT\" and .expired == false) | .id" \
+              > "$RUNNER_TEMP/pages-artifact-id" && test -s "$RUNNER_TEMP/pages-artifact-id"; then
+              echo "The tested Pages package is available."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "The tested Pages package is not available; deployment stopped."
+          exit 1
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.build.outputs.artifact_name }}

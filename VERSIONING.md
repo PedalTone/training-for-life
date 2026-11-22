@@ -1,3 +1,5 @@
+No new release — 2026.11.22: Repair Pages delivery after immediate artifact lookup returned none and a retry found duplicate names. Separate build/deploy jobs, name packages per build attempt and wait for the exact package. Keep app release 2026.11.22 0705 and its verified assets.
+
 New public release — 2026.11.22 0705: Remove the Plan picture, keep editor and History saved-day selection consistent, and fix restoration of valid workout backups. Physical iPhone checks are post-deployment recommendations; full automated/browser feature verification remains required.
 
 No new release — 2026.11.09: Establish the 48-feature mandatory regression inventory, full-suite CI and evidence-based release gate. Retain public version 2026.11.09 0758; policy/test changes only, no application deployment or retroactive certification.
