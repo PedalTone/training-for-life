@@ -21,3 +21,11 @@ clear labels and navy combined total; wider time column keeps hour-long values
 readable. Duplicate review PASS: one shared footer per recording, no new actions.
 Original split records remain unchanged. Display subtotals round once to tenths;
 combined duration adds those displayed subtotals. Physical feedback is follow-up.
+
+## Verified live publication
+
+[Deployment 45076053671](https://github.com/PedalTone/training-for-life/actions/runs/45076053671)
+succeeded for 4d44ca039c4cc4aa4a44ad97e2ee2dc2f5f5c871. Public JS/CSS/worker
+match the tested build byte-for-byte. The affected live 440x956 workflow shows
+the exact same three totals in Today, reloaded Today and History, with unchanged
+repeat/recovery records in the backup. See live-assets.json and live-browser.txt.

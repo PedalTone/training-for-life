@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-## Current candidate — split-table time totals, 2026.11.22 1703
+## Current release — split-table time totals, 2026.11.22 1703
 
 Saved split tables now end with total running time (walking/riding labels for
 those activities), total rest time and combined workout duration. All repeats,
@@ -13,7 +13,14 @@ checks at 375/393/440 verify 33:53.3 running + 20:52.2 rest = 54:45.5 duration,
 Today/History/reload consistency, exact eight-repeat/seven-recovery backup data,
 zero distance, no duplicate paused-stop effort and hour-long time fit. Screenshots
 inspected; evidence in docs/releases/2026.11.22-1703/. Saved table uses one footer;
-D02/D03/D07 PASS; unrelated design rows N/A. Deployment/live proof remains.
+D02/D03/D07 PASS; unrelated design rows N/A.
+
+Published 4d44ca039c4cc4aa4a44ad97e2ee2dc2f5f5c871; deployment 45076053671
+succeeded with the targeted tests, build and gate. Live JS index-DOD0fBnw.js,
+CSS index-Zp2u7JL0.css and worker match the tested local build byte-for-byte.
+A live 440x956 eight-repeat/seven-rest workflow verifies matching footer totals
+in Today/History after reload, save/retry and backup. Evidence: live-assets.json
+and live-browser.txt in the release folder. The user may refresh to this version.
 
 ## Current release — lap recovery results, 2026.11.22 1655
 
