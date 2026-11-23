@@ -91,3 +91,18 @@ export function splitTotals(rows:GpsSegment[]) {
  const activeTenths=Math.round(active*10),restTenths=Math.round(rest*10);
  return {activeSeconds:activeTenths/10,restSeconds:restTenths/10,totalSeconds:(activeTenths+restTenths)/10,estimatedRest:rows.some(row=>row.kind==='recovery'&&row.estimated)};
 }
+
+export function lapRecoverySeconds(draft:LapDraft|null,now=Date.now()) {
+ const start=draft?.lapProgress?.recoveryStartedAt;
+ const seconds=start?(now-Date.parse(start))/1000:0;
+ return Number.isFinite(seconds)?Math.max(0,seconds):0;
+}
+
+// Explicitly continuing a saved lap session keeps its identity and every effort.
+// A final recovery already saved at Stop is extended, never counted twice.
+// This returns a new draft; the original saved record stays intact until save.
+export function continuedLapDraft(workout:GpsWorkout,date:string,at:string) {
+ const last=workout.laps?.at(-1);
+ if(!last||!Number.isFinite(Date.parse(at))||!Number.isFinite(Date.parse(last.endedAt))||!Number.isFinite(Date.parse(workout.endedAt||last.endedAt))||Date.parse(at)<Date.parse(workout.endedAt||last.endedAt))return null;
+ return {date,activity:workout.activity,startedAt:workout.startedAt,seconds:workout.seconds,meters:workout.meters,maxSpeed:workout.maxSpeed||0,gaps:workout.gaps||0,route:workout.route,lapMode:true,laps:workout.laps!.map(lap=>({...lap})),recoveries:(workout.recoveries??inferredRecoveries(workout.laps!)).filter(rest=>rest.afterRepeat<last.number).map(rest=>({...rest})),lapProgress:{repeatStart:null,recoveryStartedAt:last.endedAt} as LapProgress,recordingId:workout.id};
+}

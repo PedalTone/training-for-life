@@ -228,8 +228,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.22 2207";
+const APP_VERSION = "2026.11.23 1754";
 const RECENT_RELEASES = [
+  { version: "2026.11.23 1754", category: "Major fix", changes: ["Track laps clearly separates Pause, Resume and finishing the whole workout. A larger Rest time clock counts while paused and resets for the next recovery.", "Continue repeats reopens the latest saved lap session with its original recording ID, keeping repeats, recovery times and totals together instead of requiring another workout."] },
   { version: "2026.11.22 2207", category: "Minor fix", changes: ["History no longer adds an Endurance clock to Speed or Easy Aerobic GPS workouts. Genuine two-workout days keep both icons; a workout icon key explains the symbols.", "Body-note flags stay red; Sick / unwell flags are now blue in History and search."] },
   { version: "2026.11.22 1703", category: "New feature", changes: ["Saved repeat tables now finish with total running time, total rest time and total workout duration in Today and History. Warm-up and cool-down repeats are included; older estimated rest stays labeled."] },
   { version: "2026.11.22 1655", category: "Minor fix", changes: ["After Pause in full-screen Track laps, see the repeat you just finished: time to tenths and average pace. Recovery time counts separately; Resume returns to live pace for the next repeat."] },
@@ -239,7 +240,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.07 1208", category: "Major fix", changes: ["Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging."] },
   { version: "2026.11.07 1115", category: "Minor fix", changes: ["Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status."] },
   { version: "2026.11.07 1043", category: "Major fix", changes: ["Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking."] },
-  { version: "2026.11.07 0838", category: "New feature", changes: ["Choose a second major workout for the same day and show paired workout icons in History instead of treating the second workout as an add-on."] },
 ];
 const withStore=withSessionStore;
 

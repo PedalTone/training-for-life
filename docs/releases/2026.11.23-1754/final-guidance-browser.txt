@@ -1,0 +1,2 @@
+PASS 375×667: saved-session Continue keeps one original ID, three repeats, exact rest without duplicate trailing recovery, backup and failed-save/reload/retry.
+PASS 440×956: seven continuous 400/600/800 repeats, six visible/reset rest clocks, same-position Pause/Resume, one recording, exact recovery/backup and comprehensive History totals.

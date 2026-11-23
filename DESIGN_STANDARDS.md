@@ -150,7 +150,7 @@ scroll jumps and layout changes during typing.
 Track laps uses one authoritative mode, chosen before Start. Pause completes the
 repeat and begins timed recovery; Resume begins the next repeat. In full-screen
 recovery, show the completed repeat’s frozen time to tenths and average pace,
-with a separate running recovery timer. Resume returns the hero to live pace. Background/GPS
+with a separate prominent Rest time clock counting up until Resume. The same primary Pause/Resume control retains its screen position; Stop & save explicitly finishes the entire workout. A saved lap session offers Continue repeats with the original recording ID, separately from Record another workout. Resume returns the hero to live pace. Background/GPS
 interruption pauses the current repeat without resetting its saved boundary.
 Stop saves the final repeat, including timed efforts with no usable GPS distance.
 Today and History share one visible table: repeat/recovery, time (tenths), GPS

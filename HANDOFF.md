@@ -1,5 +1,36 @@
 # Training for Life — development handoff
 
+## Current release candidate — lap Resume and rest clock, 2026.11.23 1754
+
+User reported seven separate recordings after a track session. Pre-change controlled
+8-repeat/7-rest browser flow passed; the exact phone event remains unconfirmed.
+Confirmed gap: saved laps only offered Record another, with no way to continue
+the same session. Normal Pause does not call finish and must retain its draft.
+
+One primary Pause/Resume control now has clear captions, a stable 88px full-screen
+touch area and explicit Stop & save / Finish entire workout. A shared prominent
+Rest time clock counts from the durable recovery boundary, initializes on reload,
+and resets on Resume. Full-screen details body uses an explicit viewport height
+so its percentage-height wrapper does not leave the lower half unused.
+Continue repeats reopens the latest same-day saved lap session, starts its next
+repeat, retains original recording ID/time/route/laps and extends any final rest
+once. It is distinct from Record another and respects the finished-day lock.
+No automatic merging or historical-record rewriting; old pending GPS work stays
+untouched in source-recovered-2026-10-23.
+
+Affected CF18/21/22/23/24/25/27/28/34/48: 79 selected tests and both builds PASS.
+11 focused lap scenarios at 375/393/440 include seven continuous variable repeats,
+six advancing/reset rest clocks, same-position touch Pause/Resume, one recording,
+full comprehensive table and exact backup/History totals; early-save Continue
+retains one ID, extends rest without duplication and survives failure/reload/
+retry. Existing eight-repeat, zero-GPS and hour-long cases PASS. Two additional
+ordinary/extended Run/Walk/Bike/map/weather/save/edit/navigation journeys PASS.
+Actual phone renders inspected. Evidence: docs/releases/2026.11.23-1754/.
+D03 and adjacent D02/D07/D10/D12 PASS; other design rows N/A, unchanged. Duplicate
+review PASS: one Pause/Resume, one shared recovery clock/table, distinct Continue
+versus New-workout actions. Physical iPhone feedback is post-deployment follow-up.
+Publication/live verification pending.
+
 ## Current release — History icons and flags, 2026.11.22 2207
 
 Confirmed historyWorkoutKeys appended Endurance for every generic GPS Run/Walk/

@@ -1,0 +1,2 @@
+PASS ordinary endurance pause/resume/save and complete Home/Today/Plan/History/Progress/Settings journey.
+PASS CF16/18/19/20/26/27/28/29/30/47: Run/Walk/Bike; weather, relative winds and units; pinch/buttons/follow; auto-pause/resume; hidden/foreground and transient GPS error resume; full-screen Stop then Log; second recording/edit/delete/cancel/reload and backup.

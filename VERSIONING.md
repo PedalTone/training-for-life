@@ -1,3 +1,5 @@
+New public release — 2026.11.23 1754: Make lap Pause/Resume and the running rest clock clear, keep one comprehensive session, and let Continue repeats extend a saved lap workout without creating another recording.
+
 New public release — 2026.11.22 2207: Correct duplicate Endurance icons on GPS speed/aerobic days, label History workout icons and distinguish red body-note flags from blue sick/unwell flags.
 
 New public release — 2026.11.22 1703: Add total running, recovery/rest and workout duration rows below the saved split table in Today and History.

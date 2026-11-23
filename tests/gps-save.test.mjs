@@ -40,3 +40,11 @@ test('late route enrichment never restores a deleted recording',async()=>{
 });
 
 test('active GPS saves do not wait for a stalled storage read',{timeout:100},async()=>{const saved=await save({...base,status:"partial"},record,undefined,true,()=>new Promise(()=>{}));assert.equal(saved.gpsWorkouts.length,1);});
+
+test('saving a continued lap workout replaces the same recording without losing other sessions or notes',async()=>{
+ const first={...record,activity:'Run',lapMode:true,laps:[{number:1,seconds:100,meters:400,startedAt:record.startedAt,endedAt:record.endedAt}],seconds:100,meters:400};
+ const day=await save({...base,status:'partial',duration:'',distance:'',gpsWorkouts:[]},first);
+ const other=await save(day,{...record,id:'other'});
+ const extended={...first,seconds:250,meters:1000,laps:[...first.laps,{number:2,seconds:150,meters:600}],recoveries:[{afterRepeat:1,seconds:60}]};
+ const result=await save(other,extended);assert.deepEqual(result.gpsWorkouts.map(w=>w.id),['first','other']);assert.deepEqual(result.gpsWorkouts[0],extended);assert.equal(result.notes,base.notes);assert.equal(result.duration,gpsTime(3850));
+});

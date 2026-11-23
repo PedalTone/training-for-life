@@ -58,6 +58,48 @@ async function check(width,height,preparedOnly=false){
   assert.equal((await draft()).lapMode,!['ordinary','extended'].includes(preparedOnly));
   assert.equal(await evaluate('window.__watches()'),1);
 
+  if(preparedOnly==='resume'||preparedOnly==='continue'){
+   await tap('.gps-view-toggle button');
+   const session=()=>evaluate("JSON.parse(localStorage.getItem('t4l:2026-11-09')||'null')");
+   const rest=()=>evaluate("document.querySelector('.gps-recovery-clock [role=timer]')?.textContent");
+   const footer=()=>evaluate("[...document.querySelectorAll('.gps-split-totals td')].map(e=>e.textContent)");
+   if(preparedOnly==='resume'){
+    const distances=[400,600,800,400,600,400,800],times=[100,150,200,98,148,96,195],rests=[60,75,90,45,80,50];
+    for(let i=0;i<distances.length;i++){
+     await evaluate(`window.__move(${distances[i]},${times[i]})`);await delay(250);
+     if(i===distances.length-1)break;
+     const position=await evaluate("(()=>{const r=document.querySelector('.gps-pause').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()");
+     await tap('.gps-pause');assert.equal((await draft()).laps.length,i+1);assert.equal(await rest(),'0:00');
+     assert.equal(await evaluate("document.querySelector('.gps-start b').textContent"),'Resume');
+     assert.equal(await evaluate("Boolean(document.querySelector('.gps-record-another,.gps-continue-repeats'))"),false,'Pause must never become a saved/new-workout screen');
+     assert.equal((await session())?.gpsWorkouts?.length||0,0,'Pause does not finalize the recording');
+     const d=await draft();await evaluate('window.__advance(15)');assert.equal(await rest(),'0:15');
+     await evaluate(`window.__move(30,${rests[i]-15})`);assert.equal((await draft()).seconds,d.seconds);assert.equal((await draft()).meters,d.meters);assert.equal(await evaluate('window.__watches()'),0);
+     const r=await evaluate("(()=>{const r=document.querySelector('.gps-start').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()");assert.ok(Math.abs(position.y-r.y)<2,'Pause/Resume keeps its touch position '+JSON.stringify({position,r}));
+     if(i===0)await screenshot('resume-rest');
+     await cdp('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...position,radiusX:8,radiusY:8}]});await cdp('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(150);
+     assert.equal(await evaluate("Boolean(document.querySelector('.gps-pause'))"),true);assert.equal(await evaluate("Boolean(document.querySelector('.gps-recovery-clock'))"),false);
+     assert.equal((await draft()).recoveries.length,i+1);assert.ok(Math.abs((await draft()).recoveries[i].seconds-rests[i])<.01);assert.equal(await evaluate('window.__watches()'),1);
+    }
+    await tap('.gps-stop');await wait("Boolean(document.querySelector('.gps-recordings'))&&!document.querySelector('.gps-stop')");
+    const w=(await session()).gpsWorkouts;assert.equal(w.length,1);assert.equal(w[0].laps.length,times.length);assert.equal(w[0].recoveries.length,rests.length);for(let j=0;j<times.length;j++){assert.ok(Math.abs(w[0].laps[j].seconds-times[j])<.002,'repeat time within 2ms floating-clock precision');assert.ok(Math.abs(w[0].laps[j].meters-distances[j])<.05,'No distance bridge across recovery');}for(let j=0;j<rests.length;j++)assert.ok(Math.abs(w[0].recoveries[j].seconds-rests[j])<.002,'rest time within 2ms timestamp precision');
+    assert.deepEqual(await footer(),['16:27.0','6:40.0','23:07.0']);await screenshot('resume-results');
+    await tap('.finish-button');await wait('Boolean(window.__backup)');assert.equal((await evaluate("window.__backup.sessions.find(s=>s.date==='2026-11-09').gpsWorkouts")).length,1);
+    await tap('.bottom-nav button:nth-child(4)');await tap('.history-today');await wait("Boolean(document.querySelector('.daily-journal'))");assert.deepEqual(await footer(),['16:27.0','6:40.0','23:07.0']);
+    console.log(`PASS ${width}×${height}: seven continuous 400/600/800 repeats, six visible/reset rest clocks, same-position Pause/Resume, one recording, exact recovery/backup and comprehensive History totals.`);
+   }else{
+    await evaluate('window.__move(400,100)');await tap('.gps-stop');await wait("Boolean(document.querySelector('.gps-continue-repeats'))");assert.match(await evaluate("document.querySelector('.gps-body').textContent"),/Continue repeats to add to this same session/);const id=(await session()).gpsWorkouts[0].id;
+    await evaluate('window.__advance(60)');await tap('.gps-continue-repeats');assert.equal((await draft()).recordingId,id);assert.equal((await draft()).laps.length,1);assert.equal(await evaluate("Boolean(document.querySelector('.gps-fullscreen .gps-pause'))"),true);
+    await evaluate('window.__move(600,150)');await tap('.gps-pause');await evaluate('window.__advance(20)');await tap('.gps-stop');await wait("Boolean(document.querySelector('.gps-continue-repeats'))");
+    assert.equal((await session()).gpsWorkouts.length,1);await evaluate('window.__advance(45)');await tap('.gps-continue-repeats');await evaluate('window.__move(400,95)');
+    if(width===375){await evaluate('window.__failSave=true');await tap('.gps-stop');await wait("document.querySelector('.gps-body')?.textContent.includes('Could not save totals')");await reload();}
+    await tap('.gps-stop');await wait("Boolean(document.querySelector('.gps-continue-repeats'))");
+    const w=(await session()).gpsWorkouts;assert.equal(w.length,1);assert.equal(w[0].id,id);assert.deepEqual(w[0].laps.map(l=>Math.round(l.meters)),[400,600,400]);assert.deepEqual(w[0].laps.map(l=>Math.round(l.seconds*10)/10),[100,150,95]);assert.deepEqual(w[0].recoveries.map(r=>Math.round(r.seconds*10)/10),[60,65]);assert.deepEqual(await footer(),['5:45.0','2:05.0','7:50.0']);
+    await screenshot('continued-results');await tap('.finish-button');await wait('Boolean(window.__backup)');assert.deepEqual(await evaluate("window.__backup.sessions.find(s=>s.date==='2026-11-09').gpsWorkouts"),w);
+    console.log(`PASS ${width}×${height}: saved-session Continue keeps one original ID, three repeats, exact rest without duplicate trailing recovery, backup${width===375?' and failed-save/reload/retry':''}.`);
+   }
+   assert.deepEqual(errors,[]);return;
+  }
   if(preparedOnly==='extended'){
    const select=async(selector,value)=>{await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(100);};
    await evaluate('window.__move(120,40)');await tap('.gps-view-toggle button');
@@ -149,7 +191,7 @@ async function check(width,height,preparedOnly=false){
     assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
     assert.notEqual(await evaluate("document.querySelector('.gps-lap-secondary section:first-child dd').textContent"),'00:00:00');
     if(i===0){
-     assert.match(await evaluate("document.querySelector('.gps-lap-heading').textContent"),/RECOVERY/);
+     assert.match(await evaluate("document.querySelector('.gps-lap-heading').textContent"),/RESTING/);
      const fit=await evaluate("(()=>{const t=document.querySelector('.gps-lap-completed dd'),p=document.querySelector('.gps-lap-average dd'),b=document.querySelector('.gps-stop').getBoundingClientRect(),r=document.querySelector('.gps-body');return {clipped:t.scrollWidth>t.clientWidth+1||p.scrollWidth>p.clientWidth+1,bottom:b.bottom,overflow:r.scrollHeight-r.clientHeight};})()");
      assert.equal(fit.clipped,false);assert.ok(fit.bottom<=height&&fit.overflow<=2,JSON.stringify(fit));
      await screenshot('recovery');
@@ -218,7 +260,7 @@ async function check(width,height,preparedOnly=false){
  }finally{await call('Target.disposeBrowserContext',{browserContextId});}
 }
 try{
- for(const [width,height] of [[375,667],[393,852],[440,956]])await check(width,height);
+ for(const [width,height] of (process.env.LIVE_ONLY==='1'?[[440,956]]:[[375,667],[393,852],[440,956]])){await check(width,height);await check(width,height,'resume');await check(width,height,'continue');}
  await check(440,956,true);
  await check(375,667,'long');
  if(process.env.LAPS_ONLY!=='1'){await check(440,956,'ordinary');await check(440,956,'extended');}

@@ -65,3 +65,10 @@ test('single no-distance repeat has zero rest and a labeled activity total witho
  }
  assert.doesNotMatch(render([{...workout,lapMode:true,laps:[]}]),/<tfoot/);
 });
+
+test('saved lap sessions offer continuation separately from creating a new workout, respecting the completed-day lock',()=>{
+ const lap={number:1,seconds:100,meters:400,startedAt:workout.startedAt,endedAt:'2026-10-18T12:01:40Z'};
+ const saved={...workout,seconds:100,meters:400,lapMode:true,laps:[lap]};
+ assert.match(render([saved]),/Continue repeats/);assert.match(render([saved]),/Same workout · next repeat/);assert.match(render([saved]),/Record another workout/);
+ assert.doesNotMatch(render([saved],{},{readOnly:true}),/Continue repeats/);assert.doesNotMatch(render([workout]),/Continue repeats/);
+});

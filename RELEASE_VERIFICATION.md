@@ -1,30 +1,27 @@
 # Critical-feature release verification
 
-Candidate version: 2026.11.22 2207
+Candidate version: 2026.11.23 1754
 Overall decision: PASS
-Affected features: CF05, CF12, CF13, CF33, CF34, CF48
-Scope rationale: History type inference duplicated GPS Run/Walk/Bike as Endurance on Speed/Easy aerobic days. Change only History classification/labels, its icon key and shared illness color. Verify explicit second-workout selections, legacy mixed types, flags/search/journal, completion and release updates. GPS recording and storage algorithms are unchanged.
-Automated evidence: npm run test:release passes 52 selected tests and server build; Pages build and git diff --check pass. Evidence: docs/releases/2026.11.22-2207/automated.txt and pages.txt.
-Browser evidence: Isolated external Chrome passes 375x667, 393x852 and 440x956; screenshots inspected. Tests cover the reported weekly pattern, genuine explicit and older mixed workouts, flags in calendar/legend/search, journal, unchanged completion and reload. Every icon/flag fits its own day and paired icons remain at least 15px wide. Evidence: docs/releases/2026.11.22-2207/browser.txt and screenshots.
-Device follow-up: Check the updated History icons/flags after refresh; physical iPhone tests are post-deployment feedback, not a release prerequisite.
-Data/backup evidence: No schema or historical record changes; browser compares all nine original fixture records byte-for-field after viewing and reload; they are unchanged.
+Affected features: CF18, CF21, CF22, CF23, CF24, CF25, CF27, CF28, CF34, CF48
+Scope rationale: Lap Pause/Resume labels, prominent recovery clock, full-screen layout and saved-lap continuation affect recording boundaries, same-ID persistence/retry, recovery and comprehensive result summaries. Verify normal continuous repeats and early-save continuation, reload/failure/backup, saved lock and ordinary tracker actions. GPS distance/pace algorithms are unchanged; existing historical recordings are not merged or rewritten automatically.
+Automated evidence: npm run test:release passes 79 selected tests and server build. Pages build and diff check pass; see docs/releases/2026.11.23-1754/automated.txt and pages.txt.
+Browser evidence: 11 focused lap scenarios pass in isolated external Chrome: original eight-repeat journey, seven continuous 400/600/800 repeats and saved-session continuation at 375x667, 393x852 and 440x956, plus zero-distance/hour-long cases. Two ordinary/extended GPS journeys pass. Additional distance-integrity assertions at all three sizes verify no GPS bridge across rests/continuation. Final saved-message guidance and both paths pass on the final build. Actual running/resting/results screenshots inspected; see docs/releases/2026.11.23-1754/browser.txt, ordinary-browser.txt and PNGs.
+Device follow-up: Recommend next iPhone track session feedback after deployment. Simulated GPS is not a physical iPhone test and physical testing does not hold publication.
+Data/backup evidence: Seven repeats/six recoveries remain one recording, with 16:27.0 running + 6:40.0 rest = 23:07.0 total in Today and History. Early-save continuation retains the same ID and three repeat times, 60/65-second recoveries without duplicate trailing rest, and exact backup arrays; failed-save/reload/retry also remains one ID. Helper tests prove originals unchanged; notes/other recordings are preserved. Historical records are never automatically merged.
 
 | Feature | Result | Evidence |
 | --- | --- | --- |
-| CF05 | PASS | Explicit primary/second types remain authoritative; legacy mixed workouts retained; generic GPS activity does not invent an additional endurance type. |
-| CF12 | PASS | Computed red (#b3332b) flags match calendar, legend and search; completion remains 6/7 with simultaneous flags. |
-| CF13 | PASS | Computed blue (#145dcc) flags match calendar, legend and search; illness normalization/rest/search unit checks pass. |
-| CF33 | PASS | Type inference unit/browser checks pass; one labeled icon/color key replaces old color-only key; search and completion retained. |
-| CF34 | PASS | Journal retains both notes and completion status. |
-| CF48 | PASS | New Eastern label, ten release notes, worker/query labels and selected tests/builds pass; live delivery proof follows publication. |
+| CF18 | PASS | Pause, Resume and final Stop workflows. |
+| CF21 | PASS | Authoritative lap mode, including continued sessions. |
+| CF22 | PASS | One-button repeat/recovery, visible rest clock, stable touch position. |
+| CF23 | PASS | Variable repeat boundaries and restart/reload. |
+| CF24 | PASS | One comprehensive repeat/recovery table and totals. |
+| CF25 | PASS | Continued session save failure/reload/retry remains one ID. |
+| CF27 | PASS | Continue same workout versus new recording, dates/order preserved. |
+| CF28 | PASS | Full-screen running/resting layouts at three phone sizes. |
+| CF34 | PASS | Matching saved History results. |
+| CF48 | PASS | Version, builds and exact publication. |
 
-Design review: D07 History and adjacent D02/D10 apply. PASS after inspecting actual phone renders: approved SVGs/colors, readable two-column key, flags under completion marks, no adjacent-day spill. Other D rows N/A: unchanged surfaces. Duplicate review: reuse approved SVGs and existing flags; one optional icon/color key replaces the old color-only disclosure, no duplicate workout actions. Old pending GPS work and personal records remain untouched.
+Design review: D03 tracker, adjacent D02/D07/D10 and data-retention D12 apply. Other rows N/A, unchanged. Duplicate review: one Pause/Resume control; Continue extends the latest lap session while Record another creates a distinct workout. Reuse recovery clock/table/helper; no duplicate rest counters or result tables. PASS after inspecting actual three-size phone screenshots, including 375x667 hour-long strings, stable 88px action targets and the larger Rest time display. Labels distinguish saving a repeat from ending the entire session; no scrolling in lap full screen.
 
-## Verified live publication
-
-[Deployment 45104447711](https://github.com/PedalTone/training-for-life/actions/runs/45104447711)
-succeeded for d6074f8fda7982eb2884a0a3eb033525dd28eaec. Public JS/CSS/worker match
-the tested local build byte-for-byte. The live 440x956 affected browser workflow
-passes, including genuine paired types, single Speed/Easy aerobic icons, distinct
-red/blue flags, journal/search/reload and unchanged records. Actual live render
-inspected. See live-assets.json, live-browser.txt and live-history-440.png.
+Investigation limit: the pre-change controlled eight-repeat/seven-rest workflow also passed. The exact cause of the user’s seven separate iPhone recordings was not reproduced. Confirmed missing capability: once saved, only Record another was available. Continue repeats now reopens that same session; normal Pause still never finalizes it. Do not claim automatic reconstruction or merging of the user’s existing seven records.

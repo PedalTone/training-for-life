@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {beginRepeat,endRepeat,currentRepeat,gpsSegments,splitTime,splitTotals} from '../app/gps-laps.ts';
+import {beginRepeat,endRepeat,currentRepeat,gpsSegments,splitTime,splitTotals,lapRecoverySeconds,continuedLapDraft} from '../app/gps-laps.ts';
 import {readGpsRecovery} from '../app/gps-recovery.ts';
 
 const origin=Date.parse('2026-11-09T12:00:00Z');
@@ -89,4 +89,28 @@ test('rest totals respect explicit empty recoveries and mark older inferred time
  assert.deepEqual(splitTotals(gpsSegments({laps})),{activeSeconds:310,restSeconds:60,totalSeconds:370,estimatedRest:true});
  assert.deepEqual(splitTotals(gpsSegments({laps,recoveries:[]})),{activeSeconds:310,restSeconds:0,totalSeconds:310,estimatedRest:false});
  assert.equal(splitTime(splitTotals([{kind:'repeat',number:1,seconds:3600.4,meters:0},{kind:'recovery',number:1,seconds:15,meters:null}]).totalSeconds),'1:00:15.4');
+});
+
+test('rest clock starts at zero, advances independently of active time and clears on Resume',()=>{
+ const at='2026-11-23T12:00:00Z';let d={startedAt:at,lapMode:true,seconds:100,meters:400,laps:[],recoveries:[],lapProgress:{repeatStart:{seconds:0,meters:0,at},recoveryStartedAt:null}};
+ d=endRepeat(d,'2026-11-23T12:01:40Z');assert.equal(lapRecoverySeconds(d,Date.parse('2026-11-23T12:01:40Z')),0);
+ assert.equal(lapRecoverySeconds(JSON.parse(JSON.stringify(d)),Date.parse('2026-11-23T12:02:55Z')),75);assert.equal(d.seconds,100);
+ d=beginRepeat(d,'2026-11-23T12:02:55Z');assert.equal(d.recoveries[0].seconds,75);assert.equal(lapRecoverySeconds(d,Date.parse('2026-11-23T12:03:00Z')),0);
+ assert.equal(lapRecoverySeconds(null),0);assert.equal(lapRecoverySeconds({lapProgress:{recoveryStartedAt:'invalid'}}),0);
+});
+test('continuing a saved lap session extends final rest once and preserves the same recording identity',()=>{
+ const laps=[{number:1,seconds:100,meters:400,startedAt:'2026-11-23T12:00:00Z',endedAt:'2026-11-23T12:01:40Z'}];
+ const workout={id:'same-session',activity:'Run',startedAt:laps[0].startedAt,endedAt:'2026-11-23T12:02:00Z',seconds:100,meters:400,maxSpeed:4,gaps:0,lapMode:true,laps,recoveries:[{afterRepeat:1,seconds:20,startedAt:laps[0].endedAt,endedAt:'2026-11-23T12:02:00Z'}]};
+ const before=JSON.stringify(workout);let d=continuedLapDraft(workout,'2026-11-23','2026-11-23T12:03:00Z');assert.equal(d.recordingId,workout.id);
+ d=beginRepeat(d,'2026-11-23T12:03:00Z');assert.deepEqual(d.recoveries.map(r=>r.seconds),[80]);
+ d=endRepeat({...d,seconds:250,meters:1000},'2026-11-23T12:05:30Z',false);assert.deepEqual(d.laps.map(l=>[l.seconds,l.meters]),[[100,400],[150,600]]);
+ assert.equal(JSON.stringify(workout),before);assert.equal(d.recordingId,'same-session');assert.equal(splitTotals(gpsSegments(d)).totalSeconds,330);
+ assert.equal(continuedLapDraft({...workout,laps:[]},'2026-11-23','2026-11-23T12:03:00Z'),null);
+ assert.equal(continuedLapDraft(workout,'2026-11-23','bad'),null);assert.equal(continuedLapDraft(workout,'2026-11-23','2026-11-23T12:01:00Z'),null);
+});
+test('continuation preserves earlier recovery and can recognize legacy lap arrays without the mode flag',()=>{
+ const laps=[{number:1,seconds:100,meters:400,startedAt:'2026-11-23T12:00:00Z',endedAt:'2026-11-23T12:01:40Z'},{number:2,seconds:150,meters:600,startedAt:'2026-11-23T12:03:00Z',endedAt:'2026-11-23T12:05:30Z'}];
+ const w={id:'legacy',activity:'Run',startedAt:laps[0].startedAt,endedAt:laps[1].endedAt,seconds:250,meters:1000,laps};
+ const d=beginRepeat(continuedLapDraft(w,'2026-11-23','2026-11-23T12:06:30Z'),'2026-11-23T12:06:30Z');
+ assert.deepEqual(d.recoveries.map(r=>[r.afterRepeat,r.seconds]),[[1,80],[2,60]]);assert.equal(d.recoveries[0].estimated,true);assert.equal(d.lapMode,true);assert.equal(d.gaps,0);
 });
