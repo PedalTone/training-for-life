@@ -54,6 +54,7 @@ Check the CSS cascade and computed style before changing a shared color.
 | Stop red | `#a93832` | Stop & save with cream text |
 | Complete green | `#548160` | Completion check, independent of workout type |
 | Body-note red | `#b3332b` | Flag in every body-note representation |
+| Sick/unwell blue | `#145dcc` | Illness flags, checkboxes and rested status; separate from injury |
 
 Workout type colors remain consistent between History and Progress:
 Strength `#a34e24`, Mobility `#287c80`, Easy aerobic `#315f9e`, Speed `#77587c`,
@@ -105,6 +106,7 @@ as the primary workout vocabulary. Strength must be an obvious dumbbell or
 realistic kettlebell; Mobility a recognizable seated stretch; Speed a runner
 with motion marks; Endurance the established stopwatch rather than an ambiguous
 winding path; Recovery a moon. Provide labels/key where meaning needs help.
+History must not add an Endurance stopwatch merely because a Speed or Easy aerobic workout has GPS Run/Walk data. Explicit primary/second types take priority; the expandable icon key labels the six core types.
 Settings icons match the clean Home icons. Future workout videos retain a
 recognizable red play treatment. Green checks and red flags remain separate
 from the workout pictogram and appear consistently in legends and lists.
@@ -198,7 +200,7 @@ walk the complete Home → Today → Plan → History → Progress → Settings 
 | D04 | Tracker editing | Edit activity/distance/duration; correct Run/Walk pace vs Bike speed; Delete → Yes, delete / Keep recording; recalculated automatic totals; locked-day safeguard | Cancel, failed write, older/latest/last deletion, reload and backup |
 | D05 | Map / auto-pause | Pinch and +/− zoom; Following centers the latest reliable position at the chosen zoom, drag pauses following, Follow me recenters and Fit route frames the route; Unobstructed live map; city/state label only after save, editable for crossings; four-second near-stop auto-pause and movement resume, including small walking steps after multi-minute stops with missing/zero native speed; manual pause stays manual; missing GPS alone never triggers either | Fresh/weak/stale fixes, opted-out state, background/recovery, route segments and totals |
 | D06 | Plan | This week / Next week underline tabs; text-only selected workout card with day selector/overview; Monday–Sunday; mapping in Next week; Training Assessment in Progress only | Future-effective edits, rollover, historical isolation, long/custom names |
-| D07 | History / journal | Twelve-week timeline; Earlier/Later advances three weeks; return to current week; remembered journal return; colored recognizable type icons; green checks/red flags; body-note filter inside Filters; distinct labeled illness flag and searchable illness journal note; Nutrition below timeline and navigation controls | Sparse/full history, all seven days, no false skipped/rest, filter/search, journal Edit above Share |
+| D07 | History / journal | Twelve-week timeline; Earlier/Later advances three weeks; return to current week; remembered journal return; colored recognizable type icons; green checks/red body flags/blue illness flags; body-note filter inside Filters; distinct labeled illness flag and searchable illness journal note; Nutrition below timeline and navigation controls | Sparse/full history, all seven days, no false skipped/rest, filter/search, journal Edit above Share |
 | D08 | Progress | Ranked percentage bars, not an unapproved pie-chart replacement; 4/8/12 weeks; denominator includes completed recovery; zero categories visible; same type colors; completed add-ons separate; comparisons use recorded evidence | Counts/order/units at each period, empty data, no invented goals or equal-share prescription |
 | D09 | Videos | Explicit per-video completion in dated workouts and journal; play/add alone never completes; repeat starts unchecked; Add video & get transcript; selected URL sent to requested free site; Paste & build then review/Save plan; visible persistent Plan ready badge; Add to today becomes Added to today; initial filter matches displayed list | Save/cancel, cached/blocked captions, denied clipboard/manual fallback, reload, existing plans and multiple videos |
 | D10 | Log / media / strength | Multiple photos (up to six), local fitness screenshots without extraction, editable long notes; set-by-set weights/units and actual reps/time; Add set in each session exercise; manual exercise logging without a video plan; new Add set actuals blank; Repeat set explicitly copies the chosen completed set but resets completion; save row/results together; reusable templates unchanged; dated Remove from today confirms deletion of that exercise and its results, including the last exercise; partial efforts retained unless explicitly removed | Add/remove/reload/backup, warm-up exclusion, finished edit lock, no invented loads |

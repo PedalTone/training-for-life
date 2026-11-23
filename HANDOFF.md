@@ -1,5 +1,28 @@
 # Training for Life — development handoff
 
+## Current release candidate — History icons and flags, 2026.11.22 2207
+
+Confirmed historyWorkoutKeys appended Endurance for every generic GPS Run/Walk/
+Bike even on Speed/Easy aerobic days. Dedicated tested helper now respects the
+existing running type and authoritative explicit second type; older mixed
+strength/run records still infer an additional type, with speed more specific
+than generic endurance. Whole-word matching prevents substring false positives.
+No stored record changes. Endurance keeps its approved stopwatch.
+
+Body flags stay red #b3332b; illness uses blue #145dcc in calendar/search/legend,
+check-in accent and rested journal status. One labeled icon/color key replaces
+the old color-only key. Dates expose all type names to accessibility tools.
+Paired icons fit the day; simultaneous flags sit below the completion check.
+
+Affected CF05/12/13/33/34/48: 52 selected tests, server and Pages builds pass.
+External Chrome at 375/393/440 verifies the screenshot pattern, explicit paired
+and legacy mixed types, flags/search/journal, 6/7 completion, reload and exact
+nine unchanged fixture records. Actual phone screenshots inspected. D07 and
+adjacent D02/D10 PASS; other matrix rows N/A, unchanged surfaces. Duplicate
+review PASS: reused icons/helper, one key, existing status flags and no new
+workout actions. Physical iPhone feedback follows deployment. Evidence:
+docs/releases/2026.11.22-2207/. Publication/live verification pending.
+
 ## Current release — split-table time totals, 2026.11.22 1703
 
 Saved split tables now end with total running time (walking/riding labels for

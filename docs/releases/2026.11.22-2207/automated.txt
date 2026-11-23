@@ -1,0 +1,111 @@
+
+> site-creator-vinext-starter@0.1.0 test:release
+> npm run build && node scripts/test-release.mjs
+
+
+> site-creator-vinext-starter@0.1.0 build
+> WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build
+
+
+  vinext build  (Vite 8.0.13)
+
+(node:53318) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1/5] analyze client references...
+[2Ktransforming...✓ 223 modules transformed.
+rendering chunks...
+✓ built in 349ms
+[2/5] analyze server references...
+[2Ktransforming...✓ 124 modules transformed.
+rendering chunks...
+✓ built in 125ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 221 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 295ms
+[4/5] build client environment...
+[2Ktransforming...✓ 165 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 360ms
+[5/5] build ssr environment...
+[2Ktransforming...✓ 130 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 312ms
+[0m
+  Route (app)
+  ─ ? /
+
+  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+Affected features: CF05, CF12, CF13, CF33, CF34, CF48; 9 Node test files.
+✔ journal renders all saved daily fields and nutrition without mutating records (17.967791ms)
+✔ an unrecorded day hides empty sections and malformed video links cannot create embeds (1.890209ms)
+✔ editor loader uses richer or newer fallback records without masking newer indexed data (103.485ms)
+✔ Today keeps completion independent of body flags, including legacy completed timestamps (3.546708ms)
+✔ workout summary lists explicit add-ons and excludes display-only examples (3.132375ms)
+✔ journal retains locally attached screenshots without extraction or changing metrics (1.855667ms)
+✔ design report links remain valid and project guidance requires its review (17.616708ms)
+✔ design documentation checks run in both npm test and GitHub release checks (2.534708ms)
+✔ search covers saved details, combines words and ignores case/accents (8.666167ms)
+✔ historical themes remain distinct, dates are inclusive and future records excluded (0.463209ms)
+✔ matching excerpts include the search hit and never mutate source records (0.191125ms)
+✔ Body notes only composes with query, type and dates and preserves note excerpt (0.134041ms)
+✔ 12 Monday-to-Sunday weeks are contiguous across month/year and DST boundaries (2.279791ms)
+✔ arrows shift three weeks and never move the timeline beyond the actual current week (0.091667ms)
+✔ workout colors are consistent across Strength and Mobility variants and do not recolor statuses (0.0815ms)
+✔ GPS activity does not invent another endurance workout on speed, aerobic or swim days (0.874625ms)
+✔ explicit two-workout selections stay authoritative and unique (0.105167ms)
+✔ older mixed-workout records still infer genuinely additional types, with specific speed preferred (0.091ms)
+✔ workout icon labels describe stopwatch, paired types and custom types (0.070375ms)
+✔ illness normalizes separately and old records do not gain an illness (0.774375ms)
+✔ saving sick rest day preserves records without claiming completion and follows Edit lock (0.115042ms)
+✔ illness rest is searchable and excluded from completed mix while ordinary recovery remains (7.574042ms)
+✔ complete version-matched feature evidence permits pre-publication sign-off (2.23725ms)
+✔ missing/duplicate feature rows and an empty inventory block publication (0.327041ms)
+✔ failed, blocked, untested or unchanged critical features cannot pass as N/A (0.189459ms)
+✔ stale candidate version and missing overall approval block publication (0.085166ms)
+✔ placeholder or absent automated/browser/backup evidence blocks publication (0.193541ms)
+✔ physical-only checks are recorded recommendations rather than release blockers (0.09875ms)
+✔ the full feature inventory stays intact while verification covers the declared scope (18.089709ms)
+✔ unaffected features need no fresh verification, while affected gaps still block (0.297292ms)
+✔ release tests follow affected feature coverage rather than running the full inventory (0.260834ms)
+(node:53327) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ server-renders the dated release and a discreet What’s new control (91.093458ms)
+✔ splash uses the supplied textured background only on the opening screen (1.325667ms)
+✔ all entered tabs share the texture while Home buttons float (0.809917ms)
+✔ What’s new groups exactly ten categorized dated releases (0.620416ms)
+✔ Plan shortcut opens weekly mapping and leaves room above navigation (0.8095ms)
+✔ new home-screen icon is referenced by both iPhone and PWA metadata (0.451125ms)
+✔ Progress recommendations show their full text in auto-sizing cards (0.694417ms)
+✔ protects screenshot extraction with the personal access code (5.408083ms)
+✔ counts all seven History days and does not override completed Recovery styling (0.73975ms)
+✔ History labels only the actual current calendar week as This Week (0.399792ms)
+✔ one-day workout changes are the authoritative Plan and History type (0.565208ms)
+✔ Weekly workout mapping follows the app's Monday-through-Sunday order (0.29425ms)
+✔ add-on exercise titles are explicitly editable and rename saved selections (0.420041ms)
+✔ online navigation bypasses stale HTTP HTML cache (1.131208ms)
+✔ offline navigation still returns the saved page (0.877625ms)
+✔ current weather bypasses the service worker and its location URL cache (0.301708ms)
+✔ map and place requests bypass worker caching of location URLs (0.296ms)
+✔ session exercise log exposes per-exercise Add set and manual logging with no plan (5.449458ms)
+✔ saved read-only and library template views cannot add session sets (0.683291ms)
+✔ Repeat set appears only on completed editable session sets (1.822125ms)
+✔ remove exercise is available only in editable dated session logs (1.662542ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 52
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 251.161542

@@ -1,3 +1,5 @@
+New public release — 2026.11.22 2207: Correct duplicate Endurance icons on GPS speed/aerobic days, label History workout icons and distinguish red body-note flags from blue sick/unwell flags.
+
 New public release — 2026.11.22 1703: Add total running, recovery/rest and workout duration rows below the saved split table in Today and History.
 
 New public release — 2026.11.22 1655: Show the last completed repeat’s time and average pace during full-screen lap recovery, with recovery time counted separately.
