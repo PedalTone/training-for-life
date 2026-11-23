@@ -25,3 +25,12 @@ Data/backup evidence: Seven repeats/six recoveries remain one recording, with 16
 Design review: D03 tracker, adjacent D02/D07/D10 and data-retention D12 apply. Other rows N/A, unchanged. Duplicate review: one Pause/Resume control; Continue extends the latest lap session while Record another creates a distinct workout. Reuse recovery clock/table/helper; no duplicate rest counters or result tables. PASS after inspecting actual three-size phone screenshots, including 375x667 hour-long strings, stable 88px action targets and the larger Rest time display. Labels distinguish saving a repeat from ending the entire session; no scrolling in lap full screen.
 
 Investigation limit: the pre-change controlled eight-repeat/seven-rest workflow also passed. The exact cause of the user’s seven separate iPhone recordings was not reproduced. Confirmed missing capability: once saved, only Record another was available. Continue repeats now reopens that same session; normal Pause still never finalizes it. Do not claim automatic reconstruction or merging of the user’s existing seven records.
+
+## Verified live publication
+
+[Deployment 45285109802](https://github.com/PedalTone/training-for-life/actions/runs/45285109802)
+succeeded for fb3f42156abb7eae8b4f3385fea4427f2d992fd2. Exact public JS/CSS/worker
+match the tested build. The live original lap scenario, seven-repeat/six-rest
+workflow, continued-session identity/recovery/backup checks and zero-distance/
+hour-long cases pass. Actual live rest screen inspected. Evidence:
+live-assets.json, live-browser.txt and live-rest-440.png.

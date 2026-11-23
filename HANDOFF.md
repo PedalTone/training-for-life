@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-## Current release candidate — lap Resume and rest clock, 2026.11.23 1754
+## Current release — lap Resume and rest clock, 2026.11.23 1754
 
 User reported seven separate recordings after a track session. Pre-change controlled
 8-repeat/7-rest browser flow passed; the exact phone event remains unconfirmed.
@@ -29,7 +29,16 @@ Actual phone renders inspected. Evidence: docs/releases/2026.11.23-1754/.
 D03 and adjacent D02/D07/D10/D12 PASS; other design rows N/A, unchanged. Duplicate
 review PASS: one Pause/Resume, one shared recovery clock/table, distinct Continue
 versus New-workout actions. Physical iPhone feedback is post-deployment follow-up.
-Publication/live verification pending.
+Published fb3f42156abb7eae8b4f3385fea4427f2d992fd2 via successful Pages run
+45285109802. Public JS index-DgZpdWpS.js, CSS index-BTKSgfYO.css and service worker
+match the tested local files byte-for-byte. Live 440x956 checks pass the original
+eight-repeat journey, seven continuous variable repeats with advancing/reset
+rest clocks, one saved recording, matching backup/History totals, and continued
+saved-session identity/rest integrity. Live zero-GPS and hour-long cases also
+pass. Live rest screenshot inspected; see live-assets.json/live-browser.txt.
+The user may refresh/reopen the iPhone app. Existing separate records are not
+merged automatically; the exact earlier phone failure remains unconfirmed.
+
 
 ## Current release — History icons and flags, 2026.11.22 2207
 
