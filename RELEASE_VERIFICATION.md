@@ -19,3 +19,12 @@ Data/backup evidence: No schema or historical record changes; browser compares a
 | CF48 | PASS | New Eastern label, ten release notes, worker/query labels and selected tests/builds pass; live delivery proof follows publication. |
 
 Design review: D07 History and adjacent D02/D10 apply. PASS after inspecting actual phone renders: approved SVGs/colors, readable two-column key, flags under completion marks, no adjacent-day spill. Other D rows N/A: unchanged surfaces. Duplicate review: reuse approved SVGs and existing flags; one optional icon/color key replaces the old color-only disclosure, no duplicate workout actions. Old pending GPS work and personal records remain untouched.
+
+## Verified live publication
+
+[Deployment 45104447711](https://github.com/PedalTone/training-for-life/actions/runs/45104447711)
+succeeded for d6074f8fda7982eb2884a0a3eb033525dd28eaec. Public JS/CSS/worker match
+the tested local build byte-for-byte. The live 440x956 affected browser workflow
+passes, including genuine paired types, single Speed/Easy aerobic icons, distinct
+red/blue flags, journal/search/reload and unchanged records. Actual live render
+inspected. See live-assets.json, live-browser.txt and live-history-440.png.

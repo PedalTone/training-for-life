@@ -1,0 +1,1 @@
+PASS 440x956: screenshot-pattern GPS speed/aerobic/endurance, genuine paired and legacy mixed types, 6/7 completion, red/blue flags in calendar/legend/search, labeled icon key, journal, reload and unchanged stored records.

@@ -13,7 +13,7 @@ and their dependencies; do not rerun every feature for every patch.
    and `git diff --check`. Use full `npm test` when broader changes warrant it.
 3. Run the relevant external-browser workflow and inspect the changed screens.
    Existing scripts: `scripts/check-today-actions.mjs`, `scripts/check-gps-laps.mjs`,
-   `scripts/check-critical-features.mjs`. Choose scripts relevant to the change;
+   `scripts/check-critical-features.mjs`, `scripts/check-history-icons.mjs`. Choose scripts relevant to the change;
    they need not all run. Use isolated synthetic data. Run GPS alone to avoid a
    competing tab triggering its intentional background pause.
 4. Require fresh PASS/evidence for the affected features. Unaffected features
@@ -40,7 +40,7 @@ this feature inventory. Review duplicate functions and buttons for every app cha
 | CF02 | Home and six-section navigation | Home, Today, Plan, History, Progress, Settings; correct selected tab/artwork; back/return; swipe never steals taps, typing, map or scroll gestures | `tests/adventure-scenes.test.mjs`, `tests/swipe-navigation.test.mjs`; both browser scripts and swipe smoke |
 | CF03 | Installed app, offline shell and cache updates | Fresh open, reopen/reload, online update and offline cached shell; correct icon/version; cached shell upgrade preserves all workout data | `tests/service-worker.test.mjs`, `tests/rendered-html.test.mjs`; external browser online/offline and installed iPhone update |
 | CF04 | Optional Home local weather | Opt in/out persists; appropriate day/night icon; denied location, unknown conditions and timeout show unavailable; approximate coordinates only | `tests/weather-kind.test.mjs`, `tests/gps-weather.test.mjs`; Home permission/refresh/offline smoke |
-| CF05 | Primary and second major workout selection | Manage/Open visibly reveal and focus controls; choose/change a second workout; saved days retain both types and History icons; no silent completion | `scripts/check-today-actions.mjs`; browser mixed strength/endurance day, reload and paired History icons |
+| CF05 | Primary and second major workout selection | Manage/Open visibly reveal and focus controls; choose/change a second workout; saved days retain both types and History icons; no silent completion | `scripts/check-today-actions.mjs`, `scripts/check-history-icons.mjs`; browser mixed strength/endurance day, reload and paired History icons |
 | CF06 | Repeat prior workout and copy prior notes | Copy appropriate earlier matching setup/notes; preserve current work; no old completion, weights or results; repeated copying does not duplicate | `tests/repeat-workout.test.mjs`, `tests/prior-workout-notes.test.mjs`; browser reuse with existing entries |
 | CF07 | Add-on selection, ordering and completion | Full library visible; checkbox selects the named row; selected rows move up immediately; Mark done is separate; unselect/reselect and reload preserve correct data | `tests/addon-selection.test.mjs`; touch Push-Ups, neighbors and long/custom rows in varied orders |
 | CF08 | Editable exercise library | Add/rename exercise; edit equipment/instructions/reference photo/graphic description; Today selections and saved backups remain consistent; historical entries preserved | `tests/addon-selection.test.mjs`, `tests/rendered-html.test.mjs`; Settings edits, Today, reload and backup smoke |

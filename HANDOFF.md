@@ -1,6 +1,6 @@
 # Training for Life — development handoff
 
-## Current release candidate — History icons and flags, 2026.11.22 2207
+## Current release — History icons and flags, 2026.11.22 2207
 
 Confirmed historyWorkoutKeys appended Endurance for every generic GPS Run/Walk/
 Bike even on Speed/Easy aerobic days. Dedicated tested helper now respects the
@@ -21,7 +21,14 @@ nine unchanged fixture records. Actual phone screenshots inspected. D07 and
 adjacent D02/D10 PASS; other matrix rows N/A, unchanged surfaces. Duplicate
 review PASS: reused icons/helper, one key, existing status flags and no new
 workout actions. Physical iPhone feedback follows deployment. Evidence:
-docs/releases/2026.11.22-2207/. Publication/live verification pending.
+docs/releases/2026.11.22-2207/.
+Published d6074f8fda7982eb2884a0a3eb033525dd28eaec through successful Pages run
+45104447711. Public JS index-C-NvbU7l.js, CSS index-jSV-8jjr.css and service worker
+match the tested local build byte-for-byte. The live 440x956 affected workflow
+passes the same type/flag/search/journal/reload and unchanged-record assertions;
+actual live screenshot inspected. Evidence: live-assets.json, live-browser.txt
+and live-history-440.png in the release folder. The user may refresh.
+
 
 ## Current release — split-table time totals, 2026.11.22 1703
 
