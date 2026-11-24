@@ -5,8 +5,8 @@ const endpoint=await(await fetch(`${process.env.CHROME_CDP_URL||'http://127.0.0.
 const socket=new WebSocket(endpoint.webSocketDebuggerUrl);
 await new Promise(resolve=>socket.addEventListener('open',resolve,{once:true}));
 let nextId=0;const pending=new Map();
-socket.addEventListener('message',event=>{const m=JSON.parse(event.data),p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);}});
-const call=(method,params={},sessionId)=>new Promise((resolve,reject)=>{const id=++nextId;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params,sessionId}));});
+socket.addEventListener('message',event=>{const m=JSON.parse(event.data),p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(new Error(`${p.method}: ${JSON.stringify(m.error)}`)):p.resolve(m.result);}});
+const call=(method,params={},sessionId)=>new Promise((resolve,reject)=>{const id=++nextId;pending.set(id,{resolve,reject,method});socket.send(JSON.stringify({id,method,params,sessionId}));});
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const mock=`
  window.__documentId=crypto.randomUUID();sessionStorage.setItem('t4l:entered-app','1');
@@ -171,7 +171,7 @@ async function check(width,height,preparedOnly=false){
   const times=[573.9,220,210,107.6,106.4,105.8,99.4,610.2];
   const rests=[182.9,187.4,228.1,130.3,177.8,145.6,200.1];
   const expectedTimes=['9:33.9','3:40.0','3:30.0','1:47.6','1:46.4','1:45.8','1:39.4'];
-  const expectedPaces=['9:34','7:23','7:02','7:13','7:08','7:06','6:40'];
+  const expectedPaces=['9:37','7:23','7:02','7:13','7:08','7:06','6:40'];
   for(let i=0;i<distances.length;i++){
    if(i===1){
     await evaluate(`window.__move(400,110)`);await reload();
@@ -187,6 +187,7 @@ async function check(width,height,preparedOnly=false){
     const completedPace=()=>evaluate("document.querySelector('.gps-lap-average dd').textContent.trim()");
     assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
     assert.equal(await evaluate("document.querySelector('.gps-lap-completed dt').textContent"),'Split time');
+    assert.equal(await evaluate("document.querySelector('.gps-lap-average dt').textContent"),'Last split pace');
     await evaluate(`window.__advance(${rests[i]})`);
     assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
     assert.notEqual(await evaluate("document.querySelector('.gps-lap-secondary section:first-child dd').textContent"),'00:00:00');
@@ -201,14 +202,16 @@ async function check(width,height,preparedOnly=false){
     }
     await tap('.gps-start');
     assert.equal(await evaluate("Boolean(document.querySelector('.gps-lap-completed'))"),false);
-    assert.equal(await evaluate("document.querySelector('.gps-lap-pace dt').textContent"),'Current pace · 5-sec avg');
+    assert.equal(await evaluate("document.querySelector('.gps-lap-pace dt').textContent"),'Current pace');
    }
   }
   const livePace=await evaluate("(()=>{const e=document.querySelector('.gps-lap-pace dd'),r=e.getBoundingClientRect();return {text:e.textContent.trim(),size:parseFloat(getComputedStyle(e).fontSize),label:document.querySelector('.gps-lap-pace dt').textContent};})()");
-  assert.equal(livePace.label,'Current pace · 5-sec avg');assert.match(livePace.text,/^\d+:\d{2}\s/);assert.ok(livePace.size>=60,JSON.stringify(livePace));
+  assert.equal(livePace.label,'Current pace');assert.match(livePace.text,/^\d+:\d{2}\s/);assert.ok(livePace.size>=60,JSON.stringify(livePace));
   const liveSplit=await evaluate("(()=>{const e=document.querySelector('.gps-lap-split-time dd'),r=e.getBoundingClientRect();return {text:e.textContent.trim(),size:parseFloat(getComputedStyle(e).fontSize),label:document.querySelector('.gps-lap-split-time dt').textContent,clipped:e.scrollWidth>e.clientWidth+1,top:r.top,bottom:r.bottom};})()");
   assert.equal(liveSplit.label,'Split time');assert.match(liveSplit.text,/^\d+:\d{2}/);assert.ok(liveSplit.size>=livePace.size-1,JSON.stringify({livePace,liveSplit}));assert.equal(liveSplit.clipped,false,JSON.stringify(liveSplit));
   assert.ok(liveSplit.top>0&&liveSplit.bottom<=height,JSON.stringify(liveSplit));
+  const liveDistance=await evaluate("(()=>({label:document.querySelector('.gps-lap-secondary-single dt').textContent,value:document.querySelector('.gps-lap-secondary-single dd').textContent.trim()}))()");
+  assert.equal(liveDistance.label,'Split distance');assert.match(liveDistance.value,/^\d+ m$/);
   assert.equal(await evaluate('window.__watches()'),1,'Only one active GPS watch');
   await screenshot('live');
   const fit=await evaluate("(()=>{const r=document.querySelector('.gps-stop').getBoundingClientRect();return{top:r.top,bottom:r.bottom,height:innerHeight,overflow:document.querySelector('.gps-body').scrollHeight-document.querySelector('.gps-body').clientHeight};})()");

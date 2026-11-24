@@ -170,6 +170,10 @@ first repeat, Pause saves that repeat and starts recovery, Resume begins the nex
 repeat, and Stop & save saves the final repeat. The saved workout retains the
 total and every GPS-measured repeat with time, distance and pace; it does not
 assume a fixed 400-meter length.
+For completed Run/Walk track splits, the displayed GPS meters are preserved but
+split pace uses distance rounded to the nearest 200 meters (minimum 200 m); exact
+halfway values round down, so 1700 GPS meters use 1600 meters for pace. A split
+with zero usable GPS distance still has no computed pace.
 
 Today and History show a **Repeats & recovery** table with variable GPS-measured
 distances in meters, time to tenths and average pace. Recovery rows time explicit

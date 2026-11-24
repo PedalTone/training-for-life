@@ -48,6 +48,16 @@ test('saved mixed-distance lap recordings show a table in normal view, including
  }
 });
 
+test('track lap tables preserve GPS meters while basing final pace on nearest 200m',()=>{
+ const laps=[{number:1,seconds:400,meters:840,startedAt:'2026-10-18T12:00:00Z',endedAt:'2026-10-18T12:06:40Z'},
+  {number:2,seconds:800,meters:1700,startedAt:'2026-10-18T12:08:40Z',endedAt:'2026-10-18T12:22:00Z'}];
+ const html=render([{...workout,seconds:1200,meters:2540,lapMode:true,laps,recoveries:[]}]);
+ const rows=html.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0];assert.ok(rows);
+ assert.match(rows,/<td>840<\/td><td>13:25<\/td>/);
+ assert.match(rows,/<td>1,700<\/td><td>13:25<\/td>/);
+ assert.match(html,/Distances shown are GPS measurements; completed split pace uses the nearest 200 m \(minimum 200 m\)\. Halfway values round down\./);
+});
+
 test('a recording saved to another date stays visibly retained with totals and a dated navigation action',()=>{
  const html=render([],{saved:workout,savedDate:'2026-10-17'},{onViewSaved(){}});
  assert.match(html,/Recording saved on another day/);assert.match(html,/Saved for 2026-10-17/);assert.match(html,/1\.00 mi · 00:10:00/);assert.match(html,/View saved workout/);

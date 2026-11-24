@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {beginRepeat,endRepeat,currentRepeat,gpsSegments,splitTime,splitTotals,lapRecoverySeconds,continuedLapDraft} from '../app/gps-laps.ts';
+import {beginRepeat,endRepeat,currentRepeat,gpsSegments,splitTime,splitTotals,lapRecoverySeconds,continuedLapDraft,trackPaceDistanceMeters} from '../app/gps-laps.ts';
 import {readGpsRecovery} from '../app/gps-recovery.ts';
 
 const origin=Date.parse('2026-11-09T12:00:00Z');
@@ -83,6 +83,16 @@ test('display totals round each subtotal once and the grand total adds displayed
  const rounded=splitTotals([{kind:'repeat',number:1,seconds:1.44,meters:5},{kind:'recovery',number:1,seconds:1.44,meters:null}]);
  assert.deepEqual(rounded,{activeSeconds:1.4,restSeconds:1.4,totalSeconds:2.8,estimatedRest:false});
  assert.deepEqual(splitTotals([]),{activeSeconds:0,restSeconds:0,totalSeconds:0,estimatedRest:false});
+});
+test('completed track split pace rounds GPS distance to nearest 200m, with midpoint down and 200m minimum',()=>{
+ assert.equal(trackPaceDistanceMeters(840),800);
+ assert.equal(trackPaceDistanceMeters(1700),1600);
+ assert.equal(trackPaceDistanceMeters(1609.344),1600);
+ assert.equal(trackPaceDistanceMeters(1701),1800);
+ assert.equal(trackPaceDistanceMeters(99),200);
+ assert.equal(trackPaceDistanceMeters(0),null);
+ assert.equal(trackPaceDistanceMeters(-10),null);
+ assert.equal(trackPaceDistanceMeters(NaN),null);
 });
 test('rest totals respect explicit empty recoveries and mark older inferred time as estimated',()=>{
  const laps=[{number:1,seconds:100,meters:400,startedAt:at(0),endedAt:at(100)},{number:2,seconds:210,meters:800,startedAt:at(160),endedAt:at(370)}];

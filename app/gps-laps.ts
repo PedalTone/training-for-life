@@ -82,6 +82,14 @@ export function splitTime(seconds:number) {
  return `${hours?hours+':':''}${hours?String(Math.floor(whole%3600/60)).padStart(2,'0'):Math.floor(whole/60)}:${String(whole%60).padStart(2,'0')}.${tenths%10}`;
 }
 
+// Track GPS can be noisy around curves. For completed running/walking splits,
+// calculate pace against the nearest 200 m while retaining the measured GPS
+// distance. At exact 100 m boundaries, round down (for example, 1700 -> 1600).
+export function trackPaceDistanceMeters(gpsMeters:number) {
+ if(!Number.isFinite(gpsMeters)||gpsMeters<=0)return null;
+ return Math.max(200,Math.ceil(gpsMeters/200-0.5)*200);
+}
+
 // Display totals use the same tenths precision as the table. Round each subtotal
 // once, then add them so the three displayed totals always reconcile. Raw saved
 // split measurements are unchanged, including older inferred recovery intervals.

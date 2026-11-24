@@ -153,13 +153,19 @@ recovery, show the completed repeat’s frozen time to tenths and average pace,
 with a separate prominent Rest time clock counting up until Resume. The same primary Pause/Resume control retains its screen position; Stop & save explicitly finishes the entire workout. A saved lap session offers Continue repeats with the original recording ID, separately from Record another workout. Resume returns the hero to live pace. Background/GPS
 interruption pauses the current repeat without resetting its saved boundary.
 Stop saves the final repeat, including timed efforts with no usable GPS distance.
-During a live Track lap, the pace is the dominant large readout. Label it as a
-trailing five-second average, calculate it from accepted GPS distance over an
-interpolated five-second window, update on each GPS fix, and round display pace
-to five-second increments to reduce visual jitter. Show Split time immediately
+During a live Track lap, the pace is the dominant large readout, labeled simply
+“Current pace.” Calculate it from accepted GPS distance over an interpolated
+trailing five-second window, update on each GPS fix, and round display pace to
+five-second increments to reduce visual jitter. Show Split time immediately
 below pace in equally large numerals, using a contrasting blue treatment so the
-two live measures are easy to distinguish while running. In recovery, keep the
-completed Split time equally prominent above the recovery clock.
+two live measures are easy to distinguish while running. Keep the live GPS
+split distance visible, especially for warm-ups and cool-downs. For completed
+running/walking track splits, calculate split pace using the nearest 200 m of
+GPS distance, with a 200 m minimum and exact halfway values rounding down. Keep
+the original GPS meters in stored data and display them in the results table;
+explain that split pace uses the rounded distance. Do not invent pace for a
+split with zero usable distance. In recovery, keep the completed Split time
+equally prominent above the recovery clock.
 Today and History share one visible table: repeat/recovery, time (tenths), GPS
 meters, and average pace. A footer summarizes total running/exercise time, total
 rest time, and their combined workout duration. Include warm-up/cool-down repeats

@@ -228,8 +228,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.24 0933";
+const APP_VERSION = "2026.11.24 0943";
 const RECENT_RELEASES = [
+  { version: "2026.11.24 0943", category: "Minor fix", changes: ["Simplify the live pace label to Current pace and keep GPS split distance visible. Completed Run/Walk track split paces now use the nearest 200 m, while the original GPS meters are retained and shown."] },
   { version: "2026.11.24 0933", category: "Minor fix", changes: ["Show the active Split time immediately below the large pace in Track laps, with the same large numerals and a distinct blue treatment."] },
   { version: "2026.11.24 0916", category: "Minor fix", changes: ["Smooth live pace in Track laps using accepted GPS distance from a rolling five-second window, updated with each fix and rounded to five-second pace steps. The large readout stays blank until a full window is available."] },
   { version: "2026.11.23 1754", category: "Major fix", changes: ["Track laps clearly separates Pause, Resume and finishing the whole workout. A larger Rest time clock counts while paused and resets for the next recovery.", "Continue repeats reopens the latest saved lap session with its original recording ID, keeping repeats, recovery times and totals together instead of requiring another workout."] },
@@ -239,7 +240,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.22 0705", category: "Major fix", changes: ["Simplify Plan by removing its large picture while keeping day selection and weekly planning.", "Keep History and the workout editor consistent when saved browser copies differ, and restore valid workout backups reliably."] },
   { version: "2026.11.09 0758", category: "Major fix", changes: ["Keep repeat boundaries and recovery times through pause, resume, reload and save. Show a readable repeats/recovery table in Today and History with time, meters and average pace.", "Finish Workout + Backup now saves pending GPS tracking first instead of staying grayed out. Failed saves keep the recording available for retry."] },
   { version: "2026.11.07 1254", category: "Major fix", changes: ["Make Today Manage and Open workout scroll to and focus the workout controls. Place saved-workout Edit directly beneath the picture, above Today’s workouts."] },
-  { version: "2026.11.07 1208", category: "Major fix", changes: ["Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging."] },
 ];
 const withStore=withSessionStore;
 

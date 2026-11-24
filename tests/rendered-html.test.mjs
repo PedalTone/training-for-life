@@ -23,7 +23,7 @@ test("server-renders the dated release and a discreet What’s new control", asy
   const html = await response.text();
   assert.match(html, /Training 4 Life/);
   assert.doesNotMatch(html, /class="brand-bar"/);
-  assert.match(html, /2026\.11\.24 0933/);
+  assert.match(html, /2026\.11\.24 0943/);
   assert.match(html, /What’s new\?/);
   assert.match(html, /aria-controls="splash-release-notes"/);
   assert.match(html, /Move well, daily\.<\/span><span>Relentless forward progress\.<\/span>/);
@@ -62,8 +62,9 @@ test("What’s new groups exactly ten categorized dated releases", async () => {
   ]);
   const releaseBlock = page.match(/const RECENT_RELEASES = \[([\s\S]*?)\n\];/)?.[1] ?? "";
   assert.equal((releaseBlock.match(/\{ version:/g) ?? []).length, 10);
-  assert.match(releaseBlock, /2026\.11\.24 0933/);
-  assert.match(releaseBlock, /2026\.11\.07 1208/);
+  assert.match(releaseBlock, /2026\.11\.24 0943/);
+  assert.match(releaseBlock, /2026\.11\.07 1254/);
+  assert.doesNotMatch(releaseBlock, /2026\.11\.07 1208/);
   assert.doesNotMatch(releaseBlock, /2026\.11\.07 1115/);
   assert.doesNotMatch(releaseBlock, /2026\.11\.07 1043/);
   assert.equal((releaseBlock.match(/category: "(?:(?:Major|Minor) fix|New feature)"/g) ?? []).length, 10);
