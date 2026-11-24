@@ -201,9 +201,11 @@ async function check(width,height,preparedOnly=false){
     }
     await tap('.gps-start');
     assert.equal(await evaluate("Boolean(document.querySelector('.gps-lap-completed'))"),false);
-    assert.equal(await evaluate("document.querySelector('.gps-lap-pace dt').textContent"),'Current pace');
+    assert.equal(await evaluate("document.querySelector('.gps-lap-pace dt').textContent"),'Current pace · 5-sec avg');
    }
   }
+  const livePace=await evaluate("(()=>{const e=document.querySelector('.gps-lap-pace dd'),r=e.getBoundingClientRect();return {text:e.textContent.trim(),size:parseFloat(getComputedStyle(e).fontSize),label:document.querySelector('.gps-lap-pace dt').textContent};})()");
+  assert.equal(livePace.label,'Current pace · 5-sec avg');assert.match(livePace.text,/^\d+:\d{2}\s/);assert.ok(livePace.size>=60,JSON.stringify(livePace));
   assert.equal(await evaluate('window.__watches()'),1,'Only one active GPS watch');
   await screenshot('live');
   const fit=await evaluate("(()=>{const r=document.querySelector('.gps-stop').getBoundingClientRect();return{top:r.top,bottom:r.bottom,height:innerHeight,overflow:document.querySelector('.gps-body').scrollHeight-document.querySelector('.gps-body').clientHeight};})()");

@@ -6,6 +6,32 @@ export const GPS_ACTIVITIES=['Run','Walk','Bike'] as const;
 export type GpsActivity=typeof GPS_ACTIVITIES[number];
 export const isGpsActivity=(value:unknown):value is GpsActivity=>GPS_ACTIVITIES.some(activity=>activity===value);
 export const gpsUsesPace=(activity:GpsActivity)=>activity!=='Bike';
+export type PaceDistanceSample={timestamp:number;meters:number};
+// Estimate speed over an exact trailing window. Interpolation avoids letting
+// irregular GPS sampling silently change the length of the pace window.
+export function rollingWindowSpeed(samples:PaceDistanceSample[],windowSeconds=5) {
+ if(!Number.isFinite(windowSeconds)||windowSeconds<=0||samples.length<2)return null;
+ const latest=samples.at(-1)!;
+ if(!Number.isFinite(latest.timestamp)||!Number.isFinite(latest.meters))return null;
+ const target=latest.timestamp-windowSeconds*1000;
+ let start:number|null=null;
+ for(let index=0;index<samples.length;index++){
+  const current=samples[index];
+  if(!Number.isFinite(current.timestamp)||!Number.isFinite(current.meters))return null;
+  if(index>0&&current.timestamp<=samples[index-1].timestamp)return null;
+  if(current.timestamp===target){start=current.meters;break;}
+  const next=samples[index+1];
+  if(current.timestamp<target&&next&&next.timestamp>target){
+   const fraction=(target-current.timestamp)/(next.timestamp-current.timestamp);
+   start=current.meters+(next.meters-current.meters)*fraction;
+   break;
+  }
+ }
+ if(start===null)return null;
+ const distance=latest.meters-start;
+ if(!Number.isFinite(distance)||distance<=0)return null;
+ return distance/windowSeconds;
+}
 export type GpsWorkout = {id:string;activity:GpsActivity;startedAt:string;endedAt:string;seconds:number;meters:number;maxSpeed:number;gaps:number;route?:GpsRoute;laps?:GpsLap[];lapMode?:boolean;recoveries?:GpsRecoveryInterval[]};
 export function gpsDistance(a:GpsPoint,b:GpsPoint) {const rad=Math.PI/180;const lat=(b.latitude-a.latitude)*rad;const lon=(b.longitude-a.longitude)*rad;const h=Math.sin(lat/2)**2+Math.cos(a.latitude*rad)*Math.cos(b.latitude*rad)*Math.sin(lon/2)**2;return 6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(Math.max(0,1-h)));}
 export function gpsStep(previous:GpsPoint|null,point:GpsPoint,activity:GpsActivity,lastSignalTimestamp=previous?.timestamp) {

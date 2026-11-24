@@ -153,6 +153,10 @@ recovery, show the completed repeat’s frozen time to tenths and average pace,
 with a separate prominent Rest time clock counting up until Resume. The same primary Pause/Resume control retains its screen position; Stop & save explicitly finishes the entire workout. A saved lap session offers Continue repeats with the original recording ID, separately from Record another workout. Resume returns the hero to live pace. Background/GPS
 interruption pauses the current repeat without resetting its saved boundary.
 Stop saves the final repeat, including timed efforts with no usable GPS distance.
+During a live Track lap, the pace is the dominant large readout. Label it as a
+trailing five-second average, calculate it from accepted GPS distance over an
+interpolated five-second window, update on each GPS fix, and round display pace
+to five-second increments to reduce visual jitter.
 Today and History share one visible table: repeat/recovery, time (tenths), GPS
 meters, and average pace. A footer summarizes total running/exercise time, total
 rest time, and their combined workout duration. Include warm-up/cool-down repeats

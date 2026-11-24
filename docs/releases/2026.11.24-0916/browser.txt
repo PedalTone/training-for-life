@@ -1,0 +1,5 @@
+External Chrome 157, isolated CDP session; simulated location stream. This is not an iPhone hardware test.
+
+PASS scripts/check-gps-laps.mjs at 375x667, 393x852 and 440x956. Each viewport completed the original eight-repeat/seven-recovery track workflow, the seven-repeat/six-recovery variable 400/600/800m workflow, and same-recording continuation. Each live screen asserted the “Current pace · 5-sec avg” label, a numeric min/mile reading after a full sample window and a pace font size >=60px. Screenshots were visually inspected for fit and hierarchy.
+
+PASS zero-distance and hour-long repeat cases; ordinary Run/Walk/Bike, pause/resume, map/weather, full-screen controls, backup and navigation regressions.

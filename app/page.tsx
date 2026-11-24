@@ -228,8 +228,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.23 1754";
+const APP_VERSION = "2026.11.24 0916";
 const RECENT_RELEASES = [
+  { version: "2026.11.24 0916", category: "Minor fix", changes: ["Smooth live pace in Track laps using accepted GPS distance from a rolling five-second window, updated with each fix and rounded to five-second pace steps. The large readout stays blank until a full window is available."] },
   { version: "2026.11.23 1754", category: "Major fix", changes: ["Track laps clearly separates Pause, Resume and finishing the whole workout. A larger Rest time clock counts while paused and resets for the next recovery.", "Continue repeats reopens the latest saved lap session with its original recording ID, keeping repeats, recovery times and totals together instead of requiring another workout."] },
   { version: "2026.11.22 2207", category: "Minor fix", changes: ["History no longer adds an Endurance clock to Speed or Easy Aerobic GPS workouts. Genuine two-workout days keep both icons; a workout icon key explains the symbols.", "Body-note flags stay red; Sick / unwell flags are now blue in History and search."] },
   { version: "2026.11.22 1703", category: "New feature", changes: ["Saved repeat tables now finish with total running time, total rest time and total workout duration in Today and History. Warm-up and cool-down repeats are included; older estimated rest stays labeled."] },
@@ -239,7 +240,6 @@ const RECENT_RELEASES = [
   { version: "2026.11.07 1254", category: "Major fix", changes: ["Make Today Manage and Open workout scroll to and focus the workout controls. Place saved-workout Edit directly beneath the picture, above Today’s workouts."] },
   { version: "2026.11.07 1208", category: "Major fix", changes: ["Add a clear Today’s workouts summary with primary and second major workout cards before detailed logging."] },
   { version: "2026.11.07 1115", category: "Minor fix", changes: ["Restyle the tracker weather panel as a compact horizontal strip with temperature, humidity, wind, direction and relative-wind status."] },
-  { version: "2026.11.07 1043", category: "Major fix", changes: ["Show wind speed and relative headwind, tailwind, or crosswind status during GPS tracking."] },
 ];
 const withStore=withSessionStore;
 
