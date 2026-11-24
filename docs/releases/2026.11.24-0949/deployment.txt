@@ -1,0 +1,8 @@
+Release: 2026.11.24 0949
+Git commit: 0ec407535ba2ace4205647483dbafb2b9b332cb5
+GitHub Pages workflow: https://github.com/PedalTone/training-for-life/actions/runs/45419175186
+Workflow result: success
+Public URL: https://pedaltone.github.io/training-for-life/app/
+Public version: 2026.11.24 0949
+Public JavaScript, CSS, and service worker SHA-256 hashes match the tested local Pages build (see live-assets.txt).
+Published-app simulated-GPS browser flows passed at 440x956; includes one workout with 8 splits and 7 rests, final History table, normalized 200 m distances, and raw backup preservation.

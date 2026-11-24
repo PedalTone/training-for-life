@@ -18,3 +18,5 @@ Design review: D03 tracker hierarchy, D07 mobile readability and D12 data preser
 | CF24 | PASS | `tests/gps-saved-view.test.mjs`: table shows 800/1600 m and calculates pace from those values; stored GPS distances remain 840/1700 m; note explains the rule. |
 | CF28 | PASS | Browser scenarios at 375x667, 393x852 and 440x956; live distance and full-screen controls fit without scrolling. |
 | CF48 | PASS | Exact app version, affected release tests, Pages build and public asset/live browser verification after deployment. |
+
+Publication: GitHub Actions run 45419175186 succeeded for commit `0ec4075`. The public 2026.11.24 0949 HTML and JavaScript expose the corrected behavior; JavaScript, CSS and service-worker SHA-256 hashes match the tested local Pages build. The published app passed the 440x956 simulated-GPS browser flow, including the final Today/History table showing normalized distance (1600 m for the 1609 m GPS warm-up) and pace. Evidence is in `docs/releases/2026.11.24-0949/`.
