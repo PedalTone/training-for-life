@@ -40,7 +40,7 @@ async function check(width,height,preparedOnly=false){
   const errors=[];
   const onMessage=event=>{const m=JSON.parse(event.data);if(m.sessionId===sessionId&&m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);};
   socket.addEventListener('message',onMessage);
-  const evaluate=async expression=>{const result=await cdp('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(result.exceptionDetails)throw new Error(JSON.stringify(result.exceptionDetails));return result.result.value;};
+  const evaluate=async expression=>{let result;for(let attempt=0;attempt<5;attempt++){try{result=await cdp('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});break;}catch(error){if(!String(error).includes('Inspected target navigated or closed')||attempt===4)throw error;await delay(75);}}if(result.exceptionDetails)throw new Error(JSON.stringify(result.exceptionDetails));return result.result.value;};
   const wait=async expression=>{for(let i=0;i<150;i++){if(await evaluate(expression))return;await delay(50);}throw new Error('Timed out: '+expression);};
   const tap=async selector=>{const point=await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});if(!e)throw new Error('Missing '+${JSON.stringify(selector)});if(e.disabled)throw new Error('Disabled '+${JSON.stringify(selector)});e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;if(!e.contains(document.elementFromPoint(x,y)))throw new Error('Obscured '+${JSON.stringify(selector)});return{x,y};})()`);await cdp('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point,radiusX:8,radiusY:8}]});await cdp('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(120);};
   const draft=()=>evaluate("JSON.parse(localStorage.getItem('t4l:gps-draft')||'null')");
@@ -248,7 +248,7 @@ async function check(width,height,preparedOnly=false){
   const footerFit=await evaluate("(()=>{const f=document.querySelector('.gps-split-totals'),r=f.getBoundingClientRect();return {left:r.left,right:r.right,overflow:[...f.querySelectorAll('th,td')].some(e=>e.scrollWidth>e.clientWidth+1)};})()");
   assert.ok(footerFit.left>=0&&footerFit.right<=width&&!footerFit.overflow,JSON.stringify(footerFit));await screenshot('totals');
   const rows=await evaluate("[...document.querySelectorAll('.gps-splits-results tbody tr')].map(r=>r.textContent)");
-  assert.equal(rows.length,15);assert.ok(rows[1].includes('Recovery'));assert.match(rows[0],/1,609/);
+  assert.equal(rows.length,15);assert.ok(rows[1].includes('Recovery'));assert.match(rows[0],/1,600/);
   await evaluate("document.querySelector('.gps-splits-results').scrollIntoView({block:'start',behavior:'instant'})");await screenshot('results');
   assert.equal(await evaluate("document.documentElement.scrollWidth<=innerWidth"),true);
   // Reload and view the same table in History, not only the ephemeral save UI.

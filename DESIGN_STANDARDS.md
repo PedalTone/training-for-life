@@ -162,12 +162,12 @@ two live measures are easy to distinguish while running. Keep the live GPS
 split distance visible, especially for warm-ups and cool-downs. For completed
 running/walking track splits, calculate split pace using the nearest 200 m of
 GPS distance, with a 200 m minimum and exact halfway values rounding down. Keep
-the original GPS meters in stored data and display them in the results table;
-explain that split pace uses the rounded distance. Do not invent pace for a
+the original GPS meters in stored data and show normalized distance and pace in
+the results table; explain that raw GPS remains saved. Do not invent pace for a
 split with zero usable distance. In recovery, keep the completed Split time
 equally prominent above the recovery clock.
-Today and History share one visible table: repeat/recovery, time (tenths), GPS
-meters, and average pace. A footer summarizes total running/exercise time, total
+Today and History share one visible table: repeat/recovery, time (tenths), track
+distance normalized to 200 m, and average pace. A footer summarizes total running/exercise time, total
 rest time, and their combined workout duration. Include warm-up/cool-down repeats
 and label inferred rest as estimated. Recovery has time only because explicit pause freezes
 distance; unavailable measurements show a dash. Older recovery gaps inferred

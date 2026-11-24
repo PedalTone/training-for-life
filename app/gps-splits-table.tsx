@@ -15,7 +15,7 @@ export function GpsSplitsTable({workout,unit='mi'}:{workout:GpsWorkout;unit?:'mi
    <thead><tr><th scope="col">Segment</th><th scope="col">Time</th><th scope="col" aria-label="Distance in meters">Dist.<small>meters</small></th><th scope="col">{usesPace?'Avg pace':'Avg speed'}<small>{usesPace?`min/${unit}`:unit==='mi'?'mph':'km/h'}</small></th></tr></thead>
    <tbody>{rows.map((row,index)=><tr key={index} className={row.kind==='recovery'?'gps-recovery-row':undefined}>
     <th scope="row">{row.kind==='repeat'?`Repeat ${row.number}`:'Recovery'}</th>
-    <td>{splitTime(row.seconds)}</td><td>{row.meters===null?'—':Math.round(row.meters).toLocaleString('en-US')}</td>
+    <td>{splitTime(row.seconds)}</td><td>{row.meters===null?'—':Math.round(trackLapPace&&row.kind==='repeat'?trackPaceDistanceMeters(row.meters)??row.meters:row.meters).toLocaleString('en-US')}</td>
     <td>{row.kind==='recovery'||!row.meters||!row.seconds?'—':usesPace?gpsPace((trackLapPace?trackPaceDistanceMeters(row.meters)??row.meters:row.meters)/row.seconds,unit):(row.meters/row.seconds*3600/(unit==='mi'?1609.344:1000)).toFixed(1)}</td>
    </tr>)}</tbody>
    <tfoot className="gps-split-totals">
@@ -24,7 +24,7 @@ export function GpsSplitsTable({workout,unit='mi'}:{workout:GpsWorkout;unit?:'mi
     <tr className="gps-workout-total"><th scope="row" colSpan={2}>Total workout duration</th><td colSpan={2}>{splitTime(totals.totalSeconds)}</td></tr>
    </tfoot>
   </table>
-  {trackLapPace&&rows.some(row=>row.kind==='repeat'&&row.meters!==null&&row.meters>0)&&<p className="gps-splits-note">Distances shown are GPS measurements; completed split pace uses the nearest 200 m (minimum 200 m). Halfway values round down.</p>}
+  {trackLapPace&&rows.some(row=>row.kind==='repeat'&&row.meters!==null&&row.meters>0)&&<p className="gps-splits-note">Track split distances and pace use the nearest 200 m (minimum 200 m); halfway values round down. Raw GPS distances remain saved, and the live tracker shows measured distance.</p>}
   {rows.some(row=>row.kind==='recovery')&&<p className="gps-splits-note">Recovery is timed while paused; distance and pace are not tracked.{rows.some(row=>row.estimated)?' Older recovery times are estimated from saved split timestamps.':''}</p>}
  </section>;
 }

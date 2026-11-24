@@ -1,4 +1,4 @@
-New public release — 2026.11.24 0943: Label live pace simply Current pace, keep GPS split distance visible, and calculate completed Run/Walk track split pace from nearest 200 m while preserving GPS measurements.
+New public release — 2026.11.24 0949: Label live pace simply Current pace, keep GPS split distance visible, and show completed Run/Walk track split distance and pace rounded to nearest 200 m while preserving raw GPS measurements.
 
 New public release — 2026.11.24 0933: Put Split time directly beneath the large pace during live Track laps, using equally large numerals and a contrasting blue card.
 

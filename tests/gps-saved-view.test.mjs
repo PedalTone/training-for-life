@@ -48,14 +48,15 @@ test('saved mixed-distance lap recordings show a table in normal view, including
  }
 });
 
-test('track lap tables preserve GPS meters while basing final pace on nearest 200m',()=>{
+test('track lap tables show rounded distance and pace while saved GPS meters stay unchanged',()=>{
  const laps=[{number:1,seconds:400,meters:840,startedAt:'2026-10-18T12:00:00Z',endedAt:'2026-10-18T12:06:40Z'},
   {number:2,seconds:800,meters:1700,startedAt:'2026-10-18T12:08:40Z',endedAt:'2026-10-18T12:22:00Z'}];
  const html=render([{...workout,seconds:1200,meters:2540,lapMode:true,laps,recoveries:[]}]);
  const rows=html.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0];assert.ok(rows);
- assert.match(rows,/<td>840<\/td><td>13:25<\/td>/);
- assert.match(rows,/<td>1,700<\/td><td>13:25<\/td>/);
- assert.match(html,/Distances shown are GPS measurements; completed split pace uses the nearest 200 m \(minimum 200 m\)\. Halfway values round down\./);
+ assert.match(rows,/<td>800<\/td><td>13:25<\/td>/);
+ assert.match(rows,/<td>1,600<\/td><td>13:25<\/td>/);
+ assert.match(html,/Track split distances and pace use the nearest 200 m \(minimum 200 m\); halfway values round down\. Raw GPS distances remain saved, and the live tracker shows measured distance\./);
+ assert.deepEqual(laps.map(lap=>lap.meters),[840,1700]);
 });
 
 test('a recording saved to another date stays visibly retained with totals and a dated navigation action',()=>{

@@ -228,9 +228,9 @@ async function prepareExerciseReference(file: File) {
   return canvas.toDataURL("image/jpeg", .78);
 }
 
-const APP_VERSION = "2026.11.24 0943";
+const APP_VERSION = "2026.11.24 0949";
 const RECENT_RELEASES = [
-  { version: "2026.11.24 0943", category: "Minor fix", changes: ["Simplify the live pace label to Current pace and keep GPS split distance visible. Completed Run/Walk track split paces now use the nearest 200 m, while the original GPS meters are retained and shown."] },
+  { version: "2026.11.24 0949", category: "Minor fix", changes: ["Simplify the live pace label to Current pace and keep GPS split distance visible. Completed Run/Walk track table distances and paces now use the nearest 200 m, while raw GPS meters remain saved."] },
   { version: "2026.11.24 0933", category: "Minor fix", changes: ["Show the active Split time immediately below the large pace in Track laps, with the same large numerals and a distinct blue treatment."] },
   { version: "2026.11.24 0916", category: "Minor fix", changes: ["Smooth live pace in Track laps using accepted GPS distance from a rolling five-second window, updated with each fix and rounded to five-second pace steps. The large readout stays blank until a full window is available."] },
   { version: "2026.11.23 1754", category: "Major fix", changes: ["Track laps clearly separates Pause, Resume and finishing the whole workout. A larger Rest time clock counts while paused and resets for the next recovery.", "Continue repeats reopens the latest saved lap session with its original recording ID, keeping repeats, recovery times and totals together instead of requiring another workout."] },
