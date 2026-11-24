@@ -1,3 +1,5 @@
+New public release — 2026.11.24 0933: Put Split time directly beneath the large pace during live Track laps, using equally large numerals and a contrasting blue card.
+
 New public release — 2026.11.24 0916: Smooth the large live Track laps pace using an interpolated rolling five-second GPS-distance window and stable five-second pace rounding.
 
 New public release — 2026.11.23 1754: Make lap Pause/Resume and the running rest clock clear, keep one comprehensive session, and let Continue repeats extend a saved lap workout without creating another recording.

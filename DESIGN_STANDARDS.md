@@ -156,7 +156,10 @@ Stop saves the final repeat, including timed efforts with no usable GPS distance
 During a live Track lap, the pace is the dominant large readout. Label it as a
 trailing five-second average, calculate it from accepted GPS distance over an
 interpolated five-second window, update on each GPS fix, and round display pace
-to five-second increments to reduce visual jitter.
+to five-second increments to reduce visual jitter. Show Split time immediately
+below pace in equally large numerals, using a contrasting blue treatment so the
+two live measures are easy to distinguish while running. In recovery, keep the
+completed Split time equally prominent above the recovery clock.
 Today and History share one visible table: repeat/recovery, time (tenths), GPS
 meters, and average pace. A footer summarizes total running/exercise time, total
 rest time, and their combined workout duration. Include warm-up/cool-down repeats

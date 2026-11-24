@@ -186,7 +186,7 @@ async function check(width,height,preparedOnly=false){
     const completedTime=()=>evaluate("document.querySelector('.gps-lap-completed dd').textContent");
     const completedPace=()=>evaluate("document.querySelector('.gps-lap-average dd').textContent.trim()");
     assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
-    assert.match(await evaluate("document.querySelector('.gps-lap-completed dt').textContent"),new RegExp('Repeat '+(i+1)+' time'));
+    assert.equal(await evaluate("document.querySelector('.gps-lap-completed dt').textContent"),'Split time');
     await evaluate(`window.__advance(${rests[i]})`);
     assert.equal(await completedTime(),expectedTimes[i]);assert.equal(await completedPace(),expectedPaces[i]+' min/mile');
     assert.notEqual(await evaluate("document.querySelector('.gps-lap-secondary section:first-child dd').textContent"),'00:00:00');
@@ -206,6 +206,9 @@ async function check(width,height,preparedOnly=false){
   }
   const livePace=await evaluate("(()=>{const e=document.querySelector('.gps-lap-pace dd'),r=e.getBoundingClientRect();return {text:e.textContent.trim(),size:parseFloat(getComputedStyle(e).fontSize),label:document.querySelector('.gps-lap-pace dt').textContent};})()");
   assert.equal(livePace.label,'Current pace · 5-sec avg');assert.match(livePace.text,/^\d+:\d{2}\s/);assert.ok(livePace.size>=60,JSON.stringify(livePace));
+  const liveSplit=await evaluate("(()=>{const e=document.querySelector('.gps-lap-split-time dd'),r=e.getBoundingClientRect();return {text:e.textContent.trim(),size:parseFloat(getComputedStyle(e).fontSize),label:document.querySelector('.gps-lap-split-time dt').textContent,clipped:e.scrollWidth>e.clientWidth+1,top:r.top,bottom:r.bottom};})()");
+  assert.equal(liveSplit.label,'Split time');assert.match(liveSplit.text,/^\d+:\d{2}/);assert.ok(liveSplit.size>=livePace.size-1,JSON.stringify({livePace,liveSplit}));assert.equal(liveSplit.clipped,false,JSON.stringify(liveSplit));
+  assert.ok(liveSplit.top>0&&liveSplit.bottom<=height,JSON.stringify(liveSplit));
   assert.equal(await evaluate('window.__watches()'),1,'Only one active GPS watch');
   await screenshot('live');
   const fit=await evaluate("(()=>{const r=document.querySelector('.gps-stop').getBoundingClientRect();return{top:r.top,bottom:r.bottom,height:innerHeight,overflow:document.querySelector('.gps-body').scrollHeight-document.querySelector('.gps-body').clientHeight};})()");

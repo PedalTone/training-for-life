@@ -1978,10 +1978,16 @@ label.video-completion { cursor:pointer; }
 .gps-lap-heading b { color:#ad4e20; font-size:13px; }
 .gps-lap-pace, .gps-lap-secondary section, .gps-lap-average { background:#fffaf2; border:1px solid #e0d5c5; border-radius:18px; padding:14px 16px; text-align:center; }
 .gps-lap-pace { padding:22px 12px; }
+.gps-lap-split-time { background:#edf3fa; border:1px solid #9eb6d2; border-top:4px solid #315f96; border-radius:18px; padding:8px; text-align:center; }
+.gps-lap-split-time dt { color:#315f96 !important; }
+.gps-lap-split-time dd { color:#203449; font:800 clamp(64px,18vw,112px)/.95 var(--sans); letter-spacing:-.06em; margin:4px 0 0; font-variant-numeric:tabular-nums; }
 .gps-lap-live dt { color:#596875; font:700 14px var(--sans); text-transform:uppercase; letter-spacing:.08em; }
 .gps-lap-pace dd { color:#203449; font:800 clamp(64px,18vw,112px)/.95 var(--sans); letter-spacing:-.06em; margin:12px 0 0; font-variant-numeric:tabular-nums; }
 .gps-lap-pace dd small { display:block; font-size:20px; letter-spacing:0; margin-top:8px; }
 .gps-lap-secondary { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.gps-lap-secondary-single { grid-template-columns:minmax(0,1fr); }
+.gps-lap-secondary-single section { display:flex; align-items:center; justify-content:space-between; text-align:left; padding:8px 12px; }
+.gps-lap-secondary-single dd { margin:0; }
 .gps-lap-secondary dd, .gps-lap-average dd { color:#203449; font:800 30px/1.1 var(--sans); margin:8px 0 0; font-variant-numeric:tabular-nums; }
 .gps-lap-average dd small { font-size:16px; }
 .gps-lap-map-hidden { display:none !important; }
@@ -2006,12 +2012,16 @@ button, summary { touch-action: manipulation; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-pace { flex:1 1 auto; min-height:0; padding:10px 8px; justify-content:center; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-pace dd { font-size:clamp(62px,18vw,108px); margin-top:5px; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-pace dd small { font-size:18px; margin-top:3px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-split-time { flex:0 0 auto; padding:6px 8px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-split-time dd { font-size:clamp(62px,18vw,108px); margin-top:3px; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-secondary section { padding:8px 10px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-secondary-single section { padding:4px 12px; }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-secondary-single dd { font-size:24px; margin:0; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-secondary dd { font-size:24px; margin-top:3px; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-average { padding:8px 10px; }
 .gps-fullscreen:has(.gps-lap-live) .gps-lap-average dd { font-size:25px; margin-top:3px; }
 /* Recovery keeps the completed repeat readable while its own timer counts. */
-.gps-fullscreen:has(.gps-lap-live) .gps-lap-completed dd { font-size:clamp(44px,15vw,82px); }
+.gps-fullscreen:has(.gps-lap-live) .gps-lap-completed dd { font-size:clamp(62px,18vw,108px); }
 .gps-fullscreen .gps-lap-recovery .gps-lap-average dd { font-size:clamp(30px,9vw,42px); }
 .gps-fullscreen:has(.gps-lap-live) .gps-actions { flex:0 0 auto; margin-top:0; }
 .gps-fullscreen:has(.gps-lap-live) .gps-actions button { min-height:64px; }

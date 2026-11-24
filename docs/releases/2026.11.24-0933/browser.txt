@@ -1,0 +1,5 @@
+External Chrome 157 using isolated browser contexts and simulated GPS. This is not a physical iPhone test.
+
+PASS scripts/check-gps-laps.mjs at 375x667, 393x852 and 440x956. Active screen shows large current pace, then a distinct blue Split time card directly below it. Both use matching 62px+ numerals, fit the viewport, and the time does not clip or overflow. The active split time advances and uses tenths. During recovery the completed Split time remains equally prominent above Rest time. The layout has no scrolling/clipping and keeps distance, split pace, overall pace, Resume and Stop controls visible.
+
+PASS original eight-repeat/seven-recovery session, seven continuous variable-distance repeats/six recoveries, saved-session continuation, zero-distance and hour-long repeats, plus ordinary tracker navigation and save regressions.
