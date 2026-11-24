@@ -1,0 +1,3 @@
+PASS public app https://pedaltone.github.io/training-for-life/app/ in isolated external Chrome 157 at 440x956. The active screen shows equally large pace and blue-accented Split time stacked in that order; the recovery screen shows the completed Split time above Rest time. Both screens fit without clipping or scrolling. The eight-repeat/seven-rest and seven-repeat/six-rest flows, continuation, zero-distance and hour-long cases pass.
+
+Location was simulated in browser; no physical iPhone test was performed.

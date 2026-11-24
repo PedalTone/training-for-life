@@ -16,3 +16,5 @@ Design review: D03 tracker hierarchy and D07 readable mobile metrics PASS. The b
 | CF22 | PASS | `tests/gps-laps.test.mjs`; `scripts/check-gps-laps.mjs`: live Split time and completed Split time labels, precision, Pause/recovery/Resume and final save. |
 | CF28 | PASS | `scripts/check-gps-laps.mjs` at 375x667, 393x852 and 440x956; matching >=62px pace/time numerals, no clipping or scroll. |
 | CF48 | PASS | Release readiness, exact version, Pages build and public asset/live browser verification after deployment. |
+
+Verified live publication: deployment 45415572029 succeeded for `690acb0e38eb746b2f2280ebc21c6754a93bd83d`. Public app `2026.11.24 0933` and exact JavaScript/CSS/service-worker hashes match the tested Pages build. The live active and recovery Split time screens and lap workflow passed. Evidence is in `docs/releases/2026.11.24-0933/live-assets.json`, `published-live-browser.txt`, screenshots, and `deployment.txt`.
