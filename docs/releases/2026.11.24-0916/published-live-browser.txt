@@ -1,0 +1,3 @@
+PASS public https://pedaltone.github.io/training-for-life/app/ in isolated external Chrome 157 at 440x956. Eight-repeat/seven-rest workout and seven-repeat/six-rest mixed-distance workout remain one recording; the page shows a numeric pace in the five-second window, rounds/stabilizes the live readout, and preserves Pause, recovery timer, Resume, final save, backup and results table. Continue repeats, zero-distance timed repeat and hour-long repeat also pass.
+
+This used simulated location points; no physical iPhone workout was performed.

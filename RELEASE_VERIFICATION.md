@@ -15,3 +15,5 @@ Device follow-up: After deployment, try one physical track workout and report wh
 | CF22 | PASS | `tests/gps-laps.test.mjs`; `scripts/check-gps-laps.mjs`: Pause, timed recovery, Resume, one-session split behavior at three phone viewports. |
 | CF28 | PASS | External Chrome screenshots at 375x667 and 440x956; label and live pace >=60px; no full-screen overflow. |
 | CF48 | PASS | Release readiness, exact version, Pages build, public asset verification after deployment. |
+
+Verified live publication: GitHub Pages deployment 45412637913 succeeded for `4de700aadeca8e436ee211ffd1647c9abc88d500`. Public release `2026.11.24 0916` and exact JS/CSS/service-worker hashes match the tested build. The affected live lap workflow passes at 440x956. See `docs/releases/2026.11.24-0916/live-assets.json`, `published-live-browser.txt`, `published-live-440.png` and `deployment.txt`.

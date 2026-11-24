@@ -1,0 +1,21 @@
+{
+  "version": "2026.11.24 0916",
+  "url": "https://pedaltone.github.io/training-for-life/app/",
+  "deploymentRun": "45412637913",
+  "sourceCommit": "4de700aadeca8e436ee211ffd1647c9abc88d500",
+  "assets": {
+    "javascript": {
+      "path": "assets/index-C-B0RId0.js",
+      "sha256": "c508481b4f3732119d3b218e4453d8941dd1c9b0e4a301517127d44f3e67862a"
+    },
+    "stylesheet": {
+      "path": "assets/index-BTKSgfYO.css",
+      "sha256": "01d052b0438c16c023f71b1859d4595f300f97e625725396a42c9d8d15667608"
+    },
+    "serviceWorker": {
+      "path": "service-worker.js",
+      "sha256": "2f4e11508f13c3ccfd9f1d72eac7a67952ac4e7a176bbd5c7f92eb6596ceea00"
+    }
+  },
+  "byteForByteMatch": true
+}
